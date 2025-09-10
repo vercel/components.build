@@ -76,6 +76,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  --fd-layout-width: 75rem;
 }
 
 .dark {
@@ -117,18 +119,8 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-secondary/50 dark:bg-background text-foreground;
   }
-}
-
-/* Fumadocs override */
-:root {
-  --fd-layout-width: 92rem;
-}
-
-/* Fix Fumadocs theme toggle icons */
-[data-theme-toggle] svg {
-  @apply fill-none;
 }
 
 /* This layer is by next-forge */
@@ -156,4 +148,36 @@
   [role="button"]:not(:disabled) {
     @apply cursor-pointer;
   }
+}
+
+/* Fix Fumadocs theme toggle icons */
+[data-theme-toggle] svg {
+  @apply fill-none;
+}
+
+/* Custom styles */
+
+#nd-docs-layout, #nd-subnav > div {
+  @apply border-x border-dashed;
+}
+
+#nd-subnav {
+  @apply bg-transparent;
+}
+
+#nd-sidebar {
+  @apply transition-none;
+}
+
+h1, 
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-semibold tracking-tight;
+}
+
+#nd-subnav [data-search-full] {
+  @apply bg-background rounded-lg;
 }
