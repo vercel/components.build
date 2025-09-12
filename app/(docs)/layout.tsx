@@ -1,4 +1,5 @@
 import { DocsLayout } from "fumadocs-ui/layouts/notebook";
+import { BoxesIcon } from "lucide-react";
 import { source } from "@/lib/source";
 
 export default function Layout({ children }: LayoutProps<"/docs">) {
@@ -10,15 +11,8 @@ export default function Layout({ children }: LayoutProps<"/docs">) {
         mode: "top",
         title: (
           <>
-            <svg
-              aria-label="Logo"
-              height="24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx={12} cy={12} fill="currentColor" r={12} />
-            </svg>
-            My App
+            <BoxesIcon />
+            <span className="font-semibold">components.build</span>
           </>
         ),
       }}

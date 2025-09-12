@@ -11,7 +11,13 @@ import { notFound } from "next/navigation";
 import { source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
-const Author = (props: { name: string; image: string; href: string }) => (
+type AuthorProps = {
+  name: string;
+  image: string;
+  href: string;
+};
+
+const Author = (props: AuthorProps) => (
   <div className="inline-flex items-center gap-1.5 align-bottom">
     <Image
       alt={props.name}

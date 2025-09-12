@@ -1,0 +1,14 @@
+{
+  "title": "components.build",
+  "description": "Build the modern web",
+  "root": true,
+  "pages": [
+    "index",
+    "---General---",
+    "definitions",
+    "principles",
+    "---Build---",
+    "---Publish---",
+    "..."
+  ]
+}
