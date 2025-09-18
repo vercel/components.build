@@ -5,7 +5,7 @@ import { source } from "@/lib/source";
 export default function Layout({ children }: LayoutProps<"/">) {
   return (
     <DocsLayout
-      githubUrl="https://github.com/vercel/components"
+      githubUrl="https://github.com/vercel/components.build"
       links={[]}
       nav={{
         mode: "top",
