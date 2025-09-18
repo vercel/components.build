@@ -196,12 +196,10 @@ h6 {
 #nd-toc {
   inset-inline-end: 0 !important;
   --fd-page-width: 100% !important;
-
-  @apply sticky!;
 }
 
 #nd-page {
-  @apply max-w-none mx-0 pr-0;
+  @apply max-w-none mx-0;
 }
 
 #nd-page > article {
