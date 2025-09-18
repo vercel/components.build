@@ -179,3 +179,64 @@ return (
 );
 ```
 
+## Naming Conventions
+
+When building composable components, consistent naming conventions are crucial for creating intuitive and predictable APIs. Both shadcn/ui and Radix UI follow established patterns that have become the de facto standard in the React ecosystem.
+
+### Root Components
+
+The `Root` component serves as the main container that wraps all other sub-components. It typically manages shared state and context by providing a context to all child components.
+
+```tsx
+<AccordionRoot>
+  {/* Child components */}
+</AccordionRoot>
+```
+
+### Interactive Elements
+
+Interactive components that trigger actions or toggle states use descriptive names:
+
+- `Trigger` - The element that initiates an action (opening, closing, toggling)
+- `Content` - The element that contains the main content being shown/hidden
+
+```tsx
+<CollapsibleTrigger>Click to expand</CollapsibleTrigger>
+<CollapsibleContent>
+  Hidden content revealed here
+</CollapsibleContent>
+```
+
+### Content Structure
+
+For components with structured content areas, use semantic names that describe their purpose:
+
+- `Header` - Top section containing titles or controls
+- `Body` - Main content area
+- `Footer` - Bottom section for actions or metadata
+
+```tsx
+<DialogHeader>
+  {/* Form title */}
+</DialogHeader>
+<DialogBody>
+  {/* Form content */}
+</DialogBody>
+<DialogFooter>
+  {/* Form footer */}
+</DialogFooter>
+```
+
+### Informational Components
+
+Components that provide information or context use descriptive suffixes:
+
+- `Title` - Primary heading or label
+- `Description` - Supporting text or explanatory content
+
+```tsx
+<CardTitle>Project Statistics</CardTitle>
+<CardDescription>
+  View your project's performance over time
+</CardDescription>
+```
