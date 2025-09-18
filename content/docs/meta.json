@@ -9,9 +9,10 @@
     "principles",
     "---Build---",
     "composition",
-    "styling",
+    "design-tokens",
     "state",
+    "styling",
     "---Publish---",
-    "..."
+    "registries"
   ]
 }
