@@ -11,8 +11,8 @@ export default function Layout({ children }: LayoutProps<"/">) {
         mode: "top",
         title: (
           <>
-            <BoxesIcon />
-            <span className="font-semibold">components.build</span>
+            <BoxesIcon className="size-4" />
+            <span className="font-medium">components.build</span>
           </>
         ),
       }}
