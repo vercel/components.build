@@ -13,6 +13,16 @@ const config = {
       },
     ],
   },
+
+  // biome-ignore lint/suspicious/useAwait: "rewrites is async"
+  async rewrites() {
+    return [
+      {
+        source: "/:path*.mdx",
+        destination: "/llms.mdx/:path*",
+      },
+    ];
+  },
 };
 
 export default withMDX(config);

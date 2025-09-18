@@ -7,6 +7,7 @@ import {
 } from "fumadocs-ui/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
 import { source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -24,6 +25,13 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
     <DocsPage full={page.data.full} toc={page.data.toc}>
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
+      <div className="-mt-8 mb-8 flex flex-row items-center gap-2">
+        <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
+        <ViewOptions
+          githubUrl={`https://github.com/vercel/components.build/blob/main/apps/docs/content/docs/${page.path}`}
+          markdownUrl={`${page.url}.mdx`}
+        />
+      </div>
       <DocsBody>
         <MDXContent
           components={getMDXComponents({
