@@ -22,7 +22,13 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
   const MDXContent = page.data.body;
 
   return (
-    <DocsPage full={page.data.full} toc={page.data.toc}>
+    <DocsPage
+      full={page.data.full}
+      tableOfContent={{
+        style: "clerk",
+      }}
+      toc={page.data.toc}
+    >
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <div className="-mt-8 mb-8 flex flex-row items-center gap-2">
