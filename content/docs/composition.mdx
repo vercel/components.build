@@ -54,7 +54,7 @@ Finally, to allow for modification of the `div` element, we'll extend the defaul
 
 We'll call this component the "Root" component.
 
-```tsx title="components/ui/accordion.tsx"
+```tsx title="@/components/ui/accordion.tsx"
 import type { HTMLAttributes } from 'react';
 
 type AccordionProps = HTMLAttributes<HTMLDivElement> & {
@@ -83,7 +83,7 @@ export const Root = ({ children, open, setOpen, ...props }: AccordionRootProps) 
 
 The Item component is the element that contains the accordion item. It is simply a wrapper for each item in the accordion.
 
-```tsx title="components/ui/accordion.tsx"
+```tsx title="@/components/ui/accordion.tsx"
 import type { HTMLAttributes } from 'react';
 
 export type AccordionItemProps = HTMLAttributes<HTMLDivElement>;
@@ -104,7 +104,7 @@ The Trigger component is the element that opens the accordion when activated. It
 
 Let's add this component to our Accordion component.
 
-```tsx title="components/ui/accordion.tsx"
+```tsx title="@/components/ui/accordion.tsx"
 import type { HTMLAttributes } from 'react';
 
 export type AccordionTriggerProps = HTMLAttributes<HTMLButtonElement> & {
@@ -129,7 +129,7 @@ The Content component is the element that contains the accordion content. It is 
 
 Let's add this component to our Accordion component.
 
-```tsx title="components/ui/accordion.tsx"
+```tsx title="@/components/ui/accordion.tsx"
 import type { HTMLAttributes } from 'react';
 
 export type AccordionContentProps = HTMLAttributes<HTMLDivElement> & {
