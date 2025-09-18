@@ -6,37 +6,9 @@ import {
   DocsTitle,
 } from "fumadocs-ui/page";
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
-
-type AuthorProps = {
-  name: string;
-  image: string;
-  href: string;
-};
-
-const Author = (props: AuthorProps) => (
-  <div className="inline-flex items-center gap-1.5 align-bottom">
-    <Image
-      alt={props.name}
-      className="my-0! inline-flex overflow-hidden rounded-full"
-      height={20}
-      src={props.image}
-      unoptimized
-      width={20}
-    />
-    <a
-      className="font-medium text-primary"
-      href={props.href}
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      {props.name}
-    </a>
-  </div>
-);
 
 export default async function Page(props: PageProps<"/[[...slug]]">) {
   const params = await props.params;
@@ -57,7 +29,6 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
           components={getMDXComponents({
             // this allows you to link to other pages with relative file paths
             a: createRelativeLink(source, page),
-            Author,
           })}
         />
       </DocsBody>

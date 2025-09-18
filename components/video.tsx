@@ -1,0 +1,16 @@
+import type { ComponentProps } from "react";
+import ReactPlayer from "react-player";
+
+type VideoProps = ComponentProps<typeof ReactPlayer>;
+
+export const Video = (props: VideoProps) => (
+  <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+    <ReactPlayer
+      {...props}
+      className="absolute inset-0"
+      controls
+      height="100%"
+      width="100%"
+    />
+  </div>
+);
