@@ -2,7 +2,7 @@ import { DocsLayout } from "fumadocs-ui/layouts/notebook";
 import { BoxesIcon } from "lucide-react";
 import { source } from "@/lib/source";
 
-export default function Layout({ children }: LayoutProps<"/docs">) {
+export default function Layout({ children }: LayoutProps<"/">) {
   return (
     <DocsLayout
       githubUrl="https://github.com/vercel/components"
