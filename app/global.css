@@ -190,7 +190,7 @@ h6 {
 }
 
 #nd-subnav [data-search-full] {
-  @apply bg-background rounded-lg;
+  @apply bg-secondary rounded-lg border-none;
 }
 
 #nd-toc {
