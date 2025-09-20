@@ -209,3 +209,7 @@ h6 {
 #nd-tocnav {
   @apply border-b-0;
 }
+
+#nd-sidebar > div[data-fd-if-empty] {
+  @apply hidden;
+}
