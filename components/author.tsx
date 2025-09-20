@@ -7,7 +7,7 @@ type AuthorProps = {
 };
 
 export const Author = (props: AuthorProps) => (
-  <div className="inline-flex items-center gap-1.5 align-bottom">
+  <span className="inline-flex items-center gap-1.5 align-bottom">
     <Image
       alt={props.name}
       className="my-0! inline-flex overflow-hidden rounded-full"
@@ -24,5 +24,5 @@ export const Author = (props: AuthorProps) => (
     >
       {props.name}
     </a>
-  </div>
+  </span>
 );
