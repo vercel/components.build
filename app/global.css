@@ -168,8 +168,8 @@
   @apply shadow-none;
 }
 
-#nd-docs-layout, #nd-subnav > div {
-  @apply border-x border-dashed;
+#nd-subnav > div {
+  @apply border-none;
 }
 
 #nd-subnav {
