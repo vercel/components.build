@@ -9,8 +9,6 @@ When building reusable components, proper typing is essential for creating flexi
 
 Each exported component should ideally wrap a single HTML or JSX element. This principle is fundamental to creating composable, customizable components.
 
-### Why Single Element Wrapping?
-
 When a component wraps multiple elements, it becomes difficult to customize specific parts without prop drilling or complex APIs. Consider this anti-pattern:
 
 ```tsx title="@/components/ui/card.tsx"
