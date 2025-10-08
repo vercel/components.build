@@ -1,5 +1,6 @@
 import { DocsLayout } from "fumadocs-ui/layouts/notebook";
 import { BoxesIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { source } from "@/lib/source";
 
 export default function Layout({ children }: LayoutProps<"/">) {
@@ -13,6 +14,9 @@ export default function Layout({ children }: LayoutProps<"/">) {
           <>
             <BoxesIcon className="size-4" />
             <span className="font-medium">components.build</span>
+            <Badge className="rounded-full" variant="secondary">
+              Beta
+            </Badge>
           </>
         ),
       }}
