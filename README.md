@@ -1,45 +1,26 @@
 # components.build
 
-This is a Next.js application generated with
-[Create Fumadocs](https://github.com/fuma-nama/fumadocs).
+An open-source standard for building modern, composable, and accessible UI components.
 
-Run development server:
+## About
 
-```bash
-npm run dev
-# or
-pnpm dev
-# or
-yarn dev
-```
+components.build is a formal specification that establishes best practices and guidelines for building open-source UI components for the modern web. Co-authored by [Hayden Bleasel](https://x.com/haydenbleasel) and [shadcn](https://x.com/shadcn), this specification aims to help open-source maintainers and senior front-end engineers create components that are:
 
-Open http://localhost:3000 with your browser to see the result.
+- **Composable** - Built with composition over inheritance, easily combined to create complex UIs
+- **Accessible** - WCAG-compliant with proper ARIA attributes and keyboard navigation
+- **Customizable** - Easy to theme and style for any design system
+- **Performant** - Lightweight with minimal dependencies
+- **Transparent** - Full code visibility and ownership
+- **Well-documented** - Clear examples and developer-friendly
 
-## Explore
+While examples use React/TypeScript, the core principles are framework-agnostic and applicable to Vue, Svelte, Angular, and other modern frameworks.
 
-In the project, you can see:
+## Contributing
 
-- `lib/source.ts`: Code for content source adapter, [`loader()`](https://fumadocs.dev/docs/headless/source-api) provides the interface to access your content.
-- `lib/layout.shared.tsx`: Shared options for layouts, optional but preferred to keep.
+Contributions are welcome! This specification is informed by the open-source community and real-world component libraries.
 
-| Route                     | Description                                            |
-| ------------------------- | ------------------------------------------------------ |
-| `app/(home)`              | The route group for your landing page and other pages. |
-| `app/docs`                | The documentation layout and pages.                    |
-| `app/api/search/route.ts` | The Route Handler for search.                          |
+To contribute, please read the [contributing guide](.github/CONTRIBUTING.md).
 
-### Fumadocs MDX
+## License
 
-A `source.config.ts` config file has been included, you can customise different options like frontmatter schema.
-
-Read the [Introduction](https://fumadocs.dev/docs/mdx) for further details.
-
-## Learn More
-
-To learn more about Next.js and Fumadocs, take a look at the following
-resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
-  features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Fumadocs](https://fumadocs.vercel.app) - learn about Fumadocs
+This project is open source and available under the [MIT License](LICENSE).
