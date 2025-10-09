@@ -7,7 +7,7 @@ description: This page establishes precise terminology used throughout the speci
 
 ### 1.1 Primitive
 
-Popularized by [Radix UI](https://www.radix-ui.com/), a primitive (or, unstyled component) is the **lowest‑level building block** that provides behavior and accessibility without any styling.
+A primitive (or, unstyled component) is the **lowest‑level building block** that provides behavior and accessibility without any styling.
 
 Primitives are completely headless (i.e. unstyled) and encapsulate semantics, focus management, keyboard interaction, layering/portals, ARIA wiring, measurement, and similar concerns. They provide the behavioral foundation but require styling to become finished UI.
 
@@ -15,6 +15,7 @@ Examples:
 
 - [Radix UI Primitives](https://www.radix-ui.com/primitives) (Dialog, Popover, Tooltip, etc.)
 - [React Aria Components](https://react-aria.dev/components)
+- [Base UI](https://base-ui.com)
 - [Headless UI](https://headlessui.com/)
 
 Expectations:
@@ -195,12 +196,13 @@ A curated index of artifacts (primitives, components, blocks, templates) with me
 ## 6. Classification Heuristics
 
 Use this decision flow to name and place an artifact:
-	1.	Does it encapsulate a single behavior or a11y concern, with minimal or no styling? → **Primitive**
-	2.	Is it a reusable UI element with a stable props API and built-in a11y? → **Component**
-	3.	Does it solve a concrete product use case with opinionated composition and copy? → **Block**
-	4.	Does it scaffold a page/flow with routing/providers and replaceable regions? → **Template**
-	5.	Is it documentation of a recurring solution, independent of implementation? → **Pattern**
-	6.	Is it non-visual logic for ergonomics/composition? → **Utility**
+
+1. Does it encapsulate a single behavior or a11y concern, with no styling? → **Primitive**
+2. Is it a reusable UI element that composes other elements and is styled? → **Component**
+3. Does it solve a concrete product use case with opinionated composition and copy? → **Block**
+4. Does it scaffold a page/flow with routing/providers and replaceable regions? → **Template**
+5. Is it documentation of a recurring solution, independent of implementation? → **Pattern**
+6. Is it non-visual logic for ergonomics/composition? → **Utility**
 
 ## 7. Non-Goals and Clarifications
 
