@@ -46,9 +46,7 @@ Every component should extend the native HTML attributes of the element it wraps
 ### Basic Pattern
 
 ```tsx
-import type { HTMLAttributes } from 'react';
-
-export type CardRootProps = HTMLAttributes<HTMLDivElement> & {
+export type CardRootProps = React.ComponentProps<'div'> & {
   // Add your custom props here
   variant?: 'default' | 'outlined';
 };
@@ -64,19 +62,19 @@ React provides type definitions for all HTML elements. Use the appropriate one f
 
 ```tsx
 // For div elements
-type DivProps = HTMLAttributes<HTMLDivElement>;
+type DivProps = React.ComponentProps<'div'>;
 
 // For button elements
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
+type ButtonProps = React.ComponentProps<'button'>;
 
 // For input elements
-type InputProps = InputHTMLAttributes<HTMLInputElement>;
+type InputProps = React.ComponentProps<'input'>;
 
 // For form elements
-type FormProps = FormHTMLAttributes<HTMLFormElement>;
+type FormProps = React.ComponentProps<'form'>;
 
 // For anchor elements
-type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement>;
+type LinkProps = React.ComponentProps<'a'>;
 ```
 
 ### Handling Different Element Types
@@ -86,8 +84,8 @@ When a component can render as different elements, use generics or union types:
 ```tsx
 // Using discriminated unions
 export type ButtonProps =
-  | (ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: false })
-  | (HTMLAttributes<HTMLElement> & { asChild: true });
+  | (React.ComponentProps<'button'> & { asChild?: false })
+  | (React.ComponentProps<'div'> & { asChild: true });
 
 // Or with a polymorphic approach
 export type PolymorphicProps<T extends React.ElementType> = {
@@ -161,12 +159,12 @@ Don't use prop names that conflict with HTML attributes unless intentionally ove
 
 ```tsx
 // ❌ Bad - conflicts with HTML title attribute
-export type CardProps = HTMLAttributes<HTMLDivElement> & {
+export type CardProps = React.ComponentProps<'div'> & {
   title: string; // This conflicts with the HTML title attribute
 };
 
 // ✅ Good - use a different name
-export type CardProps = HTMLAttributes<HTMLDivElement> & {
+export type CardProps = React.ComponentProps<'div'> & {
   heading: string;
 };
 ```
@@ -176,7 +174,7 @@ export type CardProps = HTMLAttributes<HTMLDivElement> & {
 Add JSDoc comments to custom props for better developer experience:
 
 ```tsx
-export type DialogProps = HTMLAttributes<HTMLDivElement> & {
+export type DialogProps = React.ComponentProps<'div'> & {
   /** Whether the dialog is currently open */
   open: boolean;
   /** Callback when the dialog requests to be closed */
