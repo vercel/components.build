@@ -7,6 +7,7 @@ import {
 } from "fumadocs-ui/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { AuthorNote } from "@/components/author-note";
 import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
 import { source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
@@ -43,6 +44,7 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
           components={getMDXComponents({
             // this allows you to link to other pages with relative file paths
             a: createRelativeLink(source, page),
+            AuthorNote,
           })}
         />
       </DocsBody>
