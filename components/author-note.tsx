@@ -6,6 +6,7 @@ type AuthorNoteProps = {
   role: string;
   githubUsername: string;
   children: ReactNode;
+  link: string;
 };
 
 export const AuthorNote = ({
@@ -13,6 +14,7 @@ export const AuthorNote = ({
   role,
   githubUsername,
   children,
+  link,
 }: AuthorNoteProps) => (
   <aside
     aria-label="Author's Note"
@@ -29,7 +31,14 @@ export const AuthorNote = ({
       </Avatar>
       <div>
         <div className="font-semibold">{name}</div>
-        <div className="text-muted-foreground text-sm">{role}</div>
+        <a
+          className="block text-muted-foreground text-sm underline"
+          href={link}
+          rel="noopener"
+          target="_blank"
+        >
+          {role}
+        </a>
       </div>
     </div>
   </aside>

@@ -77,6 +77,10 @@ Expectations.
 - Minimal logic beyond layout and orchestration; domain logic is stubbed via handlers.
 - Accepts data via props; never hides data behind fetches without a documented adapter.
 
+<AuthorNote name="Rob Austin" role="Founder of shadcnblocks.com" githubUsername="JugglerX" link="https://www.shadcnblocks.com/">
+Blocks are typically not reusable like a component. You don't import them, but they typically import components and primitives. This makes them good candidates for a [Registry](/registry) distribution method.
+</AuthorNote>
+
 ### 1.5 Page
 
 A complete, single-route view composed of multiple blocks arranged to serve a specific user-facing purpose. Pages combine blocks into a cohesive layout that represents one destination in an application.
