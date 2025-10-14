@@ -213,3 +213,7 @@ h6 {
 #nd-sidebar > div[data-fd-if-empty] {
   @apply hidden;
 }
+
+#nd-sidebar {
+  @apply bg-transparent;
+}

@@ -27,9 +27,6 @@ export default function Layout({ children }: LayoutProps<"/">) {
       }}
       sidebar={{
         collapsible: false,
-        style: {
-          backgroundColor: "transparent",
-        },
       }}
       tabMode="navbar"
       tree={source.pageTree}
