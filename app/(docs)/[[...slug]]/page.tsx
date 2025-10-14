@@ -64,8 +64,39 @@ export async function generateMetadata(
     notFound();
   }
 
+  const title = `${page.data.title} | components.build`;
+  const description = page.data.description;
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  const baseUrl = `${protocol}://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  const image = new URL(`/og?slug=${params.slug?.join("/") ?? ""}`, baseUrl);
+
   return {
-    title: page.data.title,
-    description: page.data.description,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+    twitter: {
+      title,
+      description,
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+        },
+      ],
+      card: "summary_large_image",
+      creator: "@vercel",
+    },
   };
 }
