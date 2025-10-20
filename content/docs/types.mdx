@@ -116,7 +116,7 @@ Exporting types enables several important patterns:
 ```tsx
 // 1. Extracting specific prop types
 import type { CardRootProps } from '@/components/ui/card';
-const variant = CardRootProps['variant'];
+type variant = CardRootProps['variant'];
 
 // 2. Extending components
 export type ExtendedCardProps = CardRootProps & {
