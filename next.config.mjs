@@ -13,8 +13,6 @@ const config = {
       },
     ],
   },
-
-  // biome-ignore lint/suspicious/useAwait: "rewrites is async"
   async rewrites() {
     return [
       {

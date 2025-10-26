@@ -2,16 +2,17 @@ import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 import { source } from "../../lib/source";
 
+const resourceRegex = /src: url\((.+)\) format\('(opentype|truetype)'\)/;
+
 const loadGoogleFont = async (font: string, text: string, weights: string) => {
   const url = `https://fonts.googleapis.com/css2?family=${font}:wght@${weights}&text=${encodeURIComponent(text)}`;
   const css = await (await fetch(url)).text();
-  const resource = css.match(
-    /src: url\((.+)\) format\('(opentype|truetype)'\)/
-  );
+  const resource = css.match(resourceRegex);
 
   if (resource) {
     const response = await fetch(resource[1]);
-    if (response.status === 200) {
+
+    if (response.ok) {
       return await response.arrayBuffer();
     }
   }
