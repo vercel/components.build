@@ -6,7 +6,9 @@
     "build": "next build",
     "dev": "next dev --turbo",
     "start": "next start",
-    "postinstall": "fumadocs-mdx"
+    "postinstall": "fumadocs-mdx",
+    "fix": "npx ultracite@latest fix",
+    "check": "npx ultracite@latest check"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
