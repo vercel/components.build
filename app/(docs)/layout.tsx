@@ -18,7 +18,10 @@ export default function Layout({ children }: LayoutProps<"/">) {
               xmlns="http://www.w3.org/2000/svg"
             >
               <title>Vercel</title>
-              <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" fill="currentColor" />
+              <path
+                d="M37.5274 0L75.0548 65H0L37.5274 0Z"
+                fill="currentColor"
+              />
             </svg>
             <span className="font-normal text-muted-foreground/50">/</span>
             <span className="font-medium">components.build</span>
