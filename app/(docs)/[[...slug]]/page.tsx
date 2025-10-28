@@ -21,6 +21,7 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
   }
 
   const MDXContent = page.data.body;
+  const mdxUrl = page.path;
 
   return (
     <DocsPage
@@ -33,10 +34,10 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <div className="-mt-8 mb-8 flex flex-row items-center gap-2">
-        <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
+        <LLMCopyButton markdownUrl={mdxUrl} />
         <ViewOptions
           githubUrl={`https://github.com/vercel/components.build/blob/main/apps/docs/content/docs/${page.path}`}
-          markdownUrl={`${page.url}.mdx`}
+          markdownUrl={mdxUrl}
         />
       </div>
       <DocsBody>
