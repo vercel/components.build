@@ -1,13 +1,11 @@
 import { notFound } from "next/navigation";
-import { type NextRequest, NextResponse } from "next/server";
-import { getLLMText } from "@/lib/get-llm-text";
-import { source } from "@/lib/source";
+import { getLLMText, source } from "@/lib/geistdocs/source";
 
 export const revalidate = false;
 
 export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ slug?: string[] }> }
+  _req: Request,
+  { params }: RouteContext<"/llms.mdx/[[...slug]]">
 ) {
   const { slug } = await params;
   const page = source.getPage(slug);
@@ -16,7 +14,11 @@ export async function GET(
     notFound();
   }
 
-  return new NextResponse(await getLLMText(page));
+  return new Response(await getLLMText(page), {
+    headers: {
+      "Content-Type": "text/markdown",
+    },
+  });
 }
 
 export function generateStaticParams() {

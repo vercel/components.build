@@ -7,7 +7,7 @@ type AuthorProps = {
 };
 
 export const Author = (props: AuthorProps) => (
-  <span className="inline-flex items-center gap-1.5 align-bottom">
+  <span className="ml-0.5 inline-flex items-center gap-1.5 align-bottom">
     <Image
       alt={props.name}
       className="my-0! inline-flex overflow-hidden rounded-full"
@@ -17,7 +17,7 @@ export const Author = (props: AuthorProps) => (
       width={20}
     />
     <a
-      className="font-medium text-primary"
+      className="font-normal text-primary no-underline"
       href={props.href}
       rel="noopener noreferrer"
       target="_blank"

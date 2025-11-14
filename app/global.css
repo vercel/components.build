@@ -2,6 +2,7 @@
 @import "fumadocs-ui/css/shadcn.css";
 @import "fumadocs-ui/css/preset.css";
 @import "tw-animate-css";
+@import "./styles/geistdocs.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -41,8 +42,6 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-
-  --color-secondary-offset: var(--secondary-offset);
 }
 
 :root {
@@ -53,8 +52,8 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  --primary: oklch(57.61% 0.2508 258.23);
+  --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -78,8 +77,6 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-
-  --secondary-offset: oklch(0.98 0 0);
 }
 
 .dark {
@@ -89,8 +86,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: oklch(57.61% 0.2508 258.23);
+  --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -114,8 +111,6 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-
-  --secondary-offset: oklch(0.2 0 0);
 }
 
 @layer base {
@@ -125,95 +120,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-/* This layer is by next-forge */
-@layer base {
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    @apply border-border;
-  }
-  * {
-    @apply min-w-0;
-  }
-  html {
-    text-rendering: optimizelegibility;
-  }
-  body {
-    @apply min-h-[100dvh];
-  }
-  input::placeholder,
-  textarea::placeholder {
-    @apply text-muted-foreground;
-  }
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    @apply cursor-pointer;
-  }
-}
-
-/* Fix Fumadocs theme toggle icons */
-[data-theme-toggle] svg {
-  @apply fill-none;
-}
-
-/* Custom styles */
-:root {
-  --color-fd-card: var(--color-secondary-offset) !important;
-}
-
-#nd-page > article figure {
-  @apply shadow-none;
-}
-
-#nd-subnav > div {
-  @apply border-none;
-}
-
-#nd-subnav {
-  @apply bg-transparent;
-}
-
-#nd-sidebar {
-  @apply transition-none;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  @apply font-semibold tracking-tight;
-}
-
-#nd-subnav [data-search-full] {
-  @apply bg-secondary rounded-lg border-none;
-}
-
-#nd-toc {
-  inset-inline-end: 0 !important;
-  --fd-page-width: 100% !important;
-}
-
-#nd-page {
-  @apply max-w-none mx-0;
-}
-
-#nd-page > article {
-  @apply max-w-prose mx-auto;
-}
-
-#nd-tocnav {
-  @apply border-b-0;
-}
-
-#nd-sidebar > div[data-fd-if-empty] {
-  @apply hidden;
-}
-
-#nd-sidebar {
-  @apply bg-transparent;
 }

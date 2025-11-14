@@ -1,36 +1,37 @@
-import "@/app/global.css";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { RootProvider } from "fumadocs-ui/provider";
-import { Geist, Geist_Mono } from "next/font/google";
+import "./global.css";
+import { Navbar } from "@/components/geistdocs/navbar";
+import { GeistdocsProvider } from "@/components/geistdocs/provider";
+import { mono, sans } from "@/lib/geistdocs/fonts";
 import { cn } from "@/lib/utils";
 
-const sans = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  weight: "variable",
-  display: "swap",
-});
+const Logo = () => (
+  <p className="font-medium text-lg tracking-tight">components.build</p>
+);
 
-const mono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  weight: "variable",
-  display: "swap",
-});
+const links: { label: string; href: string }[] = [];
 
-export default function Layout({ children }: LayoutProps<"/">) {
-  return (
-    <html
-      className={cn(sans.variable, mono.variable, "font-sans antialiased")}
-      lang="en"
-      suppressHydrationWarning
-    >
-      <body className="flex min-h-screen flex-col">
-        <RootProvider>{children}</RootProvider>
-        <SpeedInsights />
-        <Analytics />
-      </body>
-    </html>
-  );
-}
+const suggestions = [
+  "What is composability?",
+  "How do I make a component accessible?",
+  "What is the `asChild` prop?",
+  "Explain polymorphism.",
+];
+
+const Layout = ({ children }: LayoutProps<"/">) => (
+  <html
+    className={cn(sans.variable, mono.variable, "scroll-smooth antialiased")}
+    lang="en"
+    suppressHydrationWarning
+  >
+    <body>
+      <GeistdocsProvider>
+        <Navbar items={links} suggestions={suggestions}>
+          <Logo />
+        </Navbar>
+        {children}
+      </GeistdocsProvider>
+    </body>
+  </html>
+);
+
+export default Layout;
