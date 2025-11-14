@@ -15,6 +15,7 @@ import {
   CodeBlockTabsTrigger,
 } from "./code-block-tabs";
 import { Mermaid } from "./mermaid";
+import { Video } from "./video";
 
 export const getMDXComponents = (
   components?: MDXComponents
@@ -41,4 +42,6 @@ export const getMDXComponents = (
   CalloutDescription,
 
   Mermaid,
+
+  Video,
 });

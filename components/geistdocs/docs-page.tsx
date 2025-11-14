@@ -11,7 +11,6 @@ import type { CSSProperties } from "react";
 import { Author } from "@/components/author";
 import { getMDXComponents } from "@/components/geistdocs/mdx-components";
 import { TableOfContents } from "@/components/geistdocs/toc";
-import { Video } from "@/components/video";
 import { getLLMText, getPageImage, source } from "@/lib/geistdocs/source";
 import { AuthorNote } from "../author-note";
 import { AskAI } from "./ask-ai";
@@ -85,7 +84,6 @@ export const DocsPage = async ({ slug }: PageProps) => {
             // this allows you to link to other pages with relative file paths
             a: createRelativeLink(source, page),
             Author,
-            Video,
             AuthorNote,
           })}
         />
