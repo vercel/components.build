@@ -16,7 +16,8 @@ export const DocsLayout = ({
       enabled: false,
     }}
     sidebar={{
-      className: "mt-16 bg-background! border-none transition-none",
+      className:
+        "mt-16 bg-background! md:bg-transparent! border-none transition-none",
       collapsible: false,
       components: {
         Folder,
