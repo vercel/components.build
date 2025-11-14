@@ -4,11 +4,18 @@ import { MessageCircleIcon } from "lucide-react";
 import { useChatContext } from "@/hooks/geistdocs/use-chat";
 
 type AskAIProps = {
-  query: string;
+  href: string;
 };
 
-export const AskAI = ({ query }: AskAIProps) => {
+export const AskAI = ({ href }: AskAIProps) => {
   const { setIsOpen, setPrompt } = useChatContext();
+
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  const url = new URL(
+    href,
+    `${protocol}://${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}`
+  ).toString();
+  const query = `Read this page, I want to ask questions about it. ${url}`;
 
   return (
     <button
