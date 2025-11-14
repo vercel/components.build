@@ -5,10 +5,10 @@ import { MenuIcon } from "lucide-react";
 import { Button } from "../ui/button";
 
 export const MobileMenu = () => {
-  const { setOpen } = useSidebar();
+  const { setOpen, open } = useSidebar();
 
   return (
-    <Button onClick={() => setOpen(true)} size="icon-sm" variant="ghost">
+    <Button onClick={() => setOpen(!open)} size="icon-sm" variant="ghost">
       <MenuIcon className="size-4" />
     </Button>
   );
