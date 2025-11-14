@@ -2,6 +2,7 @@
 
 import { App, type Octokit } from "octokit";
 import type { ActionResponse, Feedback } from "@/components/geistdocs/feedback";
+import { emotions } from "./emotions";
 
 const getOctokit = async (): Promise<Octokit> => {
   const repo = process.env.NEXT_PUBLIC_GEISTDOCS_REPO;
@@ -67,7 +68,7 @@ const getFeedbackDestination = async () => {
   return repository;
 };
 
-export const discuss = async (
+export const sendFeedback = async (
   url: string,
   feedback: Feedback
 ): Promise<ActionResponse> => {
@@ -92,7 +93,7 @@ export const discuss = async (
   }
 
   const title = `Feedback for ${url}`;
-  const emoji = feedback.emotion === "good" ? "👍" : "👎";
+  const emoji = emotions.find((e) => e.name === feedback.emotion)?.emoji;
   const body = `${emoji} ${feedback.message}\n\n> Forwarded from user feedback.`;
 
   let {

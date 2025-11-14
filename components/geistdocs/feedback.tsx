@@ -1,39 +1,15 @@
 "use client";
 
 import { SiGithub, SiMarkdown } from "@icons-pack/react-simple-icons";
-import {
-  AngryIcon,
-  FrownIcon,
-  LaughIcon,
-  SmileIcon,
-  ThumbsUpIcon,
-} from "lucide-react";
+import { ThumbsUpIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { type SyntheticEvent, useEffect, useState, useTransition } from "react";
-import { discuss } from "@/app/actions/discuss";
+import { sendFeedback } from "@/app/actions/feedback";
+import { emotions } from "@/app/actions/feedback/emotions";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Textarea } from "../ui/textarea";
-
-const emotions = [
-  {
-    name: "angry",
-    icon: <AngryIcon />,
-  },
-  {
-    name: "sad",
-    icon: <FrownIcon />,
-  },
-  {
-    name: "happy",
-    icon: <SmileIcon />,
-  },
-  {
-    name: "ecstatic",
-    icon: <LaughIcon />,
-  },
-];
 
 type Emotion = (typeof emotions)[number]["name"];
 
@@ -89,7 +65,7 @@ export const Feedback = () => {
         message,
       };
 
-      discuss(url, feedback).then((response) => {
+      sendFeedback(url, feedback).then((response) => {
         setPrevious({
           response,
           ...feedback,
@@ -175,13 +151,13 @@ export const Feedback = () => {
                 <SiMarkdown className="inline size-3" />
                 <p className="text-xs"> supported</p>
               </div>
-              <div className="mt-2 flex items-center justify-between border-t bg-secondary p-2">
+              <div className="mt-2 flex items-center justify-between border-t bg-sidebar p-2">
                 <div className="flex items-center gap-px">
                   {emotions.map((e) => (
                     <Button
                       className={cn(
                         "text-muted-foreground hover:text-foreground",
-                        activeEmotion === e.name && "text-foreground"
+                        activeEmotion === e.name && "bg-accent text-foreground"
                       )}
                       key={e.name}
                       onClick={() => setEmotion(e.name)}
@@ -189,7 +165,7 @@ export const Feedback = () => {
                       type="button"
                       variant="ghost"
                     >
-                      {e.icon}
+                      {e.emoji}
                       <span className="sr-only">{e.name}</span>
                     </Button>
                   ))}
