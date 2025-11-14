@@ -1,19 +1,20 @@
 import "./global.css";
-import { CommandIcon } from "lucide-react";
 import { Navbar } from "@/components/geistdocs/navbar";
 import { GeistdocsProvider } from "@/components/geistdocs/provider";
 import { mono, sans } from "@/lib/geistdocs/fonts";
 import { cn } from "@/lib/utils";
 
-const Logo = () => <CommandIcon className="size-5" />;
+const Logo = () => (
+  <p className="font-medium text-lg tracking-tight">components.build</p>
+);
 
-const links = [];
+const links: { label: string; href: string }[] = [];
 
 const suggestions = [
-  "What is Vercel?",
-  "What can I deploy with Vercel?",
-  "What is Fluid Compute?",
-  "How much does Vercel cost?",
+  "What is composability?",
+  "How do I make a component accessible?",
+  "What is the `asChild` prop?",
+  "Explain polymorphism.",
 ];
 
 const Layout = ({ children }: LayoutProps<"/">) => (
