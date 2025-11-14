@@ -7,7 +7,8 @@ export const DocsLayout = ({
 }: Pick<LayoutProps<"/">, "children">) => (
   <FumadocsDocsLayout
     containerProps={{
-      className: "mx-0",
+      className:
+        "md:grid md:grid-cols-[286px_1fr_286px] md:pl-0! md:mx-auto! md:w-full md:max-w-(--fd-layout-width)!",
     }}
     nav={{
       enabled: false,
@@ -17,7 +18,7 @@ export const DocsLayout = ({
     }}
     sidebar={{
       className:
-        "mt-16 bg-background! md:bg-transparent! border-none transition-none",
+        "md:static md:sticky md:top-16 md:h-fit md:w-auto! bg-background! md:bg-transparent! border-none transition-none",
       collapsible: false,
       components: {
         Folder,

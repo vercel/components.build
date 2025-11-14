@@ -57,8 +57,7 @@ export const DocsPage = async ({ slug }: PageProps) => {
 
   return (
     <FumadocsDocsPage
-      article={{ className: "max-w-[754px]" }}
-      container={{ style: containerStyle }}
+      container={{ style: containerStyle, className: "col-span-2" }}
       full={page.data.full}
       tableOfContent={{
         component: (
