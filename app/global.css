@@ -121,5 +121,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-:root { --fd-layout-width: 1308px !important; }
