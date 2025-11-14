@@ -1,36 +1,36 @@
-import "@/app/global.css";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { RootProvider } from "fumadocs-ui/provider";
-import { Geist, Geist_Mono } from "next/font/google";
+import "./global.css";
+import { CommandIcon } from "lucide-react";
+import { Navbar } from "@/components/geistdocs/navbar";
+import { GeistdocsProvider } from "@/components/geistdocs/provider";
+import { mono, sans } from "@/lib/geistdocs/fonts";
 import { cn } from "@/lib/utils";
 
-const sans = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  weight: "variable",
-  display: "swap",
-});
+const Logo = () => <CommandIcon className="size-5" />;
 
-const mono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  weight: "variable",
-  display: "swap",
-});
+const links = [];
 
-export default function Layout({ children }: LayoutProps<"/">) {
-  return (
-    <html
-      className={cn(sans.variable, mono.variable, "font-sans antialiased")}
-      lang="en"
-      suppressHydrationWarning
-    >
-      <body className="flex min-h-screen flex-col">
-        <RootProvider>{children}</RootProvider>
-        <SpeedInsights />
-        <Analytics />
-      </body>
-    </html>
-  );
-}
+const suggestions = [
+  "What is Vercel?",
+  "What can I deploy with Vercel?",
+  "What is Fluid Compute?",
+  "How much does Vercel cost?",
+];
+
+const Layout = ({ children }: LayoutProps<"/">) => (
+  <html
+    className={cn(sans.variable, mono.variable, "scroll-smooth antialiased")}
+    lang="en"
+    suppressHydrationWarning
+  >
+    <body>
+      <GeistdocsProvider>
+        <Navbar items={links} suggestions={suggestions}>
+          <Logo />
+        </Navbar>
+        {children}
+      </GeistdocsProvider>
+    </body>
+  </html>
+);
+
+export default Layout;
