@@ -1,9 +1,9 @@
 import { createMDX } from "fumadocs-mdx/next";
+import type { NextConfig } from "next";
 
 const withMDX = createMDX();
 
-/** @type {import('next').NextConfig} */
-const config = {
+const config: NextConfig = {
   reactStrictMode: true,
   images: {
     remotePatterns: [
@@ -16,7 +16,11 @@ const config = {
   async rewrites() {
     return [
       {
-        source: "/:path*.mdx",
+        source: "/docs/:path*.mdx",
+        destination: "/llms.mdx/:path*",
+      },
+      {
+        source: "/docs/:path*.md",
         destination: "/llms.mdx/:path*",
       },
     ];
