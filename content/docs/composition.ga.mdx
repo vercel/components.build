@@ -1,0 +1,233 @@
+---
+title: Comhdhéanamh
+description: Bunús le haghaidh comhpháirteanna UI nua-aimseartha a thógáil.
+---
+
+Comhdhéanamh, nó inúsáidteacht comhdhéanach, is é bunús chun comhpháirteanna UI nua-aimseartha a thógáil. Is ceann de na teicnící is chumhachtaí é chun comhpháirteanna solúbtha, in-athúsáidte a chruthú a fhéadann riachtanais chasta a láimhseáil gan soiléire API a íobairt.
+
+In áit gach feidhmiúlachta a chramáil isteach i gcomhpháirt amháin le go leor props, dáileann comhdhéanamh an fhreagracht thar iliomad comhpháirteanna a oibríonn le chéile.
+
+Thug Fernando léacht iontach faoi seo ag React Universe Conf 2025, áit ar roinn sé a chur chuige chun Slack's Message Composer a aththógáil mar chomhpháirt inúsáidte.
+
+<Video src="https://www.youtube.com/watch?v=4KvbVq3Eg5w" />
+
+## Ag déanamh comhpháirte comhdhéanamh
+
+Chun comhpháirt a dhéanamh comhdhéanamh, ní mór duit í a bhriseadh síos i bpíosaí níos lú agus níos dírithe. Mar shampla, bainfimid an comhpháirt Accordion seo:
+
+```tsx title="accordion.tsx"
+import { Accordion } from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion data={data} />
+);
+```
+
+Cé go bhféadfadh an comhpháirt Accordion seo cuma shimplí a thabhairt, tá sí ag láimhseáil iomarcach d'fhreagrachtaí. Tá sí freagrach as an gcoimeádán, an trigger agus an content a thaispeáint; chomh maith leis sin as stát an accordion agus an tsócmhainn sonraí a bhainistiú.
+
+Tá sé deacair stíliú an chomhpháirte seo a shaincheapadh toisc go bhfuil sé nasctha go dlúth. Is dócha go dteastaíonn thréisiú CSS domhanda uaithi. Ina theannta sin, éilíonn úsáid feidhmiúlachta nua nó athrú ar an iompar an fhoinsechód a mhodhnú.
+
+Chun é seo a réiteach, is féidir linn é a bhriseadh síos i bpíosaí níos lú agus níos dírithe.
+
+### 1. Root Comhpháirt
+
+Ar an gcéad dul síos, dírímid ar an gcoimeádán - an comhpháirt a choinníonn gach rud le chéile, is é sin, an trigger agus an content. Ní gá don choimeádán seo a bheith ar an eolas faoi na sonraí, ach ní mór dó keep track of the open state. [Note: "keep track of the open state" is within prose but refers to a technical concept; translated in the next sentence.]
+
+Mar sin féin, ba mhaith linn go mbeadh an stát seo inrochtana ag comhpháirteanna páiste. Mar sin, bainimis úsáid as an API Context chun comhthéacs a chruthú don stát oscailte.
+
+Faoi dheireadh, chun ligean do mhodhnuithe ar an eilimint `div`, síneoimid na hairíonna HTML réamhshocraithe.
+
+Glaofar ar an gcomhpháirt seo an "Root" component.
+
+```tsx title="@/components/ui/accordion.tsx"
+type AccordionProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+const AccordionContext = createContext<AccordionProps>({
+  open: false,
+  setOpen: () => {},
+});
+
+export type AccordionRootProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export const Root = ({
+  children,
+  open,
+  setOpen,
+  ...props
+}: AccordionRootProps) => (
+  <AccordionContext.Provider value={{ open, setOpen }}>
+    <div {...props}>{children}</div>
+  </AccordionContext.Provider>
+);
+```
+
+### 2. Item Comhpháirt
+
+Is í an Item component an eilimint a chuimsíonn mír an accordion. Is clúdach simplí í do gach mír san accordion.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionItemProps = React.ComponentProps<'div'>;
+
+export const Item = (props: AccordionItemProps) => <div {...props} />;
+```
+
+### 3. Trigger Comhpháirt
+
+Is í an Trigger component an eilimint a oscailt an accordion nuair a ghníomhaítear í. Tá sí freagrach as:
+
+- Ag taispeáint mar chnaipe de réir réamhshocraithe (is féidir é a shaincheapadh le `asChild`)
+- Ag láimhseáil imeachtaí cliceála chun an accordion a oscailt
+- Ag bainistiú an fhócas nuair a dhúnann an accordion
+- Ag soláthar airíonna ARIA chuí
+
+Cuirimis an comhpháirt seo leis an gcomhpháirt Accordion.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionTriggerProps = React.ComponentProps<'button'> & {
+  asChild?: boolean;
+};
+
+export const Trigger = ({ asChild, ...props }: AccordionTriggerProps) => (
+  <AccordionContext.Consumer>
+    {({ open, setOpen }) => (
+      <button onClick={() => setOpen(!open)} {...props} />
+    )}
+  </AccordionContext.Consumer>
+);
+```
+
+### 4. Content Comhpháirt
+
+Is í an Content component an eilimint a chuimsíonn an ábhar accordion. Tá sí freagrach as:
+
+- Ag taispeáint an ábhair nuair a bhíonn an accordion oscailte
+- Ag soláthar airíonna ARIA chuí
+
+Cuirimis an comhpháirt seo leis an gcomhpháirt Accordion.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionContentProps = React.ComponentProps<'div'> & {
+  asChild?: boolean;
+};
+
+export const Content = ({ asChild, ...props }: AccordionContentProps) => (
+  <AccordionContext.Consumer>
+    {({ open }) => <div {...props} />}
+  </AccordionContext.Consumer>
+);
+```
+
+### 5. Ag cur gach rud le chéile
+
+Anois go bhfuil na comhpháirteanna go léir againn, is féidir linn iad a chur le chéile sa chomhad bunaidh.
+
+```tsx title="accordion.tsx"
+import * as Accordion from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion.Root open={false} setOpen={() => {}}>
+    {data.map((item) => (
+      <Accordion.Item key={item.title}>
+        <Accordion.Trigger>{item.title}</Accordion.Trigger>
+        <Accordion.Content>{item.content}</Accordion.Content>
+      </Accordion.Item>
+    ))}
+  </Accordion.Root>
+);
+```
+
+## Coinníollacha Ainmniúcháin
+
+Nuair a bhíonn tú ag tógáil comhpháirteanna comhdhéanamh, tá coinbhéis ainmniúcháin chobhsaí ríthábhachtach chun APIs intuartha agus tuartha a chruthú. Leanann shadcn/ui agus Radix UI patrúin bhunaithe atá tar éis éirí mar an caighdeán de facto i gcomhshaol React.
+
+### Root Comhpháirteanna
+
+Feidhmíonn an chomhpháirt `Root` mar an coimeádán príomhúil a chuimsíonn na fo-chomhpháirteanna uile. De ghnáth bainistíonn sí an stát roinnte agus an comhthéacs trí chomhthéacs a sholáthar do gach comhpháirt pháiste.
+
+```tsx
+<AccordionRoot>{/* Child components */}</AccordionRoot>
+```
+
+### Eilimintí Idirghníomhacha
+
+Úsáideann comhpháirteanna idirghníomhacha a spreagann gníomhartha nó a lascaíonn stáit ainmneacha tuairisciúla:
+
+- `Trigger` - An eilimint a thosaíonn gníomh (oscailt, dúnadh, lascadh)
+- `Content` - An eilimint a chuimsíonn an príomh-ábhar atá á rugadh/níosleáite
+
+```tsx
+<CollapsibleTrigger>Click to expand</CollapsibleTrigger>
+<CollapsibleContent>
+  Hidden content revealed here
+</CollapsibleContent>
+```
+
+### Struchtúr Ábhar
+
+Do chomhpháirteanna le réimsí ábhair struchtúrtha, bain úsáid as ainmneacha seantacha a chuireann síos ar a bhfeidhm:
+
+- `Header` - An rannán uachtarach a bhfuil teidil nó rialuithe ann
+- `Body` - Príomh-rannóg an ábhair
+- `Footer` - An rannán íochtarach le haghaidh gníomhartha nó meiteashonraí
+
+```tsx
+<DialogHeader>
+  {/* Dialog title */}
+</DialogHeader>
+<DialogBody>
+  {/* Dialog content */}
+</DialogBody>
+<DialogFooter>
+  {/* Dialog footer */}
+</DialogFooter>
+```
+
+### Comhpháirteanna Faisnéise
+
+Úsáideann comhpháirteanna a sholáthraíonn faisnéis nó comhthéacs sufixí tuairisciúla:
+
+- `Title` - Teideal nó lipéad príomhúil
+- `Description` - Téacs tacúil nó ábhar míniúcháin
+
+```tsx
+<CardTitle>Project Statistics</CardTitle>
+<CardDescription>
+  View your project's performance over time
+</CardDescription>
+```

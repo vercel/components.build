@@ -1,0 +1,137 @@
+---
+title: Marktplätze
+description: Komponenten-Marktplätze verwenden, um Ihre Komponenten zu teilen.
+---
+
+Komponenten-Marktplätze stellen ein weiteres neues Paradigma dar, wie Entwickler UI-Komponenten teilen und entdecken. Plattformen wie [21st.dev](https://21st.dev) sind als zentrale Hubs entstanden, in denen Ersteller Komponenten veröffentlichen und Nutzer sie nahtlos entdecken, in einer Vorschau ansehen und installieren können.
+
+Diese Marktplätze kombinieren die Zugänglichkeit von Registries mit der Auffindbarkeit traditioneller Paket-Repositories und schaffen lebendige Ökosysteme für das Teilen von Komponenten.
+
+## Wie Marktplätze funktionieren
+
+Wenn Sie in einem Marktplatz veröffentlichen, übernimmt die Plattform typischerweise:
+
+1. **Hostet Ihren Komponenten-Code** - Sie müssen keine eigene Infrastruktur verwalten
+2. **Stellt eine einheitliche CLI bereit** - Nutzer installieren Komponenten über die Tools des Marktplatzes
+3. **Generiert Vorschauen** - Live-Demos und interaktive Beispiele werden automatisch erstellt
+4. **Kümmert sich um die Auffindbarkeit** - Suche, Kategorien und Empfehlungen zeigen relevante Komponenten an
+
+Zum Beispiel verwendet die Installation von 21st.dev das vertraute shadcn-CLI-Muster:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/haydenbleasel/dialog-stack
+```
+
+Der Marktplatz kümmert sich um das Bereitstellen der Komponenten-Metadaten und des Quellcodes und macht den Installationsprozess nahtlos.
+
+## Vorteile von Komponenten-Marktplätzen
+
+Marktplätze bieten einzigartige Vorteile, die weder Registries noch npm-Pakete allein erreichen können.
+
+### Für Komponenten-Autoren
+
+#### Verteilung ohne eigene Infrastruktur
+
+Das Veröffentlichen auf einem Marktplatz eliminiert Infrastrukturprobleme. Sie müssen kein Hosting für Ihre Komponenten einrichten oder die CDN-Verteilung verwalten.
+
+Der Marktplatz übernimmt all dies, sodass Sie sich auf das Erstellen großartiger Komponenten konzentrieren können.
+
+#### Bereits vorhandenes Publikum
+
+Marktplätze bündeln die Nachfrage. Wenn Entwickler 21st.dev oder ähnliche Plattformen besuchen, suchen sie aktiv nach Komponenten. Ihre Arbeit wird organisch über Suche, Kategorien und Empfehlungen entdeckt.
+
+Dieser eingebaute Traffic bedeutet, dass Sie Ihre Komponenten nicht unabhängig vermarkten müssen.
+
+#### Monetarisierungsmöglichkeiten
+
+Einige Marktplätze ermöglichen Schöpfern, ihre Arbeit über Premium-Komponentenstufen, Sponsoring-Programme, nutzungsbasierte Preisgestaltung und Einmal-Kaufmodelle zu monetarisieren.
+
+Das schafft nachhaltige Anreize für die Pflege qualitativ hochwertiger Komponenten.
+
+#### Rückmeldungen der Community
+
+Marktplätze beinhalten typischerweise Bewertungssysteme, Kommentarbereiche, Nutzungsanalysen und Issue-Tracking.
+
+Diese Feedback-Schleife hilft Ihnen zu verstehen, wie Entwickler Ihre Komponenten nutzen und welche Verbesserungen erforderlich sind.
+
+### Für Komponenten-Nutzer
+
+#### Kuratiertes Auffinden
+
+Im Gegensatz zur Suche auf GitHub oder npm bieten Marktplätze kuratierte Erlebnisse:
+
+```
+Nach Kategorie durchsuchen:
+├── Marketing
+│   ├── Hero-Elemente
+│   ├── Preisgestaltung
+│   └── Kundenstimmen
+├── Anwendung
+│   ├── Dashboards
+│   ├── Formulare
+│   └── Datenanzeige
+└── E-Commerce
+    ├── Produkt-Karten
+    ├── Warenkorb
+    └── Kasse
+```
+
+Diese Organisation macht das Finden der richtigen Komponente deutlich schneller.
+
+#### Qualitätssicherung
+
+Viele Marktplätze implementieren Review-Prozesse. Komponenten können Code-Qualitätsprüfungen, Accessibility-Audits, Leistungstests und Dokumentationsprüfungen durchlaufen.
+
+Diese Kuratierung gewährleistet eine Mindestqualität, die bei selbstveröffentlichten Komponenten möglicherweise fehlt.
+
+#### Einheitliches Tooling
+
+Die Verwendung einer einzigen CLI für alle Marktplatz-Komponenten vereinfacht den Workflow. Sie können jede Komponente vom Marktplatz mit demselben Befehl installieren:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/<author>/<component>
+```
+
+## Herausforderungen von Marktplätzen
+
+Obwohl Marktplätze überzeugende Vorteile bieten, bringen sie auch eigene Herausforderungen mit sich.
+
+### Für Autoren
+
+#### Wettbewerb und Sichtbarkeit
+
+In einem überfüllten Marktplatz hervorzuheben wird schwierig. Sie konkurrieren mit Hunderten ähnlicher Komponenten, etablierten Erstellern mit Anhängerschaften, vorgestellten oder gesponserten Inhalten und algorithmisch gesteuerten Empfehlungen.
+
+Erfolg erfordert mehr als nur guten Code – Sie benötigen überzeugende Vorschauen, exzellente Dokumentation und oft aktive Promotion.
+
+#### Abhängigkeit von der Plattform
+
+Das Veröffentlichen auf einem Marktplatz bedeutet, deren Nutzungsbedingungen, Revenue-Sharing-Modelle, technische Anforderungen und Review-Prozesse zu akzeptieren.
+
+Wenn die Plattform ihre Richtlinien ändert oder schließt, verschwindet Ihr Distributionskanal.
+
+#### Qualitätsdruck
+
+Nutzer von Marktplätzen erwarten polierte, produktionsreife Komponenten. Das bedeutet umfassende Dokumentation, mehrere Demo-Varianten, responsives Design, Cross-Browser-Tests und Accessibility-Konformität.
+
+Diese Erwartungen zu erfüllen erfordert erheblichen Zeitaufwand, der über das reine Schreiben von Komponenten-Code hinausgeht.
+
+### Für Nutzer
+
+#### Variable Qualität
+
+Trotz Review-Prozessen variiert die Qualität auf Marktplätzen stark. Sie können auf verwaiste Komponenten mit veralteten Abhängigkeiten, schlecht dokumentiertem Code, Komponenten stoßen, die in Demos funktionieren, in der Produktion jedoch Fehler verursachen, sowie inkonsistente Coding-Stile verschiedener Autoren.
+
+Bei der Auswahl von Komponenten ist weiterhin Sorgfalt geboten.
+
+#### Lock-in-Bedenken
+
+Obwohl Marktplätze Standard-Tools wie das shadcn-CLI verwenden, können sie proprietäre Metadatenformate, benutzerdefinierte Konfigurationsanforderungen und plattformspezifische Abhängigkeiten einführen.
+
+Das kann die Migration weg vom Marktplatz erschweren.
+
+#### Entdeckungsparadoxon
+
+Zu viel Auswahl kann lähmend sein. Wenn Sie eine Button-Komponente suchen und 200 Optionen finden, hilft das nicht unbedingt weiter. Sie müssen mehrere ähnliche Komponenten bewerten, subtile Unterschiede vergleichen, die langfristige Wartbarkeit einschätzen und die Reputation der Autoren berücksichtigen.
+
+Dieser Evaluierungsprozess kann länger dauern als das Eigenbauen der Komponente.

@@ -1,0 +1,163 @@
+---
+title: Rekisteri
+description: Ymmärrä komponenttirekisterien käsite, miten ne toimivat ja miksi ne mullistavat tapaa, jolla kehittäjät jakavat ja löytävät käyttöliittymäkomponentteja.
+---
+
+Komponenttirekisterit ovat tapa jakaa ja löytää käyttöliittymäkomponentteja. Suosittu [shadcn/ui](https://ui.shadcn.com) on popularisoinut tätä lähestymistapaa, joka mahdollistaa komponenttien löytämisen ja kopioimisen suoraan projekteihisi.
+
+Rekisterit edustavat perustavaa muutosta siinä, miten kehittäjät jakavat ja löytävät käyttöliittymäkomponentteja. Perinteisiin npm-paketteihin verrattuna rekisterit perustuvat avoimen lähdekoodin malliin ja toimivat lataamalla lähdekoodi projektiisi.
+
+## Mikä tekee rekisteristä?
+
+### 1. Lähdekoodin jakelu
+
+Toisin kuin npm-paketit, jotka jakavat käännettyä koodia, rekisterit jakavat lähdekoodia:
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. Metatiedot ja konfiguraatio
+
+Hyvät rekisterit sisältävät rikkaita metatietoja komponenteista, kuten nimen, kuvauksen, riippuvuudet ja kategorian.
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. Esikatselu ja dokumentaatio
+
+Vaikka niitä ei ladattaisi, rekisterisivustot tarjoavat tyypillisesti:
+
+- Live-esikatselut komponenteista
+- Interaktiivisia esimerkkejä
+- Yksityiskohtaisen dokumentaation
+- Koodikatkelmia, valmiina kopioitavaksi
+
+## Rekisteriarkkitehtuurin edut
+
+Komponenttirekisterit tarjoavat merkittäviä etuja sekä tekijöille että käyttäjille, virtaviivaistaen käyttöliittymäkomponenttien jakamisen ja omaksumisen prosessia.
+
+### Tekijöille
+
+Komponenttien tekijöille rekisterit tekevät jakelusta huomattavan yksinkertaista. Kun komponentti on luotu, se voidaan lisätä rekisteriin ja tehdä välittömästi saatavaksi käyttäjille ilman monimutkaisia julkaisutapauksia. Tämä jakelun helppous nopeuttaa palautesykliä ja kannustaa nopeaan iterointiin.
+
+Versiohallinta on toinen keskeinen etu. Rekisterit seuraavat tyypillisesti komponenttien versioita, muutoksia ja yhteensopivuustietoja. Esimerkiksi komponentti voi ilmoittaa nykyisen versionsa, korostaa viimeaikaisia muutoksia kuten parannettua saavutettavuutta tai uusia ominaisuuksia sekä ilmoittaa, mitä shadcn/ui-versioita se tukee. Tämä läpinäkyvyys auttaa ylläpitäjiä viestimään päivityksistä ja varmistaa, että käyttäjät voivat valita projektivaatimuksiinsa sopivia komponentteja.
+
+Myös yhteisön osallistuminen paranee rekisterien kautta. Tekijät voivat vastaanottaa suoraa palautetta käyttäjiltä, jotka voivat raportoida ongelmia, pyytää ominaisuuksia ja osallistua yhteisölliseen parantamiseen. Tämä edistää interaktiivisempaa ja reagoivampaa kehitysympäristöä, josta hyötyvät sekä tekijät että kuluttajat.
+
+### Käyttäjille
+
+Komponenttien käyttäjien näkökulmasta rekisterit parantavat huomattavasti löytymistä. Käyttäjät voivat selata komponentteja kategorian mukaan, hyödyntää hakutoimintoja, tarkastella suosittavuusmittareita ja tutkia liittyviä komponentteja, mikä helpottaa juuri oikean ratkaisun löytämistä projekteihin.
+
+Ennen komponentin integroimista käyttäjät voivat esikatsella sitä toiminnassa, kokeilla eri variaatioita sekä tarkastella sen käyttäytymistä ja koodin laatua. Tämä mahdollisuus arvioida komponentteja etukäteen vähentää riskiä ja lisää luottamusta käyttöönotossa.
+
+Ehkä tärkeimpänä rekisterit antavat käyttäjille todellisen omistajuuden. Sen sijaan, että oltaisiin sidottu riippuvuuteen, käyttäjät kopioivat lähdekoodin suoraan projekteihinsa. Tämä tarkoittaa, että he voivat muokata komponentteja tarpeen mukaan, välttää riippuvuuksien hallinnan ongelmia ja säilyttää täyden kontrollin koodikannastaan.
+
+## Rekisterin luominen
+
+Voit luoda yksinkertaisen rekisterin melko nopeasti. Käytännössä tarvitset vain 3 ydinelementtiä:
+
+### 1. Komponentit
+
+Luo komponentti tai joukko komponentteja, joita haluat jakaa. Varmista, että sinulla on komponenttien lähdekoodi ja että ne ovat hyvin dokumentoituja ja helposti ymmärrettäviä.
+
+Harkitse lisätä esimerkiksi Markdown-dokumentaatiota, esimerkkitoteutuksia ja keinoa esikatsella komponenttia.
+
+### 2. Julkinen päätepiste
+
+Luo julkinen päätepiste, joka tarjoilee komponentit. Tämä voi olla yksinkertainen JSON-tiedosto tai monimutkaisempi verkkosivusto. Niin kauan kuin se on julkinen ja saavutettavissa, voit käyttää mitä tahansa päätepistettä.
+
+### 3. CLI
+
+Luo komentorivityökalu (CLI), joka mahdollistaa komponenttien asentamisen projektiisi. Tämä voi olla niin yksinkertaista kuin yksi komento, kuten `npx myregistry add button`, tai monimutkaisempi komento optioineen ja lippuineen.
+
+## shadcn-rekisterin käyttäminen
+
+Oman rekisterin rakentaminen on loistava tapa jakaa komponenttejasi yhteisön kanssa, mutta se vaatii paljon vaivaa ja ylläpitoa. Jos haluat jakaa vain muutaman komponentin, voit käyttää shadcn/ui-ekosysteemiä - rekisteriä, CLI:tä ja muuttujia.
+
+Katsotaanpa, miten voimme julkaista `MetricCard`-komponentin elävänä alle 5 minuutissa käyttämällä [Vercel](https://vercel.com):in staattista hostingia.
+
+### Vaihe 1: Luo kansio
+
+Tee kansio tällä rakenteella:
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+Aseta rekisterikohteesi JSON (esim. `metric-card.json`) `public/`-kansioon.
+
+### Vaihe 2: Lisää `vercel.json`
+
+Luo `vercel.json`-tiedosto `public/`-kansion viereen seuraavalla sisällöllä:
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Tämä varmistaa, että JSON-palvelusi toimitetaan oikeilla CORS- ja sisältöotsikoilla.
+
+### Vaihe 3: Ota käyttöön Vercelissä
+
+Kansion juuresta aja:
+
+```bash
+vercel --prod
+```
+
+ja vastaa kehotteisiin julkaistaksesi projektisi.
+
+Kun se on valmis, tiedostosi on käytettävissä osoitteessa, esimerkiksi:
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### Vaihe 4: Asenna komponentti
+
+Kuka tahansa voi nyt ajaa:
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+Ei npm-pakettia, ei build-vaihetta, ei monimutkaisuutta.

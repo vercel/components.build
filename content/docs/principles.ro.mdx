@@ -1,0 +1,54 @@
+---
+title: Principii de bază
+description: Atunci când proiectați componente UI moderne, este important să țineți cont de aceste principii de bază.
+---
+
+## Compozabilitate și reutilizare
+
+Alegeți compoziția în locul moștenirii – construiți componente care pot fi combinate și îmbinate pentru a crea interfețe mai complexe, în loc să vă bazați pe ierarhii profunde de clase.
+
+Componentele compozabile expun o API clară (prin props/slots) care permite dezvoltatorilor să personalizeze comportamentul și aspectul prin conectarea de elemente copil sau callback-uri.
+
+Acest lucru face componentele foarte reutilizabile în contexte diferite. (Designul React întărește acest lucru: „Props și compoziția vă oferă toată flexibilitatea de care aveți nevoie pentru a personaliza aspectul și comportamentul unei componente într-un mod explicit și sigur.”)
+
+## Accesibil implicit
+
+Componentele trebuie să poată fi folosite de toți utilizatorii. Folosiți elemente HTML semantice potrivite rolului componentei (de ex. `<button>` pentru acțiuni clicabile, `<ul>/<li>` pentru liste etc.) și completați cu atribute WAI-ARIA atunci când este necesar.
+
+Asigurați suport pentru navigarea cu tastatura și gestionarea focusului (de exemplu, navigare cu tastele săgeată în meniuri, capcane de focus în modale). Fiecare componentă ar trebui să respecte standardele și liniile directoare de accesibilitate implicit.
+
+Asta înseamnă furnizarea rolurilor/stărilor ARIA corespunzătoare și testarea cu cititoare de ecran. Accesibilitatea nu este opțională – este o caracteristică de bază a fiecărei componente.
+
+## Personalizare și teme
+
+O componentă ar trebui să fie ușor de re-stilat sau adaptat la cerințe de design diferite. Evitați codarea în clar a stilurilor vizuale care nu pot fi suprascrise.
+
+Furnizați mecanisme pentru tematizare și stilizare, cum ar fi CSS variables, nume de clase clar documentate sau style props. Ideal, componentele vin cu stiluri implicite rezonabile, dar permit dezvoltatorilor să personalizeze aspectul cu efort minim (de exemplu, prin trimiterea unui className sau prin utilizarea design tokens).
+
+Acest principiu asigură că componentele se pot integra în orice brand sau sistem de design fără a „se lupta” cu stilurile implicite.
+
+## Ușoare și performante
+
+Componentele ar trebui să fie cât mai economice posibil în termeni de resurse și dependențe. Evitați să suprasolicitați o componentă cu dependențe de librării mari sau logică excesiv de complexă, mai ales dacă acea logică nu este întotdeauna necesară.
+
+Tindeți spre performanță bună (atât la redare, cât și la interacțiune) prin minimizarea re-redărilor inutile și utilizarea algoritmilor eficienți pentru sarcini grele. Dacă o componentă este intensivă în date (cum ar fi o listă mare sau un tabel), luați în considerare pattern-uri precum virtualizarea sau redarea incrementală, dar mențineți astfel de funcționalități opționale.
+
+Componentele ușoare sunt mai ușor de întreținut și mai rapide pentru utilizatorii finali.
+
+## Transparență și proprietatea codului
+
+În open-source, consumatorii beneficiază adesea de vizibilitate și control complet asupra codului componentelor. Această specificație încurajează o mentalitate „open-source first”: componentele nu ar trebui să fie cutii negre.
+
+Când dezvoltatorii importă sau copiază componenta, ar trebui să poată inspecta cum funcționează și să o modifice dacă este necesar. Acest principiu stă la baza modelului emergent de distribuție „copy-and-paste” (discutat mai jos), în care dezvoltatorii integrează codul componentei direct în proiectele lor.
+
+Oferind utilizatorilor proprietatea asupra codului, creșteți încrederea și permiteți personalizări mai profunde.
+
+Chiar dacă distribuiți printr-un pachet, adoptați transparența prin furnizarea de source maps, cod ușor de citit și documentație cuprinzătoare.
+
+## Bine documentate și prietenoase cu DX
+
+O componentă excelentă nu este doar cod – vine cu documentație clară și exemple. Din perspectiva experienței dezvoltatorului (DX), componentele voastre ar trebui să fie ușor de învățat și integrat.
+
+Documentați scopul fiecărei componente, props-urile și exemplele de utilizare. Includeți note privind accesibilitatea (cum ar fi controalele de tastatură sau atributele ARIA folosite) și orice opțiuni de personalizare.
+
+O documentație bună reduce utilizarea greșită și scade bariera pentru adoptare. Vom acoperi așteptările privind documentația în secțiunea Publicare, dar este listată aici ca principiu deoarece planificarea unei bune documentații și a unei bune experiențe DX ar trebui să aibă loc în faza de proiectare/construcție.

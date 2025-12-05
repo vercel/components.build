@@ -1,0 +1,578 @@
+---
+title: Polimorfizm
+description: Bileşen işlevselliğini korurken render edilen HTML öğesini değiştirmek için `as` prop'unun nasıl kullanılacağını.
+---
+
+`as` prop'u, render edilen temel HTML öğesini veya bileşeni değiştirmenize olanak tanıyan modern React bileşen kütüphanelerinde temel bir desendir.
+
+[Styled Components](https://styled-components.com/), [Emotion](https://emotion.sh/) ve [Chakra UI](https://chakra-ui.com/) gibi kütüphaneler tarafından popülerleştirilen bu desen, bileşen stillerini ve davranışını korurken semantik HTML seçme esnekliği sağlar.
+
+`as` prop'u, çekirdek işlevselliğini korurken farklı öğe tipleri olarak render edilebilen polimorfik bileşenlere olanak tanır:
+
+```tsx
+<Button as="a" href="/home">
+  Go Home
+</Button>
+
+<Button as="button" type="submit">
+  Submit Form
+</Button>
+
+<Button as="div" role="button" tabIndex={0}>
+  Custom Element
+</Button>
+```
+
+## `as`'ı Anlamak
+
+`as` prop'u, bir bileşenin varsayılan öğe tipini geçersiz kılmanıza izin verir. Belirli bir HTML öğesiyle kilitlenmek yerine, bileşeni herhangi bir geçerli HTML etiketi veya başka bir React bileşeni olarak render edecek şekilde uyarlayabilirsiniz.
+
+Örneğin:
+
+```tsx
+// Default renders as a div
+<Box>Content</Box>
+
+// Renders as a section
+<Box as="section">Content</Box>
+
+// Renders as a nav
+<Box as="nav">Content</Box>
+```
+
+Bu, farklı HTML öğelerinin render edilmesini sağlar:
+```html
+<!-- Default -->
+<div>Content</div>
+
+<!-- With as="section" -->
+<section>Content</section>
+
+<!-- With as="nav" -->
+<nav>Content</nav>
+```
+
+## Uygulama Yöntemleri
+
+Polimorfik bileşenleri uygulamanın iki ana yaklaşımı vardır: manuel bir uygulama ve Radix UI'nin `Slot` bileşenini kullanmak.
+
+### Manuel Uygulama
+
+`as` prop'u uygulaması dinamik bileşen render'ı kullanır:
+
+```tsx
+// Simplified implementation
+function Component({
+  as: Element = 'div',
+  children,
+  ...props
+}) {
+  return <Element {...props}>{children}</Element>;
+}
+
+// More complete implementation with TypeScript
+type PolymorphicProps<E extends React.ElementType> = {
+  as?: E;
+  children?: React.ReactNode;
+} & React.ComponentPropsWithoutRef<E>;
+
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  children,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props}>{children}</Element>;
+}
+```
+
+Bileşen:
+1. Varsayılan bir öğe tipi ile `as` prop'unu kabul eder
+2. Sağlanan öğeyi kullanır veya varsayılanı geri döner
+3. Diğer tüm prop'ları render edilen öğeye yayar
+4. TypeScript generikleri ile tip güvenliğini korur
+
+### Radix UI Slot Kullanımı
+
+[Radix UI](https://www.radix-ui.com/) `Slot` bileşenini sağlar; bu, `as` prop deseni için daha güçlü bir alternatiftir. Sadece öğe tipini değiştirmek yerine, `Slot` prop'ları çocuk bileşenle birleştirir ve kompozisyon desenlerine olanak tanır.
+
+Önce paketi yükleyin:
+
+```package-install
+npm install @radix-ui/react-slot
+```
+
+`asChild` deseni, öğe tipini belirtmek yerine boolean bir prop kullanır:
+
+```tsx
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+const itemVariants = cva(
+  "rounded-lg border p-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-white",
+        primary: "bg-blue-500 text-white",
+      },
+      size: {
+        default: "h-10 px-4",
+        sm: "h-8 px-3",
+        lg: "h-12 px-6",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+function Item({
+  className,
+  variant = "default",
+  size = "default",
+  asChild = false,
+  ...props
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof itemVariants> & { asChild?: boolean }) {
+  const Comp = asChild ? Slot : "div"
+  return (
+    <Comp
+      data-slot="item"
+      data-variant={variant}
+      data-size={size}
+      className={cn(itemVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
+}
+```
+
+Artık iki şekilde kullanabilirsiniz:
+
+```tsx
+// Default: renders as a div
+<Item variant="primary">Content</Item>
+
+// With asChild: merges props with child component
+<Item variant="primary" asChild>
+  <a href="/home">Link with Item styles</a>
+</Item>
+```
+
+`Slot` bileşeni:
+1. Çocuk öğeyi klonlar
+2. Bileşenin prop'larını (className, data atributeleri vb.) çocuğun prop'larıyla birleştirir
+3. Ref'leri doğru şekilde iletir
+4. Olay işleyici kompozisyonunu işler
+
+### Karşılaştırma: `as` vs `asChild`
+
+**`as` prop'u (manuel uygulama):**
+```tsx
+// Explicit element type
+<Button as="a" href="/home">Link Button</Button>
+<Button as="button" type="submit">Submit Button</Button>
+
+// Simple, predictable API
+// Limited to element types
+```
+
+**`asChild` ile Slot:**
+```tsx
+// Implicit from child
+<Button asChild>
+  <a href="/home">Link Button</a>
+</Button>
+
+<Button asChild>
+  <button type="submit">Submit Button</button>
+</Button>
+
+// More flexible composition
+// Works with any component
+// Better prop merging
+```
+
+**Temel farklar:**
+
+| Özellik | `as` prop'u | `asChild` + Slot |
+|---------|-------------|------------------|
+| **API Stili** | `<Button as="a">` | `<Button asChild><a /></Button>` |
+| **Öğe Tipi** | Prop'ta belirtilir | Çocuktan çıkarılır |
+| **Bileşen Kompozisyonu** | Sınırlı | Tam destek |
+| **Prop Birleştirme** | Temel yayma | Akıllı birleştirme |
+| **Ref İletimi** | Manuel ayar gerekir | Dahili |
+| **Olay İşleyicileri** | Çakışma olabilir | Doğru şekilde bileştirilir |
+| **Kütüphane Boyutu** | Bağımlılık yok | `@radix-ui/react-slot` gerektirir |
+
+### Hangi Yaklaşım Ne Zaman Kullanılmalı
+
+**`as` prop'unu kullanın eğer:**
+- Daha basit bir API yüzeyi istiyorsanız
+- Öncelikle HTML öğeleri arasında geçiş yapıyorsanız
+- Ek bağımlılıklardan kaçınmak istiyorsanız
+- Bileşen basit ve karmaşık prop birleştirmeye ihtiyaç duymuyorsa
+
+**`asChild` + Slot kullanın eğer:**
+- Diğer bileşenlerle kompozisyon yapmanız gerekiyorsa
+- Otomatik prop birleştirme davranışı istiyorsanız
+- Radix UI veya shadcn/ui benzeri bir bileşen kütüphanesi inşa ediyorsanız
+- Farklı bileşen tipleri arasında güvenilir ref iletimi gerekiyorsa
+
+## Temel Avantajlar
+
+### 1. Semantik HTML Esnekliği
+
+`as` prop'u, her zaman en semantik uygun HTML öğesini kullanabilmenizi sağlar:
+
+```tsx
+// Navigation container
+<Container as="nav" className="navigation">
+  <NavItems />
+</Container>
+
+// Main content area
+<Container as="main" className="content">
+  <Article />
+</Container>
+
+// Sidebar
+<Container as="aside" className="sidebar">
+  <Widgets />
+</Container>
+```
+
+### 2. Bileşen Yeniden Kullanılabilirliği
+
+Tek bir bileşen, varyantlar oluşturmadan birden çok amaç için hizmet edebilir:
+
+```tsx
+// Text component used for different elements
+<Text as="h1" size="2xl">Page Title</Text>
+<Text as="p" size="md">Body paragraph</Text>
+<Text as="span" size="sm">Inline text</Text>
+<Text as="label" size="sm">Form label</Text>
+```
+
+### 3. Erişilebilirlik İyileştirmeleri
+
+Her bağlam için en iyi erişilebilirliği sağlayan öğeleri seçin:
+
+```tsx
+// Link that looks like a button
+<Button as="a" href="/signup">
+  Sign Up Now
+</Button>
+
+// Button that submits a form
+<Button as="button" type="submit">
+  Submit
+</Button>
+
+// Heading with button styles
+<Button as="h2" role="presentation">
+  Section Title
+</Button>
+```
+
+### 4. Stil Sistemi Entegrasyonu
+
+Öğeleri değiştirirken tutarlı stilleri koruyun:
+
+```tsx
+const Card = styled.div`
+  padding: 1rem;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+`;
+
+// Same styles, different elements
+<Card as="article">Article content</Card>
+<Card as="section">Section content</Card>
+<Card as="li">List item content</Card>
+```
+
+## Yaygın Kullanım Senaryoları
+
+### Tipografi Bileşenleri
+
+Esnek metin bileşenleri oluşturun:
+
+```tsx
+function Text({
+  as: Element = 'span',
+  variant = 'body',
+  ...props
+}) {
+  const className = cn(
+    'text-base',
+    variant === 'heading' && 'text-2xl font-bold',
+    variant === 'body' && 'text-base',
+    variant === 'caption' && 'text-sm text-gray-600',
+    props.className
+  );
+
+  return <Element className={className} {...props} />;
+}
+
+// Usage
+<Text as="h1" variant="heading">Title</Text>
+<Text as="p" variant="body">Paragraph</Text>
+<Text as="figcaption" variant="caption">Caption</Text>
+```
+
+### Düzen (Layout) Bileşenleri
+
+Semantik düzenler oluşturun:
+
+```tsx
+function Flex({ as: Element = 'div', ...props }) {
+  return (
+    <Element
+      className={cn('flex', props.className)}
+      {...props}
+    />
+  );
+}
+
+// Semantic HTML
+<Flex as="header" className="justify-between">
+  <Logo />
+  <Navigation />
+</Flex>
+
+<Flex as="main" className="flex-col">
+  <Content />
+</Flex>
+```
+
+### Etkileşimli Öğeler
+
+Farklı etkileşim türlerini ele alın:
+
+```tsx
+function Clickable({ as: Element = 'button', ...props }) {
+  const isButton = Element === 'button';
+  const isAnchor = Element === 'a';
+
+  return (
+    <Element
+      role={!isButton && !isAnchor ? 'button' : undefined}
+      tabIndex={!isButton && !isAnchor ? 0 : undefined}
+      {...props}
+    />
+  );
+}
+
+// Various clickable elements
+<Clickable as="button" onClick={handleClick}>Button</Clickable>
+<Clickable as="a" href="/link">Link</Clickable>
+<Clickable as="div" onClick={handleClick}>Div Button</Clickable>
+```
+
+## TypeScript En İyi Uygulamaları
+
+### Generik Bileşen Tipleri
+
+Tam tip güvenli polimorfik bileşenler oluşturun:
+
+```tsx
+type PolymorphicRef<E extends React.ElementType> =
+  React.ComponentPropsWithRef<E>['ref'];
+
+type PolymorphicProps<
+  E extends React.ElementType,
+  Props = {}
+> = Props &
+  Omit<React.ComponentPropsWithoutRef<E>, keyof Props> & {
+    as?: E;
+  };
+
+// Component with full type safety
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E, { customProp?: string }>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### Prop'ların Çıkarımı
+
+Öğe tipine göre prop'ları otomatik olarak çıkarın:
+
+```tsx
+// Props are inferred from the element type
+<Component as="a" href="/home">Home</Component>  // ✅ href is valid
+<Component as="div" href="/home">Home</Component> // ❌ TS error: href not valid on div
+
+<Component as="button" type="submit">Submit</Component> // ✅ type is valid
+<Component as="span" type="submit">Submit</Component>   // ❌ TS error
+```
+
+### Ayırt Edilmiş Birlikler (Discriminated Unions)
+
+Öğe-özgü prop'lar için ayırt edilmiş birlikler kullanın:
+
+```tsx
+type ButtonProps =
+  | { as: 'button'; type?: 'submit' | 'button' | 'reset' }
+  | { as: 'a'; href: string; target?: string }
+  | { as: 'div'; role: 'button'; tabIndex: number };
+
+function Button(props: ButtonProps & { children: React.ReactNode }) {
+  const Element = props.as;
+  return <Element {...props} />;
+}
+```
+
+## En İyi Uygulamalar
+
+### 1. Semantik Öğelere Varsayılan Yapın
+
+En yaygın kullanım durumunu temsil eden anlamlı varsayılanlar seçin:
+
+```tsx
+// ✅ Good defaults
+function Article({ as: Element = 'article', ...props }) { }
+function Navigation({ as: Element = 'nav', ...props }) { }
+function Heading({ as: Element = 'h2', ...props }) { }
+
+// ❌ Too generic
+function Component({ as: Element = 'div', ...props }) { }
+```
+
+### 2. Desteklenen Öğeleri Belgeleyin
+
+Hangi öğelerin desteklendiğini açıkça belirtin:
+
+```tsx
+interface BoxProps {
+  /**
+   * The HTML element to render as
+   * @default 'div'
+   * @example 'section', 'article', 'aside', 'main'
+   */
+  as?: 'div' | 'section' | 'article' | 'aside' | 'main' | 'header' | 'footer';
+}
+```
+
+### 3. Öğe Uygunluğunu Doğrulayın
+
+Uygun olmayan öğeler kullanıldığında uyarı verin:
+
+```tsx
+function Button({ as: Element = 'button', ...props }) {
+  if (__DEV__ && Element === 'div' && !props.role) {
+    console.warn(
+      'Button: When using as="div", provide role="button" for accessibility'
+    );
+  }
+
+  return <Element {...props} />;
+}
+```
+
+### 4. Olay İşleyicilerini Doğru Ele Alın
+
+Olay işleyicilerinin farklı öğelerde çalıştığından emin olun:
+
+```tsx
+function Interactive({ as: Element = 'button', onClick, ...props }) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (Element !== 'button' && (e.key === 'Enter' || e.key === ' ')) {
+      onClick?.(e as any);
+    }
+  };
+
+  return (
+    <Element
+      onClick={onClick}
+      onKeyDown={Element !== 'button' ? handleKeyDown : undefined}
+      {...props}
+    />
+  );
+}
+```
+
+## Yaygın Tuzaklar
+
+### Geçersiz HTML İçi İçe Geçme
+
+HTML iç içe geçme kurallarına dikkat edin:
+
+```tsx
+// ❌ Invalid - button inside button
+<Button as="button">
+  <Button as="button">Nested</Button>
+</Button>
+
+// ❌ Invalid - div inside p
+<Text as="p">
+  <Box as="div">Invalid nesting</Box>
+</Text>
+
+// ✅ Valid nesting
+<Text as="div">
+  <Box as="div">Valid nesting</Box>
+</Text>
+```
+
+### Eksik Erişilebilirlik Atributları
+
+Uygun ARIA atributelerini eklemeyi unutmayın:
+
+```tsx
+// ❌ Missing accessibility
+<Box as="nav">
+  <MenuItems />
+</Box>
+
+// ✅ Proper accessibility
+<Box as="nav" aria-label="Main navigation">
+  <MenuItems />
+</Box>
+```
+
+### Tip Güvenliği Kaybı
+
+Aşırı izin verici tiplerden kaçının:
+
+```tsx
+// ❌ Too permissive - no type safety
+function Component({ as: Element = 'div', ...props }: any) {
+  return <Element {...props} />;
+}
+
+// ✅ Type safe
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### Performans Düşünceleri
+
+Yine render etkilerini göz önünde bulundurun:
+
+```tsx
+// ❌ Creates new component on every render
+function Parent() {
+  const CustomDiv = (props) => <div {...props} />;
+  return <Component as={CustomDiv} />;
+}
+
+// ✅ Stable component reference
+const CustomDiv = (props) => <div {...props} />;
+function Parent() {
+  return <Component as={CustomDiv} />;
+}
+```

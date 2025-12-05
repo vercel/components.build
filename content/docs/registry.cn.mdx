@@ -1,0 +1,163 @@
+---
+title: 组件注册表
+description: 理解组件注册表的概念、它们的工作方式以及为什么它们正在革新开发者共享和发现 UI 组件的方式。
+---
+
+组件注册表是一种用于共享和发现 UI 组件的方式。由 [shadcn/ui](https://ui.shadcn.com) 推广，它们允许你直接在项目中发现并复制组件。
+
+注册表代表了开发者共享和发现 UI 组件方式的根本性变化。与传统的 npm 包不同，注册表依赖开源模型，通过将源代码下载到你的项目中来工作。
+
+## 注册表的构成要素
+
+### 1. 源代码分发
+
+与分发已编译代码的 npm 包不同，注册表分发的是源代码：
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. 元数据和配置
+
+良好的注册表包含关于组件的丰富元数据，例如名称、描述、依赖项和分类。
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. 预览与文档
+
+虽然不会被下载，注册表网站通常会提供：
+
+- 实时组件预览
+- 交互式示例
+- 详细文档
+- 可直接复制的代码片段
+
+## 注册表架构的优势
+
+组件注册表为作者和使用者都提供了显著优势，简化了共享和采用 UI 组件的流程。
+
+### 对作者
+
+对于组件作者来说，注册表使分发变得非常简单。一旦创建了组件，就可以将其添加到注册表，使其瞬间可供用户访问，而无需复杂的发布步骤。这种分发的简易性加快了反馈循环并鼓励快速迭代。
+
+版本控制是另一个关键优势。注册表通常会跟踪组件版本、变更日志和兼容性信息。例如，一个组件条目可能会指定其当前版本、突出最近的更改（例如改进的无障碍性或新功能），并指示它支持的 shadcn/ui 版本。这种透明度有助于维护者传达更新，并确保用户能够选择适合其项目需求的组件。
+
+注册表还增强了社区参与。作者可以直接收到用户反馈，用户能够报告问题、请求功能并为协作改进做出贡献。这营造了一个更具互动性和响应性的开发环境，惠及创建者和使用者双方。
+
+### 对使用者
+
+从组件使用者的角度来看，注册表极大地改善了发现组件的流程。用户可以按类别浏览组件、使用搜索功能、查看流行度指标并探索相关组件，使他们更容易找到项目所需的精确组件。
+
+在集成组件之前，用户可以预览组件的实际效果、尝试不同变体并检查其行为和代码质量。提前评估组件的能力降低了风险并提高了采用的信心。
+
+也许最重要的是，注册表赋予用户真正的所有权。用户不是被锁定在依赖关系中，而是将源代码直接复制到他们的项目中。这意味着他们可以根据需要修改组件，避免依赖管理的麻烦，并对代码库保留完全控制权。
+
+## 创建注册表
+
+你可以很快创建一个简单的注册表。实际上，你只需要 3 个核心要素：
+
+### 1. 组件
+
+创建一个或一组你想共享的组件。确保你拥有组件的源代码，并且这些组件有良好的文档且易于理解。
+
+考虑添加诸如 Markdown 文档、示例实现以及组件预览方式等内容。
+
+### 2. 公开端点
+
+创建一个用于提供组件的公开端点。这可以是一个简单的 JSON 文件，或更复杂的网站。只要它是公开且可访问的，你可以使用任何你想要的端点。
+
+### 3. CLI
+
+创建一个允许你将组件安装到项目中的 CLI。它可以简单到单条命令，例如 `npx myregistry add button`，也可以是带有选项和标志的更复杂命令。
+
+## 使用 shadcn 注册表
+
+构建你自己的注册表是与社区共享组件的绝佳方式，但它需要大量精力和维护。如果你只是想共享一两个组件，你可以使用 shadcn/ui 生态系统 —— 注册表、CLI 和变量。
+
+下面我们看看如何使用 [Vercel](https://vercel.com) 的静态托管在不到 5 分钟内将一个 `MetricCard` 组件发布上线。
+
+### 步骤 1：创建文件夹
+
+创建如下结构的文件夹：
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+将你的注册表条目 JSON（例如 `metric-card.json`）放到 `public/` 文件夹中。
+
+### 步骤 2：添加一个 `vercel.json`
+
+在 `public/` 旁创建一个 `vercel.json` 文件，内容如下：
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+这可以确保你的 JSON 以正确的 CORS 和内容头提供。
+
+### 步骤 3：部署到 Vercel
+
+在文件夹根目录运行：
+
+```bash
+vercel --prod
+```
+
+并按照提示完成项目的部署。
+
+部署完成后，你的文件将会在类似如下的地址上线：
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### 步骤 4：安装组件
+
+任何人现在都可以运行：
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+无需 npm 包、无需构建步骤、没有复杂性。

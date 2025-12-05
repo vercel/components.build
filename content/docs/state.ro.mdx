@@ -1,0 +1,88 @@
+---
+title: Stare
+description: Cum să gestionezi starea într-un component, precum și îmbinarea stării controlabile și necontrolate.
+---
+
+Construirea de componente flexibile care funcționează atât în moduri controlate, cât și în moduri necontrolate este o caracteristică definitorie a componentelor profesionale.
+
+## Stare necontrolată
+
+Starea necontrolată apare atunci când componenta își gestionează propria stare intern. Acesta este tiparul implicit de utilizare pentru majoritatea componentelor.
+
+De exemplu, iată o componentă `Stepper` simplă care își gestionează propria stare intern:
+
+```tsx title="stepper.tsx"
+import { useState } from 'react';
+
+export const Stepper = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+};
+```
+
+## Stare controlată
+
+Starea controlată este atunci când starea componentei este gestionată de componenta părinte. În loc să păstrăm starea în interior, delegăm această responsabilitate către componenta părinte.
+
+Să refacem componenta `Stepper` pentru a fi controlată de componenta părinte:
+
+```tsx title="stepper.tsx"
+type StepperProps = {
+  value: number;
+  setValue: (value: number) => void;
+};
+
+export const Stepper = ({ value, setValue }: StepperProps) => (
+  <div>
+    <p>{value}</p>
+    <button onClick={() => setValue(value + 1)}>Increment</button>
+  </div>
+);
+```
+
+## Îmbinarea stărilor
+
+Cele mai bune componente suportă atât starea controlată, cât și pe cea necontrolată. Acest lucru permite utilizarea componentei într-o varietate de scenarii și personalizarea ei ușoară.
+
+[Radix UI](https://www.radix-ui.com/) menține o utilitate internă pentru îmbinarea stării controlabile și necontrolate numită [`use-controllable-state`](https://github.com/radix-ui/primitives/tree/main/packages/react/use-controllable-state). Deși nu este destinată utilizării publice, registre precum [Kibo UI](https://www.kibo-ui.com) au implementat această utilitate pentru a-și construi propriile componente asemănătoare Radix.
+
+Să instalăm hook-ul:
+
+```package-install
+npm install @radix-ui/react-use-controllable-state
+```
+
+Acest hook ușor îți oferă aceleași modele de gestionare a stării folosite intern de biblioteca de componente Radix UI, asigurând că componentele tale se comportă în mod consecvent cu standardele din industrie.
+
+Hook-ul acceptă trei parametri principali și returnează un tuplu cu valoarea curentă și funcția de setare. Să îl folosim pentru a îmbina starea controlată și cea necontrolată a componentei `Stepper`:
+
+```tsx title="stepper.tsx"
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+
+type StepperProps = {
+  value: number;
+  defaultValue: number;
+  onValueChange: (value: number) => void;
+};
+
+export const Stepper = ({ value: controlledValue, defaultValue, onValueChange }: StepperProps) => {
+  const [value, setValue] = useControllableState({
+    prop: controlledValue,        // The controlled value prop
+    defaultProp: defaultValue,    // Default value for uncontrolled mode
+    onChange: onValueChange,      // Called when value changes
+  });
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+}
+```

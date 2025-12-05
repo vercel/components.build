@@ -1,0 +1,51 @@
+---
+title: デザイントークン
+description: セマンティックな命名規則とデザイントークンが、柔軟で保守しやすいテーマシステムをどのように構築するか。
+---
+
+モダンなコンポーネントライブラリの中核的な基盤の一つは、スタイリングに対する慎重なアプローチにあります。色をハードコーディングしたり堅いクラス体系を作る代わりに、テーマ、コンテキスト、用途の関心事を分離するセマンティックな命名規則を採用できます。
+
+このセマンティックな命名規則はデザイントークンとして知られています。このアーキテクチャ的な決定により、アプリケーション全体で美しくスケールする保守性と柔軟性のあるシステムが生まれます。
+
+## セマンティックCSS変数の哲学
+
+従来のCSSアプローチはしばしば色の値を使用コンテキストに直接結びつけ、保守が難しいもろいシステムを生み出します。デザイントークンは、何であるか（what）とどのように見えるか（how）を分離する抽象化のレイヤーを作ることで、異なるアプローチを取ります。
+
+## 変数アーキテクチャの理解
+
+この柔軟なシステムを作るために、CSS変数をどのように構成できるか見てみましょう:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+上の例では、4つのデザイントークンがあります:
+
+- `--background`、これは背景色に使用されます（主にページの背景）
+- `--foreground`、これはフォアグラウンド色（一般的なテキスト色）に使用されます
+- `--primary`、これはプライマリカラー（ブランドの主要な色）に使用されます
+- `--primary-foreground`、これはプライマリフォアグラウンド色（プライマリカラーに対して表示されるテキスト色）に使用されます

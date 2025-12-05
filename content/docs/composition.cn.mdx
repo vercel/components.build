@@ -1,0 +1,233 @@
+---
+title: 组合
+description: 构建现代 UI 组件的基础。
+---
+
+组合，或称可组合性，是构建现代 UI 组件的基础。这是创建灵活、可重用组件的最强大技术之一，能够在不牺牲 API 清晰度的情况下处理复杂需求。
+
+与其将所有功能塞入一个具有数十个 props 的单一组件，不如通过多个协作组件来分配职责。
+
+Fernando 在 React Universe Conf 2025 上对此做了很好的演讲，他分享了重建 Slack 的 Message Composer 作为可组合组件的方法。
+
+<Video src="https://www.youtube.com/watch?v=4KvbVq3Eg5w" />
+
+## 使组件可组合
+
+要使组件可组合，你需要将其拆分为更小、更专注的组件。例如，让我们看一下这个 Accordion 组件：
+
+```tsx title="accordion.tsx"
+import { Accordion } from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion data={data} />
+);
+```
+
+虽然这个 Accordion 组件看起来很简单，但它承担了过多职责。它负责渲染容器、trigger 和 content；同时还负责处理手风琴的状态和数据。
+
+定制此组件的样式很困难，因为它耦合性很强。很可能需要全局 CSS 覆盖。此外，添加新功能或调整行为需要修改组件源代码。
+
+为了解决这个问题，我们可以把它拆分为更小、更专注的组件。
+
+### 1. Root 组件
+
+首先，我们关注容器——即将所有内容（trigger 和 content）包裹在一起的组件。这个容器不需要了解数据，但需要跟踪 open 状态。
+
+不过，我们也希望子组件可以访问到这个状态。因此，我们使用 Context API 来为 open 状态创建一个上下文。
+
+最后，为了允许修改 `div` 元素，我们将扩展默认的 HTML 属性。
+
+我们把这个组件称为 "Root" 组件。
+
+```tsx title="@/components/ui/accordion.tsx"
+type AccordionProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+const AccordionContext = createContext<AccordionProps>({
+  open: false,
+  setOpen: () => {},
+});
+
+export type AccordionRootProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export const Root = ({
+  children,
+  open,
+  setOpen,
+  ...props
+}: AccordionRootProps) => (
+  <AccordionContext.Provider value={{ open, setOpen }}>
+    <div {...props}>{children}</div>
+  </AccordionContext.Provider>
+);
+```
+
+### 2. Item 组件
+
+Item 组件是包含手风琴项的元素。它只是手风琴中每个项的包装器。
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionItemProps = React.ComponentProps<'div'>;
+
+export const Item = (props: AccordionItemProps) => <div {...props} />;
+```
+
+### 3. Trigger 组件
+
+Trigger 组件是激活时打开手风琴的元素。它负责：
+
+- 默认以按钮渲染（可以通过 `asChild` 自定义）
+- 处理点击事件以打开手风琴
+- 在手风琴关闭时管理焦点
+- 提供正确的 ARIA 属性
+
+让我们把这个组件添加到我们的 Accordion 组件中。
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionTriggerProps = React.ComponentProps<'button'> & {
+  asChild?: boolean;
+};
+
+export const Trigger = ({ asChild, ...props }: AccordionTriggerProps) => (
+  <AccordionContext.Consumer>
+    {({ open, setOpen }) => (
+      <button onClick={() => setOpen(!open)} {...props} />
+    )}
+  </AccordionContext.Consumer>
+);
+```
+
+### 4. Content 组件
+
+Content 组件是包含手风琴内容的元素。它负责：
+
+- 在手风琴打开时渲染内容
+- 提供正确的 ARIA 属性
+
+让我们把这个组件添加到我们的 Accordion 组件中。
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionContentProps = React.ComponentProps<'div'> & {
+  asChild?: boolean;
+};
+
+export const Content = ({ asChild, ...props }: AccordionContentProps) => (
+  <AccordionContext.Consumer>
+    {({ open }) => <div {...props} />}
+  </AccordionContext.Consumer>
+);
+```
+
+### 5. 将它们组合在一起
+
+现在我们有了所有子组件，可以把它们放回到原始文件中。
+
+```tsx title="accordion.tsx"
+import * as Accordion from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion.Root open={false} setOpen={() => {}}>
+    {data.map((item) => (
+      <Accordion.Item key={item.title}>
+        <Accordion.Trigger>{item.title}</Accordion.Trigger>
+        <Accordion.Content>{item.content}</Accordion.Content>
+      </Accordion.Item>
+    ))}
+  </Accordion.Root>
+);
+```
+
+## 命名约定
+
+在构建可组合组件时，一致的命名约定对于创建直观且可预测的 API 至关重要。shadcn/ui 和 Radix UI 都遵循已成为 React 生态中事实标准的既定模式。
+
+### Root 组件
+
+`Root` 组件作为包装所有其他子组件的主容器。它通常通过提供上下文来管理共享状态和子组件的上下文。
+
+```tsx
+<AccordionRoot>{/* Child components */}</AccordionRoot>
+```
+
+### 交互元素
+
+触发操作或切换状态的交互组件使用描述性名称：
+
+- `Trigger` - 发起操作的元素（打开、关闭、切换）
+- `Content` - 包含被显示/隐藏的主要内容的元素
+
+```tsx
+<CollapsibleTrigger>Click to expand</CollapsibleTrigger>
+<CollapsibleContent>
+  Hidden content revealed here
+</CollapsibleContent>
+```
+
+### 内容结构
+
+对于具有结构化内容区域的组件，使用能描述其用途的语义名称：
+
+- `Header` - 顶部区域，包含标题或控件
+- `Body` - 主要内容区域
+- `Footer` - 底部区域，用于操作或元数据
+
+```tsx
+<DialogHeader>
+  {/* Dialog title */}
+</DialogHeader>
+<DialogBody>
+  {/* Dialog content */}
+</DialogBody>
+<DialogFooter>
+  {/* Dialog footer */}
+</DialogFooter>
+```
+
+### 信息性组件
+
+提供信息或上下文的组件使用描述性后缀：
+
+- `Title` - 主要标题或标签
+- `Description` - 辅助文本或说明性内容
+
+```tsx
+<CardTitle>Project Statistics</CardTitle>
+<CardDescription>
+  View your project's performance over time
+</CardDescription>
+```

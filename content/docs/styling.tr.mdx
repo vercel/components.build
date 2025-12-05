@@ -1,0 +1,280 @@
+---
+title: Stil
+description: Tailwind sınıflarıyla koşullu ve bileşenleştirilebilir stillendirme.
+---
+
+Modern bileşen kütüphaneleri, geliştirici deneyiminden ödün vermeden karmaşık gereksinimleri karşılayabilen esnek stillendirme sistemlerine ihtiyaç duyar. Tailwind CSS ile akıllı sınıf birleştirmenin kombinasyonu, özelleştirilebilir bileşenler oluşturmak için güçlü bir desen olarak ortaya çıktı.
+
+Bu yaklaşım, mantıklı varsayılanlar sağlama ile tam özelleştirmeye izin verme arasındaki temel gerilimi çözer — yıllardır bileşen kütüphanelerini zorlayan bir meydan okuma.
+
+## Geleneksel stillendirmeyle ilgili sorun
+
+Geleneksel CSS yaklaşımları genellikle özgüllük savaşlarına, stil çatışmalarına ve öngörülemez üzerine yazmalara yol açar. Bir bileşene `className="bg-blue-500"` geçirirken bileşenin zaten `bg-red-500` varsa, hangisi kazanır?
+
+Doğru şekilde ele alınmazsa her iki sınıf da uygulanır ve sonuç bir dizi faktöre bağlı olur - CSS kaynak sırası, sınıfların özgüllüğü, paketleyicinin sınıf birleştirme algoritması vb.
+
+## Sınıfları akıllıca birleştirme
+
+`tailwind-merge` kütüphanesi, Tailwind'in sınıf yapısını anlayarak çatışmaları akıllıca çözer. İki sınıf aynı CSS özelliğini hedeflediğinde sadece sonuncusunu tutar.
+
+```tsx title="Without tailwind-merge"
+// Both bg-red-500 and bg-blue-500 apply - unpredictable result
+<Button className="bg-blue-500" />
+// Renders: className="bg-red-500 bg-blue-500"
+```
+
+```tsx title="With tailwind-merge"
+import { twMerge } from 'tailwind-merge';
+
+// bg-blue-500 wins as it comes last
+const className = twMerge('bg-red-500', 'bg-blue-500');
+// Returns: "bg-blue-500"
+```
+
+Bu, tüm Tailwind yardımcı sınıfları için geçerlidir:
+
+```tsx
+twMerge('px-4 py-2', 'px-8'); // Returns: "py-2 px-8"
+twMerge('text-sm', 'text-lg'); // Returns: "text-lg"
+twMerge('hover:bg-red-500', 'hover:bg-blue-500'); // Returns: "hover:bg-blue-500"
+```
+
+Kütüphane Tailwind'in modifikör sistemini de anlar:
+
+```tsx
+// Modifiers are handled correctly
+twMerge('hover:bg-red-500 focus:bg-red-500', 'hover:bg-blue-500');
+// Returns: "focus:bg-red-500 hover:bg-blue-500"
+```
+
+## Koşullu sınıflar
+
+Çoğu zaman sınıfları props veya state'e göre koşullu olarak uygulamanız gerekir. `clsx` kütüphanesi bunun için temiz bir API sağlar:
+
+```tsx title="Using clsx"
+import clsx from 'clsx';
+
+// Basic conditionals
+clsx('base', isActive && 'active');
+// Returns: "base active" (if isActive is true)
+
+// Object syntax
+clsx('base', {
+  'active': isActive,
+  'disabled': isDisabled,
+});
+
+// Arrays
+clsx(['base', isLarge ? 'text-lg' : 'text-sm']);
+
+// Mixed
+clsx(
+  'base',
+  ['array-item'],
+  { 'object-conditional': true },
+  isActive && 'conditional'
+);
+```
+
+Yaygın bir desen, varsayılan bir sınıf setini gelen props ile ve ayrıca sahip olduğumuz özel mantıkla birleştirmektir:
+
+```tsx title="component.tsx"
+const Component = ({ className, ...props }: ComponentProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      className={cn(
+        "rounded-lg border bg-white shadow-sm",
+        isOpen && "bg-blue-500",
+        className
+      )}
+      {...props}
+    />
+  );
+};
+```
+
+## `cn` yardımcı fonksiyonu
+
+[shadcn/ui](https://ui.shadcn.com/) tarafından popüler hale getirilen `cn` fonksiyonu, koşullu mantık ve akıllı birleştirmeyi aynı anda sunmak için `clsx` ve `tailwind-merge`i birleştirir:
+
+```tsx title="lib/utils.ts"
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+Güç, sıralamadan gelir - önce temel stiller, sonra koşullar, en son kullanıcı geçersizlemeleri. Bu, tam özelleştirilebilirliği korurken öngörülebilir davranım sağlar.
+
+## Class Variance Authority (CVA)
+
+Çok sayıda varyanta sahip karmaşık bileşenlerde, koşullu sınıfları elle yönetmek pratik olmaktan çıkar. [Class Variance Authority (CVA)](https://cva.style/docs) bileşen varyantlarını tanımlamak için deklaratif bir API sağlar.
+
+Örneğin, shadcn/ui'daki [Button](https://ui.shadcn.com/docs/components/button) bileşeninden bir kesit şöyle:
+
+```tsx title="@/components/ui/button.tsx"
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline:
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        icon: "size-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+```
+
+## En iyi uygulamalar
+
+### 1. Sıralama önemlidir
+
+Sınıfları her zaman şu sırayla uygulayın:
+1. Temel stiller (her zaman uygulanır)
+2. Varyant stilleri (props'a bağlı)
+3. Koşullu stiller (state'e bağlı)
+4. Kullanıcı geçersizlemeleri (className prop)
+
+```tsx
+className={cn(
+  'base-styles',            // 1. Base
+  variant && variantStyles, // 2. Variants
+  isActive && 'active',     // 3. Conditionals
+  className                 // 4. User overrides
+)}
+```
+
+### 2. Varyantlarınızı belgeleyin
+
+Her varyantın ne yaptığını belgelemek için TypeScript ve JSDoc kullanın:
+
+```tsx
+type ButtonProps = {
+  /**
+   * The visual style of the button
+   * @default "primary"
+   */
+  variant?: 'primary' | 'secondary' | 'destructive' | 'ghost';
+
+  /**
+   * The size of the button
+   * @default "md"
+   */
+  size?: 'sm' | 'md' | 'lg';
+};
+```
+
+### 3. Tekrarlanan desenleri çıkarın
+
+Aynı koşullu mantığı tekrar tekrar yazdığınızı fark ederseniz, bunu ayıklayın:
+
+```tsx title="utils/styles.ts"
+export const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500';
+export const disabled = 'disabled:pointer-events-none disabled:opacity-50';
+
+// Use in components
+className={cn(focusRing, disabled, className)}
+```
+
+## Geçiş rehberi
+
+Farklı bir stillendirme yaklaşımından geçiş yapıyorsanız, ortak desenleri nasıl uyarlayacağınıza dair örnekler:
+
+### CSS Modules'dan
+
+```tsx title="Before - CSS Modules"
+import styles from './Button.module.css';
+
+<button className={`${styles.button} ${styles[variant]} ${className}`} />
+```
+
+```tsx title="After - cn + Tailwind"
+import { cn } from '@/lib/utils';
+
+<button className={cn(
+  'px-4 py-2 rounded-lg',
+  variant === 'primary' && 'bg-blue-500 text-white',
+  className
+)} />
+```
+
+### styled-components'den
+
+```tsx title="Before - styled-components"
+const Button = styled.button<{ $primary?: boolean }>`
+  padding: 8px 16px;
+  background: ${props => props.$primary ? 'blue' : 'gray'};
+`;
+```
+
+```tsx title="After - cn + Tailwind"
+function Button({ primary, className, ...props }) {
+  return (
+    <button
+      className={cn(
+        'px-4 py-2',
+        primary ? 'bg-blue-500' : 'bg-gray-500',
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+## Performans hususları
+
+Hem `clsx` hem de `tailwind-merge` yüksek oranda optimize edilmiştir, ancak şu ipuçlarını aklınızda bulundurun:
+
+1. **Varyantları bileşenlerin dışında tanımlayın** - CVA varyantları her render'da yeniden oluşturulmaması için bileşenin dışında tanımlanmalıdır.
+
+2. **Karmaşık hesaplamaları memoize edin** - Masraflı koşullu mantığınız varsa, memoize etmeyi düşünün:
+
+```tsx
+const className = useMemo(
+  () => cn(
+    baseStyles,
+    expensiveComputation(props),
+    className
+  ),
+  [props, className]
+);
+```
+
+3. **Dinamik değerler için CSS değişkenleri kullanın** - Sınıfları dinamik olarak üretmek yerine CSS değişkenleri kullanın:
+
+```tsx title="Prefer CSS variables"
+// Good
+<div
+  className="bg-[var(--color)]"
+  style={{ '--color': dynamicColor } as React.CSSProperties}
+/>
+
+// Avoid
+<div className={`bg-[${dynamicColor}]`} />
+```
+
+Tailwind CSS, akıllı sınıf birleştirme ve varyant API'lerinin kombinasyonu, bileşen stillendirmesi için sağlam bir temel sağlar. Bu yaklaşım, basit butonlardan karmaşık tasarım sistemlerine kadar ölçeklenirken öngörülebilirliği ve geliştirici deneyimini korur.

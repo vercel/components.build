@@ -1,0 +1,233 @@
+---
+title: Compositie
+description: De basis voor het bouwen van moderne UI-componenten.
+---
+
+Compositie, of samenstelbaarheid, is de basis voor het bouwen van moderne UI-componenten. Het is een van de krachtigste technieken om flexibele, herbruikbare componenten te maken die complexe eisen aankunnen zonder concessies te doen aan de duidelijkheid van de API.
+
+In plaats van alle functionaliteit in één component met tientallen props te proppen, verdeelt compositie de verantwoordelijkheid over meerdere samenwerkende componenten.
+
+Fernando gaf hierover een geweldige presentatie op React Universe Conf 2025, waar hij zijn benadering deelde voor het herbouwen van Slack's Message Composer als een composable component.
+
+<Video src="https://www.youtube.com/watch?v=4KvbVq3Eg5w" />
+
+## Een component samenstelbaar maken
+
+Om een component samenstelbaar te maken, moet je het opdelen in kleinere, meer gefocuste componenten. Neem bijvoorbeeld dit Accordion-component:
+
+```tsx title="accordion.tsx"
+import { Accordion } from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion data={data} />
+);
+```
+
+Hoewel dit Accordion-component eenvoudig lijkt, handelt het te veel verantwoordelijkheden af. Het is verantwoordelijk voor het renderen van de container, trigger en content; evenals het afhandelen van de accordion-status en data.
+
+Het aanpassen van de styling van dit component is moeilijk omdat het sterk gekoppeld is. Het vereist waarschijnlijk globale CSS-overschrijvingen. Bovendien vereist het toevoegen van nieuwe functionaliteit of het bijstellen van het gedrag het aanpassen van de broncode van het component.
+
+Om dit op te lossen kunnen we dit opdelen in kleinere, meer gerichte componenten.
+
+### 1. Root-component
+
+Eerst richten we ons op de container - het component dat alles bij elkaar houdt, dus de trigger en content. Deze container hoeft niets te weten over de data, maar moet wel de open-status bijhouden.
+
+We willen echter dat deze status ook toegankelijk is voor child-componenten. Laten we daarom de Context API gebruiken om een context voor de open-status te maken.
+
+Tot slot, om wijziging van het `div`-element mogelijk te maken, breiden we de standaard HTML-attributen uit.
+
+We noemen dit component de "Root"-component.
+
+```tsx title="@/components/ui/accordion.tsx"
+type AccordionProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+const AccordionContext = createContext<AccordionProps>({
+  open: false,
+  setOpen: () => {},
+});
+
+export type AccordionRootProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export const Root = ({
+  children,
+  open,
+  setOpen,
+  ...props
+}: AccordionRootProps) => (
+  <AccordionContext.Provider value={{ open, setOpen }}>
+    <div {...props}>{children}</div>
+  </AccordionContext.Provider>
+);
+```
+
+### 2. Item-component
+
+Het Item-component is het element dat het accordion-item bevat. Het is eenvoudigweg een wrapper voor elk item in het accordion.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionItemProps = React.ComponentProps<'div'>;
+
+export const Item = (props: AccordionItemProps) => <div {...props} />;
+```
+
+### 3. Trigger-component
+
+Het Trigger-component is het element dat het accordion opent wanneer het geactiveerd wordt. Het is verantwoordelijk voor:
+
+- Renderen als een knop standaard (kan aangepast worden met `asChild`)
+- Afhandelen van click-events om het accordion te openen
+- Focus beheren wanneer het accordion sluit
+- Het voorzien van correcte ARIA-attributen
+
+Laten we dit component toevoegen aan ons Accordion-component.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionTriggerProps = React.ComponentProps<'button'> & {
+  asChild?: boolean;
+};
+
+export const Trigger = ({ asChild, ...props }: AccordionTriggerProps) => (
+  <AccordionContext.Consumer>
+    {({ open, setOpen }) => (
+      <button onClick={() => setOpen(!open)} {...props} />
+    )}
+  </AccordionContext.Consumer>
+);
+```
+
+### 4. Content-component
+
+Het Content-component is het element dat de accordion-content bevat. Het is verantwoordelijk voor:
+
+- Het renderen van de content wanneer het accordion open is
+- Het voorzien van correcte ARIA-attributen
+
+Laten we dit component toevoegen aan ons Accordion-component.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionContentProps = React.ComponentProps<'div'> & {
+  asChild?: boolean;
+};
+
+export const Content = ({ asChild, ...props }: AccordionContentProps) => (
+  <AccordionContext.Consumer>
+    {({ open }) => <div {...props} />}
+  </AccordionContext.Consumer>
+);
+```
+
+### 5. Alles samenvoegen
+
+Nu we alle componenten hebben, kunnen we ze samenvoegen in ons oorspronkelijke bestand.
+
+```tsx title="accordion.tsx"
+import * as Accordion from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion.Root open={false} setOpen={() => {}}>
+    {data.map((item) => (
+      <Accordion.Item key={item.title}>
+        <Accordion.Trigger>{item.title}</Accordion.Trigger>
+        <Accordion.Content>{item.content}</Accordion.Content>
+      </Accordion.Item>
+    ))}
+  </Accordion.Root>
+);
+```
+
+## Naamgevingsconventies
+
+Bij het bouwen van composable componenten zijn consistente naamgevingsconventies cruciaal voor het creëren van intuïtieve en voorspelbare API's. Zowel shadcn/ui als Radix UI volgen gevestigde patronen die de facto-standaard zijn geworden in het React-ecosysteem.
+
+### Root-componenten
+
+Het `Root`-component dient als de hoofdcontainer die alle andere subcomponenten omhult. Het beheert doorgaans gedeelde state en context door een context aan alle child-componenten te leveren.
+
+```tsx
+<AccordionRoot>{/* Child components */}</AccordionRoot>
+```
+
+### Interactieve elementen
+
+Interactieve componenten die acties triggeren of staten togglen gebruiken beschrijvende namen:
+
+- `Trigger` - Het element dat een actie initieert (openen, sluiten, togglen)
+- `Content` - Het element dat de hoofdcontent bevat die wordt getoond/verborgen
+
+```tsx
+<CollapsibleTrigger>Click to expand</CollapsibleTrigger>
+<CollapsibleContent>
+  Hidden content revealed here
+</CollapsibleContent>
+```
+
+### Content-structuur
+
+Voor componenten met gestructureerde contentgebieden, gebruik semantische namen die hun doel beschrijven:
+
+- `Header` - Bovenste sectie met titels of controls
+- `Body` - Hoofdcontentgebied
+- `Footer` - Onderste sectie voor acties of metadata
+
+```tsx
+<DialogHeader>
+  {/* Dialog title */}
+</DialogHeader>
+<DialogBody>
+  {/* Dialog content */}
+</DialogBody>
+<DialogFooter>
+  {/* Dialog footer */}
+</DialogFooter>
+```
+
+### Informatieve componenten
+
+Componenten die informatie of context bieden gebruiken beschrijvende suffixen:
+
+- `Title` - Primaire kop of label
+- `Description` - Ondersteunende tekst of beschrijvende inhoud
+
+```tsx
+<CardTitle>Project Statistics</CardTitle>
+<CardDescription>
+  View your project's performance over time
+</CardDescription>
+```

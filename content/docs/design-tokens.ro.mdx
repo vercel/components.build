@@ -1,0 +1,51 @@
+---
+title: Tokenuri de design
+description: Cum convențiile de denumire semantice și tokenurile de design creează un sistem de tematizare flexibil și ușor de întreținut.
+---
+
+Una dintre fundațiile principale ale bibliotecilor moderne de componente constă în abordarea lor atentă față de stilizare. În loc să codăm culorile direct sau să creăm sisteme de clase rigide, putem folosi o convenție de denumire semantică care separă preocupările legate de temă, context și utilizare.
+
+Această convenție de denumire semantică este cunoscută sub denumirea de tokenuri de design. Această decizie arhitecturală creează un sistem ușor de întreținut și flexibil, care se scalează frumos în cadrul aplicațiilor.
+
+## Filosofia variabilelor CSS semantice
+
+Abordările tradiționale ale CSS leagă adesea valorile de culoare direct de contextul lor de utilizare, creând sisteme fragile greu de întreținut. Tokenurile de design adoptă o abordare diferită prin crearea unor straturi de abstractizare care separă ce este ceva de felul în care arată.
+
+## Înțelegerea arhitecturii variabilelor
+
+Să examinăm cum putem structura variabilele CSS pentru a crea acest sistem flexibil:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+În exemplul de mai sus, avem patru tokenuri de design:
+
+- `--background`, care este folosit pentru culorile de fundal (în principal fundalul paginii)
+- `--foreground`, care este folosit pentru culorile de prim-plan (culoarea generală a textului)
+- `--primary`, care este folosit pentru culorile primare (culoarea principală a brandului)
+- `--primary-foreground`, care este folosit pentru culorile de prim-plan primare (culoarea textului, așa cum apare pe fundalul culorii primare)

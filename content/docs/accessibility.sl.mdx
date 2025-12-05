@@ -1,0 +1,132 @@
+---
+title: Dostopnost
+description: Gradnja komponent, ki so uporabne za vse, vključno z uporabniki z invalidnostmi, ki se zanašajo na pomožne tehnologije.
+---
+
+Dostopnost (a11y) ni izbirna funkcija — to je temeljna zahteva za sodobne spletne komponente. Vsaka komponenta mora biti uporabna za vse, vključno z ljudmi z vidnimi, motoričnimi, slušnimi ali kognitivnimi okvarami.
+
+Ta vodnik je nepopoln seznam načel in vzorcev za dostopnost, ki jih je treba upoštevati pri gradnji komponent. Ni izčrpen vodnik, vendar naj vam da občutek, za katere vrste težav bi morali biti pozorni.
+
+Če uporabljate linter z močnimi pravili za dostopnost, kot je [Ultracite](https://www.ultracite.ai), bodo te vrste težav verjetno zaznane samodejno, vendar je vseeno pomembno razumeti načela.
+
+## Osnovna načela
+
+### 1. Najprej semantični HTML
+
+Vedno začnite z najustreznejšim HTML elementom. Semantični HTML nudi vgrajene funkcije dostopnosti, ki jih pri po meri narejenih implementacijah pogosto spregledajo.
+
+Semantic elementi prinašajo pravilna obvestila vlog, interakcijo s tipkovnico, upravljanje fokusa in sodelovanje v obrazcih.
+
+### 2. Navigacija s tipkovnico
+
+Vsak interaktiven element mora biti dostopen s tipkovnico. Uporabniki bi morali z le tipkovnico krmariti, aktivirati in delovati z vsemi funkcionalnostmi.
+
+### 3. Podpora bralnikom zaslona
+
+Poskrbite, da bodo vsa vsebina in interakcije pravilno objavljene bralnikom zaslona z uporabo atributov ARIA, kadar je to potrebno.
+
+### 4. Vizualna dostopnost
+
+Podprite uporabnike z vidnimi omejitvami z ustreznim kontrastom, indikatorji fokusa in odzivno velikostjo besedila.
+
+## ARIA vzorci
+
+### Razumevanje ARIA
+
+ARIA (Accessible Rich Internet Applications) zagotavlja semantične informacije o elementih pomožnim tehnologijam. ARIA uporabite za izboljšanje, ne za nadomestitev, semantičnega HTML.
+
+Obstaja nekaj pravil, ki jih morate upoštevati:
+
+1. Ne uporabljajte ARIA, če lahko uporabite semantični HTML
+2. Ne spreminjajte naravne semantike, razen če je to nujno
+3. Vsi interaktivni elementi morajo biti dostopni s tipkovnico
+4. Ne skrivajte fokusabilnih elementov pred pomožnimi tehnologijami
+5. Vsi interaktivni elementi morajo imeti dostopna imena
+
+### Pogosti ARIA atributi
+
+#### Vloge
+
+Določite, kaj element predstavlja:
+
+#### Stanja
+
+Opredelite trenutno stanje elementa:
+
+#### Lastnosti
+
+Navedite dodatne informacije:
+
+## Vzorci komponent
+
+### Modalno okno/Dialog
+
+Modalna okna zahtevajo skrbno upravljanje fokusa in ujetje tipkovnice.
+
+### Spustni meni
+
+Spustni meniji potrebujejo ustrezne ARIA atribute in navigacijo s tipkovnico.
+
+### Zavihki
+
+Vmesniki z zavihki zahtevajo specifične ARIA vzorce in navigacijo s tipkovnico.
+
+### Obrazci
+
+Obrazci potrebujejo jasne oznake, sporočila o napakah in povratne informacije za validacijo.
+
+## Upravljanje fokusa
+
+### Vidni fokus
+
+Prikažite indikatorje fokusa samo pri navigaciji s tipkovnico.
+
+### Zajetje fokusa
+
+Ohranite fokus znotraj določenega območja.
+
+### Obnovitev fokusa
+
+Vrnite fokus na ustrezen element po interakcijah.
+
+## Žive regije
+
+Objavite spremembe dinamične vsebine bralnikom zaslona:
+
+### Sporočila stanja
+
+### Indikatorji napredka
+
+## Barva in kontrast
+
+### Zahteve glede kontrasta
+
+Upoštevajte smernice WCAG glede kontrasta barv.
+
+### Neodvisnost od barv
+
+Nikoli ne prenašajte informacij samo z barvo.
+
+## Mobilna dostopnost
+
+### Ciljna območja za dotik
+
+Zagotovite, da so ciljne površine za dotik dovolj velike.
+
+### Pogledna okna in povečava
+
+Dovolite uporabnikom povečavo.
+
+## Pogoste pasti
+
+### Besedilo nadomestka kot oznake
+
+Ne uporabljajte placeholderjev kot edine oznake.
+
+### Prazni gumbi
+
+Vedno zagotovite dostopno besedilo za gumbke z ikonami.
+
+### Onemogočeni elementi obrazca
+
+Onemogočeni elementi niso fokusabilni, kar lahko uporabnike zmede.

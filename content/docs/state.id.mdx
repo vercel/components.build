@@ -1,0 +1,88 @@
+---
+title: State
+description: Cara mengelola state dalam sebuah komponen, serta menggabungkan state yang terkontrol dan tidak terkontrol.
+---
+
+Membangun komponen yang fleksibel yang bekerja dalam mode terkontrol dan tidak terkontrol adalah ciri khas komponen profesional.
+
+## State Tidak Terkontrol
+
+State tidak terkontrol adalah ketika komponen mengelola state-nya sendiri secara internal. Ini adalah pola penggunaan default untuk sebagian besar komponen.
+
+Sebagai contoh, berikut adalah komponen `Stepper` sederhana yang mengelola state-nya sendiri secara internal:
+
+```tsx title="stepper.tsx"
+import { useState } from 'react';
+
+export const Stepper = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+};
+```
+
+## State Terkontrol
+
+State terkontrol adalah ketika state komponen dikelola oleh komponen induk. Alih-alih melacak state secara internal, kita mendelegasikan tanggung jawab ini ke komponen induk.
+
+Mari kita ubah komponen `Stepper` agar dikontrol oleh komponen induk:
+
+```tsx title="stepper.tsx"
+type StepperProps = {
+  value: number;
+  setValue: (value: number) => void;
+};
+
+export const Stepper = ({ value, setValue }: StepperProps) => (
+  <div>
+    <p>{value}</p>
+    <button onClick={() => setValue(value + 1)}>Increment</button>
+  </div>
+);
+```
+
+## Menggabungkan state
+
+Komponen terbaik mendukung baik state terkontrol maupun tidak terkontrol. Ini memungkinkan komponen digunakan dalam beragam skenario, dan untuk dengan mudah dikustomisasi.
+
+[Radix UI](https://www.radix-ui.com/) memelihara utilitas internal untuk menggabungkan state yang terkontrol dan tidak terkontrol yang disebut [`use-controllable-state`](https://github.com/radix-ui/primitives/tree/main/packages/react/use-controllable-state). Meskipun tidak dimaksudkan untuk penggunaan publik, registri seperti [Kibo UI](https://www.kibo-ui.com) telah mengimplementasikan utilitas ini untuk membangun komponen mereka yang mirip Radix.
+
+Mari instal hook ini:
+
+```package-install
+npm install @radix-ui/react-use-controllable-state
+```
+
+Hook ringan ini memberi Anda pola pengelolaan state yang sama yang digunakan secara internal oleh pustaka komponen Radix UI, memastikan komponen Anda berperilaku konsisten dengan standar industri.
+
+Hook ini menerima tiga parameter utama dan mengembalikan tuple dengan nilai saat ini dan fungsi setter. Mari gunakan untuk menggabungkan state terkontrol dan tidak terkontrol dari komponen `Stepper`:
+
+```tsx title="stepper.tsx"
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+
+type StepperProps = {
+  value: number;
+  defaultValue: number;
+  onValueChange: (value: number) => void;
+};
+
+export const Stepper = ({ value: controlledValue, defaultValue, onValueChange }: StepperProps) => {
+  const [value, setValue] = useControllableState({
+    prop: controlledValue,        // The controlled value prop
+    defaultProp: defaultValue,    // Default value for uncontrolled mode
+    onChange: onValueChange,      // Called when value changes
+  });
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+}
+```

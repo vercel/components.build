@@ -1,0 +1,163 @@
+---
+title: Clár Comhpháirteanna
+description: Tuig an coincheap de chláracha comhpháirteanna, conas a oibríonn siad, agus cén fáth atá siad ag réabhlóidú an tslí a roinn agus a aimsíonn forbróirí comhpháirteanna UI.
+---
+
+Is bealach iad cláracha comhpháirteanna chun comhpháirteanna UI a roinnt agus a fháil. Phioc shadcn/ui iad mar shampla, agus ligíonn siad duit comhpháirteanna a aimsiú agus cóip den fhoinse a chur díreach isteach i do thionscadail.
+
+Léiríonn cláracha athrú bunúsach sa tslí a roinneann agus a aimsíonn forbróirí comhpháirteanna UI. Éagsúil le pacáistí traidisiúnta npm, braitheann cláracha ar mhúnla foinse oscailte agus oibríonn siad trí chóid foinse a íoslódáil isteach i do thionscadal.
+
+## Cad a dhéanann clár comhpháirteanna?
+
+### 1. Dáileadh Cóid Foinse
+
+Ní cosúil le npm packages a dháileann cód comhdhéanta, déanann cláracha cód foinse a dháileadh:
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. Meiteashonraí agus Cumraíocht
+
+Cuimsíonn cláracha maith meiteashonraí saibhir faoi chomhpháirteanna, mar shampla ainm, cur síos, spleáchais, agus catagóir.
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. Réamhamharc agus Doiciméadú
+
+Cé nach n-íoslódáiltear iad i gcónaí, soláthraíonn láithreáin ghréasáin chlár de ghnáth:
+
+- Réamhamharcanna beo de chomhpháirteanna
+- Samplaí idirghníomhacha
+- Doiciméadú mionsonraithe
+- Sleachta cód réidh le cóipeáil
+
+## Buntáistí Ailtireachta Cláir
+
+Tugann cláracha comhpháirteanna buntáistí suntasacha do údair agus do úsáideoirí araon, rud a shimpliú an próiseas chun comhpháirteanna a roinnt agus a ghlacadh.
+
+### Do Údair
+
+Do údair comhpháirteanna, déanann cláracha an dáileadh thar a bheith simplí. Nuair a chruthaítear comhpháirt, is féidir í a chur leis an gclár, rud a dhéanann í inrochtana láithreach do úsáideoirí gan gá le céimeanna foilsithe casta. Luathaíonn an éascaíocht seo an lúb aiseolais agus spreagann sé athruithe tapa.
+
+Is buntáiste eile é rialú leagan. De ghnáth rianaíonn cláracha leaganacha comhpháirte, logacha athruithe, agus eolas faoi chomhoiriúnacht. Mar shampla, d’fhéadfadh iontráil comhpháirte a shonrú a leagan reatha, aird a tharraingt ar athruithe le déanaí ar nós feabhsuithe inrochtaineachta nó gnéithe nua, agus a léiriú cén leaganacha de shadcn/ui a thacaíonn sé leo. Cabhraíonn an trédhearcacht seo le cothaitheoirí nuashonruithe a chur in iúl agus cinntíonn sí gur féidir le húsáideoirí comhpháirte a roghnú a oireann do riachtanais a dtionscadal.
+
+Feabhsaítear rannpháirtíocht an phobail freisin trí chláracha. Is féidir le húdair aiseolas díreach a fháil ó úsáideoirí, is féidir le húsáideoirí fadhbanna a thuairisciú, gnéithe a éileamh, agus cur leis na feabhsúcháin chomhoibríocha. Cothaíonn sé seo timpeallacht forbartha níos idirghníomhaí agus freagrach, rud a bhuaileann le cruthaitheoirí agus tomhaltóirí araon.
+
+### Do Úsáideoirí
+
+Ó thaobh úsáideoirí comhpháirte de, feabhsaíonn cláracha an próiseas aimsiúcháin go mór. Is féidir le húsáideoirí brabhsáil trí chomhpháirteanna de réir catagóire, feidhm cuardaigh a úsáid, méadrachtaí tóir a fheiceáil, agus comhpháirteanna gaolmhara a iniúchadh, rud a dhéanann sé níos éasca an rud atá uathu a fháil don tionscadal.
+
+Sula n-ionchorprófar comhpháirt, is féidir le húsáideoirí í a réamhamharcadh i ngníomh, tástáil a dhéanamh ar éagsúlachtaí éagsúla, agus a neamhghnáthghníomhartha agus cáilíocht an chód a athbhreithniú. Laghdaíonn an cumas seo comhpháirt a mheas roimhe seo an riosca agus méadaíonn sé muinín maidir le glacadh.
+
+B'fhéidir an rud is tábhachtaí, cumasaíonn cláracha úinéireacht fhíor d'úsáideoirí. In áit a bheith faoi ghlas i spleáchas, cóipeálann úsáideoirí an cód foinse díreach isteach ina dtionscadail. Ciallaíonn sé seo gur féidir leo comhpháirteanna a mhodhnú de réir mar is gá, trioblóidí bainistíochta spleáchais a sheachaint, agus smacht iomlán a choinneáil ar a mbunachar cód.
+
+## Ag Cruthú Chláir
+
+Is féidir leat clár simplí a chruthú go han-tapa. Go praiticiúil, ní bheidh uait ach 3 eilimint lárnach:
+
+### 1. Comhpháirteanna
+
+Cruthaigh comhpháirt, nó sraith comhpháirteanna, ar mhaith leat a roinnt. Déan cinnte go bhfuil an cód foinse agat don chomhpháirt, agus go bhfuil siad dea-doiciméadaithe agus éasca le tuiscint.
+
+Smaoinigh ar rudaí a chur leis mar dhoiciméadú i Markdown, samplaí cur i bhfeidhm, agus bealach chun an chomhpháirt a réamhamharcadh.
+
+### 2. Deireadhphointe poiblí
+
+Cruthaigh deireadhphointe poiblí a sheirbheálann na comhpháirteanna. Is féidir é seo a bheith comhad JSON simplí, nó suíomh gréasáin níos casta. Chomh fada agus atá sé poiblí agus inrochtana, is féidir leat aon deireadhphointe ar mhaith leat a úsáid.
+
+### 3. CLI
+
+Cruthaigh CLI a ligeann duit na comhpháirteanna a shuiteáil i do thionscadal. Is féidir é a bheith chomh simplí le hordú amháin, cosúil le `npx myregistry add button`, nó ordú níos casta le roghanna agus bratacha.
+
+## Ag Úsáid an Chláir shadcn
+
+Is bealach iontach é do chlár a thógáil duit féin chun do chomhpháirteanna a roinnt leis an bpobal, ach éilíonn sé go leor iarrachta agus cothabhála. Má tá tú ag iarraidh comhpháirt nó beirt a roinnt go tapa, is féidir leat an eiceachóras shadcn/ui a úsáid — an clár, CLI agus athróga.
+
+Feicfimid conas is féidir linn comhpháirt `MetricCard` a fhoilsiú beo i níos lú ná 5 nóiméad ag úsáid óstála statach [Vercel](https://vercel.com).
+
+### Céim 1: Cruthaigh Fillteán
+
+Déanta fillteán leis an struchtúr seo:
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+Cuir do mhír chlár JSON (m.sh. `metric-card.json`) sa bhfillteán `public/`.
+
+### Céim 2: Cuir `vercel.json` leis
+
+Cruthaigh comhad `vercel.json` in aice le `public/` leis an méid seo a leanas:
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Cinntíonn sé seo go seirbheáiltear do JSON leis na cinnteoirí CORS agus ábhar cuí.
+
+### Céim 3: Cuir ar fáil ar Vercel
+
+Ó fhréamh do fhillteáin, rith:
+
+```bash
+vercel --prod
+```
+
+agus freagair na moltaí chun do thionscadal a chur ar fáil.
+
+Nuair a bheidh sé críochnaithe, beidh do chomhad beo ar rud éigin cosúil le:
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### Céim 4: Suiteáil an Chomhpháirt
+
+Is féidir le dhuine ar bith anois rith:
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+Gan pacáiste npm, gan céim tógála, gan castacht.

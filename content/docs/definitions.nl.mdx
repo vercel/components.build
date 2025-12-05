@@ -1,0 +1,234 @@
+---
+title: Definities
+description: Deze pagina stelt precieze terminologie vast die door de hele specificatie wordt gebruikt. Termen zijn opzettelijk framework-agnostisch, maar we gebruiken React voor voorbeelden.
+---
+
+## 1. Artefacttaxonomie
+
+### 1.1 Primitief
+
+Een primitie f (of, ongestileerde component) is het **laagste bouwblok** dat gedrag en toegankelijkheid biedt zonder enige opmaak.
+
+Primitives zijn volledig headless (d.w.z. zonder opmaak) en kapselen semantiek, focusbeheer, toetsenbordinteractie, lagen/portals, ARIA-koppelingen, meting en aanverwante zorgen in. Ze bieden de gedragsmatige basis maar vereisen styling om een afgewerkte UI te worden.
+
+Voorbeelden:
+
+- [Radix UI Primitives](https://www.radix-ui.com/primitives) (Dialog, Popover, Tooltip, etc.)
+- [React Aria Components](https://react-spectrum.adobe.com/react-aria)
+- [Base UI](https://base-ui.com)
+- [Headless UI](https://headlessui.com/)
+
+Verwachtingen:
+
+- Volledig zonder opmaak (headless).
+- Enkele verantwoordelijkheid; samenstelbaar tot gestileerde componenten.
+- Wordt geleverd met uitputtend a11y-gedrag voor zijn rol.
+- Versiebeheer geeft de voorkeur aan stabiliteit; brekende wijzigingen zijn zeldzaam en gedocumenteerd.
+
+<Callout>
+De termen primitive en component worden op het web meestal door elkaar gebruikt, maar ze zijn niet hetzelfde.
+</Callout>
+
+### 1.2 Component
+
+Een component is een gestileerde, herbruikbare UI-eenheid die visueel ontwerp toevoegt aan primitives of meerdere elementen composeert om complete, functionele interface-elementen te creëren.
+
+Componenten zijn nog steeds relatief laag-niveau maar bevatten styling, waardoor ze direct bruikbaar zijn in applicaties. Ze wikkelen doorgaans ongestileerde primitives in met een standaard visueel ontwerp en blijven aanpasbaar.
+
+Voorbeelden:
+- [shadcn/ui components](https://ui.shadcn.com/) (gestileerde wrappers van Radix primitives)
+- [Material UI components](https://mui.com/components/)
+- [Ant Design components](https://ant.design/components/overview/)
+
+Verwachtingen:
+- Duidelijke props-API; ondersteunt waar van toepassing gecontroleerd en ongecontroleerd gebruik.
+- Bevat standaardstyling maar blijft overschrijfvriendelijk (classes, tokens, slots).
+- Volledig toetsenbordtoegankelijk en schermlezer-vriendelijk (erft van primitives).
+- Samenstelbaar (children/slots, render props of samengestelde subcomponenten).
+- Kan gebouwd zijn uit primitives of gedrag direct implementeren met styling.
+
+### 1.3 Patroon
+
+Patronen zijn een specifieke compositie van primitives of componenten die worden gebruikt om een concreet UI/UX-probleem op te lossen.
+
+Voorbeelden:
+- Formuliervalidatie met inlinefouten
+- Bevestigen van destructieve acties
+- Typeahead-zoeken
+- Optimistische UI
+
+Verwachtingen.
+- Beschrijft gedrag, a11y, toetsenkaart en faalmodi.
+- Kan referentie-implementaties in meerdere frameworks bevatten.
+
+### 1.4 Blok
+
+Een opinionated, productieklare compositie van componenten die een concreet interfacegebruikgeval (vaak productspecifiek) oplost met content‑scaffolding. Blokken ruilen generaliteit in voor snelheid van adoptie.
+
+Voorbeelden:
+- Prijstabel
+- Authenticatieschermen
+- Onboarding-stepper
+- AI-chatpaneel
+- Factureringsinstellingenformulier
+
+Verwachtingen.
+- Sterke standaardinstellingen, copy-paste-vriendelijk, gemakkelijk te branden/themen.
+- Minimale logica buiten lay-out en orkestratie; domeinlogica is gestubd via handlers.
+- Accepteert data via props; verbergt nooit data achter fetches zonder een gedocumenteerde adapter.
+
+<AuthorNote name="Rob Austin" role="Founder of shadcnblocks.com" githubUsername="JugglerX" link="https://www.shadcnblocks.com/">
+Blokken zijn doorgaans niet herbruikbaar zoals een component. Je importeert ze niet, maar ze importeren doorgaans componenten en primitives. Dit maakt ze goede kandidaten voor een [Register](/registry) distributiemethode.
+</AuthorNote>
+
+### 1.5 Pagina
+
+Een complete weergave voor één route, samengesteld uit meerdere blokken die zijn gerangschikt om een specifiek gebruikersgericht doel te dienen. Pagina's combineren blokken in een samenhangende lay-out die één bestemming in een applicatie vertegenwoordigt.
+
+Voorbeelden:
+- Landingspagina (hero-blok + features-blok + prijsblok + footer-blok)
+- Productdetailpagina (afbeeldingsgalerij-blok + productinfo-blok + reviews-blok)
+- Dashboardpagina (statistieken-blok + grafiek-blok + activiteitstroom-blok)
+
+Verwachtingen:
+- Combineert meerdere blokken in een eenduidige lay-out voor één route.
+- Richt zich op lay-out en orkestratie van blokken in plaats van component‑niveau details.
+- Kan pagina-specifieke logica bevatten voor datacoördinatie tussen blokken.
+- Zelfstandig voor één URL/route; niet bedoeld om hergebruikt te worden over routes heen.
+
+### 1.6 Sjabloon
+
+Een multpagina-collectie of volledige site‑scaffold die pagina's, routeringsconfiguratie, gedeelde lay-outs, globale providers en projectstructuur bundelt. Sjablonen zijn complete startpunten voor volledige applicaties of grote applicatie-secties.
+
+Voorbeelden:
+- [TailwindCSS Templates](https://tailwindui.com/templates)
+- [shadcnblocks Templates](https://www.shadcnblocks.com/templates) (volledige applicatieshells)
+- "SaaS starter" (auth-pagina's + dashboard-pagina's + instellingenpagina's + marketingpagina's)
+- "E-commerce template" (winkelfront + productpagina's + checkout-flow + adminpagina's)
+
+Verwachtingen:
+- Bevat meerdere pagina's met routering/ navigatiestructuur.
+- Biedt globale configuratie (theme providers, auth context, layout-schelpen).
+- Opinionated projectstructuur met duidelijke conventies.
+- Ontworpen als een uitgebreid startpunt; fork en pas aan in plaats van importeren als afhankelijkheid.
+- Kan build-configuratie, deployment-setup en ontwikkeltools bevatten.
+
+### 1.7 Utility (Niet‑visueel)
+
+Een helper geëxporteerd voor ontwikkelaarsergonomie of compositie; geen gerenderde UI.
+
+Voorbeelden:
+- React hooks (useControllableState, useId)
+- Klasse‑utilities
+- Keybinding-helpers
+- Focus-scopes
+
+Verwachtingen.
+- Vrij van bijwerkingen (behalve waar expliciet gedocumenteerd).
+- Testbaar in isolatie; ondersteunt tree-shaking.
+
+## 2. API- en compositieterminologie
+
+### 2.1 Props-API
+
+Het publieke configuratie-oppervlak van een component. Props zijn stabiel, getypeerd en gedocumenteerd met standaardwaarden en a11y-gevolgen.
+
+### 2.2 Children / Slots
+
+Plaatsaanduiders voor door de aanroeper geleverde structuur of inhoud.
+- Children (impliciet slot). JSX tussen opening-/sluit-tags.
+- Genoemde slots. Props zoals icon, footer, of `<Component.Slot>` subcomponenten.
+- Slot-forwarding. Doorgeven van DOM-attributen/className/refs naar het onderliggende element.
+
+### 2.3 Render Prop (Functie-als-Child)
+
+Een functie als child die wordt gebruikt om rendering te delegeren terwijl de ouder state/data levert.
+
+```tsx
+<ParentComponent data={data}>
+  {(item) => (
+    <ChildComponent key={item.id} {...item} />
+  )}
+</ParentComponent>
+```
+
+Gebruik wanneer de ouder data/gedrag moet bezitten maar de consument de markup volledig moet kunnen bepalen.
+
+### 2.4 Gecontroleerd vs. Ongecontroleerd
+
+**Gecontroleerd** en **ongecontroleerd** zijn termen die de toestand van een component beschrijven.
+
+**Gecontroleerde** componenten hebben hun waarde gestuurd via props, en geven doorgaans een `onChange`-evenement af (de bron van waarheid is de ouder). **Ongecontroleerde** componenten houden interne state; en kunnen een `defaultValue` en een imperatieve reset blootstellen.
+
+Veel invoervelden zouden beide moeten ondersteunen. Lees meer over [gecontroleerde en ongecontroleerde toestand](/state).
+
+### 2.5 Provider / Context
+
+Een topniveau-component die gedeelde state/configuratie levert aan een subboom (bijv. theme, locale, actieve tab-id). Providers zijn expliciet gedocumenteerd met vereiste plaatsing.
+
+### 2.6 Portal
+
+UI renderen buiten de DOM-hiërarchie om lagen/stacking‑context te beheren (bijv. modals, popovers, toasts), terwijl toegankelijkheid behouden blijft (focus trap, aria-modal, inert achtergrond).
+
+## 3. Styling- en thematerminologie
+
+### 3.1 Headless
+
+Implementeert gedrag en toegankelijkheid zonder een uiterlijk voor te schrijven. Vereist dat de consument styling levert.
+
+### 3.2 Gestyled
+
+Wordt geleverd met standaard visueel ontwerp (CSS-klassen, inline styles of tokens) maar blijft overschrijfvriendelijk (className-merge, CSS-variabelen, theming).
+
+### 3.3 Varianten
+
+Discrete, gedocumenteerde stijl- of gedragsvarianten die via props worden blootgesteld (bijv. `size="sm|md|lg"`, `tone="neutral|destructive"`). Varianten zijn geen aparte componenten.
+
+### 3.4 Ontwerptokens
+
+Genoemde, platform-agnostische waarden (bijv. `--color-bg`, `--radius-md`, `--space-2`) die visueel ontwerp parameteriseren en theming ondersteunen.
+
+## 4. Toegankelijkheidsvocabulaire
+
+### 4.1 Rol / Staat / Eigenschap
+
+WAI-ARIA-attributen die semantiek (`role="menu"`), toestand (`aria-checked`) en relaties (`aria-controls`, `aria-labelledby`) communiceren.
+
+### 4.2 Toetsenkaart
+
+De gedocumenteerde set toetsenbordinteracties voor een widget (bijv. `Tab`, `Arrow keys`, `Home/End`, `Escape`). Elk interactief component verklaart en implementeert een toetsenkaart.
+
+### 4.3 Focusbeheer
+
+Regels voor initiële focus, roving focus, focus trapping en focusteruggave bij teardown.
+
+## 5. Distributieterminologie
+
+### 5.1 Package (Registry-distributie)
+
+De component/bibliotheek wordt gepubliceerd naar een package-registry (bijv. `npm`) en geïmporteerd via een bundler. Geeft de voorkeur aan versiegebaseerde updates en dependency-beheer.
+
+### 5.2 Kopieer-en-plak (Bron-distributie)
+
+Broncode wordt rechtstreeks in het repository van de consument geïntegreerd (vaak via een CLI). Geeft de voorkeur aan eigenaarschap, aanpassing en nul extra runtime.
+
+### 5.3 Register (Catalogus)
+
+Een gecureerde index van artefacten (primitives, componenten, blokken, sjablonen) met metadata, previews en installatie-/kopieerinstructies. Een register is niet per se een package manager.
+
+## 6. Classificatieheuristieken
+
+Gebruik deze beslisflow om een artefact te benoemen en te plaatsen:
+
+1. Omvat het een enkel gedrags- of a11y‑zorgpunt, zonder enige opmaak? → **Primitief**
+2. Is het een gestileerd, herbruikbaar UI‑element dat visueel ontwerp toevoegt aan primitives of meerdere elementen composeert? → **Component**
+3. Lost het een concreet productgebruikgeval op met opinionated compositie en copy? → **Blok**
+4. Scaffold het een pagina/flow met routering/providers en vervangbare regio's? → **Sjabloon**
+5. Is het documentatie van een terugkerende oplossing, onafhankelijk van implementatie? → **Patroon**
+6. Is het niet-visuele logica voor ergonomie/compositie? → **Utility**
+
+## 7. Niet‑doelen en verduidelijkingen
+
+- Web Components vs. "Components." In deze specificatie verwijst "component" naar een herbruikbare UI‑eenheid (voorbeelden in React). Het impliceert niet de HTML Custom Elements-standaard tenzij expliciet vermeld. Gelijke principes zijn van toepassing over frameworks heen.
+- Widgets. De term “widget” wordt vermeden vanwege ambiguïteit; gebruik component (algemeen) of patroon (alleen documentatie-oplossing).
+- Thema's vs. Styles. Een thema is een parameterisatie van styles (via tokens). Styles zijn de concrete presentatie. Componenten moeten thema's ondersteunen; blokken/sjablonen kunnen opinionated styles plus theming-hooks meeleveren.

@@ -1,0 +1,163 @@
+---
+title: Registre
+description: Comprendre le concept de registres de composants, leur fonctionnement et pourquoi ils révolutionnent la manière dont les développeurs partagent et découvrent des composants d'interface utilisateur.
+---
+
+Les registres de composants sont un moyen de partager et de découvrir des composants d'interface utilisateur. Popularisés par [shadcn/ui](https://ui.shadcn.com), ils vous permettent de découvrir et de copier des composants directement dans vos projets.
+
+Les registres représentent un changement fondamental dans la manière dont les développeurs partagent et découvrent des composants d'interface utilisateur. Contrairement aux paquets npm traditionnels, les registres reposent sur un modèle open source et fonctionnent en téléchargeant le code source dans votre projet.
+
+## Qu'est-ce qu'un registre ?
+
+### 1. Distribution du code source
+
+Contrairement aux paquets npm qui distribuent du code compilé, les registres distribuent le code source :
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. Métadonnées et configuration
+
+Les bons registres incluent des métadonnées riches sur les composants telles que le nom, la description, les dépendances et la catégorie.
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. Aperçu et documentation
+
+Même s'ils ne sont pas téléchargés, les sites web de registres fournissent généralement :
+
+- Aperçus en direct des composants
+- Exemples interactifs
+- Documentation détaillée
+- Extraits de code prêts à être copiés
+
+## Avantages de l'architecture de registre
+
+Les registres de composants offrent des avantages significatifs tant pour les auteurs que pour les utilisateurs, en simplifiant le processus de partage et d'adoption des composants d'interface utilisateur.
+
+### Pour les auteurs
+
+Pour les auteurs de composants, les registres rendent la distribution remarquablement simple. Une fois qu'un composant est créé, il peut être ajouté au registre, le rendant instantanément accessible aux utilisateurs sans étapes de publication complexes. Cette facilité de distribution accélère la boucle de retour et encourage l'itération rapide.
+
+La gestion des versions est un autre avantage clé. Les registres suivent généralement les versions des composants, les journaux de modifications et les informations de compatibilité. Par exemple, une fiche de composant peut spécifier sa version courante, mettre en évidence les changements récents tels qu'une meilleure accessibilité ou de nouvelles fonctionnalités, et indiquer quelles versions de shadcn/ui sont compatibles. Cette transparence aide les mainteneurs à communiquer les mises à jour et permet aux utilisateurs de sélectionner des composants adaptés aux exigences de leur projet.
+
+L'engagement communautaire est également renforcé grâce aux registres. Les auteurs peuvent recevoir des retours directs des utilisateurs, qui peuvent signaler des problèmes, demander des fonctionnalités et contribuer à des améliorations collaboratives. Cela favorise un environnement de développement plus interactif et réactif, au bénéfice des créateurs comme des consommateurs.
+
+### Pour les consommateurs
+
+Du point de vue des utilisateurs de composants, les registres améliorent considérablement le processus de découverte. Les utilisateurs peuvent parcourir les composants par catégorie, utiliser la recherche, consulter des métriques de popularité et explorer des composants connexes, ce qui facilite la recherche exacte de ce dont ils ont besoin pour leurs projets.
+
+Avant d'intégrer un composant, les utilisateurs peuvent le prévisualiser en action, tester différentes variantes et examiner son comportement et la qualité du code. Cette capacité à évaluer les composants au préalable réduit les risques et augmente la confiance lors de l'adoption.
+
+Peut-être plus important encore, les registres donnent aux utilisateurs une véritable propriété. Plutôt que d'être enfermés dans une dépendance, les utilisateurs copient le code source directement dans leurs projets. Cela signifie qu'ils peuvent modifier les composants selon leurs besoins, éviter les soucis de gestion des dépendances et conserver le contrôle total de leur base de code.
+
+## Créer un registre
+
+Vous pouvez créer un registre simple assez rapidement. Concrètement, vous n'avez besoin que de 3 éléments principaux :
+
+### 1. Composants
+
+Créez un composant, ou un ensemble de composants, que vous souhaitez partager. Assurez-vous de disposer du code source des composants, et qu'ils soient bien documentés et faciles à comprendre.
+
+Envisagez d'ajouter des éléments tels que de la documentation Markdown, des implémentations exemples, et un moyen de prévisualiser le composant.
+
+### 2. Un point de terminaison public
+
+Créez un point de terminaison public qui sert les composants. Cela peut être un simple fichier JSON, ou un site web plus complexe. Tant qu'il est public et accessible, vous pouvez utiliser n'importe quel endpoint.
+
+### 3. CLI
+
+Créez une CLI qui vous permet d'installer les composants dans votre projet. Cela peut être aussi simple qu'une commande unique, comme `npx myregistry add button`, ou une commande plus complexe avec options et flags.
+
+## Utiliser le registre shadcn
+
+Construire votre propre registre est un excellent moyen de partager vos composants avec la communauté, mais cela demande beaucoup d'efforts et de maintenance. Si vous souhaitez simplement partager un ou deux composants, vous pouvez utiliser l'écosystème shadcn/ui — registre, CLI et variables.
+
+Voyons comment publier en direct un composant `MetricCard` en moins de 5 minutes en utilisant l'hébergement statique de [Vercel](https://vercel.com).
+
+### Étape 1 : Créez un dossier
+
+Créez un dossier avec cette structure :
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+Mettez votre élément de registre JSON (par ex. `metric-card.json`) dans le dossier `public/`.
+
+### Étape 2 : Ajoutez un `vercel.json`
+
+Créez un fichier `vercel.json` à côté de `public/` avec le contenu suivant :
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Cela garantit que votre JSON est servi avec les en-têtes CORS et de contenu appropriés.
+
+### Étape 3 : Déployez sur Vercel
+
+Depuis la racine de votre dossier, exécutez :
+
+```bash
+vercel --prod
+```
+
+et répondez aux invites pour déployer votre projet.
+
+Une fois terminé, votre fichier sera disponible à une adresse du type :
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### Étape 4 : Installez le composant
+
+N'importe qui peut maintenant exécuter :
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+Ni package npm, ni étape de build, ni complexité.

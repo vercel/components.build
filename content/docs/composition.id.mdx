@@ -1,0 +1,233 @@
+---
+title: Komposisi
+description: Dasar untuk membangun komponen UI modern.
+---
+
+Komposisi, atau komposabilitas, adalah dasar untuk membangun komponen UI modern. Ini adalah salah satu teknik paling kuat untuk membuat komponen yang fleksibel dan dapat digunakan ulang yang mampu menangani kebutuhan kompleks tanpa mengorbankan kejelasan API.
+
+Alih-alih memadati semua fungsionalitas ke dalam satu komponen dengan puluhan props, komposisi mendistribusikan tanggung jawab ke beberapa komponen yang saling bekerja sama.
+
+Fernando memberikan presentasi hebat tentang ini di React Universe Conf 2025, di mana dia membagikan pendekatannya untuk membangun kembali Slack's Message Composer sebagai komponen yang dapat dikomposisi.
+
+<Video src="https://www.youtube.com/watch?v=4KvbVq3Eg5w" />
+
+## Membuat komponen dapat dikomposisi
+
+Untuk membuat sebuah komponen dapat dikomposisi, Anda perlu memecahnya menjadi komponen yang lebih kecil dan lebih fokus. Sebagai contoh, mari kita ambil komponen Accordion berikut:
+
+```tsx title="accordion.tsx"
+import { Accordion } from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion data={data} />
+);
+```
+
+Meskipun komponen Accordion ini tampak sederhana, ia menangani terlalu banyak tanggung jawab. Ia bertanggung jawab untuk merender container, trigger dan content; serta menangani state dan data accordion.
+
+Menyesuaikan styling komponen ini sulit karena keterkaitan yang erat. Kemungkinan besar diperlukan override CSS global. Selain itu, menambahkan fungsionalitas baru atau mengubah perilaku memerlukan modifikasi pada kode sumber komponen.
+
+Untuk mengatasinya, kita dapat memecahnya menjadi komponen-komponen yang lebih kecil dan lebih fokus.
+
+### 1. Komponen Root
+
+Pertama, mari fokus pada container — komponen yang menampung semuanya yaitu trigger dan content. Container ini tidak perlu mengetahui data, tetapi perlu melacak state `open`.
+
+Namun, kita juga ingin state ini dapat diakses oleh komponen anak. Jadi, mari gunakan Context API untuk membuat konteks untuk state `open`.
+
+Terakhir, untuk memungkinkan modifikasi elemen `div`, kita akan memperluas atribut HTML default.
+
+Kita akan menamai komponen ini sebagai komponen "Root".
+
+```tsx title="@/components/ui/accordion.tsx"
+type AccordionProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+const AccordionContext = createContext<AccordionProps>({
+  open: false,
+  setOpen: () => {},
+});
+
+export type AccordionRootProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export const Root = ({
+  children,
+  open,
+  setOpen,
+  ...props
+}: AccordionRootProps) => (
+  <AccordionContext.Provider value={{ open, setOpen }}>
+    <div {...props}>{children}</div>
+  </AccordionContext.Provider>
+);
+```
+
+### 2. Komponen Item
+
+Komponen Item adalah elemen yang berisi item accordion. Ini hanyalah pembungkus untuk setiap item di accordion.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionItemProps = React.ComponentProps<'div'>;
+
+export const Item = (props: AccordionItemProps) => <div {...props} />;
+```
+
+### 3. Komponen Trigger
+
+Komponen Trigger adalah elemen yang membuka accordion saat diaktifkan. Ia bertanggung jawab untuk:
+
+- Merender sebagai sebuah button secara default (dapat dikustomisasi dengan `asChild`)
+- Menangani event klik untuk membuka accordion
+- Mengelola fokus saat accordion menutup
+- Menyediakan atribut ARIA yang tepat
+
+Mari tambahkan komponen ini ke dalam komponen Accordion kita.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionTriggerProps = React.ComponentProps<'button'> & {
+  asChild?: boolean;
+};
+
+export const Trigger = ({ asChild, ...props }: AccordionTriggerProps) => (
+  <AccordionContext.Consumer>
+    {({ open, setOpen }) => (
+      <button onClick={() => setOpen(!open)} {...props} />
+    )}
+  </AccordionContext.Consumer>
+);
+```
+
+### 4. Komponen Content
+
+Komponen Content adalah elemen yang berisi content accordion. Ia bertanggung jawab untuk:
+
+- Merender konten ketika accordion dalam keadaan open
+- Menyediakan atribut ARIA yang tepat
+
+Mari tambahkan komponen ini ke dalam komponen Accordion kita.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionContentProps = React.ComponentProps<'div'> & {
+  asChild?: boolean;
+};
+
+export const Content = ({ asChild, ...props }: AccordionContentProps) => (
+  <AccordionContext.Consumer>
+    {({ open }) => <div {...props} />}
+  </AccordionContext.Consumer>
+);
+```
+
+### 5. Menggabungkannya
+
+Sekarang kita memiliki semua komponennya, kita dapat menggabungkannya kembali ke file asli kita.
+
+```tsx title="accordion.tsx"
+import * as Accordion from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion.Root open={false} setOpen={() => {}}>
+    {data.map((item) => (
+      <Accordion.Item key={item.title}>
+        <Accordion.Trigger>{item.title}</Accordion.Trigger>
+        <Accordion.Content>{item.content}</Accordion.Content>
+      </Accordion.Item>
+    ))}
+  </Accordion.Root>
+);
+```
+
+## Konvensi Penamaan
+
+Saat membangun komponen yang dapat dikomposisi, konvensi penamaan yang konsisten sangat penting untuk menciptakan API yang intuitif dan dapat diprediksi. Baik shadcn/ui maupun Radix UI mengikuti pola yang sudah mapan yang telah menjadi standar de facto di ekosistem React.
+
+### Komponen Root
+
+Komponen `Root` berfungsi sebagai container utama yang membungkus semua sub-komponen lainnya. Biasanya ia mengelola state bersama dan konteks dengan menyediakan context kepada semua komponen anak.
+
+```tsx
+<AccordionRoot>{/* Child components */}</AccordionRoot>
+```
+
+### Elemen Interaktif
+
+Komponen interaktif yang memicu aksi atau mengganti state menggunakan nama yang deskriptif:
+
+- `Trigger` - Elemen yang memulai sebuah aksi (membuka, menutup, mengganti status)
+- `Content` - Elemen yang berisi konten utama yang ditampilkan/disembunyikan
+
+```tsx
+<CollapsibleTrigger>Click to expand</CollapsibleTrigger>
+<CollapsibleContent>
+  Hidden content revealed here
+</CollapsibleContent>
+```
+
+### Struktur Konten
+
+Untuk komponen dengan area konten yang terstruktur, gunakan nama semantik yang menjelaskan tujuannya:
+
+- `Header` - Bagian atas yang berisi judul atau kontrol
+- `Body` - Area konten utama
+- `Footer` - Bagian bawah untuk aksi atau metadata
+
+```tsx
+<DialogHeader>
+  {/* Dialog title */}
+</DialogHeader>
+<DialogBody>
+  {/* Dialog content */}
+</DialogBody>
+<DialogFooter>
+  {/* Dialog footer */}
+</DialogFooter>
+```
+
+### Komponen Informasional
+
+Komponen yang menyediakan informasi atau konteks menggunakan sufiks deskriptif:
+
+- `Title` - Judul utama atau label
+- `Description` - Teks penjelas atau konten pendukung
+
+```tsx
+<CardTitle>Project Statistics</CardTitle>
+<CardDescription>
+  View your project's performance over time
+</CardDescription>
+```

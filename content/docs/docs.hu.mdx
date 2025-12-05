@@ -1,0 +1,140 @@
+---
+title: Dokumentáció
+description: Hogyan dokumentáld a komponenseidet.
+---
+
+A jó dokumentáció elengedhetetlen ahhoz, hogy a komponenseid hozzáférhetőek és könnyen használhatóak legyenek. Ez az útmutató vázolja azokat a kulcselemeket, amelyeket minden komponens dokumentációs oldalnak tartalmaznia kell.
+
+## Dokumentációs keretrendszer
+
+A dokumentáció méretezéséhez használhatsz egy dokumentációs keretrendszert. Számos lehetőség áll rendelkezésre a projekt(je)id nyelvétől és igényeitől függően. Népszerű opciók például:
+
+- [Fumadocs](https://fumadocs.dev/) - Gyors, funkciógazdag dokumentációs keretrendszer Next.js-hez
+- [Nextra](https://nextra.site/) - Markdown-alapú dokumentáció beépített kereséssel és témázással
+- [Content Collections](https://content-collections.dev/) - Típusbiztos tartalomkezelés dokumentációhoz
+- [Docusaurus](https://docusaurus.io/) - Funkciógazdag dokumentációs oldalak verziókezelés támogatással
+- [VitePress](https://vitepress.dev/) - Vue-alapú statikus oldalgenerátor, dokumentációra optimalizálva
+
+Ideálisan a választott keretrendszer támogassa a szintaxiskiemelést, egyedi komponenseket, és általánosságban legyen jól megtervezett.
+
+## Alapvető dokumentációs szekciók
+
+### Áttekintés
+
+Kezdd egy rövid bevezetéssel, amely elmagyarázza, mit csinál a komponens és mikor érdemes használni.
+
+### Demó, forráskód és előnézet
+
+Az első benyomás érdekében érdemes egy demót mellékelni, amely a komponenst működés közben mutatja, valamint a demó létrehozásához használt kódot.
+
+Ha egy nyílt forráskódú [Regiszter](/registry)-t használsz, beilleszthetsz egy előnézetet is a komponens létrehozásához használt forráskódról.
+
+Használj kódtömböket szintaxiskiemeléssel és másolás a vágólapra funkcióval. Fontold meg fül alapú felületek használatát, hogy ezek között válthass anélkül, hogy a lap rendezetlenné válna.
+
+### Telepítés
+
+Tartalmazz egy egyértelmű utasítást arra vonatkozóan, hogyan telepíthető a komponens. Ideális esetben ez egy parancs legyen, amit kimásolhatsz és beilleszthetsz a terminálodba.
+
+Ha shadcn/ui-re építesz, használhatod a [shadcn CLI](https://ui.shadcn.com/docs/cli)-t a komponens telepítéséhez, pl.
+
+```package-install
+npx shadcn@latest add <your-component-url>
+```
+
+Ha közvetlenül egy [Piac](/marketplaces)-ra publikálsz, használhatod a piactér CLI-jét a komponens telepítéséhez, pl.
+
+```package-install
+npx shadcn@latest add https://21st.dev/r/<your-author>/<your-component>
+```
+
+Ha nem a shadcn/ui-t használod, de egy [Regiszter](/registry)-t építesz, készíthetsz saját CLI-t a komponens telepítéséhez, pl.
+
+```package-install
+npx your-registry-cli@latest add <your-component-url>
+```
+
+Végül, ha npm-re publikálsz, használhatod az npm CLI-t a komponens telepítéséhez, pl.
+
+```package-install
+npm install <your-component-name>
+```
+
+<Callout>
+Ha több telepítési lehetőséget szeretnél megjeleníteni, mint fent, használhatsz például a Fumadocs [`package-install` szintaxisát](https://fumadocs.dev/docs/headless/mdx/install).
+</Callout>
+
+### Funkciók
+
+Sorold fel a komponensed kulcsfontosságú funkcióit, hogy a felhasználók gyorsan megérthessék a képességeit és előnyeit. Például:
+
+- **Testreszabható** – Könnyen igazítható stílusok, méretek és viselkedés az igényekhez.
+- **Alapból hozzáférhető** – Követi a legjobb gyakorlatokat billentyűzet-navigáció, ARIA szerepek és képernyőolvasó támogatás terén.
+- **Komponálható** – Úgy tervezték, hogy zökkenőmentesen működjön más komponensekkel és mintákkal.
+- **Típusbiztos** – Átfogó TypeScript típusokkal érkezik a maximális biztonság és automatikus kiegészítés érdekében.
+- **Témázás támogatás** – Integrálható a dizájn tokenjeiddel vagy témarendszereddel.
+- **Könnyű** – Minimális függőségek és teljesítményre optimalizálva.
+- **SSR/SSG kompatibilis** – Működik szerveroldali és statikus renderelő keretrendszerekkel.
+- **Jól dokumentált** – Tartalmaz világos használati példákat és API referenciát.
+
+Személyre szabhatod ezt a listát a komponensednek megfelelően. Emeld ki, mi teszi egyedivé vagy különösen hasznossá a fejlesztők számára.
+
+### Példák
+
+Mutasd be a komponens rugalmasságát gyakorlati példákkal:
+
+- **Variánsok** - Különböző vizuális stílusok vagy elérhető méretek
+- **Állapotok** - Betöltés, letiltott, hiba vagy siker állapotok
+- **Haladó használat** - Összetett forgatókönyvek és szélsőséges esetek
+- **Kompozíció** - Hogyan működik a komponens más komponensekkel
+- **Reszponzív viselkedés** - Hogyan alkalmazkodik különböző képernyőméretekhez
+
+Minden példának tartalmaznia kell a renderelt kimenetet és a hozzá tartozó kódot is.
+
+### Props és API referencia
+
+Dokumentáld az összes elérhető prop-ot, metódust és konfigurációs lehetőséget. Érdemes a kapcsolódó prop-okat csoportosítani és kiemelni a gyakran használtakat. Minden prop esetén tüntesd fel:
+
+- **Név** - A prop azonosítója
+- **Típus** - TypeScript típusdefiníció
+- **Alapértelmezett** - Az alapértelmezett érték, ha nincs megadva
+- **Kötelező** - Hogy a prop kötelező-e
+- **Leírás** - Mit csinál a prop és mikor használjuk
+
+<Callout>
+Ha Fumadocs-ot használsz, érdemes megfontolnod az Auto Type Table használatát az pontosság biztosítása és a karbantartási terhek csökkentése érdekében.
+</Callout>
+
+### Hozzáférhetőség
+
+Dokumentáld, hogyan támogatja a komponensed a hozzáférhetőségi funkciókat:
+
+- Billentyűzet-navigációs minták
+- ARIA attribútumok és szerepek
+- Képernyőolvasó támogatás
+- Fókuszkezelés
+- Színkontraszt szempontok
+
+### Változásnapló és verziózás
+
+Hasznos lehet minden komponens dokumentációs oldalán fenntartani egy változásnaplót, amely lefedi:
+
+- Verziószámok szemantikus verziózás szerint
+- Új funkciók és fejlesztések
+- Hibajavítások
+- Törő változások
+- Migrációs útmutatók főverzió frissítésekhez
+
+Segíts a felhasználóknak megérteni, mi változott a verziók között és hogyan lehet biztonságosan frissíteni. Tartalmazz kódpéldákat, amelyek bemutatják a törő változások előtti/utáni mintákat.
+
+<Callout>
+Ha a szintaxiskiemelő keretrendszered támogatja (például Shiki), érdemes lehet egy [diff transzformer jelölést](https://shiki.style/packages/transformers#transformernotationdiff) használni a verziók közötti változások bemutatásához.
+</Callout>
+
+## Legjobb gyakorlatok
+
+- Tartsd naprakészen a dokumentációt a kódbeli változásokkal
+- Használj valós példákat, amelyek valódi problémákat oldanak meg
+- Tartalmazz gyakori buktatókat és hibakeresési tippeket
+- Adj teljesítménybeli megfontolásokat, ha releváns
+- Linkelj kapcsolódó komponensekre és mintákra
+- Tedd az összes kódpéldát futtathatóvá és tesztelve biztosíthatóvá

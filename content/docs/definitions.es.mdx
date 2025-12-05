@@ -1,0 +1,234 @@
+---
+title: Definiciones
+description: Esta página establece la terminología precisa utilizada a lo largo de la especificación. Los términos son intencionadamente agnósticos al framework, pero usaremos React para los ejemplos.
+---
+
+## 1. Taxonomía de Artefactos
+
+### 1.1 Primitivo
+
+Un primitivo (o, componente sin estilo) es el **bloque de construcción de más bajo nivel** que proporciona comportamiento y accesibilidad sin ningún estilo.
+
+Los primitivos son completamente sin estilo (es decir, *headless*) y encapsulan semántica, gestión del foco, interacción por teclado, enmascaramiento/portales, enlace ARIA, medición y preocupaciones similares. Proporcionan la base de comportamiento pero requieren estilos para convertirse en una IU acabada.
+
+Ejemplos:
+
+- [Radix UI Primitives](https://www.radix-ui.com/primitives) (Dialog, Popover, Tooltip, etc.)
+- [React Aria Components](https://react-spectrum.adobe.com/react-aria)
+- [Base UI](https://base-ui.com)
+- [Headless UI](https://headlessui.com/)
+
+Expectativas:
+
+- Completamente sin estilos (*headless*).
+- Responsabilidad única; componible en componentes estilizados.
+- Se entrega con comportamiento de accesibilidad exhaustivo para su rol.
+- Versionado que favorece la estabilidad; los cambios incompatibles son raros y documentados.
+
+<Callout>
+Los términos *primitivo* y *componente* se usan típicamente de forma intercambiable en la web, pero no son lo mismo.
+</Callout>
+
+### 1.2 Componente
+
+Un componente es una unidad de IU reutilizable y estilizada que añade diseño visual a primitivos o compone múltiples elementos para crear elementos de interfaz completos y funcionales.
+
+Los componentes siguen siendo relativamente de bajo nivel pero incluyen estilos, lo que los hace inmediatamente utilizables en aplicaciones. Normalmente envuelven primitivos sin estilo con un diseño visual por defecto mientras permanecen personalizables.
+
+Ejemplos:
+- [shadcn/ui components](https://ui.shadcn.com/) (wrappers estilizados de los primitivos de Radix)
+- [Material UI components](https://mui.com/components/)
+- [Ant Design components](https://ant.design/components/overview/)
+
+Expectativas:
+- API de props clara; soporta uso controlado y no controlado donde aplique.
+- Incluye estilo por defecto pero permite sobreescritura fácilmente (classes, tokens, slots).
+- Totalmente accesible por teclado y amigable para lectores de pantalla (hereda de los primitivos).
+- Componible (children/slots, render props, o subcomponentes compuestos).
+- Puede construirse a partir de primitivos o implementar comportamiento directamente con estilos.
+
+### 1.3 Patrón
+
+Los patrones son una composición específica de primitivos o componentes que se usan para resolver un problema UI/UX concreto.
+
+Ejemplos:
+- Validación de formularios con errores en línea
+- Confirmación de acciones destructivas
+- Búsqueda tipo typeahead
+- IU optimista
+
+Expectativas.
+- Describe comportamiento, a11y, mapa de teclado y modos de fallo.
+- Puede incluir implementaciones de referencia en múltiples frameworks.
+
+### 1.4 Bloque
+
+Una composición opinada, lista para producción de componentes que resuelve un caso de uso de interfaz concreto (a menudo específico del producto) con andamiaje de contenido. Los bloques intercambian generalidad por velocidad de adopción.
+
+Ejemplos:
+- Tabla de precios
+- Pantallas de autenticación
+- Stepper de onboarding
+- Panel de chat con IA
+- Formulario de configuración de facturación
+
+Expectativas.
+- Valores predeterminados fuertes, fácil de copiar/pegar, fácilmente brandable/temable.
+- Lógica mínima más allá del diseño y la orquestación; la lógica del dominio está esbozada mediante handlers.
+- Acepta datos vía props; nunca oculta datos detrás de fetches sin un adaptador documentado.
+
+<AuthorNote name="Rob Austin" role="Founder of shadcnblocks.com" githubUsername="JugglerX" link="https://www.shadcnblocks.com/">
+Los bloques típicamente no son reutilizables como un componente. No los importas, pero normalmente importan componentes y primitivos. Esto los convierte en buenos candidatos para un método de distribución de [Registry](/registry).
+</AuthorNote>
+
+### 1.5 Página
+
+Una vista completa de una sola ruta compuesta por múltiples bloques dispuestos para servir un propósito específico orientado al usuario. Las páginas combinan bloques en un diseño cohesivo que representa un destino en una aplicación.
+
+Ejemplos:
+- Página de aterrizaje (bloque hero + bloque de características + bloque de precios + bloque de footer)
+- Página de detalle de producto (bloque de galería de imágenes + bloque de información del producto + bloque de reseñas)
+- Página de dashboard (bloque de estadísticas + bloque de gráficos + bloque de feed de actividad)
+
+Expectativas:
+- Combina múltiples bloques en un diseño unificado para una sola ruta.
+- Se centra en el diseño y la orquestación de bloques más que en detalles a nivel de componente.
+- Puede incluir lógica específica de la página para la coordinación de datos entre bloques.
+- Autocontenida para una única URL/ruta; no está pensada para reutilizarse entre rutas.
+
+### 1.6 Plantilla
+
+Una colección de múltiples páginas o andamiaje de sitio completo que agrupa páginas, configuración de enrutamiento, layouts compartidos, providers globales y estructura del proyecto. Las plantillas son puntos de partida completos para aplicaciones enteras o secciones importantes de una aplicación.
+
+Ejemplos:
+- [TailwindCSS Templates](https://tailwindui.com/templates)
+- [shadcnblocks Templates](https://www.shadcnblocks.com/templates) (shells de aplicación completos)
+- "SaaS starter" (páginas de auth + páginas de dashboard + páginas de configuración + páginas de marketing)
+- "Plantilla de comercio electrónico" (vitrina + páginas de producto + flujo de checkout + páginas de administración)
+
+Expectativas:
+- Incluye múltiples páginas con estructura de routing/navegación.
+- Proporciona configuración global (theme providers, contexto de auth, shells de layout).
+- Estructura de proyecto opinada con convenciones claras.
+- Diseñada como un punto de partida completo; forkear y personalizar en lugar de importar como dependencia.
+- Puede incluir configuración de build, setup de despliegue y herramientas de desarrollo.
+
+### 1.7 Utilidad (No visual)
+
+Un helper exportado para ergonomía del desarrollador o composición; no es UI renderizada.
+
+Ejemplos:
+- Hooks de React (useControllableState, useId)
+- Utilidades de clases
+- Helpers de keybinding
+- Focus scopes
+
+Expectativas.
+- Sin efectos secundarios (excepto donde esté documentado explícitamente).
+- Testeable en aislamiento; soporta tree-shaking.
+
+## 2. Vocabulario de API y Composición
+
+### 2.1 API de Props
+
+La superficie de configuración pública de un componente. Las props son estables, tipadas y documentadas con valores por defecto y ramificaciones de accesibilidad.
+
+### 2.2 Children / Slots
+
+Marcadores de posición para estructura o contenido proporcionado por el llamador.
+- Children (slot implícito). JSX entre etiquetas de apertura/cierre.
+- Named slots. Props como icon, footer, o subcomponentes `<Component.Slot>`.
+- Slot forwarding. Pasar atributos DOM/className/refs al elemento subyacente.
+
+### 2.3 Render Prop (Function-as-Child)
+
+Un child función usado para delegar el renderizado mientras el padre suministra estado/datos.
+
+```tsx
+<ParentComponent data={data}>
+  {(item) => (
+    <ChildComponent key={item.id} {...item} />
+  )}
+</ParentComponent>
+```
+
+Úsalo cuando el padre deba poseer datos/comportamiento pero el consumidor deba controlar completamente el marcado.
+
+### 2.4 Controlado vs. No controlado
+
+**Controlado** y **no controlado** son términos usados para describir el estado de un componente.
+
+**Controlado** los componentes tienen su valor dirigido por props, y típicamente emiten un evento `onChange` (la fuente de la verdad es el padre). **No controlado** los componentes mantienen estado interno; y pueden exponer un `defaultValue` y un reset imperativo.
+
+Muchos inputs deberían soportar ambos. Aprende más sobre [controlled and uncontrolled state](/state).
+
+### 2.5 Provider / Context
+
+Un componente de nivel superior que suministra estado/configuración compartida a un subárbol (por ejemplo, theme, locale, id de pestaña activa). Los providers están documentados explícitamente con colocación requerida.
+
+### 2.6 Portal
+
+Renderizar UI fuera de la jerarquía DOM para gestionar contexto de apilamiento/encapsulado (por ejemplo, modales, popovers, toasts), mientras se preserva la a11y (trampa de foco, aria-modal, fondo inerte).
+
+## 3. Vocabulario de Estilado y Theming
+
+### 3.1 Headless
+
+Implementa comportamiento y accesibilidad sin prescribir apariencia. Requiere que el consumidor proporcione el estilado.
+
+### 3.2 Estilizado
+
+Se entrega con diseño visual por defecto (clases CSS, estilos inline o tokens) pero sigue siendo fácil de sobreescribir (merge de className, vars CSS, theming).
+
+### 3.3 Variantes
+
+Permutaciones discretas y documentadas de estilo o comportamiento expuestas vía props (por ejemplo, `size="sm|md|lg"`, `tone="neutral|destructive"`). Las variantes no son componentes separados.
+
+### 3.4 Design Tokens
+
+Valores nombrados y agnósticos a la plataforma (por ejemplo, `--color-bg`, `--radius-md`, `--space-2`) que parametrizan el diseño visual y soportan theming.
+
+## 4. Vocabulario de Accesibilidad
+
+### 4.1 Rol / Estado / Propiedad
+
+Atributos WAI-ARIA que comunican semántica (`role="menu"`), estado (`aria-checked`) y relaciones (`aria-controls`, `aria-labelledby`).
+
+### 4.2 Mapa de Teclado
+
+El conjunto documentado de interacciones por teclado para un widget (por ejemplo, `Tab`, `Arrow keys`, `Home/End`, `Escape`). Cada componente interactivo declara e implementa un mapa de teclado.
+
+### 4.3 Gestión del Foco
+
+Reglas para foco inicial, foco itinerante (roving focus), captura de foco y retorno de foco al desmontar.
+
+## 5. Vocabulario de Distribución
+
+### 5.1 Paquete (Distribución por Registry)
+
+El componente/biblioteca se publica en un registro de paquetes (por ejemplo, `npm`) y se importa mediante un bundler. Favorece actualizaciones versionadas y gestión de dependencias.
+
+### 5.2 Copiar-y-Pegar (Distribución por Fuente)
+
+El código fuente se integra directamente en el repositorio del consumidor (a menudo vía un CLI). Favorece la propiedad, personalización y cero runtime extra.
+
+### 5.3 Registry (Catálogo)
+
+Un índice curado de artefactos (primitivos, componentes, bloques, plantillas) con metadata, vistas previas e instrucciones de instalación/copia. Un registry no es necesariamente un gestor de paquetes.
+
+## 6. Heurísticas de Clasificación
+
+Usa este flujo de decisión para nombrar y ubicar un artefacto:
+
+1. ¿Encapsula un único comportamiento o preocupación de accesibilidad, sin estilos? → **Primitivo**
+2. ¿Es un elemento de IU estilizado y reutilizable que añade diseño visual a primitivos o compone múltiples elementos? → **Componente**
+3. ¿Resuelve un caso de uso concreto de producto con composición opinada y copy? → **Bloque**
+4. ¿Estructura una página/flujo con routing/providers y regiones reemplazables? → **Plantilla**
+5. ¿Es documentación de una solución recurrente, independiente de la implementación? → **Patrón**
+6. ¿Es lógica no visual para ergonomía/composición? → **Utilidad**
+
+## 7. No-Objetivos y Aclaraciones
+
+- Web Components vs. "Components". En esta especificación, "componente" se refiere a una unidad reutilizable de IU (ejemplos en React). No implica el estándar HTML Custom Elements a menos que se indique explícitamente. Los principios equivalentes aplican a través de los frameworks.
+- Widgets. Se evita el término “widget” debido a su ambigüedad; usa componente (general) o patrón (solución solo documental).
+- Temas vs. Estilos. Un tema es una parametrización de estilos (vía tokens). Los estilos son la presentación concreta. Los componentes deberían soportar temas; los bloques/plantillas pueden incluir estilos opinados además de hooks de theming.

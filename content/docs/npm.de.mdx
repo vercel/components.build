@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Wie Sie Ihre Komponenten bei NPM veröffentlichen.
+---
+
+NPM-Pakete stellen den traditionellen Ansatz zur Verteilung von Komponentenbibliotheken dar. Während [registries](/registry) aufgrund ihrer Flexibilität an Popularität gewonnen haben, bleibt das Veröffentlichen bei npm eine leistungsfähige Option mit klaren Vorteilen für bestimmte Anwendungsfälle.
+
+Der grundlegende Unterschied zwischen npm-Paketen und Registries liegt darin, wie sie Code verteilen und Eigentum verwalten.
+
+## Paketmodell
+
+Wenn Sie Komponenten als npm-Paket veröffentlichen, verteilen Sie vorgefertigten, versionierten Code, den Benutzer als Abhängigkeit installieren:
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+Das bietet mehrere überzeugende Vorteile, die sie zur richtigen Wahl für viele Komponentenbibliotheken machen.
+
+### Versionsverwaltung
+
+Als Paketautor kontrollieren Sie die Versionierung und Updates. Benutzer können auf bestimmte Versionen fixieren, was Stabilität gewährleistet:
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+Diese zentralisierte Versionskontrolle bedeutet, dass Sie Updates, Sicherheitsfixes und neue Funktionen bereitstellen können, die Benutzer über normale Abhängigkeitsaktualisierungen erhalten.
+
+### Vereinfachte Installation
+
+NPM-Pakete bieten eine reibungslose Installationserfahrung. Ein einziger Befehl fügt Ihre gesamte Komponentenbibliothek hinzu:
+
+```bash
+npm install @acme/ui-components
+```
+
+Kein manuelles Kopieren von Dateien, Verwalten von Abhängigkeiten oder Konfigurieren von Build-Tools erforderlich. Alles funktioniert sofort.
+
+### Abhängigkeitsauflösung
+
+NPM kümmert sich automatisch um transitive Abhängigkeiten. Wenn Ihre Komponenten spezifische Versionen von React, Framer Motion oder anderen Bibliotheken benötigen, löst npm diese Abhängigkeiten automatisch und verhindert Versionskonflikte.
+
+### TypeScript-Unterstützung
+
+Veröffentlichte Pakete können vorgefertigte Typdefinitionen enthalten, die sofortige TypeScript-Unterstützung ohne zusätzliche Konfiguration bieten:
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## Einschränkungen von NPM-Paketen
+
+Während npm-Pakete in der Distribution überzeugen, haben sie Nachteile, die Registries gezielt adressieren.
+
+### Eigentum am Quellcode
+
+Die wichtigste Einschränkung ist der fehlende Zugriff auf den Quellcode. Benutzer können nicht:
+
+- Das Verhalten von Komponenten direkt ändern
+- Fehler beheben, ohne auf Updates zu warten
+- Implementierungsdetails anpassen
+- Unbenutzten Code entfernen
+
+Dies schafft eine Abhängigkeitsbeziehung, in der Benutzer für alle Änderungen auf den Paketmaintainer angewiesen sind.
+
+### Anpassungseinschränkungen
+
+Anpassungen an Komponenten erfordern die Arbeit innerhalb der bereitgestellten API. Während Sie Props zur Anpassung bereitstellen können:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+Benutzer können das Funktionsprinzip der Komponente nicht grundlegend ändern, ohne das gesamte Paket zu forken.
+
+### Bundle-Größe
+
+NPM-Pakete enthalten alle Komponenten, selbst wenn Benutzer nur einen Teil benötigen. Zwar hilft tree-shaking, aber es ist nicht immer perfekt und kann unnötiges Gewicht für Anwendungen hinzufügen.
+
+## CSS- und Tailwind-Konfiguration
+
+Eine wichtige Überlegung beim Veröffentlichen Tailwind-basierter Komponenten über npm ist, sicherzustellen, dass Styles in der konsumierenden Anwendung korrekt funktionieren.
+
+Standardmäßig generiert Tailwind nur Styles für Klassen, die es in Ihren Projektdateien findet. Es schaut nicht in `node_modules` hinein, was bedeutet, dass die Styles Ihrer Komponenten nicht enthalten werden.
+
+Um dies zu beheben, müssen Benutzer eine `@source`-Direktive zu ihrer Tailwind-Konfiguration hinzufügen, die Tailwind anweist, Ihr Paket nach Klassennamen zu durchsuchen:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+Dokumentieren Sie diese Anforderung stets deutlich in der README Ihres Pakets.
+
+## Veröffentlichen Ihrer Komponentenbibliothek
+
+Um Ihre Komponenten bei npm zu veröffentlichen, benötigen Sie eine korrekt konfigurierte `package.json`, die folgendermaßen aussehen könnte:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+NPM-Pakete bleiben ein wesentlicher Bestandteil des Komponenten-Ökosystems. Während Registries überzeugende Vorteile in Bezug auf Quellcode-Eigentum und Anpassbarkeit bieten, liefern npm-Pakete die Stabilität, Versionsverwaltung und Benutzerfreundlichkeit, die viele Teams benötigen.
+
+Entscheidend ist, die Bedürfnisse Ihrer Nutzer zu verstehen und die Verbreitungsmethode zu wählen, die ihnen am besten dient. Manchmal bedeutet das, beide Optionen anzubieten und Entwicklern die Wahl zu überlassen, was für ihr Projekt am besten funktioniert.

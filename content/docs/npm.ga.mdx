@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Conas do chomhpháirteanna a fhoilsiú chuig NPM.
+---
+
+Is ionann pacáistí NPM agus an cur chuige traidisiúnta maidir le leabharlanna comhpháirteanna a dháileadh. Cé go bhfuil tóir á fháil ag [registries](/registry) mar gheall ar a solúbthacht, fanann foilsiú ar npm mar rogha chumhachtach le buntáistí soiléire do chásanna úsáide áirithe.
+
+Tá an difríocht bhunúsach idir pacáistí npm agus registries sa chaoi a ndáileann siad cód agus a mbainistíonn siad úinéireacht.
+
+## Múnla Pacáiste
+
+Nuair a fhoilsíonn tú comhpháirteanna mar phacáiste npm, tá tú ag dháileadh cód réamhthógtha, le leaganú, a shuiteálann úsáideoirí mar spleáchas:
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+Tugann sé seo roinnt buntáistí tarraingteacha a dhéanann iad an rogha cheart do go leor leabharlanna comhpháirte.
+
+### Bainistíocht Leagan
+
+Mar údair an phacáiste, tá tú i gceannas ar leaganú agus nuashonruithe. Is féidir le húsáideoirí daingniú ar leaganacha sonracha, ag cinntiú cobhsaíochta:
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+Ciallaíonn an rialú leagan lárnach seo gur féidir leat nuashonruithe, patchanna slándála agus gnéithe nua a bhrú a fhaigheann úsáideoirí trí nuashonruithe spleáchais chaighdeánacha.
+
+### Suiteáil Simplithe
+
+Soláthraíonn pacáistí NPM taithí suiteála gan fhriotaíocht. Cuirtear do leabharlann chomhpháirte uilig leis le hordú amháin:
+
+```bash
+npm install @acme/ui-components
+```
+
+Níl gá comhaid a chóipeáil de láimh, spleáchais a bhainistiú, ná uirlisí tógála a chumrú. Oibríonn gach rud go huathoibríoch.
+
+### Réiteach Spleáchais
+
+Bainistíonn npm spleáchais trasghnóthacha go huathoibríoch. Má éilíonn do chomhpháirteanna leaganacha sonracha de React, Framer Motion, nó leabharlanna eile, réitíonn npm na spleáchais seo go huathoibríoch, ag cosc ar choimhlintí leagan.
+
+### Tacaíocht TypeScript
+
+Is féidir le pacáistí foilsiúla sainmhínithe cineál réamhthógtha a áireamh, ag tabhairt tacaíochta TypeScript láithreach gan cumraíocht bhreise:
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## Teorainneacha Pacáistí NPM
+
+Cé go n-éiríonn le pacáistí npm sa dáileadh, tagann siad le tairgiúlachtaí atá á réiteach go sonrach ag registries.
+
+### Úinéireacht Chóid Fhoinse
+
+Is é an teorainn is suntasaí ná an easpa rochtana ar chód foinse. Ní féidir le húsáideoirí:
+
+- Athrú ar iompar an chomhpháirt go díreach
+- Lochtanna a shocrú gan fanacht ar nuashonruithe
+- Sonraí cur i bhfeidhm a shaincheapadh
+- Cód nach n-úsáidtear a bhaint
+
+Cruthaíonn sé seo caidreamh spleáchais ina gcaithfidh úsáideoirí brath ar bhainisteoir an phacáiste do gach athrú.
+
+### Srianta Saincheaptha
+
+Éilíonn tweakáil ar chomhpháirteanna oibriú laistigh den API nochtaithe. Cé gur féidir leat props a sholáthar don saincheaptha:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+Ní féidir le húsáideoirí bunúsach a athrú ar an gcaoi a n-oibríonn an chomhpháirt gan an pacáiste iomlán a fhoirc.
+
+### Méid an Phacáiste
+
+Cuimsíonn pacáistí NPM na comhpháirteanna go léir, fiú má tá ach fo-sraith ag teastáil ó úsáideoirí. Cé go gcabhraíonn tree-shaking, ní bhíonn sé foirfe i gcónaí, agus d’fhéadfadh sé meáchan neamhriachtanach a chur le feidhmchláir.
+
+## Cumraíocht CSS agus Tailwind
+
+Tá ceanncheist thábhachtach nuair a fhoilsíonn tú comhpháirteanna bunaithe ar Tailwind trí npm ná a chinntiú go n-oibríonn na stíleanna i gceart sa fheidhmchlár tomhaltais.
+
+De réir réamhshocraithe, táirgeann Tailwind stíleanna do na rangaí amháin a aimsíonn sé i do chomhaid tionscadail. Ní fhéachann sé isteach i `node_modules`, rud a chiallaíonn nach mbeidh stíleanna do chomhpháirte san áireamh.
+
+Chun é seo a shocrú, caithfidh úsáideoirí treoir `@source` a chur lena gcumraíocht Tailwind, ag rá leis pacáiste a scanadh le haghaidh ainmneacha ranga:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+Déanaigh an éilimh seo a dhoiciméadú go láidir i README do phacáiste.
+
+## Do Leabharlann Chomhpháirte a Fhoilsiú
+
+Chun do chomhpháirteanna a fhoilsiú ar npm, tá `package.json` go maith cumraithe de dhíth ort a d'fhéadfadh breathnú mar seo:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+Fanann pacáistí NPM mar chuid riachtanach den éiceachóras comhpháirte. Cé go dtugann registries buntáistí tarraingteacha maidir le húinéireacht cóid foinse agus saincheaptha, cuireann pacáistí npm cobhsaíocht, bainistíocht leagan agus éascaíocht úsáide ar fáil atá ag teastáil ó go leor foirne.
+
+Is é an príomhchuid ná tuiscint a bheith agat ar riachtanais do úsáideoirí agus an modh dáileacháin a roghnú a fhreastalaíonn orthu is fearr. Uaireanta, ciallaíonn sin an dá rogha a thairiscint agus ligean do fhorbróirí cinneadh a dhéanamh faoi cad is fearr dá dtionscadal.

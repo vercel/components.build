@@ -1,0 +1,185 @@
+---
+title: 型
+description: ブラウザのネイティブHTML要素を拡張して最大限のカスタマイズを可能にする。
+---
+
+再利用可能なコンポーネントを構築する際、適切な型付けは柔軟でカスタマイズ可能、かつ型安全なインターフェースを作るために不可欠です。コンポーネントの型に関する確立されたパターンに従うことで、強力で使いやすいコンポーネントを提供できます。
+
+## 単一要素のラッピング
+
+エクスポートされる各コンポーネントは理想的には単一のHTMLまたはJSX要素をラップするべきです。この原則は合成可能でカスタマイズしやすいコンポーネントを作るために基本となります。
+
+コンポーネントが複数の要素をラップしていると、プロップの掘り下げ（prop drilling）や複雑なAPIなしに特定の部分をカスタマイズすることが難しくなります。次のアンチパターンを考えてください：
+
+```tsx title="@/components/ui/card.tsx"
+const Card = ({ title, description, footer, ...props }) => (
+  <div {...props}>
+    <div className="card-header">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div className="card-footer">
+      {footer}
+    </div>
+  </div>
+);
+```
+
+前述の[コンポジション](/composition)で説明したように、このアプローチは以下のような問題を引き起こします：
+- ヘッダーのスタイリングを追加のプロップなしでカスタマイズできない
+- タイトルや説明に使われるHTML要素を制御できない
+- 特定のDOM構造に強制される
+
+代わりに、各レイヤーはそれ自体のコンポーネントにするべきです。これにより各レイヤーを独立してカスタマイズでき、タイトルや説明に使用する正確なHTML要素を制御できます。
+
+このアプローチの利点は次のとおりです：
+- **最大限のカスタマイズ** - ユーザーは各レイヤーを独立してスタイルや修正が可能
+- **propの掘り下げが不要** - props はそれを必要とする要素に直接渡される
+- **セマンティックなHTML** - ユーザーは正確なDOM構造を確認・制御できる
+- **アクセシビリティの向上** - ARIA属性やセマンティック要素を直接制御できる
+- **単純なメンタルモデル** - 1つのコンポーネント = 1つの要素
+
+## HTML属性の拡張
+
+各コンポーネントはラップする要素のネイティブHTML属性を拡張するべきです。これによりユーザーは基盤となるHTML要素を完全に制御できます。
+
+### 基本パターン
+
+```tsx
+export type CardRootProps = React.ComponentProps<'div'> & {
+  // Add your custom props here
+  variant?: 'default' | 'outlined';
+};
+
+export const CardRoot = ({ variant = 'default', ...props }: CardRootProps) => (
+  <div {...props} />
+);
+```
+
+### 一般的なHTML属性の型
+
+ReactはすべてのHTML要素に対する型定義を提供しています。コンポーネントに適したものを使用してください：
+
+```tsx
+// For div elements
+type DivProps = React.ComponentProps<'div'>;
+
+// For button elements
+type ButtonProps = React.ComponentProps<'button'>;
+
+// For input elements
+type InputProps = React.ComponentProps<'input'>;
+
+// For form elements
+type FormProps = React.ComponentProps<'form'>;
+
+// For anchor elements
+type LinkProps = React.ComponentProps<'a'>;
+```
+
+### 異なる要素タイプの処理
+
+コンポーネントが異なる要素としてレンダリングできる場合は、ジェネリクスやユニオン型を使用してください：
+
+```tsx
+// Using discriminated unions
+export type ButtonProps =
+  | (React.ComponentProps<'button'> & { asChild?: false })
+  | (React.ComponentProps<'div'> & { asChild: true });
+
+// Or with a polymorphic approach
+export type PolymorphicProps<T extends React.ElementType> = {
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
+```
+
+### カスタムコンポーネントの拡張
+
+既存のコンポーネントを拡張する場合、`ComponentProps` 型を使用してコンポーネントの props を取得できます。
+
+```tsx title="@/components/ui/share-button.tsx"
+import type { ComponentProps } from 'react';
+
+export type ShareButtonProps = ComponentProps<'button'>;
+
+export const ShareButton = (props: ShareButtonProps) => (
+  <button {...props} />
+);
+```
+
+## 型のエクスポート
+
+常にコンポーネントの prop 型をエクスポートしてください。これにより利用者がさまざまなユースケースでそれらを利用できるようになります。
+
+型をエクスポートすることでいくつかの重要なパターンが可能になります：
+
+```tsx
+// 1. Extracting specific prop types
+import type { CardRootProps } from '@/components/ui/card';
+type variant = CardRootProps['variant'];
+
+// 2. Extending components
+export type ExtendedCardProps = CardRootProps & {
+  isLoading?: boolean;
+};
+
+// 3. Creating wrapper components
+const MyCard = (props: CardRootProps) => (
+  <CardRoot {...props} className={cn('my-custom-class', props.className)} />
+);
+
+// 4. Type-safe prop forwarding
+function useCardProps(): Partial<CardRootProps> {
+  return {
+    variant: 'outlined',
+    className: 'custom-card',
+  };
+}
+```
+
+Your exported types should be named `<ComponentName>Props`. This is a convention that helps other developers understand the purpose of the type.
+
+## ベストプラクティス
+
+### 1. 常に props を最後にスプレッドする
+
+ユーザーがデフォルトの props を上書きできるようにしてください：
+
+```tsx
+// ✅ Good - user props override defaults
+<div className="default-class" {...props} />
+
+// ❌ Bad - defaults override user props
+<div {...props} className="default-class" />
+```
+
+### 2. prop名の競合を避ける
+
+意図的にオーバーライドする場合を除き、HTML属性と競合するprop名は使用しないでください：
+
+```tsx
+// ❌ Bad - conflicts with HTML title attribute
+export type CardProps = React.ComponentProps<'div'> & {
+  title: string; // This conflicts with the HTML title attribute
+};
+
+// ✅ Good - use a different name
+export type CardProps = React.ComponentProps<'div'> & {
+  heading: string;
+};
+```
+
+### 3. カスタムpropsをドキュメント化する
+
+カスタムpropsにはJSDocコメントを追加して、開発者体験を向上させてください：
+
+```tsx
+export type DialogProps = React.ComponentProps<'div'> & {
+  /** Whether the dialog is currently open */
+  open: boolean;
+  /** Callback when the dialog requests to be closed */
+  onOpenChange: (open: boolean) => void;
+  /** Whether to render the dialog in a portal */
+  modal?: boolean;
+};
+```

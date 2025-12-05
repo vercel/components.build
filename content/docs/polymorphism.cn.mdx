@@ -1,0 +1,578 @@
+---
+title: 多态
+description: 如何使用 `as` prop 在保持组件功能的同时更改渲染的 HTML 元素。
+---
+
+The `as` prop is a fundamental pattern in modern React component libraries that allows you to change the underlying HTML element or component that gets rendered.
+
+Popularized by libraries like [Styled Components](https://styled-components.com/), [Emotion](https://emotion.sh/), and [Chakra UI](https://chakra-ui.com/), this pattern provides flexibility in choosing semantic HTML while maintaining component styling and behavior.
+
+The `as` prop enables polymorphic components - components that can render as different element types while preserving their core functionality:
+
+```tsx
+<Button as="a" href="/home">
+  Go Home
+</Button>
+
+<Button as="button" type="submit">
+  Submit Form
+</Button>
+
+<Button as="div" role="button" tabIndex={0}>
+  Custom Element
+</Button>
+```
+
+## 理解 `as`
+
+The `as` prop allows you to override the default element type of a component. Instead of being locked into a specific HTML element, you can adapt the component to render as any valid HTML tag or even another React component.
+
+For example:
+
+```tsx
+// Default renders as a div
+<Box>Content</Box>
+
+// Renders as a section
+<Box as="section">Content</Box>
+
+// Renders as a nav
+<Box as="nav">Content</Box>
+```
+
+This renders different HTML elements:
+```html
+<!-- Default -->
+<div>Content</div>
+
+<!-- With as="section" -->
+<section>Content</section>
+
+<!-- With as="nav" -->
+<nav>Content</nav>
+```
+
+## 实现方法
+
+There are two main approaches to implementing polymorphic components: a manual implementation and using Radix UI's `Slot` component.
+
+### 手动实现
+
+The `as` prop implementation uses dynamic component rendering:
+
+```tsx
+// Simplified implementation
+function Component({
+  as: Element = 'div',
+  children,
+  ...props
+}) {
+  return <Element {...props}>{children}</Element>;
+}
+
+// More complete implementation with TypeScript
+type PolymorphicProps<E extends React.ElementType> = {
+  as?: E;
+  children?: React.ReactNode;
+} & React.ComponentPropsWithoutRef<E>;
+
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  children,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props}>{children}</Element>;
+}
+```
+
+该组件：
+1. 接受一个带默认元素类型的 `as` prop
+2. 使用提供的元素，或回退到默认元素
+3. 将所有其他 props 展开并传递给渲染的元素
+4. 通过 TypeScript 泛型保持类型安全
+
+### 使用 Radix UI 的 Slot
+
+[Radix UI](https://www.radix-ui.com/) provides a `Slot` component that offers a more powerful alternative to the `as` prop pattern. Instead of just changing the element type, `Slot` merges props with the child component, enabling composition patterns.
+
+First, install the package:
+
+```package-install
+npm install @radix-ui/react-slot
+```
+
+The `asChild` pattern uses a boolean prop instead of specifying the element type:
+
+```tsx
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+const itemVariants = cva(
+  "rounded-lg border p-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-white",
+        primary: "bg-blue-500 text-white",
+      },
+      size: {
+        default: "h-10 px-4",
+        sm: "h-8 px-3",
+        lg: "h-12 px-6",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+function Item({
+  className,
+  variant = "default",
+  size = "default",
+  asChild = false,
+  ...props
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof itemVariants> & { asChild?: boolean }) {
+  const Comp = asChild ? Slot : "div"
+  return (
+    <Comp
+      data-slot="item"
+      data-variant={variant}
+      data-size={size}
+      className={cn(itemVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
+}
+```
+
+Now you can use it in two ways:
+
+```tsx
+// Default: renders as a div
+<Item variant="primary">Content</Item>
+
+// With asChild: merges props with child component
+<Item variant="primary" asChild>
+  <a href="/home">Link with Item styles</a>
+</Item>
+```
+
+`Slot` 组件：
+1. 克隆子元素
+2. 将组件的 props（className、data 属性等）与子元素的 props 合并
+3. 正确转发 refs
+4. 处理事件处理器的组合
+
+### 比较： `as` vs `asChild`
+
+**`as` prop (manual implementation):**
+```tsx
+// Explicit element type
+<Button as="a" href="/home">Link Button</Button>
+<Button as="button" type="submit">Submit Button</Button>
+
+// Simple, predictable API
+// Limited to element types
+```
+
+**`asChild` with Slot:**
+```tsx
+// Implicit from child
+<Button asChild>
+  <a href="/home">Link Button</a>
+</Button>
+
+<Button asChild>
+  <button type="submit">Submit Button</button>
+</Button>
+
+// More flexible composition
+// Works with any component
+// Better prop merging
+```
+
+**关键差异：**
+
+| 特性 | `as` prop | `asChild` + Slot |
+|---------|-----------|------------------|
+| **API 风格** | `<Button as="a">` | `<Button asChild><a /></Button>` |
+| **元素类型** | 在 prop 中指定 | 从子元素推断 |
+| **组件组合** | 受限 | 完全支持 |
+| **Prop 合并** | 基础展开 | 智能合并 |
+| **ref 转发** | 需要手动设置 | 内置 |
+| **事件处理器** | 可能冲突 | 正确组合 |
+| **库大小** | 无额外依赖 | 需要 `@radix-ui/react-slot` |
+
+### 何时使用每种方法
+
+**在以下情况下使用 `as` prop：**
+- 你想要更简洁的 API
+- 你主要在 HTML 元素之间切换
+- 你希望避免额外依赖
+- 组件较简单且不需要复杂的 prop 合并
+
+**在以下情况下使用 `asChild` + Slot：**
+- 你需要与其他组件进行组合
+- 你希望自动合并 props
+- 你正在构建类似 Radix UI 或 shadcn/ui 的组件库
+- 你需要在不同组件类型间可靠地转发 ref
+
+## 主要优势
+
+### 1. 语义化 HTML 的灵活性
+
+The `as` prop ensures you can always use the most semantically appropriate HTML element:
+
+```tsx
+// Navigation container
+<Container as="nav" className="navigation">
+  <NavItems />
+</Container>
+
+// Main content area
+<Container as="main" className="content">
+  <Article />
+</Container>
+
+// Sidebar
+<Container as="aside" className="sidebar">
+  <Widgets />
+</Container>
+```
+
+### 2. 组件可重用性
+
+One component can serve multiple purposes without creating variants:
+
+```tsx
+// Text component used for different elements
+<Text as="h1" size="2xl">Page Title</Text>
+<Text as="p" size="md">Body paragraph</Text>
+<Text as="span" size="sm">Inline text</Text>
+<Text as="label" size="sm">Form label</Text>
+```
+
+### 3. 无障碍性改进
+
+Choose elements that provide the best accessibility for each context:
+
+```tsx
+// Link that looks like a button
+<Button as="a" href="/signup">
+  Sign Up Now
+</Button>
+
+// Button that submits a form
+<Button as="button" type="submit">
+  Submit
+</Button>
+
+// Heading with button styles
+<Button as="h2" role="presentation">
+  Section Title
+</Button>
+```
+
+### 4. 样式系统集成
+
+Maintain consistent styling while changing elements:
+
+```tsx
+const Card = styled.div`
+  padding: 1rem;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+`;
+
+// Same styles, different elements
+<Card as="article">Article content</Card>
+<Card as="section">Section content</Card>
+<Card as="li">List item content</Card>
+```
+
+## 常见用例
+
+### 排版组件
+
+Create flexible text components:
+
+```tsx
+function Text({
+  as: Element = 'span',
+  variant = 'body',
+  ...props
+}) {
+  const className = cn(
+    'text-base',
+    variant === 'heading' && 'text-2xl font-bold',
+    variant === 'body' && 'text-base',
+    variant === 'caption' && 'text-sm text-gray-600',
+    props.className
+  );
+
+  return <Element className={className} {...props} />;
+}
+
+// Usage
+<Text as="h1" variant="heading">Title</Text>
+<Text as="p" variant="body">Paragraph</Text>
+<Text as="figcaption" variant="caption">Caption</Text>
+```
+
+### 布局组件
+
+Build semantic layouts:
+
+```tsx
+function Flex({ as: Element = 'div', ...props }) {
+  return (
+    <Element
+      className={cn('flex', props.className)}
+      {...props}
+    />
+  );
+}
+
+// Semantic HTML
+<Flex as="header" className="justify-between">
+  <Logo />
+  <Navigation />
+</Flex>
+
+<Flex as="main" className="flex-col">
+  <Content />
+</Flex>
+```
+
+### 交互元素
+
+Handle different interaction types:
+
+```tsx
+function Clickable({ as: Element = 'button', ...props }) {
+  const isButton = Element === 'button';
+  const isAnchor = Element === 'a';
+
+  return (
+    <Element
+      role={!isButton && !isAnchor ? 'button' : undefined}
+      tabIndex={!isButton && !isAnchor ? 0 : undefined}
+      {...props}
+    />
+  );
+}
+
+// Various clickable elements
+<Clickable as="button" onClick={handleClick}>Button</Clickable>
+<Clickable as="a" href="/link">Link</Clickable>
+<Clickable as="div" onClick={handleClick}>Div Button</Clickable>
+```
+
+## TypeScript 最佳实践
+
+### 通用组件类型
+
+Create fully type-safe polymorphic components:
+
+```tsx
+type PolymorphicRef<E extends React.ElementType> =
+  React.ComponentPropsWithRef<E>['ref'];
+
+type PolymorphicProps<
+  E extends React.ElementType,
+  Props = {}
+> = Props &
+  Omit<React.ComponentPropsWithoutRef<E>, keyof Props> & {
+    as?: E;
+  };
+
+// Component with full type safety
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E, { customProp?: string }>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### 推断 Props
+
+Automatically infer props based on the element:
+
+```tsx
+// Props are inferred from the element type
+<Component as="a" href="/home">Home</Component>  // ✅ href is valid
+<Component as="div" href="/home">Home</Component> // ❌ TS error: href not valid on div
+
+<Component as="button" type="submit">Submit</Component> // ✅ type is valid
+<Component as="span" type="submit">Submit</Component>   // ❌ TS error
+```
+
+### 判别联合类型
+
+Use discriminated unions for element-specific props:
+
+```tsx
+type ButtonProps =
+  | { as: 'button'; type?: 'submit' | 'button' | 'reset' }
+  | { as: 'a'; href: string; target?: string }
+  | { as: 'div'; role: 'button'; tabIndex: number };
+
+function Button(props: ButtonProps & { children: React.ReactNode }) {
+  const Element = props.as;
+  return <Element {...props} />;
+}
+```
+
+## 最佳实践
+
+### 1. 默认使用语义化元素
+
+Choose meaningful defaults that represent the most common use case:
+
+```tsx
+// ✅ Good defaults
+function Article({ as: Element = 'article', ...props }) { }
+function Navigation({ as: Element = 'nav', ...props }) { }
+function Heading({ as: Element = 'h2', ...props }) { }
+
+// ❌ Too generic
+function Component({ as: Element = 'div', ...props }) { }
+```
+
+### 2. 记录有效元素
+
+Clearly specify which elements are supported:
+
+```tsx
+interface BoxProps {
+  /**
+   * The HTML element to render as
+   * @default 'div'
+   * @example 'section', 'article', 'aside', 'main'
+   */
+  as?: 'div' | 'section' | 'article' | 'aside' | 'main' | 'header' | 'footer';
+}
+```
+
+### 3. 验证元素的适当性
+
+Warn when inappropriate elements are used:
+
+```tsx
+function Button({ as: Element = 'button', ...props }) {
+  if (__DEV__ && Element === 'div' && !props.role) {
+    console.warn(
+      'Button: When using as="div", provide role="button" for accessibility'
+    );
+  }
+
+  return <Element {...props} />;
+}
+```
+
+### 4. 正确处理事件处理器
+
+Ensure event handlers work across different elements:
+
+```tsx
+function Interactive({ as: Element = 'button', onClick, ...props }) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (Element !== 'button' && (e.key === 'Enter' || e.key === ' ')) {
+      onClick?.(e as any);
+    }
+  };
+
+  return (
+    <Element
+      onClick={onClick}
+      onKeyDown={Element !== 'button' ? handleKeyDown : undefined}
+      {...props}
+    />
+  );
+}
+```
+
+## 常见陷阱
+
+### 无效的 HTML 嵌套
+
+Be careful about HTML nesting rules:
+
+```tsx
+// ❌ Invalid - button inside button
+<Button as="button">
+  <Button as="button">Nested</Button>
+</Button>
+
+// ❌ Invalid - div inside p
+<Text as="p">
+  <Box as="div">Invalid nesting</Box>
+</Text>
+
+// ✅ Valid nesting
+<Text as="div">
+  <Box as="div">Valid nesting</Box>
+</Text>
+```
+
+### 缺失无障碍属性
+
+Remember to add appropriate ARIA attributes:
+
+```tsx
+// ❌ Missing accessibility
+<Box as="nav">
+  <MenuItems />
+</Box>
+
+// ✅ Proper accessibility
+<Box as="nav" aria-label="Main navigation">
+  <MenuItems />
+</Box>
+```
+
+### 类型安全丢失
+
+Avoid using overly permissive types:
+
+```tsx
+// ❌ Too permissive - no type safety
+function Component({ as: Element = 'div', ...props }: any) {
+  return <Element {...props} />;
+}
+
+// ✅ Type safe
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### 性能考虑
+
+Be aware of re-render implications:
+
+```tsx
+// ❌ Creates new component on every render
+function Parent() {
+  const CustomDiv = (props) => <div {...props} />;
+  return <Component as={CustomDiv} />;
+}
+
+// ✅ Stable component reference
+const CustomDiv = (props) => <div {...props} />;
+function Parent() {
+  return <Component as={CustomDiv} />;
+}
+```

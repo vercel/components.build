@@ -1,0 +1,233 @@
+---
+title: Komposition
+description: Grundlaget for at bygge moderne UI-komponenter.
+---
+
+Komposition, eller komponérbarhed, er grundlaget for at bygge moderne UI-komponenter. Det er en af de mest kraftfulde teknikker til at skabe fleksible, genanvendelige komponenter, der kan håndtere komplekse krav uden at gå på kompromis med klarheden i API'et.
+
+I stedet for at proppe al funktionalitet ind i en enkelt komponent med dusinvis af props, fordeler komposition ansvaret på flere samarbejdende komponenter.
+
+Fernando holdt en fremragende talk på React Universe Conf 2025, hvor han delte sin tilgang til at genopbygge Slacks Message Composer som en komponerbar komponent.
+
+<Video src="https://www.youtube.com/watch?v=4KvbVq3Eg5w" />
+
+## Gøre en komponent komponerbar
+
+For at gøre en komponent komponerbar, skal du bryde den ned i mindre, mere fokuserede komponenter. For eksempel, lad os tage denne Accordion-komponent:
+
+```tsx title="accordion.tsx"
+import { Accordion } from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion data={data} />
+);
+```
+
+Selvom denne Accordion-komponent kan virke simpel, håndterer den for mange ansvarsområder. Den har ansvar for at rendere containeren, trigger og indhold; samt håndtere accordion-tilstanden og dataene.
+
+At tilpasse styling af denne komponent er vanskeligt, fordi den er tæt koblet. Det kræver sandsynligvis globale CSS-overrides. Derudover kræver tilføjelse af ny funktionalitet eller justering af adfærd, at man ændrer i komponentens kildetekst.
+
+For at løse dette kan vi opdele det i mindre, mere fokuserede komponenter.
+
+### 1. Root-komponent
+
+Først, lad os fokusere på containeren - komponenten der holder det hele sammen, dvs. triggeren og indholdet. Denne container behøver ikke at kende til dataene, men den skal holde styr på den åbne tilstand.
+
+Vi ønsker dog også, at denne tilstand skal være tilgængelig for underkomponenter. Så lad os bruge Context API til at oprette en context for den åbne tilstand.
+
+Endelig, for at tillade modifikation af `div`-elementet, udvider vi de standard HTML-attributter.
+
+Vi kalder denne komponent "Root".
+
+```tsx title="@/components/ui/accordion.tsx"
+type AccordionProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+const AccordionContext = createContext<AccordionProps>({
+  open: false,
+  setOpen: () => {},
+});
+
+export type AccordionRootProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export const Root = ({
+  children,
+  open,
+  setOpen,
+  ...props
+}: AccordionRootProps) => (
+  <AccordionContext.Provider value={{ open, setOpen }}>
+    <div {...props}>{children}</div>
+  </AccordionContext.Provider>
+);
+```
+
+### 2. Item-komponent
+
+Item-komponenten er elementet, der indeholder accordion-item'et. Det er blot en simpel wrapper for hvert element i accordionen.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionItemProps = React.ComponentProps<'div'>;
+
+export const Item = (props: AccordionItemProps) => <div {...props} />;
+```
+
+### 3. Trigger-komponent
+
+Trigger-komponenten er elementet, der åbner accordionen, når den aktiveres. Den er ansvarlig for:
+
+- Renderering som en knap som standard (kan tilpasses med `asChild`)
+- Håndtering af klikbegivenheder for at åbne accordionen
+- At håndtere fokus, når accordionen lukkes
+- At levere korrekte ARIA-attributter
+
+Lad os tilføje denne komponent til vores Accordion-komponent.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionTriggerProps = React.ComponentProps<'button'> & {
+  asChild?: boolean;
+};
+
+export const Trigger = ({ asChild, ...props }: AccordionTriggerProps) => (
+  <AccordionContext.Consumer>
+    {({ open, setOpen }) => (
+      <button onClick={() => setOpen(!open)} {...props} />
+    )}
+  </AccordionContext.Consumer>
+);
+```
+
+### 4. Content-komponent
+
+Content-komponenten er elementet, der indeholder accordion-indholdet. Den er ansvarlig for:
+
+- At rendre indholdet, når accordionen er åben
+- At levere korrekte ARIA-attributter
+
+Lad os tilføje denne komponent til vores Accordion-komponent.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionContentProps = React.ComponentProps<'div'> & {
+  asChild?: boolean;
+};
+
+export const Content = ({ asChild, ...props }: AccordionContentProps) => (
+  <AccordionContext.Consumer>
+    {({ open }) => <div {...props} />}
+  </AccordionContext.Consumer>
+);
+```
+
+### 5. Sætte det hele sammen
+
+Nu hvor vi har alle komponenterne, kan vi sætte dem sammen i vores oprindelige fil.
+
+```tsx title="accordion.tsx"
+import * as Accordion from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion.Root open={false} setOpen={() => {}}>
+    {data.map((item) => (
+      <Accordion.Item key={item.title}>
+        <Accordion.Trigger>{item.title}</Accordion.Trigger>
+        <Accordion.Content>{item.content}</Accordion.Content>
+      </Accordion.Item>
+    ))}
+  </Accordion.Root>
+);
+```
+
+## Navngivningskonventioner
+
+Når du bygger komponerbare komponenter, er konsistente navngivningskonventioner afgørende for at skabe intuitive og forudsigelige API'er. Både shadcn/ui og Radix UI følger etablerede mønstre, som er blevet de facto-standarden i React-økosystemet.
+
+### Root-komponenter
+
+`Root`-komponenten fungerer som den primære container, der indpakker alle andre underkomponenter. Den håndterer typisk delt tilstand og context ved at levere en context til alle børnekomponenter.
+
+```tsx
+<AccordionRoot>{/* Child components */}</AccordionRoot>
+```
+
+### Interaktive elementer
+
+Interaktive komponenter, der udløser handlinger eller skifter tilstande, bruger beskrivende navne:
+
+- `Trigger` - Elementet der initierer en handling (åbning, lukning, skift)
+- `Content` - Elementet der indeholder hovedindholdet, som vises/skjules
+
+```tsx
+<CollapsibleTrigger>Click to expand</CollapsibleTrigger>
+<CollapsibleContent>
+  Hidden content revealed here
+</CollapsibleContent>
+```
+
+### Indholdsstruktur
+
+For komponenter med strukturerede indholdsområder, brug semantiske navne, der beskriver deres formål:
+
+- `Header` - Topsektion med titler eller kontroller
+- `Body` - Hovedindholdsområde
+- `Footer` - Bundsektion til handlinger eller metadata
+
+```tsx
+<DialogHeader>
+  {/* Dialog title */}
+</DialogHeader>
+<DialogBody>
+  {/* Dialog content */}
+</DialogBody>
+<DialogFooter>
+  {/* Dialog footer */}
+</DialogFooter>
+```
+
+### Informationskomponenter
+
+Komponenter der leverer information eller kontekst bruger beskrivende suffikser:
+
+- `Title` - Primær overskrift eller label
+- `Description` - Understøttende tekst eller forklarende indhold
+
+```tsx
+<CardTitle>Project Statistics</CardTitle>
+<CardDescription>
+  View your project's performance over time
+</CardDescription>
+```

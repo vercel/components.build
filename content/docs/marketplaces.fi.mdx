@@ -1,0 +1,137 @@
+---
+title: Markkinapaikat
+description: Komponenttien jakaminen markkinapaikkojen avulla.
+---
+
+Komponenttien markkinapaikat edustavat uutta paradigmaa siinä, miten kehittäjät jakavat ja löytävät käyttöliittymäkomponentteja. Alustat kuten [21st.dev](https://21st.dev) ovat nousseet keskitettyinä keskuksina, joissa tekijät voivat julkaista komponentteja ja käyttäjät voivat löytää, esikatsella ja asentaa niitä saumattomasti.
+
+Nämä markkinapaikat yhdistävät rekisterien saavutettavuuden ja perinteisten pakettivarastojen löydettävyyden, luoden elinvoimaisia ekosysteemejä komponenttien jakamiseen.
+
+## Miten markkinapaikat toimivat
+
+Kun julkaiset markkinapaikkaan, alusta tyypillisesti:
+
+1. **Isännöi komponenttisi koodia** - Ei tarvitse ylläpitää omaa infrastruktuuria
+2. **Tarjoaa yhtenäisen CLI:n** - Käyttäjät asentavat komponentteja markkinapaikan työkaluilla
+3. **Luo esikatseluita** - Elävät demot ja interaktiiviset esimerkit luodaan automaattisesti
+4. **Vastaa löydettävyydestä** - Haku, kategoriat ja suositukset nostavat esiin relevantteja komponentteja
+
+Esimerkiksi 21st.dev:stä asentaminen käyttää tuttua shadcn CLI -mallia:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/haydenbleasel/dialog-stack
+```
+
+Markkinapaikka hoitaa komponentin metatiedon ja lähdekoodin tarjoamisen, mikä tekee asennusprosessista saumatonta.
+
+## Komponenttien markkinapaikkojen edut
+
+Markkinapaikat tarjoavat ainutlaatuisia etuja, joita rekisterit tai npm-paketit eivät yksin pysty tarjoamaan.
+
+### Komponenttien tekijöille
+
+#### Jakelu ilman infrastruktuuria
+
+Julkaiseminen markkinapaikassa poistaa infrastruktuuriin liittyvät huolenaiheet. Sinun ei tarvitse perustaa hostausta komponenteillesi tai hallita CDN-jakelua.
+
+Markkinapaikka hoitaa kaiken tämän, jolloin voit keskittyä loistavien komponenttien luomiseen.
+
+#### Valmiiksi olemassa oleva yleisö
+
+Markkinapaikat kokoavat kysyntää. Kun kehittäjät vierailevat 21st.devissä tai vastaavilla alustoilla, he etsivät aktiivisesti komponentteja. Työsi löydetään orgaanisesti haun, kategorioiden ja suositusten kautta.
+
+Tämä valmiiksi olemassa oleva liikenne tarkoittaa, ettei sinun tarvitse markkinoida komponenttejasi erikseen.
+
+#### Rahallistamismahdollisuudet
+
+Jotkut markkinapaikat mahdollistavat tekijöiden rahallistamisen tarjoamalla premium-komponenttitasoja, sponsorointiohjelmia, käyttöperusteista hinnoittelua ja kertamaksupohjaisia malleja.
+
+Tämä luo kestäviä kannustimia ylläpitää korkealaatuisia komponentteja.
+
+#### Yhteisön palaute
+
+Markkinapaikoilla on tyypillisesti arvostelujärjestelmiä, kommenttiosioita, käyttöanalytiikkaa ja bugiseurantaa.
+
+Tämä palautesilmukka auttaa ymmärtämään, miten kehittäjät käyttävät komponenttejasi ja millaisia parannuksia ne tarvitsevat.
+
+### Komponenttien käyttäjille
+
+#### Kuratoitu löytäminen
+
+Toisin kuin GitHubin tai npm:n läpi etsiminen, markkinapaikat tarjoavat kuratoituja kokemuksia:
+
+```
+Browse by category:
+├── Marketing
+│   ├── Heroes
+│   ├── Pricing
+│   └── Testimonials
+├── Application
+│   ├── Dashboards
+│   ├── Forms
+│   └── Data Display
+└── E-commerce
+    ├── Product Cards
+    ├── Cart
+    └── Checkout
+```
+
+Tämä järjestely tekee oikean komponentin löytämisestä huomattavasti nopeampaa.
+
+#### Laatuvarmistus
+
+Monet markkinapaikat toteuttavat arviointiprosesseja. Komponentit voivat käydä läpi koodin laatutarkastuksia, saavutettavuusauditointeja, suorituskyvyn testauksia ja dokumentaation tarkistusta.
+
+Tämä kuratointi varmistaa peruslaadun, jota itsejulkaistuilta komponenteilta voi puuttua.
+
+#### Yhtenäiset työkalut
+
+Yhden CLI:n käyttäminen kaikille markkinapaikan komponenteille yksinkertaistaa työnkulkua. Voit asentaa minkä tahansa komponentin markkinapaikasta samalla komennolla:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/<author>/<component>
+```
+
+## Markkinapaikkojen haasteet
+
+Vaikka markkinapaikat tarjoavat houkuttelevia etuja, ne tuovat myös mukanaan ainutlaatuisia haasteita.
+
+### Komponenttien tekijöille
+
+#### Kilpailu ja näkyvyys
+
+Ruuhkaisessa markkinapaikassa erottuminen käy vaikeaksi. Kilpailet satojen samankaltaisten komponenttien, vakiintuneiden tekijöiden, esilletuodun tai sponsoroidun sisällön ja algoritmien ohjaamien suositusten kanssa.
+
+Menestys vaatii muutakin kuin hyvää koodia — tarvitset houkuttelevia esikatseluita, erinomaista dokumentaatiota ja usein aktiivista markkinointia.
+
+#### Alustariippuvuus
+
+Julkaiseminen markkinapaikalla tarkoittaa heidän palveluehtojensa, tulonjakomallien, teknisten vaatimusten ja arviointiprosessien hyväksymistä.
+
+Jos alusta muuttaa käytäntöjään tai lopettaa toimintansa, jakelukanavasi katoaa.
+
+#### Laatupaine
+
+Markkinapaikan käyttäjät odottavat hiottuja, tuotantovalmiita komponentteja. Tämä tarkoittaa kattavaa dokumentaatiota, useita demovariaatioita, responsiivista suunnittelua, selainyhteensopivuustestausta ja saavutettavuuden noudattamista.
+
+Näiden odotusten täyttäminen vaatii merkittävää ajallista panostusta pelkkään komponenttikoodin kirjoittamiseen lisäksi.
+
+### Komponenttien käyttäjille
+
+#### Vaihteleva laatu
+
+Arviointiprosesseista huolimatta markkinapaikkojen laatu vaihtelee voimakkaasti. Saatat kohdata hylättyjä komponentteja vanhentuneilla riippuvuuksilla, huonosti dokumentoitua koodia, komponentteja jotka toimivat demoissa mutta rikkoutuvat tuotannossa, sekä eri tekijöiden välillä epäyhtenäisiä koodityylejä.
+
+Komponentteja valittaessa tarvitaan edelleen huolellisuutta.
+
+#### Sitoutumisriskit
+
+Vaikka markkinapaikat käyttävät standardityökaluja kuten shadcn CLI:tä, ne saattavat tuoda mukanaan omia metatietomuotoja, räätälöityjä konfiguraatiovaatimuksia ja alustakohtaisia riippuvuuksia.
+
+Tämä voi tehdä siirtymisestä pois markkinapaikasta vaikeaa.
+
+#### Löydettävyyden paradoksi
+
+Liian suuri valikoima voi halvaannuttaa. Kun etsit painikekomponenttia, 200 vaihtoehtoa ei välttämättä auta. Sinun täytyy arvioida useita samankaltaisia komponentteja, verrata hienovaraisia eroja, arvioida pitkäaikaista ylläpidettävyyttä ja ottaa huomioon tekijän maine.
+
+Tämä arviointiprosessi voi viedä enemmän aikaa kuin komponentin itse rakentaminen.

@@ -1,0 +1,578 @@
+---
+title: ポリモーフィズム
+description: コンポーネントの機能を維持しながらレンダリングされる HTML 要素を `as` プロップで変更する方法。
+---
+
+`as` プロップは、基になる HTML 要素やレンダリングされるコンポーネントを変更できる、現代の React コンポーネントライブラリでの基本的なパターンです。
+
+[Styled Components](https://styled-components.com/)、[Emotion](https://emotion.sh/)、[Chakra UI](https://chakra-ui.com/) のようなライブラリによって普及したこのパターンは、コンポーネントのスタイルや挙動を維持しつつ、意味的に適切な HTML を柔軟に選択する手段を提供します。
+
+`as` プロップはポリモーフィックなコンポーネントを可能にします — コア機能を保持したまま異なる要素タイプとしてレンダリングできるコンポーネントです:
+
+```tsx
+<Button as="a" href="/home">
+  Go Home
+</Button>
+
+<Button as="button" type="submit">
+  Submit Form
+</Button>
+
+<Button as="div" role="button" tabIndex={0}>
+  Custom Element
+</Button>
+```
+
+## `as` の理解
+
+`as` プロップを使うと、コンポーネントのデフォルト要素タイプを上書きできます。特定の HTML 要素に固定される代わりに、有効な HTML タグや別の React コンポーネントとしてレンダリングするようコンポーネントを適応できます。
+
+例えば:
+
+```tsx
+// Default renders as a div
+<Box>Content</Box>
+
+// Renders as a section
+<Box as="section">Content</Box>
+
+// Renders as a nav
+<Box as="nav">Content</Box>
+```
+
+これらは異なる HTML 要素をレンダリングします:
+```html
+<!-- Default -->
+<div>Content</div>
+
+<!-- With as="section" -->
+<section>Content</section>
+
+<!-- With as="nav" -->
+<nav>Content</nav>
+```
+
+## 実装方法
+
+ポリモーフィックコンポーネントを実装する主なアプローチは二つあります: 手動実装と Radix UI の `Slot` コンポーネントを使う方法です。
+
+### 手動実装
+
+`as` プロップの実装は動的なコンポーネントレンダリングを使用します:
+
+```tsx
+// Simplified implementation
+function Component({
+  as: Element = 'div',
+  children,
+  ...props
+}) {
+  return <Element {...props}>{children}</Element>;
+}
+
+// More complete implementation with TypeScript
+type PolymorphicProps<E extends React.ElementType> = {
+  as?: E;
+  children?: React.ReactNode;
+} & React.ComponentPropsWithoutRef<E>;
+
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  children,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props}>{children}</Element>;
+}
+```
+
+このコンポーネントは:
+1. デフォルト要素タイプを持つ `as` プロップを受け取る
+2. 指定された要素を使用するかデフォルトにフォールバックする
+3. 他のすべてのプロップをレンダリングされる要素にスプレッドする
+4. TypeScript ジェネリクスで型安全性を維持する
+
+### Radix UI の Slot を使う
+
+[Radix UI](https://www.radix-ui.com/) は `Slot` コンポーネントを提供しており、`as` プロップパターンに対するより強力な代替手段を与えます。単に要素タイプを変更するだけでなく、`Slot` は子コンポーネントとプロップをマージすることで、構成（コンポジション）パターンを可能にします。
+
+まず、パッケージをインストールします:
+
+```package-install
+npm install @radix-ui/react-slot
+```
+
+`asChild` パターンは要素タイプを指定する代わりにブール型のプロップを使用します:
+
+```tsx
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+const itemVariants = cva(
+  "rounded-lg border p-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-white",
+        primary: "bg-blue-500 text-white",
+      },
+      size: {
+        default: "h-10 px-4",
+        sm: "h-8 px-3",
+        lg: "h-12 px-6",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+function Item({
+  className,
+  variant = "default",
+  size = "default",
+  asChild = false,
+  ...props
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof itemVariants> & { asChild?: boolean }) {
+  const Comp = asChild ? Slot : "div"
+  return (
+    <Comp
+      data-slot="item"
+      data-variant={variant}
+      data-size={size}
+      className={cn(itemVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
+}
+```
+
+これで二通りで使用できます:
+
+```tsx
+// Default: renders as a div
+<Item variant="primary">Content</Item>
+
+// With asChild: merges props with child component
+<Item variant="primary" asChild>
+  <a href="/home">Link with Item styles</a>
+</Item>
+```
+
+`Slot` コンポーネントは:
+1. 子要素をクローンする
+2. コンポーネントのプロップ（className、data 属性など）を子のプロップとマージする
+3. ref を適切にフォワードする
+4. イベントハンドラの合成を扱う
+
+### 比較: `as` と `asChild`
+
+**`as` プロップ（手動実装）:**
+```tsx
+// Explicit element type
+<Button as="a" href="/home">Link Button</Button>
+<Button as="button" type="submit">Submit Button</Button>
+
+// Simple, predictable API
+// Limited to element types
+```
+
+**`asChild` と Slot:**
+```tsx
+// Implicit from child
+<Button asChild>
+  <a href="/home">Link Button</a>
+</Button>
+
+<Button asChild>
+  <button type="submit">Submit Button</button>
+</Button>
+
+// More flexible composition
+// Works with any component
+// Better prop merging
+```
+
+**主な違い:**
+
+| 機能 | `as` prop | `asChild` + Slot |
+|---------|-----------|------------------|
+| **API スタイル** | `<Button as="a">` | `<Button asChild><a /></Button>` |
+| **要素タイプ** | プロップで指定 | 子から推論 |
+| **コンポーネント構成** | 制限あり | フルサポート |
+| **プロップマージ** | 基本的なスプレッド | インテリジェントなマージ |
+| **ref フォワーディング** | 手動設定が必要 | 組み込み |
+| **イベントハンドラ** | 衝突する可能性あり | 正しく合成される |
+| **ライブラリサイズ** | 依存なし | `@radix-ui/react-slot` が必要 |
+
+### 各アプローチを使うとき
+
+**`as` プロップを使うべき時:**
+- よりシンプルな API を望むとき
+- 主に HTML 要素間を切り替えるとき
+- 追加の依存関係を避けたいとき
+- コンポーネントがシンプルで複雑なプロップマージを必要としないとき
+
+**`asChild` + Slot を使うべき時:**
+- 他のコンポーネントと合成する必要があるとき
+- 自動的なプロップマージ動作が欲しいとき
+- Radix UI や shadcn/ui のようなコンポーネントライブラリを構築しているとき
+- 異なるコンポーネントタイプ間で信頼できる ref フォワーディングが必要なとき
+
+## 主な利点
+
+### 1. 意味的な HTML の柔軟性
+
+`as` プロップにより、常に最も意味的に適切な HTML 要素を使用できます:
+
+```tsx
+// Navigation container
+<Container as="nav" className="navigation">
+  <NavItems />
+</Container>
+
+// Main content area
+<Container as="main" className="content">
+  <Article />
+</Container>
+
+// Sidebar
+<Container as="aside" className="sidebar">
+  <Widgets />
+</Container>
+```
+
+### 2. コンポーネントの再利用性
+
+1 つのコンポーネントが複数の用途に対応でき、バリアントを増やさずに済みます:
+
+```tsx
+// Text component used for different elements
+<Text as="h1" size="2xl">Page Title</Text>
+<Text as="p" size="md">Body paragraph</Text>
+<Text as="span" size="sm">Inline text</Text>
+<Text as="label" size="sm">Form label</Text>
+```
+
+### 3. アクセシビリティの改善
+
+各コンテキストに最適なアクセシビリティを提供する要素を選べます:
+
+```tsx
+// Link that looks like a button
+<Button as="a" href="/signup">
+  Sign Up Now
+</Button>
+
+// Button that submits a form
+<Button as="button" type="submit">
+  Submit
+</Button>
+
+// Heading with button styles
+<Button as="h2" role="presentation">
+  Section Title
+</Button>
+```
+
+### 4. スタイルシステムとの統合
+
+要素を変更しても一貫したスタイルを維持できます:
+
+```tsx
+const Card = styled.div`
+  padding: 1rem;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+`;
+
+// Same styles, different elements
+<Card as="article">Article content</Card>
+<Card as="section">Section content</Card>
+<Card as="li">List item content</Card>
+```
+
+## よくある使用例
+
+### タイポグラフィコンポーネント
+
+柔軟なテキストコンポーネントを作成:
+
+```tsx
+function Text({
+  as: Element = 'span',
+  variant = 'body',
+  ...props
+}) {
+  const className = cn(
+    'text-base',
+    variant === 'heading' && 'text-2xl font-bold',
+    variant === 'body' && 'text-base',
+    variant === 'caption' && 'text-sm text-gray-600',
+    props.className
+  );
+
+  return <Element className={className} {...props} />;
+}
+
+// Usage
+<Text as="h1" variant="heading">Title</Text>
+<Text as="p" variant="body">Paragraph</Text>
+<Text as="figcaption" variant="caption">Caption</Text>
+```
+
+### レイアウトコンポーネント
+
+意味的なレイアウトを構築:
+
+```tsx
+function Flex({ as: Element = 'div', ...props }) {
+  return (
+    <Element
+      className={cn('flex', props.className)}
+      {...props}
+    />
+  );
+}
+
+// Semantic HTML
+<Flex as="header" className="justify-between">
+  <Logo />
+  <Navigation />
+</Flex>
+
+<Flex as="main" className="flex-col">
+  <Content />
+</Flex>
+```
+
+### インタラクティブ要素
+
+異なるインタラクションタイプを扱う:
+
+```tsx
+function Clickable({ as: Element = 'button', ...props }) {
+  const isButton = Element === 'button';
+  const isAnchor = Element === 'a';
+
+  return (
+    <Element
+      role={!isButton && !isAnchor ? 'button' : undefined}
+      tabIndex={!isButton && !isAnchor ? 0 : undefined}
+      {...props}
+    />
+  );
+}
+
+// Various clickable elements
+<Clickable as="button" onClick={handleClick}>Button</Clickable>
+<Clickable as="a" href="/link">Link</Clickable>
+<Clickable as="div" onClick={handleClick}>Div Button</Clickable>
+```
+
+## TypeScript のベストプラクティス
+
+### ジェネリックなコンポーネント型
+
+完全に型安全なポリモーフィックコンポーネントを作成:
+
+```tsx
+type PolymorphicRef<E extends React.ElementType> =
+  React.ComponentPropsWithRef<E>['ref'];
+
+type PolymorphicProps<
+  E extends React.ElementType,
+  Props = {}
+> = Props &
+  Omit<React.ComponentPropsWithoutRef<E>, keyof Props> & {
+    as?: E;
+  };
+
+// Component with full type safety
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E, { customProp?: string }>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### プロップの推論
+
+要素に基づいて自動的にプロップを推論:
+
+```tsx
+// Props are inferred from the element type
+<Component as="a" href="/home">Home</Component>  // ✅ href is valid
+<Component as="div" href="/home">Home</Component> // ❌ TS error: href not valid on div
+
+<Component as="button" type="submit">Submit</Component> // ✅ type is valid
+<Component as="span" type="submit">Submit</Component>   // ❌ TS error
+```
+
+### 識別共用体（Discriminated Unions）
+
+要素固有のプロップには識別共用体を使用:
+
+```tsx
+type ButtonProps =
+  | { as: 'button'; type?: 'submit' | 'button' | 'reset' }
+  | { as: 'a'; href: string; target?: string }
+  | { as: 'div'; role: 'button'; tabIndex: number };
+
+function Button(props: ButtonProps & { children: React.ReactNode }) {
+  const Element = props.as;
+  return <Element {...props} />;
+}
+```
+
+## ベストプラクティス
+
+### 1. 意味的な要素をデフォルトにする
+
+もっとも一般的なユースケースを代表する意味のあるデフォルトを選ぶ:
+
+```tsx
+// ✅ Good defaults
+function Article({ as: Element = 'article', ...props }) { }
+function Navigation({ as: Element = 'nav', ...props }) { }
+function Heading({ as: Element = 'h2', ...props }) { }
+
+// ❌ Too generic
+function Component({ as: Element = 'div', ...props }) { }
+```
+
+### 2. サポートする要素を文書化する
+
+どの要素がサポートされているかを明確に指定する:
+
+```tsx
+interface BoxProps {
+  /**
+   * The HTML element to render as
+   * @default 'div'
+   * @example 'section', 'article', 'aside', 'main'
+   */
+  as?: 'div' | 'section' | 'article' | 'aside' | 'main' | 'header' | 'footer';
+}
+```
+
+### 3. 要素の適切性を検証する
+
+不適切な要素が使われた場合に警告する:
+
+```tsx
+function Button({ as: Element = 'button', ...props }) {
+  if (__DEV__ && Element === 'div' && !props.role) {
+    console.warn(
+      'Button: When using as="div", provide role="button" for accessibility'
+    );
+  }
+
+  return <Element {...props} />;
+}
+```
+
+### 4. イベントハンドラを適切に扱う
+
+異なる要素間でイベントハンドラが動作するようにする:
+
+```tsx
+function Interactive({ as: Element = 'button', onClick, ...props }) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (Element !== 'button' && (e.key === 'Enter' || e.key === ' ')) {
+      onClick?.(e as any);
+    }
+  };
+
+  return (
+    <Element
+      onClick={onClick}
+      onKeyDown={Element !== 'button' ? handleKeyDown : undefined}
+      {...props}
+    />
+  );
+}
+```
+
+## よくある落とし穴
+
+### 無効な HTML ネスティング
+
+HTML のネスティング規則に注意する:
+
+```tsx
+// ❌ Invalid - button inside button
+<Button as="button">
+  <Button as="button">Nested</Button>
+</Button>
+
+// ❌ Invalid - div inside p
+<Text as="p">
+  <Box as="div">Invalid nesting</Box>
+</Text>
+
+// ✅ Valid nesting
+<Text as="div">
+  <Box as="div">Valid nesting</Box>
+</Text>
+```
+
+### アクセシビリティ属性の欠落
+
+適切な ARIA 属性を追加することを忘れない:
+
+```tsx
+// ❌ Missing accessibility
+<Box as="nav">
+  <MenuItems />
+</Box>
+
+// ✅ Proper accessibility
+<Box as="nav" aria-label="Main navigation">
+  <MenuItems />
+</Box>
+```
+
+### 型安全性の喪失
+
+過度に寛容な型を使うのは避ける:
+
+```tsx
+// ❌ Too permissive - no type safety
+function Component({ as: Element = 'div', ...props }: any) {
+  return <Element {...props} />;
+}
+
+// ✅ Type safe
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### パフォーマンスに関する考慮
+
+再レンダーの影響に注意する:
+
+```tsx
+// ❌ Creates new component on every render
+function Parent() {
+  const CustomDiv = (props) => <div {...props} />;
+  return <Component as={CustomDiv} />;
+}
+
+// ✅ Stable component reference
+const CustomDiv = (props) => <div {...props} />;
+function Parent() {
+  return <Component as={CustomDiv} />;
+}
+```

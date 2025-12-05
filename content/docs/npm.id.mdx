@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Cara menerbitkan komponen Anda ke NPM.
+---
+
+Paket NPM mewakili pendekatan tradisional untuk mendistribusikan pustaka komponen. Sementara [registri](/registry) telah menjadi populer karena fleksibilitasnya, penerbitan ke npm tetap menjadi opsi yang kuat dengan keuntungan tersendiri untuk beberapa kasus penggunaan.
+
+Perbedaan mendasar antara paket npm dan registri terletak pada bagaimana keduanya mendistribusikan kode dan mengelola kepemilikan.
+
+## Model Paket
+
+Saat Anda menerbitkan komponen sebagai paket npm, Anda mendistribusikan kode yang sudah dibangun dan diberi versi yang dapat diinstal pengguna sebagai sebuah dependensi:
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+Ini menawarkan beberapa keuntungan menarik yang membuatnya menjadi pilihan yang tepat untuk banyak pustaka komponen.
+
+### Manajemen Versi
+
+Sebagai penulis paket, Anda mengendalikan versi dan pembaruan. Pengguna dapat mengunci ke versi tertentu, memastikan stabilitas:
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+Kontrol versi terpusat ini berarti Anda dapat mendorong pembaruan, patch keamanan, dan fitur baru yang diterima pengguna melalui pembaruan dependensi standar.
+
+### Instalasi yang Disederhanakan
+
+Paket NPM memberikan pengalaman instalasi tanpa hambatan. Satu perintah menambahkan seluruh pustaka komponen Anda:
+
+```bash
+npm install @acme/ui-components
+```
+
+Tidak perlu menyalin file secara manual, mengelola dependensi, atau mengonfigurasi alat build. Semua bekerja langsung.
+
+### Resolusi Dependensi
+
+NPM secara otomatis menangani dependensi transitif. Jika komponen Anda memerlukan versi tertentu dari React, Framer Motion, atau pustaka lain, npm akan menyelesaikan dependensi ini secara otomatis, mencegah konflik versi.
+
+### Dukungan TypeScript
+
+Paket yang dipublikasikan dapat menyertakan definisi tipe yang sudah dibangun, memberikan dukungan TypeScript langsung tanpa konfigurasi tambahan:
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## Keterbatasan Paket NPM
+
+Meskipun paket npm unggul dalam hal distribusi, ada kompromi yang secara khusus diatasi oleh registri.
+
+### Kepemilikan Kode Sumber
+
+Keterbatasan paling signifikan adalah ketiadaan akses ke kode sumber. Pengguna tidak dapat:
+
+- Memodifikasi perilaku komponen secara langsung
+- Memperbaiki bug tanpa menunggu pembaruan
+- Menyesuaikan detail implementasi
+- Menghapus kode yang tidak digunakan
+
+Ini menciptakan hubungan ketergantungan di mana pengguna harus mengandalkan pemelihara paket untuk semua perubahan.
+
+### Keterbatasan Kustomisasi
+
+Mengubah komponen mengharuskan bekerja dalam API yang diekspos. Meskipun Anda dapat menyediakan props untuk kustomisasi:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+Pengguna tidak dapat secara mendasar mengubah cara kerja komponen tanpa memfork seluruh paket.
+
+### Ukuran Bundle
+
+Paket NPM menyertakan semua komponen, bahkan jika pengguna hanya membutuhkan sebagian. Meskipun tree-shaking membantu, itu tidak selalu sempurna, yang berpotensi menambah bobot yang tidak perlu pada aplikasi.
+
+## Konfigurasi CSS dan Tailwind
+
+Satu pertimbangan penting saat menerbitkan komponen berbasis Tailwind melalui npm adalah memastikan gaya bekerja dengan benar di aplikasi yang mengonsumsinya.
+
+Secara default, Tailwind hanya menghasilkan gaya untuk kelas yang ditemukannya di file proyek Anda. Ia tidak mencari di dalam `node_modules`, yang berarti gaya komponen Anda tidak akan disertakan.
+
+Untuk memperbaiki ini, pengguna perlu menambahkan direktif `@source` ke konfigurasi Tailwind mereka, memberitahukan agar memindai paket Anda untuk nama kelas:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+Selalu dokumentasikan persyaratan ini secara jelas di README paket Anda.
+
+## Mempublikasikan Perpustakaan Komponen Anda
+
+Untuk menerbitkan komponen Anda ke npm, Anda memerlukan `package.json` yang dikonfigurasi dengan benar yang mungkin terlihat seperti ini:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+Paket NPM tetap menjadi bagian penting dari ekosistem komponen. Sementara registri menawarkan manfaat kuat untuk kepemilikan kode sumber dan kustomisasi, paket npm memberikan stabilitas, manajemen versi, dan kemudahan penggunaan yang dibutuhkan banyak tim.
+
+Kuncinya adalah memahami kebutuhan pengguna Anda dan memilih metode distribusi yang paling sesuai untuk mereka. Kadang-kadang, itu berarti menawarkan kedua opsi dan membiarkan pengembang memilih apa yang terbaik untuk proyek mereka.

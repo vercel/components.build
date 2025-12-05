@@ -1,0 +1,140 @@
+---
+title: Docs
+description: Comment documenter vos composants.
+---
+
+Une bonne documentation est essentielle pour rendre vos composants accessibles et faciles à utiliser. Ce guide décrit les éléments clés que chaque page de documentation de composant devrait inclure.
+
+## Cadre de documentation
+
+Pour faire évoluer votre documentation, vous pouvez utiliser un cadre de documentation. Il existe de nombreuses options disponibles en fonction du langage de votre projet et des besoins du projet. Les options populaires incluent :
+
+- [Fumadocs](https://fumadocs.dev/) - Cadre de documentation rapide et riche en fonctionnalités pour Next.js
+- [Nextra](https://nextra.site/) - Documentation basée sur Markdown avec recherche et thèmes intégrés
+- [Content Collections](https://content-collections.dev/) - Gestion de contenu typée pour la documentation
+- [Docusaurus](https://docusaurus.io/) - Sites de documentation riches en fonctionnalités avec prise en charge du versioning
+- [VitePress](https://vitepress.dev/) - Générateur de site statique propulsé par Vue optimisé pour la documentation
+
+De préférence, votre choix de cadre devrait prendre en charge la coloration syntaxique, les composants personnalisés et être généralement bien conçu.
+
+## Sections essentielles de la documentation
+
+### Aperçu
+
+Commencez par une brève introduction expliquant ce que fait le composant et quand l'utiliser.
+
+### Démonstration, code source et aperçu
+
+Pour faire bonne impression auprès des développeurs, vous devriez inclure une démonstration qui montre le composant en action, ainsi que le code utilisé pour créer la démonstration.
+
+Si vous utilisez un [Registre](/registry) open source, vous pouvez également inclure un aperçu du code source utilisé pour créer le composant.
+
+Utilisez des blocs de code avec coloration syntaxique et fonctionnalité de copie dans le presse-papiers. Envisagez d'utiliser des interfaces à onglets pour basculer entre ces vues sans encombrer la page.
+
+### Installation
+
+Incluez une instruction claire sur la façon d'installer le composant. De préférence, cela devrait être une commande unique que vous pouvez copier-coller dans votre terminal.
+
+Si vous développez sur shadcn/ui, vous pouvez utiliser le [shadcn CLI](https://ui.shadcn.com/docs/cli) pour installer le composant, par ex.
+
+```package-install
+npx shadcn@latest add <your-component-url>
+```
+
+Si vous publiez sur une [Place de marché](/marketplaces), vous pouvez utiliser le CLI de la place de marché pour installer le composant, par ex.
+
+```package-install
+npx shadcn@latest add https://21st.dev/r/<your-author>/<your-component>
+```
+
+Si vous n'utilisez pas shadcn/ui mais que vous construisez un [Registre](/registry), vous pourriez créer votre propre CLI pour installer le composant, par ex.
+
+```package-install
+npx your-registry-cli@latest add <your-component-url>
+```
+
+Enfin, si vous publiez sur npm, vous pouvez utiliser le CLI npm pour installer le composant, par ex.
+
+```package-install
+npm install <your-component-name>
+```
+
+<Callout>
+Pour afficher plusieurs options d'installation comme nous l'avons fait ci-dessus, vous pouvez utiliser quelque chose comme la [syntaxe `package-install` de Fumadocs](https://fumadocs.dev/docs/headless/mdx/install).
+</Callout>
+
+### Fonctionnalités
+
+Listez les principales fonctionnalités de votre composant pour aider les utilisateurs à comprendre rapidement ses capacités et ses avantages. Par exemple :
+
+- **Personnalisable** – Ajustez facilement les styles, les tailles et le comportement pour répondre à vos besoins.
+- **Accessible par défaut** – Suit les meilleures pratiques pour la navigation au clavier, les rôles ARIA et le support des lecteurs d'écran.
+- **Composable** – Conçu pour fonctionner de manière transparente avec d'autres composants et patrons.
+- **Typé** – Fourni avec des types TypeScript complets pour une sécurité maximale et l'autocomplétion.
+- **Prise en charge du theming** – S'intègre à vos tokens de design ou à votre système de thème.
+- **Léger** – Dépendances minimales et optimisé pour la performance.
+- **Prêt pour SSR/SSG** – Fonctionne avec les frameworks de rendu côté serveur et statique.
+- **Bien documenté** – Comprend des exemples d'utilisation clairs et une référence d'API.
+
+Adaptez cette liste à votre composant spécifique. Mettez en évidence ce qui le rend unique ou particulièrement utile pour les développeurs.
+
+### Exemples
+
+Démontrez la flexibilité du composant avec des exemples pratiques :
+
+- **Variantes** - Différents styles visuels ou tailles disponibles
+- **États** - États de chargement, désactivé, erreur ou succès
+- **Utilisation avancée** - Scénarios complexes et cas limites
+- **Composition** - Comment le composant fonctionne avec d'autres composants
+- **Comportement réactif** - Comment il s'adapte à différentes tailles d'écran
+
+Chaque exemple devrait inclure à la fois le rendu et le code correspondant.
+
+### Props et référence de l'API
+
+Documentez toutes les props, méthodes et options de configuration disponibles. Envisagez de regrouper les props liées et de mettre en évidence celles couramment utilisées. Pour chaque prop, incluez :
+
+- **Nom** - L'identifiant de la prop
+- **Type** - Définition de type TypeScript
+- **Par défaut** - Valeur par défaut si non spécifiée
+- **Obligatoire** - Si la prop est obligatoire
+- **Description** - Ce que fait la prop et quand l'utiliser
+
+<Callout>
+Si vous utilisez Fumadocs, vous pouvez envisager d'utiliser [Auto Type Table](https://fumadocs.dev/docs/ui/components/auto-type-table) pour garantir l'exactitude et réduire la charge de maintenance.
+</Callout>
+
+### Accessibilité
+
+Documentez comment votre composant prend en charge les fonctionnalités d'accessibilité :
+
+- Modèles de navigation au clavier
+- Attributs et rôles ARIA
+- Support des lecteurs d'écran
+- Gestion du focus
+- Considérations sur le contraste des couleurs
+
+### Journal des modifications et gestion des versions
+
+Il peut être utile de maintenir un journal des modifications sur chaque page de documentation de composant couvrant :
+
+- Numéros de version suivant le versioning sémantique
+- Nouvelles fonctionnalités et améliorations
+- Corrections de bugs
+- Changements incompatibles
+- Guides de migration pour les mises à jour majeures
+
+Aidez les utilisateurs à comprendre ce qui a changé entre les versions et comment mettre à niveau en toute sécurité. Incluez des exemples de code montrant les schémas avant/après pour les changements incompatibles.
+
+<Callout>
+  Si votre framework de coloration syntaxique le prend en charge (comme Shiki), vous pouvez vouloir utiliser une [notation de transformateur diff](https://shiki.style/packages/transformers#transformernotationdiff) pour montrer les changements entre les versions.
+</Callout>
+
+## Bonnes pratiques
+
+- Gardez la documentation à jour avec les changements de code
+- Utilisez des exemples issus du monde réel qui résolvent des problèmes réels
+- Incluez les pièges courants et des conseils de dépannage
+- Fournissez des considérations de performance lorsque pertinent
+- Liez aux composants et patrons connexes
+- Faites en sorte que tous les exemples de code soient exécutables et testés

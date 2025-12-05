@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Cum să publici componentele tale pe NPM.
+---
+
+Pachetele NPM reprezintă abordarea tradițională pentru distribuirea bibliotecilor de componente. În timp ce [registrii](/registry) au câștigat popularitate datorită flexibilității lor, publicarea pe npm rămâne o opțiune puternică, cu avantaje distincte pentru anumite cazuri de utilizare.
+
+Diferența fundamentală între pachetele npm și registrii constă în modul în care distribuie codul și gestionează proprietatea.
+
+## Modelul pachetului
+
+Când publici componente ca pachet npm, distribui cod precompilat și versionat pe care utilizatorii îl instalează ca dependență:
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+Acest lucru oferă mai multe avantaje convingătoare care le fac alegerea potrivită pentru multe biblioteci de componente.
+
+### Gestionarea versiunilor
+
+Ca autor al pachetului, controlezi versionarea și actualizările. Utilizatorii pot bloca anumite versiuni, asigurând stabilitatea:
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+Acest control centralizat al versiunilor înseamnă că poți publica actualizări, patch-uri de securitate și funcționalități noi pe care utilizatorii le primesc prin actualizările standard ale dependențelor.
+
+### Instalare simplificată
+
+Pachetele NPM oferă o experiență de instalare fără fricțiuni. O singură comandă adaugă întreaga ta bibliotecă de componente:
+
+```bash
+npm install @acme/ui-components
+```
+
+Nu este nevoie să copiezi manual fișiere, să gestionezi dependențe sau să configurezi unelte de build. Totul funcționează din cutie.
+
+### Rezolvarea dependențelor
+
+NPM se ocupă automat de dependențele tranzitive. Dacă componentele tale necesită versiuni specifice de React, Framer Motion sau alte biblioteci, npm rezolvă aceste dependențe automat, prevenind conflicte de versiuni.
+
+### Suport TypeScript
+
+Pachetele publicate pot include definiții de tip precompilate, oferind suport imediat pentru TypeScript fără configurații suplimentare:
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## Limitările pachetelor NPM
+
+Deși pachetele npm excelează la distribuție, vin cu compromisuri pe care registrii le abordează în mod specific.
+
+### Accesul la codul sursă
+
+Cea mai semnificativă limitare este lipsa accesului la codul sursă. Utilizatorii nu pot:
+
+- Modifica comportamentul componentelor direct
+- Repara bug-uri fără a aștepta actualizări
+- Personaliza detalii de implementare
+- Elimina cod neutilizat
+
+Aceasta creează o relație de dependență în care utilizatorii trebuie să se bazeze pe întreținătorul pachetului pentru toate modificările.
+
+### Constrângeri privind personalizarea
+
+Ajustarea componentelor necesită să lucrezi în cadrul API-ului expus. Deși poți furniza props pentru personalizare:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+Utilizatorii nu pot modifica fundamental modul în care funcționează componenta fără a forka întregul pachet.
+
+### Dimensiunea bundle-ului
+
+Pachetele NPM includ toate componentele, chiar dacă utilizatorii au nevoie doar de un subset. Deși tree-shaking ajută, nu este întotdeauna perfect, ceea ce poate adăuga greutate inutilă aplicațiilor.
+
+## Configurarea CSS și Tailwind
+
+O considerație critică atunci când publici componente bazate pe Tailwind prin npm este asigurarea faptului că stilurile funcționează corect în aplicația consumatoare.
+
+Implicit, Tailwind generează stiluri doar pentru clasele pe care le găsește în fișierele proiectului tău. Nu caută în `node_modules`, ceea ce înseamnă că stilurile componentelor tale nu vor fi incluse.
+
+Pentru a remedia acest lucru, utilizatorii trebuie să adauge o directivă `@source` în configurația Tailwind, indicându-i să scaneze pachetul tău pentru nume de clase:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+Documentează întotdeauna această cerință în mod clar în README-ul pachetului tău.
+
+## Publicarea bibliotecii tale de componente
+
+Pentru a publica componentele pe npm, ai nevoie de un `package.json` configurat corect, care ar putea arăta astfel:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+Pachetele NPM rămân o parte vitală a ecosistemului de componente. În timp ce registrii oferă beneficii convingătoare pentru proprietatea codului sursă și personalizare, pachetele npm oferă stabilitate, gestionare a versiunilor și ușurință în utilizare de care multe echipe au nevoie.
+
+Cheia este să înțelegi nevoile utilizatorilor tăi și să alegi metoda de distribuție care îi servește cel mai bine. Uneori, asta înseamnă să oferi ambele opțiuni și să lași dezvoltatorii să aleagă ce funcționează cel mai bine pentru proiectul lor.

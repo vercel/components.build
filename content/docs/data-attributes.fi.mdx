@@ -1,0 +1,400 @@
+---
+title: Data-attribuutit
+description: Data-attribuuttien käyttäminen deklaratiiviseen tyylittelyyn ja komponenttien tunnistamiseen.
+---
+
+Data-attribuutit tarjoavat tehokkaan tavan paljastaa komponentin tila ja rakenne kuluttajille, mahdollistaen joustavan tyylittelyn ilman propsien räjähtävää määrää. Modernit komponenttikirjastot käyttävät kahta ensisijaista mallia: `data-state` visuaalisille tiloille ja `data-slot` komponenttien tunnistamiseen.
+
+## Tilojen tyylitys `data-state`-attribuutilla
+
+Yksi yleisimmistä antipatterneistä komponenttien tyylittelyssä on erillisten className-proppien paljastaminen eri tiloille.
+
+Vähemmän moderneissa komponenteissa näet usein API:ita kuten tämä:
+
+```tsx
+<Dialog
+  openClassName="bg-black"
+  closedClassName="bg-white"
+  classes={{
+    open: "opacity-100",
+    closed: "opacity-0"
+  }}
+/>
+```
+
+Tässä lähestymistavassa on useita ongelmia:
+- Se kytkee komponentin sisäisen tilan sen tyylitys-APIin
+- Se luo propsien määrän räjähdyksen komponenttien kasvaessa monimutkaisemmiksi
+- Se tekee komponentista vaikeamman käyttää ja ylläpitää
+- Se estää tilaperusteisen tyylittelyn tilayhdistelmien perusteella
+
+### Ratkaisu: `data-state`-attribuutit
+
+Käytä sen sijaan `data-*`-attribuutteja paljastaaksesi komponentin tila deklaratiivisesti. Tämä antaa kuluttajille mahdollisuuden tyylittää komponentteja tilan perusteella standardeilla CSS-valitsimilla:
+
+```tsx title="component.tsx"
+const Dialog = ({ className, ...props }: DialogProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      data-state={isOpen ? 'open' : 'closed'}
+      className={cn('transition-all', className)}
+      {...props}
+    />
+  );
+};
+```
+
+Nyt kuluttajat voivat tyylittää komponentin ulkopuolelta tilan perusteella:
+
+```tsx title="app.tsx"
+<Dialog className="data-[state=open]:opacity-100 data-[state=closed]:opacity-0" />
+```
+
+### Tämän lähestymistavan edut
+
+1. **Yksi className-prop** - Ei tarvetta useille tilakohtaisille className-propseille
+2. **Yhdisteltävissä** - Yhdistä useita data-attribuutteja monimutkaisiin tiloihin
+3. **Standardi CSS** - Toimii minkä tahansa CSS-in-JS-ratkaisun tai tavallisen CSS:n kanssa
+4. **Tyyppiturvallinen** - TypeScript voi päätellä data-attribuuttien arvot
+5. **Tarkasteltavissa** - Tilat näkyvät DevToolsissa HTML-attribuutteina
+
+### Yleiset tilamallit
+
+Käytä data-attribuutteja kaikenlaisiin komponenttitiloihin:
+
+```tsx
+// Open/closed state
+<Accordion data-state={isOpen ? 'open' : 'closed'} />
+
+// Selected state
+<Tab data-state={isSelected ? 'active' : 'inactive'} />
+
+// Disabled state (in addition to disabled attribute)
+<Button data-disabled={isDisabled} disabled={isDisabled} />
+
+// Loading state
+<Button data-loading={isLoading} />
+
+// Orientation
+<Slider data-orientation="horizontal" />
+
+// Side/position
+<Tooltip data-side="top" />
+```
+
+### Tyylitys Tailwindilla
+
+Tailwind tukee mielivaltaisia variantteja, mikä tekee data-attribuuttityylistä elegantin:
+
+```tsx
+<Dialog
+  className={cn(
+    // Base styles
+    'rounded-lg border p-4',
+    // State-based styles
+    'data-[state=open]:animate-in data-[state=open]:fade-in',
+    'data-[state=closed]:animate-out data-[state=closed]:fade-out',
+    // Multiple attributes
+    'data-[state=open][data-side=top]:slide-in-from-top-2'
+  )}
+/>
+```
+
+Yleisesti käytetyille tiloille voit laajentaa Tailwindin konfiguraatiota:
+
+```js title="tailwind.config.js"
+module.exports = {
+  theme: {
+    extend: {
+      data: {
+        open: 'state="open"',
+        closed: 'state="closed"',
+        active: 'state="active"',
+      }
+    }
+  }
+}
+```
+
+Nyt voit käyttää lyhennettä:
+
+```tsx
+<Dialog className="data-open:opacity-100 data-closed:opacity-0" />
+```
+
+### Integrointi Radix UI:n kanssa
+
+Tätä mallia käyttää laajasti Radix UI, joka automaattisesti lisää data-attribuutteja primitiiveihinsa:
+
+```tsx
+import * as Dialog from '@radix-ui/react-dialog';
+
+<Dialog.Root>
+  <Dialog.Trigger />
+  <Dialog.Portal>
+    {/* Radix automatically adds data-state="open" | "closed" */}
+    <Dialog.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out" />
+    <Dialog.Content className="data-[state=open]:fade-in data-[state=closed]:fade-out" />
+  </Dialog.Portal>
+</Dialog.Root>
+```
+
+Muita Radixin tarjoamia data-attribuutteja ovat:
+- `data-state` - open/closed, active/inactive, on/off
+- `data-side` - top/right/bottom/left (sijoitettujen elementtien kohdalla)
+- `data-align` - start/center/end (sijoitettujen elementtien kohdalla)
+- `data-orientation` - horizontal/vertical
+- `data-disabled` - olemassa, kun komponentti on disabled-tilassa
+- `data-placeholder` - olemassa, kun placeholder on näkyvissä
+
+## Komponenttien tunnistaminen `data-slot`-attribuutilla
+
+Kun `data-state` seuraa visuaalisia tiloja, `data-slot` tunnistaa komponenttityyppejä koostumuksessa. Tämä malli, jonka suosiota on kasvattanut shadcn/ui, antaa vanhemmille komponentille mahdollisuuden kohdistaa ja tyylittää tiettyjä lapsikomponentteja ilman hauraita luokka- tai elementtivalitsimia.
+
+### Ongelma lapsen kohdistamisessa
+
+Perinteisillä tavoilla tyylittää lapsikomponentteja on merkittäviä rajoituksia:
+
+```tsx
+// Relies on element types - breaks if implementation changes
+<form className="[&_input]:rounded-lg [&_button]:mt-4" />
+
+// Relies on class names - breaks if classes change
+<form className="[&_.text-input]:rounded-lg" />
+
+// Requires passing classes through props - verbose
+<form>
+  <input className={inputClasses} />
+  <button className={buttonClasses} />
+</form>
+```
+
+### Ratkaisu: `data-slot`-attribuutit
+
+Käytä `data-slot` antamaan komponenteille vakaat tunnisteet, joita vanhemmat voivat kohdistaa:
+
+```tsx title="field-set.tsx"
+function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
+  return (
+    <fieldset
+      data-slot="field-set"
+      className={cn(
+        "flex flex-col gap-6",
+        // Target specific child slots
+        "has-[>[data-slot=checkbox-group]]:gap-3",
+        "has-[>[data-slot=radio-group]]:gap-3",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+```tsx title="checkbox-group.tsx"
+function CheckboxGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="checkbox-group"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  );
+}
+```
+
+### `data-slot`-attribuuttien edut
+
+1. **Vakaita tunnisteita** - Eivät rikkinäisiä kun toteutuksen yksityiskohdat muuttuvat
+2. **Semanttinen kohdistaminen** - Kohdista komponentin tarkoituksen perusteella, ei rakenteen
+3. **Kapselointi** - Sisäiset luokat pysyvät yksityisinä
+4. **Yhdisteltävissä** - Toimii mielivaltaisessa upotuksessa ja koostumuksessa
+5. **Tyyppiturvallinen** - Voidaan validoida ja dokumentoida
+
+### Parent-aware-tyylittely `has-[]`-valitsimella
+
+Tailwindin `has-[]`-valitsin yhdessä `data-slot`-attribuuttien kanssa luo voimakkaan vanhempaan perustuvan tyylittelyn:
+
+```tsx title="form.tsx"
+function Form({ className, ...props }: React.ComponentProps<"form">) {
+  return (
+    <form
+      data-slot="form"
+      className={cn(
+        "space-y-4",
+        // Adjust spacing when specific slots are present
+        "has-[>[data-slot=form-section]]:space-y-6",
+        "has-[>[data-slot=inline-fields]]:space-y-2",
+        // Style based on slot states
+        "has-[[data-slot=submit-button][data-loading=true]]:opacity-50",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### Descendant-kohdistaminen `[&_]`-mallilla
+
+Syvempää upotusta varten käytä `[&_selector]`-mallia kohdistamaan mihin tahansa jälkeläiseen:
+
+```tsx title="card.tsx"
+function Card({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card"
+      className={cn(
+        "rounded-lg border p-4",
+        // Target any descendant with data-slot
+        "[&_[data-slot=card-header]]:mb-4",
+        "[&_[data-slot=card-title]]:text-lg [&_[data-slot=card-title]]:font-semibold",
+        "[&_[data-slot=card-description]]:text-sm [&_[data-slot=card-description]]:text-muted-foreground",
+        "[&_[data-slot=card-footer]]:mt-4 [&_[data-slot=card-footer]]:border-t [&_[data-slot=card-footer]]:pt-4",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### Globaalit CSS-tyylit `data-slot`-attribuuteilla
+
+Data-slotit toimivat erinomaisesti globaalin CSS:n kanssa teemanlaajuisen yhdenmukaisuuden saavuttamiseksi:
+
+```css title="globals.css"
+/* Style all buttons within forms */
+[data-slot="form"] [data-slot="button"] {
+  @apply w-full sm:w-auto;
+}
+
+/* Style submit buttons specifically */
+[data-slot="form"] [data-slot="submit-button"] {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* Adjust inputs within inline layouts */
+[data-slot="inline-fields"] [data-slot="input"] {
+  @apply flex-1;
+}
+
+/* Style based on state combinations */
+[data-slot="dialog"][data-state="open"] [data-slot="dialog-content"] {
+  @apply animate-in fade-in;
+}
+```
+
+### Nimeämiskäytännöt
+
+Noudata näitä käytäntöjä yhdenmukaisen `data-slot`-nimeämisen varmistamiseksi:
+
+1. **Käytä kebab-casea** - `data-slot="form-field"` eikä `data-slot="formField"`
+2. **Ole spesifinen** - `data-slot="submit-button"` eikä `data-slot="button"`
+3. **Vastaavuus komponentin tarkoitukseen** - Nimi kertoo mitä komponentti tekee, ei miltä se näyttää
+4. **Vältä toteutuksen yksityiskohtia** - `data-slot="user-avatar"` eikä `data-slot="rounded-image"`
+
+```tsx
+// Good examples
+data-slot="search-input"
+data-slot="navigation-menu"
+data-slot="error-message"
+data-slot="submit-button"
+data-slot="card-header"
+
+// Avoid
+data-slot="input"           // Too generic
+data-slot="blueButton"      // Includes styling
+data-slot="div-wrapper"     // Implementation detail
+data-slot="mainContent"     // Use camelCase
+```
+
+## Milloin käyttää data-attribuutteja vs props
+
+Ymmärrys siitä, milloin käyttää kumpaakin mallia, on avain siistiin API:iin:
+
+### `data-state`-käyttötapaukset
+- **Visuaaliset tilat** - open/closed, active/inactive, loading jne.
+- **Asettelutilat** - orientation, side, alignment
+- **Interaktiotilat** - hover, focus, disabled (kun tarvitset tyylitellä lapsia)
+
+### `data-slot`-käyttötapaukset
+- **Komponenttien tunnistus** - Vakaat tunnisteet kohdistamista varten
+- **Koostumusmallit** - Vanhempi-lapsi-suhteet
+- **Globaali tyylittely** - Teemanlaajuinen komponenttityylitys
+- **Variantista riippumaton kohdistaminen** - Kohdista minkä tahansa komponentin variantin
+
+### `props`-käyttötapaukset
+- **Variantit** - Eri visuaaliset suunnat (primary, secondary, destructive)
+- **Koot** - sm, md, lg
+- **Käytöksen konfiguraatio** - controlled/uncontrolled, oletusarvot
+- **Tapahtumakäsittelijät** - onClick, onChange jne.
+
+### Yhdistetty lähestymistapa
+
+Hyvin suunniteltu komponentti käyttää kaikkia kolmea mallia tarkoituksenmukaisesti:
+
+```tsx title="button.tsx"
+type ButtonProps = {
+  variant?: 'primary' | 'secondary' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
+  loading?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
+  className?: string;
+};
+
+const Button = ({
+  variant = 'primary',
+  size = 'md',
+  loading,
+  disabled,
+  className,
+  ...props
+}: ButtonProps) => {
+  return (
+    <button
+      // Slot for targeting
+      data-slot="button"
+      // State for conditional styling
+      data-loading={loading}
+      data-disabled={disabled}
+      className={cn(
+        // Variant styles via props
+        buttonVariants({ variant, size }),
+        // Additional state styling allowed via className
+        className
+      )}
+      disabled={disabled}
+      {...props}
+    />
+  );
+};
+```
+
+Nyt nappia voidaan käyttää ja tyylittää monella eri tavalla:
+
+```tsx
+// Basic usage with variants
+<Button variant="primary" size="lg">Submit</Button>
+
+// Parent targeting via data-slot
+<form className="[&_[data-slot=button]]:w-full">
+  <Button>Submit</Button>
+</form>
+
+// State-based styling via data-state
+<Button
+  loading={isLoading}
+  className="data-[loading=true]:opacity-50"
+>
+  Submit
+</Button>
+
+// Global CSS can target any button
+// [data-slot="button"][data-loading="true"] { ... }
+```
+
+Data-attribuutit tarjoavat vankan perustan modernien komponenttikirjastojen tyylittelylle. Käyttämällä `data-state`-attribuuttia visuaalisiin tiloihin ja `data-slot`-attribuuttia komponenttien tunnistamiseen luot joustavan, ylläpidettävän API:n, joka skaalautuu yksinkertaisista komponenteista monimutkaisiin design-järjestelmiin.

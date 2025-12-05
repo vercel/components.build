@@ -1,0 +1,54 @@
+---
+title: Principes fondamentaux
+description: Lors de la construction de composants d'interface modernes, il est important de garder ces principes fondamentaux à l'esprit.
+---
+
+## Composabilité et réutilisabilité
+
+Favorisez la composition plutôt que l'héritage — construisez des composants qui peuvent être combinés et imbriqués pour créer des interfaces utilisateur plus complexes, plutôt que de compter sur des hiérarchies de classes profondes.
+
+Les composants composables exposent une API claire (via props/slots) qui permet aux développeurs de personnaliser le comportement et l'apparence en branchant des éléments enfants ou des callbacks.
+
+Cela rend les composants hautement réutilisables dans différents contextes. (La conception de React renforce cela : « Props and composition give you all the flexibility you need to customize a component’s look and behavior in an explicit and safe way. »)
+
+## Accessible par défaut
+
+Les composants doivent être utilisables par tous les utilisateurs. Utilisez des éléments HTML sémantiques appropriés au rôle du composant (par exemple `<button>` pour les actions cliquables, `<ul>/<li>` pour les listes, etc.) et complétez-les par des attributs WAI-ARIA lorsque nécessaire.
+
+Assurez-vous que la navigation au clavier et la gestion du focus sont prises en charge (par exemple, navigation par touches fléchées dans les menus, verrouillage du focus dans les modales). Chaque composant doit respecter, d'emblée, les normes et lignes directrices en matière d'accessibilité.
+
+Cela implique de fournir des rôles/états ARIA appropriés et de tester avec des lecteurs d'écran. L'accessibilité n'est pas optionnelle — c'est une fonctionnalité de base de chaque composant.
+
+## Personnalisation et thématisation
+
+Un composant doit être facile à restyler ou à adapter à différentes exigences de design. Évitez d'encoder en dur des styles visuels qui ne peuvent pas être remplacés.
+
+Fournissez des mécanismes pour le theming et le styling, tels que les CSS variables, des noms de classes clairement documentés, ou des style props. Idéalement, les composants sont livrés avec un style par défaut sensé mais permettent aux développeurs de personnaliser l'apparence avec un effort minimal (par exemple, en passant un className ou en utilisant des design tokens).
+
+Ce principe garantit que les composants peuvent s'intégrer à n'importe quelle marque ou système de design sans « lutter » contre les styles par défaut.
+
+## Léger et performant
+
+Les composants doivent être aussi légers que possible en termes d'actifs et de dépendances. Évitez d'alourdir un composant avec de grosses dépendances de bibliothèque ou une logique excessivement complexe, surtout si cette logique n'est pas toujours nécessaire.
+
+Visez de bonnes performances (à la fois au rendu et à l'interaction) en minimisant les re-renders inutiles et en utilisant des algorithmes efficaces pour les tâches lourdes. Si un composant est intensif en données (comme une grande liste ou un tableau), envisagez des modèles tels que la virtualisation ou le rendu incrémental, mais gardez ces fonctionnalités optionnelles.
+
+Les composants légers sont plus faciles à maintenir et plus rapides pour les utilisateurs finaux.
+
+## Transparence et propriété du code
+
+En open-source, les consommateurs bénéficient souvent d'une visibilité et d'un contrôle complets du code des composants. Cette spécification encourage un état d'esprit « open-source first » : les composants ne doivent pas être des boîtes noires.
+
+Lorsque les développeurs importent ou copient votre composant, ils doivent pouvoir inspecter son fonctionnement et le modifier si nécessaire. Ce principe sous-tend le modèle de distribution émergent « copier-coller » (discuté plus loin) où les développeurs intègrent directement le code du composant dans leurs projets.
+
+En donnant aux utilisateurs la propriété du code, vous augmentez la confiance et permettez une personnalisation plus poussée.
+
+Même si vous distribuez via un package, adoptez la transparence en fournissant des source maps, du code lisible et une documentation complète.
+
+## Bien documenté et favorable à l'expérience développeur (DX)
+
+Un excellent composant n'est pas juste du code — il s'accompagne d'une documentation claire et d'exemples. Du point de vue de l'expérience développeur (DX), vos composants doivent être faciles à apprendre et à intégrer.
+
+Documentez le but de chaque composant, ses props et des exemples d'utilisation. Incluez des notes sur l'accessibilité (comme les contrôles clavier ou les attributs ARIA utilisés) et toutes les options de personnalisation.
+
+Une bonne documentation réduit les usages incorrects et abaisse la barrière à l'adoption. Nous couvrirons les attentes en matière de documentation dans la section Publication, mais cela est énoncé ici comme principe car la planification d'une bonne documentation et d'une bonne DX devrait se faire pendant la phase de conception/construction.

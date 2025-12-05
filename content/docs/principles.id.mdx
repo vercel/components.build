@@ -1,0 +1,54 @@
+---
+title: Prinsip Inti
+description: Saat membangun komponen UI modern, penting untuk menjaga prinsip-prinsip inti ini.
+---
+
+## Komposabilitas dan Dapat Digunakan Kembali
+
+Utamakan komposisi daripada pewarisan – buat komponen yang dapat digabungkan dan disusun bersarang untuk membuat UI yang lebih kompleks, alih-alih mengandalkan hierarki kelas yang dalam.
+
+Komponen yang dapat dikomposisi mengekspos API yang jelas (melalui props/slots) yang memungkinkan pengembang menyesuaikan perilaku dan tampilan dengan memasang elemen anak atau callback.
+
+Ini membuat komponen sangat dapat digunakan kembali dalam berbagai konteks. (Desain React menegaskan hal ini: “Props and composition give you all the flexibility you need to customize a component’s look and behavior in an explicit and safe way.”)
+
+## Dapat Diakses Secara Default
+
+Komponen harus dapat digunakan oleh semua pengguna. Gunakan elemen HTML semantik yang sesuai dengan peran komponen (mis. `<button>` untuk aksi yang dapat diklik, `<ul>/<li>` untuk daftar, dll.) dan tambahkan atribut WAI-ARIA bila perlu.
+
+Pastikan navigasi keyboard dan pengelolaan fokus didukung (misalnya, navigasi dengan tombol panah di menu, perangkap fokus di modal). Setiap komponen harus mematuhi standar dan pedoman aksesibilitas secara bawaan.
+
+Ini berarti menyediakan peran/status ARIA yang tepat dan menguji dengan pembaca layar. Aksesibilitas bukan pilihan – ini adalah fitur dasar dari setiap komponen.
+
+## Kustomisasi dan Pemberian Tema
+
+Sebuah komponen harus mudah diubah gaya atau disesuaikan dengan kebutuhan desain yang berbeda. Hindari menetapkan gaya visual secara statis yang tidak dapat ditimpa.
+
+Sediakan mekanisme untuk theming dan styling, seperti CSS variables, nama kelas yang terdokumentasi dengan jelas, atau style props. Idealnya, komponen hadir dengan gaya default yang masuk akal namun memungkinkan pengembang menyesuaikan tampilan dengan usaha minimal (misalnya, dengan meneruskan className atau menggunakan design tokens).
+
+Prinsip ini memastikan komponen dapat cocok dengan merek atau sistem desain mana pun tanpa “melawan” gaya default.
+
+## Ringan dan Berkinerja Tinggi
+
+Komponen harus seramping mungkin dalam hal aset dan dependensi. Hindari membengkakkan komponen dengan dependensi pustaka besar atau logika yang terlalu kompleks, terutama jika logika tersebut tidak selalu diperlukan.
+
+Upayakan kinerja yang baik (baik pada rendering maupun interaksi) dengan meminimalkan render ulang yang tidak perlu dan menggunakan algoritma efisien untuk tugas berat. Jika sebuah komponen intensif data (seperti daftar besar atau tabel), pertimbangkan pola seperti virtualisasi atau rendering bertahap, tetapi biarkan fitur tersebut bersifat opsional.
+
+Komponen yang ringan lebih mudah dipelihara dan lebih cepat bagi pengguna akhir.
+
+## Transparansi dan Kepemilikan Kode
+
+Dalam open-source, konsumen sering mendapat manfaat dari memiliki visibilitas penuh dan kontrol atas kode komponen. Spesifikasi ini mendorong pola pikir “open-source first”: komponen seharusnya bukan kotak hitam.
+
+Saat pengembang mengimpor atau menyalin komponen Anda, mereka harus dapat memeriksa cara kerjanya dan memodifikasinya jika perlu. Prinsip ini mendasari model distribusi “copy-and-paste” yang sedang berkembang (dibahas nanti) di mana pengembang mengintegrasikan kode komponen langsung ke dalam proyek mereka.
+
+Dengan memberi pengguna kepemilikan kode, Anda meningkatkan kepercayaan dan memungkinkan kustomisasi yang lebih mendalam.
+
+Bahkan jika Anda mendistribusikan melalui paket, dukung transparansi dengan menyediakan source maps, kode yang dapat dibaca, dan dokumentasi lengkap.
+
+## Terdokumentasi dengan Baik dan Ramah DX
+
+Komponen yang bagus bukan sekadar kode – ia dilengkapi dengan dokumentasi dan contoh yang jelas. Dari perspektif pengalaman pengembang (DX), komponen Anda harus mudah dipelajari dan diintegrasikan.
+
+Dokumentasikan tujuan setiap komponen, props, dan contoh penggunaan. Sertakan catatan tentang aksesibilitas (seperti kontrol keyboard atau atribut ARIA yang digunakan) dan opsi kustomisasi apa pun.
+
+Dokumentasi yang baik mengurangi penyalahgunaan dan menurunkan hambatan untuk adopsi. Kami akan membahas harapan dokumentasi di bagian Publikasi, tetapi ini dicantumkan di sini sebagai prinsip karena perencanaan untuk dokumentasi dan DX yang baik harus terjadi selama fase desain/pembangunan.

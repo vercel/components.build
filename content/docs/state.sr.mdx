@@ -1,0 +1,88 @@
+---
+title: Stanje
+description: Kako upravljati stanjem u komponenti, kao i spajanje kontrolisanog i nekontrolisanog stanja.
+---
+
+Izrada fleksibilnih komponenti koje rade i u kontrolisanom i u nekontrolisanom režimu je karakteristika profesionalnih komponenti.
+
+## Nekontrolisano stanje
+
+Nekontrolisano stanje je kada komponenta upravlja sopstvenim stanjem interno. Ovo je podrazumevani obrazac korišćenja za većinu komponenti.
+
+Na primer, evo jednostavne `Stepper` komponente koja interno upravlja sopstvenim stanjem:
+
+```tsx title="stepper.tsx"
+import { useState } from 'react';
+
+export const Stepper = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+};
+```
+
+## Kontrolisano stanje
+
+Kontrolisano stanje je kada roditeljska komponenta upravlja stanjem komponente. Umesto da pratimo stanje interno, delegiramo ovu odgovornost roditeljskoj komponenti.
+
+Prerađimo komponentu `Stepper` da bi bila kontrolisana od strane roditeljske komponente:
+
+```tsx title="stepper.tsx"
+type StepperProps = {
+  value: number;
+  setValue: (value: number) => void;
+};
+
+export const Stepper = ({ value, setValue }: StepperProps) => (
+  <div>
+    <p>{value}</p>
+    <button onClick={() => setValue(value + 1)}>Increment</button>
+  </div>
+);
+```
+
+## Spajanje stanja
+
+Najbolje komponente podržavaju i kontrolisano i nekontrolisano stanje. To omogućava upotrebu komponente u različitim scenarijima i njenu laku prilagodbu.
+
+[Radix UI](https://www.radix-ui.com/) održava internu utilitu za spajanje kontrolisanog i nekontrolisanog stanja pod nazivom [`use-controllable-state`](https://github.com/radix-ui/primitives/tree/main/packages/react/use-controllable-state). Iako nije namenjena za javnu upotrebu, projekti poput [Kibo UI](https://www.kibo-ui.com) implementirali su ovu utilitu kako bi izgradili sopstvene komponente slične Radix-u.
+
+Hajde da instaliramo hook:
+
+```package-install
+npm install @radix-ui/react-use-controllable-state
+```
+
+Ovaj lagani hook vam daje iste obrasce upravljanja stanjem koji se koriste interno u biblioteci komponenti Radix UI-a, osiguravajući da se vaše komponente ponašaju u skladu sa industrijskim standardima.
+
+Hook prihvata tri glavna parametra i vraća tuple sa trenutnom vrednošću i setter-om. Iskoristimo ga da spojimo kontrolisano i nekontrolisano stanje komponente `Stepper`:
+
+```tsx title="stepper.tsx"
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+
+type StepperProps = {
+  value: number;
+  defaultValue: number;
+  onValueChange: (value: number) => void;
+};
+
+export const Stepper = ({ value: controlledValue, defaultValue, onValueChange }: StepperProps) => {
+  const [value, setValue] = useControllableState({
+    prop: controlledValue,        // The controlled value prop
+    defaultProp: defaultValue,    // Default value for uncontrolled mode
+    onChange: onValueChange,      // Called when value changes
+  });
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+}
+```

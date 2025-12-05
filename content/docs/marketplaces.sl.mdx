@@ -1,0 +1,135 @@
+---
+title: Tržnice
+description: Uporaba tržnic komponent za deljenje vaših komponent.
+---
+
+Component marketplaces predstavljajo nov paradigm v načinu, kako razvijalci delijo in odkrivajo UI komponente. Platforme, kot je [21st.dev](https://21st.dev), so se pojavile kot centralizirana središča, kjer ustvarjalci lahko objavijo komponente, uporabniki pa jih lahko odkrijejo, predogledajo in jih brezhibno namestijo.
+
+Te tržnice združujejo dostopnost registrov z odkritljivostjo tradicionalnih repozitorijev paketov, ustvarjajoč živahna ekosisteme za izmenjavo komponent.
+
+## Kako delujejo tržnice
+
+Ko objavite na tržnici, platforma običajno:
+
+1. **Gostuje kodo vaše komponente** - Ni potrebe po upravljanju lastne infrastrukture
+2. **Nudi poenoten CLI** - Uporabniki nameščajo komponente preko orodij tržnice
+3. **Ustvarja predoglede** - Spletne predstavitve in interaktivni primeri se ustvarijo samodejno
+4. **Urejajo odkrivanje** - Iskanje, kategorije in priporočila prikazujejo relevantne komponente
+
+Na primer, namestitev iz 21st.dev uporablja znan vzorec shadcn CLI:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/haydenbleasel/dialog-stack
+```
+
+Tržnica skrbi za strežbo metapodatkov in izvorne kode komponente, kar naredi postopek namestitve brezhiben.
+
+## Prednosti tržnic komponent
+
+Tržnice ponujajo edinstvene prednosti, ki jih registri ali npm paketi sami po sebi ne morejo zagotoviti.
+
+### Za avtorje komponent
+
+#### Distribucija brez infrastrukture
+
+Objava na tržnici odpravi skrbi glede infrastrukture. Ni vam treba nastaviti gostovanja za svoje komponente ali upravljati distribucije CDN.
+
+Tržnica poskrbi za vse to, tako da se lahko osredotočite na ustvarjanje odličnih komponent.
+
+#### Obstoječa publika
+
+Tržnice združujejo povpraševanje. Ko razvijalci obiščejo 21st.dev ali podobne platforme, aktivno iščejo komponente. Vaše delo se odkrije organsko preko iskanja, kategorij in priporočil.
+
+Ta vgrajen promet pomeni, da ni potrebe po samostojnem trženju vaših komponent.
+
+#### Možnosti monetizacije
+
+Nekatere tržnice omogočajo ustvarjalcem monetizacijo njihovih del preko plačljivih nivojev komponent, sponzorskih programov, cen na podlagi uporabe in modelov enkratnega nakupa.
+
+To ustvarja trajnostne spodbude za vzdrževanje visokokakovostnih komponent.
+
+#### Povratne informacije skupnosti
+
+Tržnice običajno vključujejo ocenjevalne sisteme, odseke za komentarje, analitiko uporabe in sledenje težavam.
+
+Ta povratna zanka vam pomaga razumeti, kako razvijalci uporabljajo vaše komponente in kakšne izboljšave potrebujejo.
+
+### Za uporabnike komponent
+
+#### Kurirano odkrivanje
+
+V nasprotju z iskanjem po GitHub ali npm, tržnice ponujajo kurirane izkušnje:
+
+Brskaj po kategorijah:
+├── Trženje
+│   ├── Heroji
+│   ├── Cenik
+│   └── Pričevanja
+├── Aplikacije
+│   ├── Nadzorne plošče
+│   ├── Obrazci
+│   └── Prikaz podatkov
+└── E-trgovina
+    ├── Kartice izdelkov
+    ├── Košarica
+    └── Blagajna
+
+Takšna organizacija močno pospeši iskanje prave komponente.
+
+#### Zagotavljanje kakovosti
+
+Mnoge tržnice izvajajo postopke pregleda. Komponente lahko prestanejo preverjanja kakovosti kode, revizije dostopnosti, testiranje zmogljivosti in pregled dokumentacije.
+
+Ta kuracija zagotavlja osnovno raven kakovosti, ki jo samostojno objavljene komponente morda nimajo.
+
+#### Poenotena orodja
+
+Uporaba enega CLI za vse tržnične komponente poenostavi delovni tok. Katerekoli komponente iz tržnice lahko namestite z istim ukazom:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/<author>/<component>
+```
+
+## Izzivi tržnic
+
+Čeprav tržnice ponujajo privlačne prednosti, prinašajo tudi posebne izzive.
+
+### Za avtorje
+
+#### Konkurenca in vidnost
+
+V prepolni tržnici je izstopanje zahtevno. Tekmujete s stovinami podobnih komponent, uveljavljenimi ustvarjalci s sledilci, izpostavljeno ali sponzorirano vsebino ter priporočili, ki jih poganjajo algoritmi.
+
+Uspeh zahteva več kot le dobro kodo - potrebujete prepričljive predoglede, odlično dokumentacijo in pogosto tudi aktivno promocijo.
+
+#### Odvisnost od platforme
+
+Objava na tržnici pomeni sprejetje njenih pogojev uporabe, modelov delitve prihodkov, tehničnih zahtev in postopkov pregleda.
+
+Če platforma spremeni politike ali preneha delovati, vaš distribucijski kanal izgine.
+
+#### Pritisk kakovosti
+
+Uporabniki tržnic pričakujejo dodelane, proizvodno pripravljene komponente. To pomeni obsežno dokumentacijo, več različic demo primerov, odziven dizajn, testiranje v različnih brskalnikih in skladnost z dostopnostjo.
+
+Izpolnjevanje teh pričakovanj zahteva znaten čas in trud poleg samega pisanja kode komponent.
+
+### Za uporabnike
+
+#### Spremenljiva kakovost
+
+Kljub postopkom pregleda kakovost na tržnicah močno variira. Lahko naletite na zapuščene komponente z zastarelimi odvisnostmi, slabo dokumentirano kodo, komponente, ki delujejo v demo prikazih, a se sesujejo v produkciji, in neenotne stile kodiranja med avtorji.
+
+Pri izbiri komponent je še vedno potrebna skrbna preiskava.
+
+#### Skrbi glede odvisnosti
+
+Čeprav tržnice uporabljajo standardna orodja, kot je shadcn CLI, lahko uvedejo lastne formate metapodatkov, prilagojene zahteve za konfiguracijo in odvisnosti, specifične za platformo.
+
+To lahko oteži selitev proč s tržnice.
+
+#### Paradoks odkrivanja
+
+Preveč izbire lahko paralizira. Ko iščete komponento za gumb, najti 200 možnosti ne pomaga nujno. Potrebno je oceniti več podobnih komponent, primerjati subtilne razlike, oceniti dolgoročno vzdržljivost in upoštevati ugled avtorjev.
+
+Ta proces ocenjevanja lahko traja dlje kot izdelava komponente samemu.

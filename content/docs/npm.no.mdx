@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Hvordan publisere komponentene dine til NPM.
+---
+
+NPM-pakker representerer den tradisjonelle tilnærmingen til distribusjon av komponentbiblioteker. Selv om [registre](/registry) har blitt populære på grunn av fleksibiliteten, forblir npm-publisering et kraftig alternativ med tydelige fordeler for visse bruksområder.
+
+Den grunnleggende forskjellen mellom npm-pakker og registre ligger i hvordan de distribuerer kode og håndterer eierskap.
+
+## Pakkemodell
+
+Når du publiserer komponenter som en npm-pakke, distribuerer du forhåndsbygget, versjonert kode som brukere installerer som en avhengighet:
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+Dette gir flere overbevisende fordeler som gjør dem til riktig valg for mange komponentbiblioteker.
+
+### Versjonshåndtering
+
+Som pakkeansvarlig kontrollerer du versjonering og oppdateringer. Brukere kan låse seg til spesifikke versjoner for å sikre stabilitet:
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+Denne sentraliserte versjonskontrollen betyr at du kan pushe oppdateringer, sikkerhetspatcher og nye funksjoner som brukerne mottar gjennom standard avhengighetsoppdateringer.
+
+### Forenklet installasjon
+
+NPM-pakker gir en friksjonsfri installasjonsopplevelse. En enkelt kommando legger til hele komponentbiblioteket ditt:
+
+```bash
+npm install @acme/ui-components
+```
+
+Ingen behov for å kopiere filer manuelt, håndtere avhengigheter eller konfigurere byggverktøy. Alt fungerer rett ut av boksen.
+
+### Avhengighetsoppløsning
+
+NPM håndterer transitive avhengigheter automatisk. Hvis komponentene dine krever spesifikke versjoner av React, Framer Motion eller andre biblioteker, løser npm disse avhengighetene automatisk og forhindrer versjonskonflikter.
+
+### TypeScript-støtte
+
+Publiserte pakker kan inkludere forhåndsbygde typedefinisjoner, som gir umiddelbar TypeScript-støtte uten ekstra konfigurering:
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## Begrensninger for NPM-pakker
+
+Selv om npm-pakker utmerker seg i distribusjon, kommer de med kompromisser som registre spesielt adresserer.
+
+### Eierskap til kildekode
+
+Den mest betydelige begrensningen er mangelen på tilgang til kildekoden. Brukere kan ikke:
+
+- Endre komponentoppførsel direkte
+- Fikse feil uten å vente på oppdateringer
+- Tilpasse implementasjonsdetaljer
+- Fjerne ubrukt kode
+
+Dette skaper et avhengighetsforhold hvor brukere må stole på pakkevedlikeholderen for alle endringer.
+
+### Begrensninger for tilpasning
+
+Å finjustere komponenter krever at man arbeider innenfor det eksponerte API-et. Selv om du kan tilby props for tilpasning:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+kan brukere ikke fundamentalt endre hvordan komponenten fungerer uten å forke hele pakken.
+
+### Pakkestørrelse
+
+NPM-pakker inkluderer alle komponentene, selv om brukerne bare trenger et delsett. Selv om tree-shaking hjelper, er det ikke alltid perfekt, noe som potensielt legger unødvendig vekt til applikasjoner.
+
+## CSS- og Tailwind-konfigurasjon
+
+En kritisk vurdering når du publiserer Tailwind-baserte komponenter via npm er å sikre at stilene fungerer riktig i applikasjonen som konsumerer pakken.
+
+Som standard genererer Tailwind bare stiler for klasser den finner i prosjektfilene dine. Den ser ikke inne i node_modules, noe som betyr at komponentstilene dine ikke vil bli inkludert.
+
+For å fikse dette må brukerne legge til en `@source`-direktiv i Tailwind-konfigurasjonen deres, som forteller Tailwind å skanne pakken din etter klassenavn:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+Dokumenter dette kravet tydelig i pakke-README-en din.
+
+## Publisere komponentbiblioteket ditt
+
+For å publisere komponentene dine til npm trenger du en riktig konfigurert `package.json` som kan se slik ut:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+NPM-pakker forblir en viktig del av komponentøkosystemet. Selv om registre tilbyr sterke fordeler for eierskap til kildekode og tilpasning, gir npm-pakker stabilitet, versjonshåndtering og brukervennlighet som mange team trenger.
+
+Det viktigste er å forstå brukernes behov og velge distribusjonsmetoden som best tjener dem. Noen ganger betyr det å tilby begge alternativene og la utviklere velge hva som fungerer best for prosjektet deres.

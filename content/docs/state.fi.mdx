@@ -1,0 +1,88 @@
+---
+title: Tila
+description: Kuinka hallita komponentin tilaa sekä yhdistää kontrolloitua ja kontrolloimatonta tilaa.
+---
+
+Joustavien komponenttien rakentaminen, jotka toimivat sekä hallitussa että hallitsemattomassa tilassa, on ammattimaisten komponenttien tunnusmerkki.
+
+## Hallitsematon tila
+
+Hallitsematon tila tarkoittaa, että komponentti hallinnoi omaa tilaansa sisäisesti. Tämä on oletuskäyttötapa useimmille komponenteille.
+
+Esimerkiksi tässä on yksinkertainen `Stepper`-komponentti, joka hallinnoi omaa tilaansa sisäisesti:
+
+```tsx title="stepper.tsx"
+import { useState } from 'react';
+
+export const Stepper = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+};
+```
+
+## Hallittu tila
+
+Hallittu tila tarkoittaa, että komponentin tilaa hallinnoi vanhempakomponentti. Sen sijaan, että seuraisimme tilaa sisäisesti, delegoimme tämän vastuun vanhemmalle komponentille.
+
+Muokataan `Stepper`-komponentti siten, että sen tila hallitaan vanhempakomponentissa:
+
+```tsx title="stepper.tsx"
+type StepperProps = {
+  value: number;
+  setValue: (value: number) => void;
+};
+
+export const Stepper = ({ value, setValue }: StepperProps) => (
+  <div>
+    <p>{value}</p>
+    <button onClick={() => setValue(value + 1)}>Increment</button>
+  </div>
+);
+```
+
+## Tilojen yhdistäminen
+
+Parhaat komponentit tukevat sekä hallittua että hallitsematonta tilaa. Tämä mahdollistaa komponentin käytön erilaisissa tilanteissa ja helpottaa sen mukauttamista.
+
+[Radix UI](https://www.radix-ui.com/) ylläpitää sisäistä apuvälinettä hallittujen ja hallitsemattomien tilojen yhdistämiseen nimeltä [`use-controllable-state`](https://github.com/radix-ui/primitives/tree/main/packages/react/use-controllable-state). Vaikka sitä ei ole tarkoitettu julkiseen käyttöön, rekisterit kuten [Kibo UI](https://www.kibo-ui.com) ovat toteuttaneet tämän apuvälineen rakentaakseen omia Radix-tyylisiä komponenttejaan.
+
+Asennetaan hook:
+
+```package-install
+npm install @radix-ui/react-use-controllable-state
+```
+
+Tämä kevyt hook tarjoaa samat tilanhallintamallit, joita Radix UI:n komponenttikirjasto käyttää sisäisesti, varmistaen että komponenttisi käyttäytyvät yhdenmukaisesti alan standardien kanssa.
+
+Hook ottaa kolme pääparametria ja palauttaa tuplen, joka sisältää nykyisen arvon ja asettajan. Käytetään sitä yhdistämään `Stepper`-komponentin hallittu ja hallitsematon tila:
+
+```tsx title="stepper.tsx"
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+
+type StepperProps = {
+  value: number;
+  defaultValue: number;
+  onValueChange: (value: number) => void;
+};
+
+export const Stepper = ({ value: controlledValue, defaultValue, onValueChange }: StepperProps) => {
+  const [value, setValue] = useControllableState({
+    prop: controlledValue,        // The controlled value prop
+    defaultProp: defaultValue,    // Default value for uncontrolled mode
+    onChange: onValueChange,      // Called when value changes
+  });
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+}
+```

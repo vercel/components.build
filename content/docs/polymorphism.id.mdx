@@ -1,0 +1,578 @@
+---
+title: Polimorfisme
+description: Cara menggunakan prop `as` untuk mengubah elemen HTML yang dirender sambil mempertahankan fungsionalitas komponen.
+---
+
+Prop `as` adalah pola dasar dalam pustaka komponen React modern yang memungkinkan Anda mengubah elemen HTML atau komponen dasar yang dirender.
+
+Dipopulerkan oleh pustaka seperti [Styled Components](https://styled-components.com/), [Emotion](https://emotion.sh/), dan [Chakra UI](https://chakra-ui.com/), pola ini memberikan fleksibilitas dalam memilih HTML semantik sambil mempertahankan styling dan perilaku komponen.
+
+Prop `as` memungkinkan komponen polimorfik — komponen yang dapat dirender sebagai berbagai tipe elemen sambil mempertahankan fungsionalitas inti mereka:
+
+```tsx
+<Button as="a" href="/home">
+  Go Home
+</Button>
+
+<Button as="button" type="submit">
+  Submit Form
+</Button>
+
+<Button as="div" role="button" tabIndex={0}>
+  Custom Element
+</Button>
+```
+
+## Memahami `as`
+
+Prop `as` memungkinkan Anda menimpa tipe elemen default dari sebuah komponen. Alih-alih terikat pada elemen HTML tertentu, Anda dapat menyesuaikan komponen untuk dirender sebagai tag HTML yang valid atau bahkan komponen React lain.
+
+Sebagai contoh:
+
+```tsx
+// Default renders as a div
+<Box>Content</Box>
+
+// Renders as a section
+<Box as="section">Content</Box>
+
+// Renders as a nav
+<Box as="nav">Content</Box>
+```
+
+Ini merender elemen HTML yang berbeda:
+```html
+<!-- Default -->
+<div>Content</div>
+
+<!-- With as="section" -->
+<section>Content</section>
+
+<!-- With as="nav" -->
+<nav>Content</nav>
+```
+
+## Metode Implementasi
+
+Ada dua pendekatan utama untuk mengimplementasikan komponen polimorfik: implementasi manual dan menggunakan komponen `Slot` dari Radix UI.
+
+### Implementasi Manual
+
+Implementasi prop `as` menggunakan rendering komponen dinamis:
+
+```tsx
+// Simplified implementation
+function Component({
+  as: Element = 'div',
+  children,
+  ...props
+}) {
+  return <Element {...props}>{children}</Element>;
+}
+
+// More complete implementation with TypeScript
+type PolymorphicProps<E extends React.ElementType> = {
+  as?: E;
+  children?: React.ReactNode;
+} & React.ComponentPropsWithoutRef<E>;
+
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  children,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props}>{children}</Element>;
+}
+```
+
+Komponen ini:
+1. Menerima prop `as` dengan tipe elemen default
+2. Menggunakan elemen yang disediakan atau fallback ke default
+3. Menyebarkan semua prop lain ke elemen yang dirender
+4. Mempertahankan keamanan tipe menggunakan generik TypeScript
+
+### Menggunakan Radix UI Slot
+
+[Radix UI](https://www.radix-ui.com/) menyediakan komponen `Slot` yang menawarkan alternatif lebih kuat untuk pola prop `as`. Alih-alih hanya mengubah tipe elemen, `Slot` menggabungkan prop dengan komponen anak, memungkinkan pola komposisi.
+
+Pertama, pasang paket:
+
+```package-install
+npm install @radix-ui/react-slot
+```
+
+Pola `asChild` menggunakan prop boolean alih-alih menentukan tipe elemen:
+
+```tsx
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+const itemVariants = cva(
+  "rounded-lg border p-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-white",
+        primary: "bg-blue-500 text-white",
+      },
+      size: {
+        default: "h-10 px-4",
+        sm: "h-8 px-3",
+        lg: "h-12 px-6",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+function Item({
+  className,
+  variant = "default",
+  size = "default",
+  asChild = false,
+  ...props
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof itemVariants> & { asChild?: boolean }) {
+  const Comp = asChild ? Slot : "div"
+  return (
+    <Comp
+      data-slot="item"
+      data-variant={variant}
+      data-size={size}
+      className={cn(itemVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
+}
+```
+
+Sekarang Anda dapat menggunakannya dalam dua cara:
+
+```tsx
+// Default: renders as a div
+<Item variant="primary">Content</Item>
+
+// With asChild: merges props with child component
+<Item variant="primary" asChild>
+  <a href="/home">Link with Item styles</a>
+</Item>
+```
+
+Komponen `Slot`:
+1. Mengkloning elemen anak
+2. Menggabungkan prop-komponen (className, atribut data, dll.) dengan prop anak
+3. Meneruskan ref dengan benar
+4. Menangani komposisi event handler
+
+### Perbandingan: `as` vs `asChild`
+
+**`as` prop (implementasi manual):**
+```tsx
+// Explicit element type
+<Button as="a" href="/home">Link Button</Button>
+<Button as="button" type="submit">Submit Button</Button>
+
+// Simple, predictable API
+// Limited to element types
+```
+
+**`asChild` dengan Slot:**
+```tsx
+// Implicit from child
+<Button asChild>
+  <a href="/home">Link Button</a>
+</Button>
+
+<Button asChild>
+  <button type="submit">Submit Button</button>
+</Button>
+
+// More flexible composition
+// Works with any component
+// Better prop merging
+```
+
+**Perbedaan utama:**
+
+| Fitur | `as` prop | `asChild` + Slot |
+|---------|-----------|------------------|
+| **Gaya API** | `<Button as="a">` | `<Button asChild><a /></Button>` |
+| **Tipe Elemen** | Ditentukan di prop | Diinfer dari anak |
+| **Komposisi Komponen** | Terbatas | Dukungan penuh |
+| **Penggabungan Prop** | Penyebaran dasar | Penggabungan cerdas |
+| **Penerusan ref** | Perlu pengaturan manual | Bawaan |
+| **Penanganan event** | Dapat konflik | Dikomposisikan dengan benar |
+| **Ukuran pustaka** | Tanpa dependensi | Memerlukan `@radix-ui/react-slot` |
+
+### Kapan Menggunakan Masing-masing Pendekatan
+
+**Gunakan prop `as` ketika:**
+- Anda menginginkan permukaan API yang lebih sederhana
+- Anda terutama beralih antar elemen HTML
+- Anda ingin menghindari dependensi tambahan
+- Komponen sederhana dan tidak membutuhkan penggabungan prop yang kompleks
+
+**Gunakan `asChild` + Slot ketika:**
+- Anda perlu melakukan komposisi dengan komponen lain
+- Anda menginginkan perilaku penggabungan prop otomatis
+- Anda membangun pustaka komponen mirip Radix UI atau shadcn/ui
+- Anda membutuhkan penerusan ref yang andal di berbagai tipe komponen
+
+## Manfaat Utama
+
+### 1. Fleksibilitas HTML Semantik
+
+Prop `as` memastikan Anda selalu dapat menggunakan elemen HTML yang paling semantis sesuai konteks:
+
+```tsx
+// Navigation container
+<Container as="nav" className="navigation">
+  <NavItems />
+</Container>
+
+// Main content area
+<Container as="main" className="content">
+  <Article />
+</Container>
+
+// Sidebar
+<Container as="aside" className="sidebar">
+  <Widgets />
+</Container>
+```
+
+### 2. Kegunaan Ulang Komponen
+
+Satu komponen dapat melayani berbagai tujuan tanpa membuat varian terpisah:
+
+```tsx
+// Text component used for different elements
+<Text as="h1" size="2xl">Page Title</Text>
+<Text as="p" size="md">Body paragraph</Text>
+<Text as="span" size="sm">Inline text</Text>
+<Text as="label" size="sm">Form label</Text>
+```
+
+### 3. Peningkatan Aksesibilitas
+
+Pilih elemen yang memberikan aksesibilitas terbaik untuk tiap konteks:
+
+```tsx
+// Link that looks like a button
+<Button as="a" href="/signup">
+  Sign Up Now
+</Button>
+
+// Button that submits a form
+<Button as="button" type="submit">
+  Submit
+</Button>
+
+// Heading with button styles
+<Button as="h2" role="presentation">
+  Section Title
+</Button>
+```
+
+### 4. Integrasi Sistem Styling
+
+Pertahankan styling konsisten sambil mengganti elemen:
+
+```tsx
+const Card = styled.div`
+  padding: 1rem;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+`;
+
+// Same styles, different elements
+<Card as="article">Article content</Card>
+<Card as="section">Section content</Card>
+<Card as="li">List item content</Card>
+```
+
+## Kasus Penggunaan Umum
+
+### Komponen Tipografi
+
+Buat komponen teks yang fleksibel:
+
+```tsx
+function Text({
+  as: Element = 'span',
+  variant = 'body',
+  ...props
+}) {
+  const className = cn(
+    'text-base',
+    variant === 'heading' && 'text-2xl font-bold',
+    variant === 'body' && 'text-base',
+    variant === 'caption' && 'text-sm text-gray-600',
+    props.className
+  );
+
+  return <Element className={className} {...props} />;
+}
+
+// Usage
+<Text as="h1" variant="heading">Title</Text>
+<Text as="p" variant="body">Paragraph</Text>
+<Text as="figcaption" variant="caption">Caption</Text>
+```
+
+### Komponen Layout
+
+Bangun layout semantik:
+
+```tsx
+function Flex({ as: Element = 'div', ...props }) {
+  return (
+    <Element
+      className={cn('flex', props.className)}
+      {...props}
+    />
+  );
+}
+
+// Semantic HTML
+<Flex as="header" className="justify-between">
+  <Logo />
+  <Navigation />
+</Flex>
+
+<Flex as="main" className="flex-col">
+  <Content />
+</Flex>
+```
+
+### Elemen Interaktif
+
+Tangani berbagai tipe interaksi:
+
+```tsx
+function Clickable({ as: Element = 'button', ...props }) {
+  const isButton = Element === 'button';
+  const isAnchor = Element === 'a';
+
+  return (
+    <Element
+      role={!isButton && !isAnchor ? 'button' : undefined}
+      tabIndex={!isButton && !isAnchor ? 0 : undefined}
+      {...props}
+    />
+  );
+}
+
+// Various clickable elements
+<Clickable as="button" onClick={handleClick}>Button</Clickable>
+<Clickable as="a" href="/link">Link</Clickable>
+<Clickable as="div" onClick={handleClick}>Div Button</Clickable>
+```
+
+## Praktik Terbaik TypeScript
+
+### Tipe Komponen Generik
+
+Buat komponen polimorfik yang sepenuhnya aman secara tipe:
+
+```tsx
+type PolymorphicRef<E extends React.ElementType> =
+  React.ComponentPropsWithRef<E>['ref'];
+
+type PolymorphicProps<
+  E extends React.ElementType,
+  Props = {}
+> = Props &
+  Omit<React.ComponentPropsWithoutRef<E>, keyof Props> & {
+    as?: E;
+  };
+
+// Component with full type safety
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E, { customProp?: string }>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### Menginferensi Props
+
+Secara otomatis menurunkan tipe props berdasarkan elemen:
+
+```tsx
+// Props are inferred from the element type
+<Component as="a" href="/home">Home</Component>  // ✅ href is valid
+<Component as="div" href="/home">Home</Component> // ❌ TS error: href not valid on div
+
+<Component as="button" type="submit">Submit</Component> // ✅ type is valid
+<Component as="span" type="submit">Submit</Component>   // ❌ TS error
+```
+
+### Discriminated Unions
+
+Gunakan discriminated unions untuk prop spesifik-elemen:
+
+```tsx
+type ButtonProps =
+  | { as: 'button'; type?: 'submit' | 'button' | 'reset' }
+  | { as: 'a'; href: string; target?: string }
+  | { as: 'div'; role: 'button'; tabIndex: number };
+
+function Button(props: ButtonProps & { children: React.ReactNode }) {
+  const Element = props.as;
+  return <Element {...props} />;
+}
+```
+
+## Praktik Terbaik
+
+### 1. Default ke Elemen Semantis
+
+Pilih default yang bermakna dan mewakili kasus penggunaan umum:
+
+```tsx
+// ✅ Good defaults
+function Article({ as: Element = 'article', ...props }) { }
+function Navigation({ as: Element = 'nav', ...props }) { }
+function Heading({ as: Element = 'h2', ...props }) { }
+
+// ❌ Too generic
+function Component({ as: Element = 'div', ...props }) { }
+```
+
+### 2. Dokumentasikan Elemen yang Didukung
+
+Tentukan dengan jelas elemen mana yang didukung:
+
+```tsx
+interface BoxProps {
+  /**
+   * The HTML element to render as
+   * @default 'div'
+   * @example 'section', 'article', 'aside', 'main'
+   */
+  as?: 'div' | 'section' | 'article' | 'aside' | 'main' | 'header' | 'footer';
+}
+```
+
+### 3. Validasi Kesesuaian Elemen
+
+Berikan peringatan saat elemen yang tidak tepat digunakan:
+
+```tsx
+function Button({ as: Element = 'button', ...props }) {
+  if (__DEV__ && Element === 'div' && !props.role) {
+    console.warn(
+      'Button: When using as="div", provide role="button" for accessibility'
+    );
+  }
+
+  return <Element {...props} />;
+}
+```
+
+### 4. Tangani Event Handler dengan Benar
+
+Pastikan event handler bekerja di berbagai elemen:
+
+```tsx
+function Interactive({ as: Element = 'button', onClick, ...props }) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (Element !== 'button' && (e.key === 'Enter' || e.key === ' ')) {
+      onClick?.(e as any);
+    }
+  };
+
+  return (
+    <Element
+      onClick={onClick}
+      onKeyDown={Element !== 'button' ? handleKeyDown : undefined}
+      {...props}
+    />
+  );
+}
+```
+
+## Jebakan Umum
+
+### Penempatan HTML yang Tidak Valid
+
+Perhatikan aturan penempatan HTML:
+
+```tsx
+// ❌ Invalid - button inside button
+<Button as="button">
+  <Button as="button">Nested</Button>
+</Button>
+
+// ❌ Invalid - div inside p
+<Text as="p">
+  <Box as="div">Invalid nesting</Box>
+</Text>
+
+// ✅ Valid nesting
+<Text as="div">
+  <Box as="div">Valid nesting</Box>
+</Text>
+```
+
+### Atribut Aksesibilitas yang Hilang
+
+Ingat untuk menambahkan atribut ARIA yang sesuai:
+
+```tsx
+// ❌ Missing accessibility
+<Box as="nav">
+  <MenuItems />
+</Box>
+
+// ✅ Proper accessibility
+<Box as="nav" aria-label="Main navigation">
+  <MenuItems />
+</Box>
+```
+
+### Kehilangan Keamanan Tipe
+
+Hindari penggunaan tipe yang terlalu permisif:
+
+```tsx
+// ❌ Too permissive - no type safety
+function Component({ as: Element = 'div', ...props }: any) {
+  return <Element {...props} />;
+}
+
+// ✅ Type safe
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### Pertimbangan Kinerja
+
+Perhatikan implikasi re-render:
+
+```tsx
+// ❌ Creates new component on every render
+function Parent() {
+  const CustomDiv = (props) => <div {...props} />;
+  return <Component as={CustomDiv} />;
+}
+
+// ✅ Stable component reference
+const CustomDiv = (props) => <div {...props} />;
+function Parent() {
+  return <Component as={CustomDiv} />;
+}
+```

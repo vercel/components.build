@@ -1,0 +1,51 @@
+---
+title: Tóicní Dearaidh
+description: Conas a chruthaíonn cleachtais ainmniúcháin shemantacha agus tóicní dearaidh córas téamúcháin solúbtha agus inmharthana.
+---
+
+Tá ceann de bhunús leabharlann chomhlántach nua-aimseartha i ndearcadh machnamhach ar stíliú. In áit dathanna a chódáil go daingean nó córais ranganna daingean a chruthú, is féidir linn cleachtas ainmniúcháin shemantach a chur i bhfeidhm a scarann cúraimí an théama, an chomhthéacs, agus an úsáid.
+
+Tá an cleachtas ainmniúcháin shemantach seo ar a dtugtar tóicní dearaidh. Cruthaíonn an cinneadh ailtireachta seo córas inmharthana, solúbtha a scálaíonn go hálainn ar fud feidhmchlár.
+
+## Fealsúnacht na nAthróga CSS Sheamanta
+
+Is minic a cheanglaíonn cur chuige traidisiúnta CSS luachanna datha go díreach lena gcomhthéacsanna úsáide, ag cruthú córais bhriste a bhíonn deacair iad a chothabháil. Tógann tóicní dearaidh cur chuige difriúil trí shraitheanna abstaraíochta a chruthú a scarann cad é rud óna chuma.
+
+## Ag Tuigbheáil Ailtireacht na nAthróga
+
+Déanaimis féachaint ar conas is féidir linn ár n-athróga CSS a struchtúrú chun an córas solúbtha seo a chruthú:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+Sa sampla thuas, tá ceithre tóicní dearaidh againn:
+
+- `--background`, a úsáidtear do dhathanna cúlra (go príomha cúlra na leathanaigh)
+- `--foreground`, a úsáidtear do dhathanna tosaigh (dath ginearálta an téacs)
+- `--primary`, a úsáidtear do dhathanna príomhúla (príomh-dath an bhranda)
+- `--primary-foreground`, a úsáidtear do dhathanna tosaigh phríomúla (dath an téacs, mar a bhíonn le feiceáil i gcoinne an datha príomha)

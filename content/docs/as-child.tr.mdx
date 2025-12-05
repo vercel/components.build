@@ -1,0 +1,319 @@
+---
+title: asChild
+description: Bileşen içinde özel bir öğeyi render etmek için `asChild` prop'unun nasıl kullanılacağı.
+---
+
+The `asChild` prop, modern React bileşen kütüphanelerinde güçlü bir kalıptır. [Radix UI](https://www.radix-ui.com/primitives/docs/guides/composition) tarafından popüler hale getirilmiş ve [shadcn/ui](https://ui.shadcn.com) tarafından benimsenmiştir; bu kalıp, bileşenin işlevselliğini korurken varsayılan işaretlemeyi özel öğelerle değiştirmeyi sağlar.
+
+## `asChild`'ı Anlama
+
+Temelde, `asChild` bir bileşenin nasıl render edildiğini değiştirir. `true` olarak ayarlandığında, bileşen varsayılan DOM öğesini render etmek yerine, props'larını, davranışlarını ve event handler'larını doğrudan hemen altındaki çocuk öğe ile birleştirir.
+
+### `asChild` Olmadan
+
+```tsx
+<Dialog.Trigger>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+Bu iç içe geçmiş öğeler render eder:
+```html
+<button data-state="closed">
+  <button>Open Dialog</button>
+</button>
+```
+
+### `asChild` ile
+
+```tsx
+<Dialog.Trigger asChild>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+Bu tek, birleştirilmiş bir öğe render eder:
+```html
+<button data-state="closed">Open Dialog</button>
+```
+
+Dialog.Trigger'ın işlevselliği, gereksiz sarmalayıcı öğeleri ortadan kaldırarak butonunuza uygulanır.
+
+## Nasıl Çalışır
+
+Alt katta, `asChild` React'in bileşim yeteneklerini kullanarak bileşenleri birleştirir:
+
+```tsx
+// Simplified implementation
+function Component({ asChild, children, ...props }) {
+  if (asChild) {
+    // Clone child and merge props
+    return React.cloneElement(children, {
+      ...props,
+      ...children.props,
+      // Merge event handlers
+      onClick: (e) => {
+        props.onClick?.(e);
+        children.props.onClick?.(e);
+      }
+    });
+  }
+
+  // Render default element
+  return <button {...props}>{children}</button>;
+}
+```
+
+Bileşen:
+1. `asChild`'ın true olup olmadığını kontrol eder
+2. Çocuk öğeyi klonlar
+3. Hem ebeveynin hem de çocuğun props'larını birleştirir
+4. Event handler'ları birleştirir
+5. Geliştirilmiş çocuğu döner
+
+## Temel Faydalar
+
+### 1. Semantik HTML
+
+`asChild`, kullanım durumunuza en uygun HTML öğesini kullanmanıza olanak tanır:
+
+```tsx
+// Use a link for navigation
+<AlertDialog.Trigger asChild>
+  <a href="/delete">Delete Account</a>
+</AlertDialog.Trigger>
+
+// Use a custom button component
+<Tooltip.Trigger asChild>
+  <IconButton icon={<InfoIcon />} />
+</Tooltip.Trigger>
+```
+
+### 2. Temiz DOM Yapısı
+
+Geleneksel bileşim genellikle derin iç içe geçmiş DOM yapıları oluşturur. `asChild` bu "sarmalayıcı cehennemi"ni ortadan kaldırır:
+
+```tsx
+// Without asChild: Nested wrappers
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger>
+      <button>
+        <span>Hover me</span>
+      </button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+
+// With asChild: Clean structure
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <button>Hover me</button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+```
+
+### 3. Tasarım Sistemi Entegrasyonu
+
+`asChild`, mevcut tasarım sistemi bileşenlerinizle sorunsuz entegrasyona olanak tanır:
+
+```tsx
+import { Button } from '@/components/ui/button';
+
+<DropdownMenu.Trigger asChild>
+  <Button variant="outline" size="icon">
+    <MoreVertical className="h-4 w-4" />
+  </Button>
+</DropdownMenu.Trigger>
+```
+
+Button bileşeniniz, herhangi bir değişiklik yapmadan gerekli dropdown tetikleyici davranışlarını alır.
+
+### 4. Bileşen Bileşimi
+
+Birden fazla davranışı tek bir öğe üzerine bileştirebilirsiniz:
+
+```tsx
+<Dialog.Trigger asChild>
+  <Tooltip.Trigger asChild>
+    <button>
+      Open dialog (with tooltip)
+    </button>
+  </Tooltip.Trigger>
+</Dialog.Trigger>
+```
+
+Bu, hem dialog'u açan hem de hover sırasında tooltip gösteren bir buton oluşturur.
+
+## Yaygın Kullanım Durumları
+
+### Özel Tetikleyici Öğeler
+
+Varsayılan tetikleyicileri özel bileşenlerle değiştirin:
+
+```tsx
+// Custom link trigger
+<Collapsible.Trigger asChild>
+  <a href="#" className="text-blue-600 underline">
+    Toggle Details
+  </a>
+</Collapsible.Trigger>
+
+// Icon-only trigger
+<Popover.Trigger asChild>
+  <IconButton>
+    <Settings className="h-4 w-4" />
+  </IconButton>
+</Popover.Trigger>
+```
+
+### Erişilebilir Navigasyon
+
+Navigasyon öğeleri için uygun semantiği koruyun:
+
+```tsx
+<NavigationMenu.Link asChild>
+  <Link href="/products" className="nav-link">
+    Products
+  </Link>
+</NavigationMenu.Link>
+```
+
+### Form Entegrasyonu
+
+Form kütüphaneleri ile entegrasyon sağlarken işlevselliği koruyun:
+
+```tsx
+<FormField
+  control={form.control}
+  name="acceptTerms"
+  render={({ field }) => (
+    <FormItem>
+      <Checkbox.Root asChild>
+        <input
+          type="checkbox"
+          {...field}
+          className="sr-only"
+        />
+      </Checkbox.Root>
+    </FormItem>
+  )}
+/>
+```
+
+## En İyi Uygulamalar
+
+### 1. Erişilebilirliği Koru
+
+Öğe türünü değiştirirken erişilebilirliğin korunduğundan emin olun:
+
+```tsx
+// ✅ Good - maintains button semantics
+<Dialog.Trigger asChild>
+  <button type="button">Open</button>
+</Dialog.Trigger>
+
+// ⚠️ Dikkat - uygun ARIA özniteliklerini sağlayın
+<Dialog.Trigger asChild>
+  <div role="button" tabIndex={0}>Open</div>
+</Dialog.Trigger>
+```
+
+### 2. Bileşen Gereksinimlerini Dokümante Edin
+
+Bileşenlerin `asChild`'ı ne zaman desteklediğini açıkça belgeleyin:
+
+```tsx
+interface TriggerProps {
+  /**
+   * Change the default rendered element for the one passed as a child,
+   * merging their props and behavior.
+   *
+   * @default false
+   */
+  asChild?: boolean;
+  children: React.ReactNode;
+}
+```
+
+### 3. Çocuk Bileşenleri Test Edin
+
+Özel bileşenlerin `asChild` ile doğru çalıştığını doğrulayın:
+
+```tsx
+// Test that props are properly forwarded
+const TestButton = (props) => {
+  console.log('Received props:', props);
+  return <button {...props} />;
+};
+
+<Tooltip.Trigger asChild>
+  <TestButton>Test</TestButton>
+</Tooltip.Trigger>
+```
+
+### 4. Kenar Durumlarını Ele Alın
+
+Koşullu renderlama gibi kenar durumlarını düşünün:
+
+```tsx
+// Handle conditional children
+<Dialog.Trigger asChild>
+  {isLoading ? (
+    <Skeleton className="h-10 w-20" />
+  ) : (
+    <Button>Open Dialog</Button>
+  )}
+</Dialog.Trigger>
+```
+
+## Yaygın Tuzaklar
+
+### Props'ları Yaymamak
+
+[Types](/docs/types) sayfasında tartışıldığı gibi, props'ları altta yatan öğeye her zaman yaymalısınız.
+
+```tsx
+// ❌ Won't receive trigger behavior
+const BadButton = ({ children }) => <button>{children}</button>;
+
+// ✅ Properly receives all props
+const GoodButton = ({ children, ...props }) => (
+  <button {...props}>{children}</button>
+);
+```
+
+### Birden Fazla Çocuk
+
+`asChild`'ı destekleyen bir bileşene birden fazla çocuk geçirmeyin. Bu, bileşenin hangi çocuğu kullanacağını bilmemesi nedeniyle hata oluşturur.
+
+```tsx
+// ❌ Error - asChild expects single child
+<Trigger asChild>
+  <button>One</button>
+  <button>Two</button>
+</Trigger>
+
+// ✅ Single child element
+<Trigger asChild>
+  <button>Single Button</button>
+</Trigger>
+```
+
+### Fragment Çocukları
+
+`asChild`'ı destekleyen bir bileşene fragment geçirmeyin. Fragmentler geçerli bir element olmadığından hata oluşur.
+
+```tsx
+// ❌ Fragment is not a valid element
+<Trigger asChild>
+  <>Button</>
+</Trigger>
+
+// ✅ Actual element
+<Trigger asChild>
+  <button>Button</button>
+</Trigger>
+```

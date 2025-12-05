@@ -1,0 +1,51 @@
+---
+title: Dizajn tokeni
+description: Kako semantičke konvencije imenovanja i dizajn tokeni stvaraju fleksibilan, lako održiv sistem za upravljanje temama.
+---
+
+Jedna od ključnih osnova modernih biblioteka komponenti leži u njihovom promišljenom pristupu stilizovanju. Umesto da hardkodiramo boje ili pravimo rigidne sisteme klasa, možemo primeniti semantičku konvenciju imenovanja koja odvaja odgovornosti vezane za temu, kontekst i upotrebu.
+
+Ova semantička konvencija imenovanja poznata je kao dizajn tokeni. Ova arhitektonska odluka stvara lako održiv, fleksibilan sistem koji se lepo skalira kroz aplikacije.
+
+## Filozofija semantičkih CSS varijabli
+
+Tradicionalni CSS pristupi često povezuju vrednosti boja direktno sa kontekstima njihove upotrebe, stvarajući krhke sisteme koji su teški za održavanje. Dizajn tokeni primenjuju drugačiji pristup stvaranjem slojeva apstrakcije koji odvajaju šta nešto jeste od toga kako izgleda.
+
+## Razumevanje arhitekture varijabli
+
+Pogledajmo kako možemo strukturisati naše CSS promenljive da bismo stvorili ovaj fleksibilni sistem:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+U gornjem primeru imamo četiri dizajn tokena:
+
+- `--background`, koji se koristi za boje pozadine (pre svega pozadina stranice)
+- `--foreground`, koji se koristi za boje prednjeg plana (opšta boja teksta)
+- `--primary`, koji se koristi za primarne boje (glavna boja brenda)
+- `--primary-foreground`, koji se koristi za primarne boje prednjeg plana (boja teksta koja se vidi na primarnoj boji)

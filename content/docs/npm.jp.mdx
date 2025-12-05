@@ -1,0 +1,165 @@
+---
+title: NPM
+description: コンポーネントをnpmに公開する方法。
+---
+
+NPMパッケージはコンポーネントライブラリを配布する伝統的なアプローチを示します。柔軟性で人気を集めている[レジストリ](/registry)がある一方で、npmによる公開は特定のユースケースに対して明確な利点を持つ強力な選択肢であり続けます。
+
+npmパッケージとレジストリの根本的な違いは、コードの配布方法と所有権の管理方法にあります。
+
+## パッケージモデル
+
+コンポーネントをnpmパッケージとして公開すると、ユーザーが依存関係としてインストールする、事前ビルド済みでバージョン管理されたコードを配布することになります。
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+これは多くのコンポーネントライブラリにとって適切な選択となるいくつかの説得力のある利点を提供します。
+
+### バージョン管理
+
+パッケージ作成者として、バージョン管理や更新をコントロールできます。ユーザーは特定のバージョンに固定でき、安定性を確保できます。
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+この集中型のバージョン管理により、アップデート、セキュリティパッチ、新機能をプッシュでき、ユーザーは標準的な依存関係の更新を通じてそれらを受け取ります。
+
+### インストールの簡素化
+
+NPMパッケージは摩擦の少ないインストール体験を提供します。単一のコマンドでライブラリ全体を追加できます。
+
+```bash
+npm install @acme/ui-components
+```
+
+ファイルを手動でコピーしたり、依存関係を管理したり、ビルドツールを設定したりする必要はありません。すべてがそのまま動作します。
+
+### 依存関係の解決
+
+NPMは推移的な依存関係を自動的に処理します。コンポーネントが特定のバージョンのReactやFramer Motionなどを必要とする場合、npmがこれらの依存関係を自動的に解決し、バージョンの衝突を防ぎます。
+
+### TypeScriptサポート
+
+公開されたパッケージは事前にビルドされた型定義を含めることができ、追加の設定なしに即座にTypeScriptサポートを提供します。
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## NPMパッケージの制限
+
+npmパッケージは配布に優れていますが、レジストリが特に対処するトレードオフを伴います。
+
+### ソースコードの所有権
+
+最も重大な制限はソースコードにアクセスできないことです。ユーザーは以下のことができません:
+
+- コンポーネントの挙動を直接変更する
+- アップデートを待たずにバグを修正する
+- 実装の詳細をカスタマイズする
+- 未使用のコードを削除する
+
+これにより、ユーザーはすべての変更に対してパッケージのメンテナに依存する関係が生まれます。
+
+### カスタマイズの制約
+
+コンポーネントを調整するには公開されたAPIの範囲内で作業する必要があります。カスタマイズ用のpropsを提供することはできますが:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+ユーザーはパッケージ全体をフォークしない限り、コンポーネントの根本的な動作を変えることはできません。
+
+### バンドルサイズ
+
+NPMパッケージにはユーザーが一部しか必要としない場合でもすべてのコンポーネントが含まれます。tree-shakingは役立ちますが常に完璧ではなく、アプリケーションに不要な重みを追加する可能性があります。
+
+## CSS と Tailwind の設定
+
+Tailwindベースのコンポーネントをnpm経由で公開する際に重要な考慮事項の一つは、利用側のアプリケーションでスタイルが正しく機能することを保証することです。
+
+デフォルトでは、Tailwindはプロジェクトファイル内で見つけたクラスに対してのみスタイルを生成します。`node_modules`の中はスキャンしないため、あなたのコンポーネントのスタイルは含まれません。
+
+これを修正するために、ユーザーはTailwindの設定に`@source`ディレクティブを追加し、パッケージ内のクラス名をスキャンするよう指示する必要があります:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+この要件は必ずパッケージのREADMEに目立つように記載してください。
+
+## コンポーネントライブラリの公開方法
+
+コンポーネントをnpmに公開するには、適切に構成された`package.json`が必要です。例は次のようになります:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+NPMパッケージはコンポーネントエコシステムにおいて重要な役割を果たし続けます。レジストリはソースコードの所有権やカスタマイズに対して魅力的な利点を提供しますが、npmパッケージは多くのチームが必要とする安定性、バージョン管理、使いやすさを提供します。
+
+重要なのはユーザーのニーズを理解し、それらに最も適した配布方法を選ぶことです。場合によっては両方のオプションを提供し、開発者がプロジェクトに最適な方法を選べるようにするのが最善です。

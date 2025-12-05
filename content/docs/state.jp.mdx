@@ -1,0 +1,88 @@
+---
+title: 状態
+description: コンポーネント内の状態を管理する方法と、制御可能な（controllable）状態と非制御（uncontrolled）状態を統合する方法。
+---
+
+柔軟なコンポーネントを作成し、制御された（controlled）モードと非制御（uncontrolled）モードの両方で動作させることは、プロフェッショナルなコンポーネントの特徴です。
+
+## 非制御状態
+
+非制御状態とは、コンポーネントが自身の状態を内部で管理する場合を指します。これはほとんどのコンポーネントにおけるデフォルトの使用パターンです。
+
+例えば、内部で自身の状態を管理するシンプルな`Stepper`コンポーネントは次のとおりです：
+
+```tsx title="stepper.tsx"
+import { useState } from 'react';
+
+export const Stepper = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+};
+```
+
+## 制御状態
+
+制御状態とは、コンポーネントの状態が親コンポーネントによって管理される場合を指します。状態を内部で管理するのではなく、この責任を親コンポーネントに委譲します。
+
+`Stepper`コンポーネントを親コンポーネントにより制御されるように作り直しましょう：
+
+```tsx title="stepper.tsx"
+type StepperProps = {
+  value: number;
+  setValue: (value: number) => void;
+};
+
+export const Stepper = ({ value, setValue }: StepperProps) => (
+  <div>
+    <p>{value}</p>
+    <button onClick={() => setValue(value + 1)}>Increment</button>
+  </div>
+);
+```
+
+## 状態の統合
+
+優れたコンポーネントは、制御された状態と非制御状態の両方に対応します。これにより、さまざまなシナリオでコンポーネントを使用でき、簡単にカスタマイズできます。
+
+[Radix UI](https://www.radix-ui.com/)は、制御可能（controllable）および非制御（uncontrolled）状態を統合する内部ユーティリティである[`use-controllable-state`](https://github.com/radix-ui/primitives/tree/main/packages/react/use-controllable-state)を提供しています。公開用を意図したものではありませんが、[Kibo UI](https://www.kibo-ui.com)のようなプロジェクトはこのユーティリティを実装して独自のRadix風コンポーネントを構築しています。
+
+このフックをインストールしましょう：
+
+```package-install
+npm install @radix-ui/react-use-controllable-state
+```
+
+この軽量なフックは、Radix UIのコンポーネントライブラリが内部で使用しているのと同じ状態管理パターンを提供します。これにより、あなたのコンポーネントが業界標準に沿った一貫した挙動を示すようになります。
+
+このフックは主に3つのパラメータを受け取り、現在の値とセッターを含むタプルを返します。`Stepper`コンポーネントの制御状態と非制御状態を統合するためにこれを使用してみましょう：
+
+```tsx title="stepper.tsx"
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+
+type StepperProps = {
+  value: number;
+  defaultValue: number;
+  onValueChange: (value: number) => void;
+};
+
+export const Stepper = ({ value: controlledValue, defaultValue, onValueChange }: StepperProps) => {
+  const [value, setValue] = useControllableState({
+    prop: controlledValue,        // The controlled value prop
+    defaultProp: defaultValue,    // Default value for uncontrolled mode
+    onChange: onValueChange,      // Called when value changes
+  });
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+}
+```

@@ -1,0 +1,319 @@
+---
+title: asChild
+description: Hvordan bruke `asChild`-propen for å rendre et egendefinert element i komponenten.
+---
+
+The `asChild` prop er et kraftfullt mønster i moderne React-komponentbibliotek. Popularisert av [Radix UI](https://www.radix-ui.com/primitives/docs/guides/composition) og tatt i bruk av [shadcn/ui](https://ui.shadcn.com), lar dette mønsteret deg erstatte standardmarkup med egendefinerte elementer samtidig som komponentens funksjonalitet beholdes.
+
+## Forstå `asChild`
+
+I bunn og grunn endrer `asChild` hvordan en komponent rendres. Når den er satt til `true`, i stedet for å rendre sitt standard DOM-element, slår komponenten sammen sine props, oppførsel og event-handlere med sitt umiddelbare child-element.
+
+### Uten `asChild`
+
+```tsx
+<Dialog.Trigger>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+Dette rendrer nestede elementer:
+```html
+<button data-state="closed">
+  <button>Open Dialog</button>
+</button>
+```
+
+### Med `asChild`
+
+```tsx
+<Dialog.Trigger asChild>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+Dette rendrer ett enkelt, sammenslått element:
+```html
+<button data-state="closed">Open Dialog</button>
+```
+
+Dialog.Trigger-funksjonaliteten blir sammenslått på knappen din, og fjerner unødvendige wrapper-elementer.
+
+## Hvordan det fungerer
+
+Under panseret bruker `asChild` Reacts komposisjonsmuligheter for å slå sammen komponenter:
+
+```tsx
+// Simplified implementation
+function Component({ asChild, children, ...props }) {
+  if (asChild) {
+    // Clone child and merge props
+    return React.cloneElement(children, {
+      ...props,
+      ...children.props,
+      // Merge event handlers
+      onClick: (e) => {
+        props.onClick?.(e);
+        children.props.onClick?.(e);
+      }
+    });
+  }
+
+  // Render default element
+  return <button {...props}>{children}</button>;
+}
+```
+
+Komponenten:
+1. Sjekker om `asChild` er true
+2. Kloner child-elementet
+3. Slår sammen props fra både parent og child
+4. Kombinerer event-handlere
+5. Returnerer det forbedrede child
+
+## Viktige fordeler
+
+### 1. Semantisk HTML
+
+`asChild` lar deg bruke det mest passende HTML-elementet for ditt brukstilfelle:
+
+```tsx
+// Use a link for navigation
+<AlertDialog.Trigger asChild>
+  <a href="/delete">Delete Account</a>
+</AlertDialog.Trigger>
+
+// Use a custom button component
+<Tooltip.Trigger asChild>
+  <IconButton icon={<InfoIcon />} />
+</Tooltip.Trigger>
+```
+
+### 2. Ren DOM-struktur
+
+Tradisjonell komposisjon skaper ofte dypt nestede DOM-strukturer. `asChild` eliminerer denne "wrapper-helvete":
+
+```tsx
+// Without asChild: Nested wrappers
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger>
+      <button>
+        <span>Hover me</span>
+      </button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+
+// With asChild: Clean structure
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <button>Hover me</button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+```
+
+### 3. Integrasjon med designsystem
+
+`asChild` muliggjør sømløs integrasjon med dine eksisterende designsystemkomponenter:
+
+```tsx
+import { Button } from '@/components/ui/button';
+
+<DropdownMenu.Trigger asChild>
+  <Button variant="outline" size="icon">
+    <MoreVertical className="h-4 w-4" />
+  </Button>
+</DropdownMenu.Trigger>
+```
+
+Din Button-komponent mottar all nødvendig dropdown trigger-funksjonalitet uten modifikasjoner.
+
+### 4. Komponentkomposisjon
+
+Du kan komponere flere oppførseler på ett enkelt element:
+
+```tsx
+<Dialog.Trigger asChild>
+  <Tooltip.Trigger asChild>
+    <button>
+      Open dialog (with tooltip)
+    </button>
+  </Tooltip.Trigger>
+</Dialog.Trigger>
+```
+
+Dette lager en knapp som både åpner et dialogvindu og viser et tooltip ved hover.
+
+## Vanlige bruksområder
+
+### Egendefinerte trigger-elementer
+
+Erstatt standardtriggere med egendefinerte komponenter:
+
+```tsx
+// Custom link trigger
+<Collapsible.Trigger asChild>
+  <a href="#" className="text-blue-600 underline">
+    Toggle Details
+  </a>
+</Collapsible.Trigger>
+
+// Icon-only trigger
+<Popover.Trigger asChild>
+  <IconButton>
+    <Settings className="h-4 w-4" />
+  </IconButton>
+</Popover.Trigger>
+```
+
+### Tilgjengelig navigasjon
+
+Bevar korrekt semantikk for navigasjonselementer:
+
+```tsx
+<NavigationMenu.Link asChild>
+  <Link href="/products" className="nav-link">
+    Products
+  </Link>
+</NavigationMenu.Link>
+```
+
+### Skjema-integrasjon
+
+Integrer med skjema-biblioteker samtidig som funksjonaliteten bevares:
+
+```tsx
+<FormField
+  control={form.control}
+  name="acceptTerms"
+  render={({ field }) => (
+    <FormItem>
+      <Checkbox.Root asChild>
+        <input
+          type="checkbox"
+          {...field}
+          className="sr-only"
+        />
+      </Checkbox.Root>
+    </FormItem>
+  )}
+/>
+```
+
+## Beste praksis
+
+### 1. Bevar tilgjengelighet
+
+Når du endrer elementtyper, sørg for at tilgjengeligheten bevares:
+
+```tsx
+// ✅ Good - maintains button semantics
+<Dialog.Trigger asChild>
+  <button type="button">Open</button>
+</Dialog.Trigger>
+
+// ⚠️ Forsiktig - sørg for riktige ARIA-attributter
+<Dialog.Trigger asChild>
+  <div role="button" tabIndex={0}>Open</div>
+</Dialog.Trigger>
+```
+
+### 2. Dokumenter komponentkrav
+
+Dokumenter tydelig når komponenter støtter `asChild`:
+
+```tsx
+interface TriggerProps {
+  /**
+   * Change the default rendered element for the one passed as a child,
+   * merging their props and behavior.
+   *
+   * @default false
+   */
+  asChild?: boolean;
+  children: React.ReactNode;
+}
+```
+
+### 3. Test child-komponenter
+
+Verifiser at egendefinerte komponenter fungerer korrekt med `asChild`:
+
+```tsx
+// Test that props are properly forwarded
+const TestButton = (props) => {
+  console.log('Received props:', props);
+  return <button {...props} />;
+};
+
+<Tooltip.Trigger asChild>
+  <TestButton>Test</TestButton>
+</Tooltip.Trigger>
+```
+
+### 4. Håndter edge-tilfeller
+
+Vurder edge-tilfeller som betinget rendering:
+
+```tsx
+// Handle conditional children
+<Dialog.Trigger asChild>
+  {isLoading ? (
+    <Skeleton className="h-10 w-20" />
+  ) : (
+    <Button>Open Dialog</Button>
+  )}
+</Dialog.Trigger>
+```
+
+## Vanlige fallgruver
+
+### Ikke spre props
+
+Som diskutert i [Typer](/docs/types), bør du alltid spre props til underliggende element.
+
+```tsx
+// ❌ Won't receive trigger behavior
+const BadButton = ({ children }) => <button>{children}</button>;
+
+// ✅ Properly receives all props
+const GoodButton = ({ children, ...props }) => (
+  <button {...props}>{children}</button>
+);
+```
+
+### Flere children
+
+Ikke pass flere children til en komponent som støtter `asChild`. Dette vil føre til en feil siden komponenten ikke vet hvilken child den skal bruke.
+
+```tsx
+// ❌ Error - asChild expects single child
+<Trigger asChild>
+  <button>One</button>
+  <button>Two</button>
+</Trigger>
+
+// ✅ Single child element
+<Trigger asChild>
+  <button>Single Button</button>
+</Trigger>
+```
+
+### Fragment-children
+
+Ikke pass en fragment til en komponent som støtter `asChild`. Dette vil gi en feil siden fragmenter ikke er gyldige elementer.
+
+```tsx
+// ❌ Fragment is not a valid element
+<Trigger asChild>
+  <>Button</>
+</Trigger>
+
+// ✅ Actual element
+<Trigger asChild>
+  <button>Button</button>
+</Trigger>
+```

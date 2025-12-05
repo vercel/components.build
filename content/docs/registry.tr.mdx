@@ -1,0 +1,164 @@
+---
+title: Kayıtlar
+description: Bileşen kayıtlarının ne olduğunu, nasıl çalıştığını ve neden geliştiricilerin UI bileşenlerini paylaşma ve keşfetme şeklini devrim niteliğinde değiştirdiğini anlayın.
+---
+
+Bileşen kayıtları, UI bileşenlerini paylaşmanın ve keşfetmenin bir yoludur. [shadcn/ui](https://ui.shadcn.com) tarafından popüler hale getirilen bu yaklaşım, bileşenleri doğrudan projelerinize keşfetip kopyalamanıza olanak tanır.
+
+Kayıtlar, geliştiricilerin UI bileşenlerini paylaşma ve keşfetme biçiminde temel bir kaymayı temsil eder. Geleneksel npm paketlerinden farklı olarak, kayıtlar açık kaynak modeline dayanır ve kaynak kodunun projenize indirimesi yoluyla çalışır.
+
+## Bir Kayıtı Ne Oluşturur?
+
+### 1. Kaynak Kod Dağıtımı
+
+Derlenmiş kod dağıtan npm paketlerinin aksine, kayıtlar kaynak kodunu dağıtır:
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. Metadata ve Yapılandırma
+
+İyi kayıtlar, bileşenler hakkında ad, açıklama, bağımlılıklar ve kategori gibi zengin metadata içerir.
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. Önizleme ve Dokümantasyon
+
+İndirilmemiş olsalar da, kayıt siteleri tipik olarak şunları sağlar:
+
+- Canlı bileşen önizlemeleri
+- Etkileşimli örnekler
+- Ayrıntılı dokümantasyon
+- Kopyalamaya hazır kod parçacıkları
+
+## Kayıt Mimarisi Avantajları
+
+Bileşen kayıtları, hem yazarlar hem de kullanıcılar için önemli avantajlar sunar ve UI bileşenlerini paylaşma ve benimseme sürecini kolaylaştırır.
+
+### Yazarlar için
+
+Bileşen yazarları için kayıtlar dağıtımı son derece basit hale getirir. Bir bileşen oluşturulduktan sonra, kayda eklenebilir ve karmaşık yayınlama adımlarına gerek kalmadan kullanıcıların erişimine anında açılabilir. Bu dağıtım kolaylığı geri bildirim döngüsünü hızlandırır ve hızlı yinelemeyi teşvik eder.
+
+Sürüm kontrolü başka bir önemli avantajdır. Kayıtlar tipik olarak bileşen sürümlerini, değişiklik günlüklerini ve uyumluluk bilgilerini izler. Örneğin, bir bileşen girdisi mevcut sürümünü belirtebilir, erişilebilirliğin iyileştirilmesi veya yeni özellikler gibi son değişiklikleri vurgulayabilir ve hangi shadcn/ui sürümlerini desteklediğini gösterebilir. Bu şeffaflık, bakımcıların güncellemeleri iletmesine yardımcı olur ve kullanıcıların projelerine uygun bileşenleri seçmesini sağlar.
+
+Topluluk etkileşimi de kayıtlar sayesinde artar. Yazarlar, kullanıcıların sorun raporlaması, özellik talep etmesi ve işbirlikçi iyileştirmelere katkıda bulunması yoluyla doğrudan geri bildirim alabilir. Bu, hem üreticilere hem de tüketicilere fayda sağlayan daha etkileşimli ve yanıt veren bir geliştirme ortamını teşvik eder.
+
+### Tüketiciler için
+
+Bileşen kullanıcıları açısından kayıtlar keşif sürecini büyük ölçüde iyileştirir. Kullanıcılar bileşenleri kategoriye göre gezebilir, arama işlevini kullanabilir, popülerlik metriklerini görebilir ve ilgili bileşenleri keşfedebilir; bu da projeleri için tam olarak ihtiyaç duyduklarını bulmayı kolaylaştırır.
+
+Bir bileşeni entegre etmeden önce kullanıcılar onu eylem halinde önizleyebilir, farklı varyantlarla deney yapabilir ve davranışını ve kod kalitesini inceleyebilir. Bileşenleri önceden değerlendirebilme yeteneği riski azaltır ve benimseme konusunda güveni artırır.
+
+Belki de en önemlisi, kayıtlar kullanıcılara gerçek sahiplik sağlar. Bir bağımlılığa kilitlenmek yerine, kullanıcılar kaynak kodunu doğrudan projelerine kopyalar. Bu, bileşenleri gerektiği gibi değiştirebilecekleri, bağımlılık yönetimi sıkıntılarından kaçınabilecekleri ve kod tabanı üzerinde tam kontrole sahip olabilecekleri anlamına gelir.
+
+
+## Bir Kayıt Oluşturma
+
+Basit bir kayıtı oldukça hızlı oluşturabilirsiniz. Pratikte yalnızca 3 temel öğeye ihtiyacınız vardır:
+
+### 1. Bileşenler
+
+Paylaşmak istediğiniz bir bileşen veya bileşen seti oluşturun. Bileşenlerin kaynak koduna sahip olduğunuzdan ve bunların iyi belgelenmiş ve anlaşılması kolay olduğundan emin olun.
+
+Markdown dokümantasyonu, örnek uygulamalar ve bileşeni önizlemeye yarayacak bir yol eklemeyi düşünün.
+
+### 2. Genel bir uç nokta
+
+Bileşenleri sunan genel bir uç nokta oluşturun. Bu basit bir JSON dosyası veya daha karmaşık bir web sitesi olabilir. Genel ve erişilebilir olduğu sürece, istediğiniz herhangi bir uç noktayı kullanabilirsiniz.
+
+### 3. CLI
+
+Bileşenleri projenize yüklemenizi sağlayan bir CLI oluşturun. Bu, `npx myregistry add button` gibi tek bir komut kadar basit olabilir veya seçenekler ve bayraklar içeren daha karmaşık bir komut olabilir.
+
+## shadcn Kayıtını Kullanma
+
+Kendi kaydınızı oluşturmak, bileşenlerinizi toplulukla paylaşmanın harika bir yoludur, ancak çok çaba ve bakım gerektirir. Sadece bir veya iki bileşen paylaşmak istiyorsanız, shadcn/ui ekosistemini — kayıt, CLI ve değişkenleri — kullanabilirsiniz.
+
+Bir `MetricCard` bileşenini [Vercel](https://vercel.com)'ün statik barındırmasını kullanarak 5 dakikadan kısa sürede canlı olarak nasıl yayımlayabileceğimize bakalım.
+
+### Adım 1: Bir Klasör Oluşturun
+
+Aşağıdaki yapıya sahip bir klasör oluşturun:
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+Kayıt öğesi JSON'unuzu (ör. `metric-card.json`) `public/` klasörüne koyun.
+
+### Adım 2: Bir `vercel.json` Ekleyin
+
+`public/` yanında bir `vercel.json` dosyası oluşturun ve aşağıdakileri ekleyin:
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Bu, JSON'unuzun doğru CORS ve içerik başlıkları ile sunulmasını sağlar.
+
+### Adım 3: Vercel'e Dağıtın
+
+Klasörünüzün kökünden şu komutu çalıştırın:
+
+```bash
+vercel --prod
+```
+
+ve projeyi dağıtmak için istemlere yanıt verin.
+
+İşlem tamamlandığında, dosyanız şu şekilde bir adreste yayında olacaktır:
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### Adım 4: Bileşeni Yükleyin
+
+Artık herkes şu komutu çalıştırabilir:
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+Ne npm paketi, ne derleme adımı, ne de karmaşıklık.

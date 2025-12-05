@@ -1,0 +1,163 @@
+---
+title: Komponens-regiszter
+description: Értsd meg a komponens-regiszterek fogalmát, működését és azt, hogy miért forradalmasítják a fejlesztők számára az UI komponensek megosztását és felfedezését.
+---
+
+A komponens-regiszterek módot adnak az UI komponensek megosztására és felfedezésére. A [shadcn/ui](https://ui.shadcn.com) népszerűsítette őket, és lehetővé teszik, hogy komponenseket közvetlenül a projektjeidbe fedezz fel és másolj.
+
+A regiszterek alapvető változást jelentenek abban, ahogyan a fejlesztők megosztják és felfedezik az UI komponenseket. A hagyományos npm csomagoktól eltérően a regiszterek egy nyílt forráskódú modellt használnak, és a forráskód letöltésén keresztül működnek a projektedbe.
+
+## Mi tesz egy regisztert?
+
+### 1. Forráskód terjesztése
+
+Ellentétben az npm csomagokkal, amelyek lefordított kódot terjesztenek, a regiszterek forráskódot osztanak meg:
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. Metaadatok és konfiguráció
+
+A jó regiszterek gazdag metaadatokat tartalmaznak a komponensekről, mint például a név, leírás, függőségek és kategória.
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. Előnézet és dokumentáció
+
+Bár nem kerülnek letöltésre, a regiszterek weboldalai rendszerint a következőket nyújtják:
+
+- Élő komponens-előnézetek
+- Interaktív példák
+- Részletes dokumentáció
+- Kódrészletek, amelyek készen állnak a másolásra
+
+## A regiszter-architektúra előnyei
+
+A komponens-regiszterek jelentős előnyöket kínálnak mind a szerzők, mind a felhasználók számára, leegyszerűsítve a komponensek megosztásának és átvételének folyamatát.
+
+### Szerzők számára
+
+A komponens-szerzők számára a regiszterek rendkívül egyszerűvé teszik a terjesztést. Miután egy komponens elkészült, hozzáadható a regiszterhez, így az azonnal elérhetővé válik a felhasználók számára anélkül, hogy bonyolult publikálási lépésekre lenne szükség. Ez a terjesztés könnyítése felgyorsítja a visszajelzési ciklust és ösztönzi a gyors iterációt.
+
+A verziókezelés egy további kulcsfontosságú előny. A regiszterek általában követik a komponens verzióit, a változásnaplókat és a kompatibilitási információkat. Például egy komponens bejegyzése megadhatja az aktuális verziót, kiemelheti a legutóbbi változásokat, mint például a javított hozzáférhetőség vagy új funkciók, és jelezheti, hogy mely shadcn/ui verziókat támogatja. Ez az átláthatóság segít a karbantartóknak a frissítések kommunikálásában, és biztosítja, hogy a felhasználók olyan komponenseket válasszanak, amelyek megfelelnek a projektkövetelményeiknek.
+
+A közösségi részvétel is javul a regiszterek által. A szerzők közvetlen visszajelzéseket kaphatnak a felhasználóktól, akik hibákat jelenthetnek, funkciókat kérhetnek és hozzájárulhatnak a közös fejlesztéshez. Ez interaktívabb és reagálóbb fejlesztési környezetet eredményez, ami mind a készítők, mind a fogyasztók javára válik.
+
+### Felhasználók számára
+
+A komponens-felhasználók szemszögéből a regiszterek jelentősen javítják a felfedezési folyamatot. A felhasználók kategóriák szerint böngészhetnek, kereshetnek, megtekinthetik a népszerűségi mutatókat és feltérképezhetik a kapcsolódó komponenseket, így könnyebb megtalálniuk pontosan azt, amire szükségük van a projektjeikhez.
+
+Egy komponens integrálása előtt a felhasználók megtekinthetik azt működés közben, kipróbálhatnak különböző variánsokat, és áttekinthetik a viselkedését és kódminőségét. Ez a képesség, hogy előre értékelni lehessen a komponenseket, csökkenti a kockázatot és növeli a bizalmat a használat során.
+
+Talán a legfontosabb, hogy a regiszterek valódi tulajdonjogot adnak a felhasználóknak. A függőségbe zártság helyett a felhasználók a forráskódot közvetlenül átmásolják a projektjeikbe. Ez azt jelenti, hogy szükség szerint módosíthatják a komponenseket, elkerülhetik a függőségkezelés bonyodalmait, és teljes irányítást tarthatnak a kódbázisuk felett.
+
+## Regiszter létrehozása
+
+Elég gyorsan létrehozhatsz egy egyszerű regisztert. Gyakorlatilag csak 3 alapvető elemre van szükséged:
+
+### 1. Komponensek
+
+Hozz létre egy komponenst, vagy több komponenst, amelyeket meg szeretnél osztani. Győződj meg róla, hogy rendelkezel a komponensek forráskódjával, és hogy azok jól dokumentáltak és könnyen érthetők.
+
+Fontold meg olyan elemek hozzáadását, mint a Markdown dokumentáció, példapéldák és egy mód a komponens előnézetére.
+
+### 2. Publikus végpont
+
+Hozz létre egy publikus végpontot, amely kiszolgálja a komponenseket. Ez lehet egy egyszerű JSON fájl vagy egy összetettebb weboldal. Amíg nyilvános és elérhető, bármilyen végpontot használhatsz.
+
+### 3. CLI
+
+Készíts egy CLI-t, amely lehetővé teszi a komponensek telepítését a projektedbe. Ez lehet olyan egyszerű, mint egyetlen parancs, például `npx myregistry add button`, vagy egy összetettebb parancs opciókkal és zászlókkal.
+
+## A shadcn regiszter használata
+
+Saját regiszter építése remek módja annak, hogy megoszd a komponenseidet a közösséggel, de sok erőfeszítést és karbantartást igényel. Ha csak egy-két komponenst szeretnél megosztani, használhatod a shadcn/ui ökoszisztémát — regiszter, CLI és változók.
+
+Nézzük meg, hogyan tehetünk közzé egy `MetricCard` komponenst élőben kevesebb mint 5 perc alatt a [Vercel](https://vercel.com) statikus tárhelyének használatával.
+
+### 1. lépés: Mappa létrehozása
+
+Hozz létre egy mappát a következő struktúrával:
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+Tedd a regiszter bejegyzésed JSON fájlját (pl. `metric-card.json`) a `public/` mappába.
+
+### 2. lépés: Adj hozzá egy `vercel.json` fájlt
+
+Hozz létre egy `vercel.json` fájlt a `public/` mellett a következő tartalommal:
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Ez biztosítja, hogy a JSON fájl a megfelelő CORS és tartalmi fejléc értékekkel kerüljön kiszolgálásra.
+
+### 3. lépés: Telepítés Vercel-re
+
+A mappád gyökeréből futtasd:
+
+```bash
+vercel --prod
+```
+
+és válaszolj a megjelenő kérdésekre a projekt telepítéséhez.
+
+Ha elkészült, a fájlod élő lesz valami ilyesmi címen:
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### 4. lépés: A komponens telepítése
+
+Most bárki lefuttathatja:
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+Nincs npm csomag, nincs build lépés, nincs bonyolultság.

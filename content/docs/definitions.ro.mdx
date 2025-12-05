@@ -1,0 +1,234 @@
+---
+title: Definiții
+description: Această pagină stabilește terminologia precisă folosită pe parcursul specificației. Termenii sunt intenționat agnostici față de framework, dar vom folosi React pentru exemple.
+---
+
+## 1. Taxonomia artefactelor
+
+### 1.1 Primitiv
+
+Un primitiv (sau component neformatat) este **unitatea de bază la cel mai jos nivel** care oferă comportament și accesibilitate fără niciun stil.
+
+Primitivii sunt complet headless (adică neformatate) și încapsulează semantică, gestionarea focusului, interacțiunea prin tastatură, layering/portale, legături ARIA, măsurare și preocupări similare. Oferă fundația comportamentală, dar necesită styling pentru a deveni UI complet.
+
+Exemple:
+
+- [Radix UI Primitives](https://www.radix-ui.com/primitives) (Dialog, Popover, Tooltip etc.)
+- [React Aria Components](https://react-spectrum.adobe.com/react-aria)
+- [Base UI](https://base-ui.com)
+- [Headless UI](https://headlessui.com/)
+
+Așteptări:
+
+- Complet neformatat (headless).
+- Responsabilitate unică; componibil în componente stilizate.
+- Livrează comportament exhaustiv pentru accesibilitatea (a11y) rolului său.
+- Versionarea favorizează stabilitatea; schimbările breaking sunt rare și documentate.
+
+<Callout>
+Termenii *primitiv* și *componentă* sunt de obicei folosiți interschimbabil pe web, dar nu sunt aceeași.
+</Callout>
+
+### 1.2 Componentă
+
+O componentă este o unitate UI stilizată și reutilizabilă care adaugă design vizual la primitivi sau compune multiple elemente pentru a crea elemente de interfață complete și funcționale.
+
+Componentele sunt încă relativ la nivel jos, dar includ styling, făcându-le imediat utilizabile în aplicații. De obicei înfășoară primitivi neformatate cu design vizual implicit, rămânând în același timp personalizabile.
+
+Exemple:
+- [shadcn/ui components](https://ui.shadcn.com/) (wrap-uri stilizate ale primitivilor Radix)
+- [Material UI components](https://mui.com/components/)
+- [Ant Design components](https://ant.design/components/overview/)
+
+Așteptări:
+- API clar de props; suport pentru utilizare controlată și necontrolată acolo unde este aplicabil.
+- Include stilizare implicită, dar permite suprascriere ușoară (classes, tokens, slots).
+- Complet accesibilă de la tastatură și prietenoasă cu cititoarele de ecran (moștenește din primitivi).
+- Componibilă (children/slots, render props sau subcomponente compuse).
+- Poate fi construită din primitivi sau poate implementa comportamentul direct cu styling.
+
+### 1.3 Model
+
+Modelele sunt o compoziție specifică de primitivi sau componente folosite pentru a rezolva o problemă UI/UX specifică.
+
+Exemple:
+- Validarea formularului cu erori inline
+- Confirmarea acțiunilor distructive
+- Căutare typeahead
+- UI optimist
+
+Așteptări.
+- Descrie comportamentul, accesibilitatea (a11y), harta de la tastatură și modurile de eșec.
+- Poate include implementări de referință în mai multe framework-uri.
+
+### 1.4 Bloc
+
+O compoziție opinată, gata pentru producție, de componente care rezolvă un caz concret de utilizare a interfeței (adesea specific produsului) cu scaffolding pentru conținut. Blocurile fac schimb de generalitate pentru viteză de adoptare.
+
+Exemple:
+- Tabel de prețuri
+- Ecrane de autentificare
+- Stepper de onboarding
+- Panou de chat AI
+- Formular pentru setările de facturare
+
+Așteptări.
+- Seturi implicite puternice, ușor de copiat-lipat, ușor de branduit/tematizat.
+- Logică minimă dincolo de layout și orchestrare; logica de domeniu este simulată prin handler-e.
+- Acceptă date prin props; nu ascunde niciodată date prin fetch-uri fără un adaptor documentat.
+
+<AuthorNote name="Rob Austin" role="Founder of shadcnblocks.com" githubUsername="JugglerX" link="https://www.shadcnblocks.com/">
+Blocurile, de obicei, nu sunt reutilizabile în același mod ca o componentă. Nu le imporți în mod normal, dar ele importă, de regulă, componente și primitivi. Acest lucru le face candidați buni pentru o metodă de distribuție de tip [Registru](/registry).
+</AuthorNote>
+
+### 1.5 Pagină
+
+O vedere completă, single-route compusă din multiple blocuri aranjate pentru a servi un scop specific pentru utilizator. Paginile combină blocuri într-un layout coerent care reprezintă o destinație dintr-o aplicație.
+
+Exemple:
+- Pagina de landing (hero block + features block + pricing block + footer block)
+- Pagina de detalii produs (image gallery block + product info block + reviews block)
+- Pagină de dashboard (stats block + chart block + activity feed block)
+
+Așteptări:
+- Combină multiple blocuri într-un layout unificat pentru o singură rută.
+- Se concentrează pe layout și orchestrarea blocurilor mai degrabă decât pe detalii la nivel de componentă.
+- Poate include logică specifică paginii pentru coordonarea datelor între blocuri.
+- Autonomă pentru un singur URL/rută; nu este destinată reutilizării între rute.
+
+### 1.6 Șablon
+
+O colecție multi-pagină sau un scaffold full-site care grupează pagini, configurație de rutare, layout-uri partajate, provideri globali și structura proiectului. Șabloanele sunt puncte de plecare complete pentru aplicații întregi sau secțiuni majore ale aplicațiilor.
+
+Exemple:
+- [TailwindCSS Templates](https://tailwindui.com/templates)
+- [shadcnblocks Templates](https://www.shadcnblocks.com/templates) (shell-uri de aplicație complete)
+- "SaaS starter" (pagini de autentificare + pagini dashboard + pagini de setări + pagini de marketing)
+- "Șablon e‑commerce" (storefront + pagini de produs + flux de checkout + pagini admin)
+
+Așteptări:
+- Include multiple pagini cu structură de rutare/navigare.
+- Oferă configurare globală (theme providers, auth context, layout shells).
+- Structură de proiect opinată cu convenții clare.
+- Conceput ca punct de plecare cuprinzător; se forkează și personalizează mai degrabă decât se importă ca dependență.
+- Poate include configurație de build, setup pentru deployment și tooling de dezvoltare.
+
+### 1.7 Utilitar (Non‑vizual)
+
+Un helper exportat pentru ergonomia dezvoltatorului sau compoziție; UI‑ul nu este redat.
+
+Exemple:
+- React hooks (useControllableState, useId)
+- Utilitare de clase
+- Helpers pentru keybinding
+- Focus scopes
+
+Așteptări.
+- Fără efecte secundare (exceptând cazurile documentate explicit).
+- Testabil în izolare; suportă tree‑shaking.
+
+## 2. Vocabular API și Compoziție
+
+### 2.1 Props API
+
+Suprafața publică de configurare a unei componente. Props‑urile sunt stabile, tipizate și documentate cu valorile implicite și implicațiile pentru accesibilitate (a11y).
+
+### 2.2 Children / Slots
+
+Locuri rezervate pentru structura sau conținutul furnizat de apelant.
+- Children (slot implicit). JSX între etichetele de deschidere/închidere.
+- Sloturi denumite. Props precum icon, footer, sau subcomponente `<Component.Slot>`.
+- Forwarding de slot. Transmiterea atributelor DOM/className/refs către elementul subiacent.
+
+### 2.3 Render Prop (Function-as-Child)
+
+Un child de tip funcție folosit pentru a delega redarea în timp ce părinteul furnizează stare/date.
+
+```tsx
+<ParentComponent data={data}>
+  {(item) => (
+    <ChildComponent key={item.id} {...item} />
+  )}
+</ParentComponent>
+```
+
+Folosește când părinteul trebuie să dețină date/comportament, dar consumatorul trebuie să controleze complet markup‑ul.
+
+### 2.4 Controlled vs. Uncontrolled
+
+**Controlled** și **uncontrolled** sunt termeni folosiți pentru a descrie starea unei componente.
+
+**Controlled** componentele au valoarea condusă de props și, de obicei, emit un eveniment `onChange` (sursa adevărului este părinteul). **Uncontrolled** componentele țin stare internă; și pot expune un `defaultValue` și o resetare imperativă.
+
+Multe inputuri ar trebui să suporte ambele. Află mai multe despre [controlled and uncontrolled state](/state).
+
+### 2.5 Provider / Context
+
+O componentă de top-level care furnizează stare/configurație partajată unui subarbore (de ex., theme, locale, id-ul tabului activ). Providerii sunt documentați explicit cu plasarea necesară.
+
+### 2.6 Portal
+
+Redarea UI în afara ierarhiei DOM pentru a gestiona contextul de layering/stacking (de ex., modale, popovere, toasts), păstrând în același timp accesibilitatea (trap de focus, aria-modal, fundal inert).
+
+## 3. Vocabular Styling și Theming
+
+### 3.1 Headless
+
+Implementează comportament și accesibilitate fără a prescrie aspectul. Necesită ca consumatorul să furnizeze styling.
+
+### 3.2 Styled
+
+Livrează design vizual implicit (clase CSS, stiluri inline sau tokens), dar rămâne prietenos cu suprascrierea (mergere className, variabile CSS, theming).
+
+### 3.3 Variants
+
+Permutări discrete și documentate de stil sau comportament expuse prin props (de ex., `size="sm|md|lg"`, `tone="neutral|destructive"`). Variants nu sunt componente separate.
+
+### 3.4 Design Tokens
+
+Valori denumite, independente de platformă (de ex., `--color-bg`, `--radius-md`, `--space-2`) care parametrizează designul vizual și suportă theming-ul.
+
+## 4. Vocabular Accesibilitate
+
+### 4.1 Role / State / Property
+
+Atribute WAI-ARIA care comunică semantica (`role="menu"`), starea (`aria-checked`) și relațiile (`aria-controls`, `aria-labelledby`).
+
+### 4.2 Keyboard Map
+
+Setul documentat de interacțiuni prin tastatură pentru un widget (de ex., `Tab`, `Arrow keys`, `Home/End`, `Escape`). Fiecare componentă interactivă declară și implementează o keyboard map.
+
+### 4.3 Focus Management
+
+Reguli pentru focus inițial, roving focus, focus trapping și revenirea focusului la teardown.
+
+## 5. Vocabular Distribuție
+
+### 5.1 Package (Registry Distribution)
+
+Componenta/biblioteca este publicată într‑un registru de pachete (de ex., `npm`) și importată via bundler. Favorizează update‑uri versiunate și managementul dependențelor.
+
+### 5.2 Copy-and-Paste (Source Distribution)
+
+Codul sursă este integrat direct în repo‑ul consumatorului (adesea printr‑un CLI). Favorizează proprietate, personalizare și zero runtime suplimentar.
+
+### 5.3 Registry (Catalog)
+
+Un index curatoriat de artefacte (primitivi, componente, blocuri, șabloane) cu metadata, previzualizări și instrucțiuni de instalare/copiere. Un registru nu este neapărat un manager de pachete.
+
+## 6. Heuristici de clasificare
+
+Folosește acest flux decizional pentru a numi și plasa un artefact:
+
+1. Incapsulează un singur comportament sau o problemă de accesibilitate, fără styling? → **Primitiv**
+2. Este un element UI stilizat, reutilizabil, care adaugă design vizual la primitivi sau compune multiple elemente? → **Componentă**
+3. Rezolvă un caz concret de utilizare produsului cu compoziție și copy opinată? → **Bloc**
+4. Scaffoldează o pagină/flux cu routing/provideri și regiuni înlocuibile? → **Șablon**
+5. Este documentația unei soluții recurente, independentă de implementare? → **Model**
+6. Este logică non‑vizuală pentru ergonomie/compunție? → **Utilitar**
+
+## 7. Non‑obiective și clarificări
+
+- Web Components vs. "Components." În această specificație, "componentă" se referă la o unitate UI reutilizabilă (exemple în React). Nu implică standardul HTML Custom Elements decât dacă este specificat explicit. Principiile echivalente se aplică între framework‑uri.
+- Widgets. Termenul „widget” este evitat din cauza ambiguității; folosește componentă (general) sau model (soluție doar documentațională).
+- Themes vs. Styles. Un theme este o parametrizare a stilurilor (prin tokens). Stilurile sunt prezentarea concretă. Componentele ar trebui să suporte themes; blocurile/șabloanele pot livra stiluri opiniate plus hook‑uri pentru theming.

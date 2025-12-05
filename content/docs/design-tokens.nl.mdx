@@ -1,0 +1,51 @@
+---
+title: Design-tokens
+description: Hoe semantische naamgevingsconventies en design-tokens een flexibel, onderhoudbaar themasysteem creëren.
+---
+
+Een van de kernfundamenten van moderne componentbibliotheken ligt in hun doordachte benadering van styling. In plaats van kleuren hard te coderen of starre klassystemen te creëren, kunnen we een semantische naamgevingsconventie toepassen die de verantwoordelijkheden van thema, context en gebruik scheidt.
+
+Deze semantische naamgevingsconventie staat bekend als design-tokens. Deze architecturale keuze creëert een onderhoudbaar, flexibel systeem dat prachtig schaalt over applicaties.
+
+## De filosofie van semantische CSS-variabelen
+
+Traditionele CSS-benaderingen koppelen kleurwaarden vaak direct aan hun gebruikscontexten, waardoor kwetsbare systemen ontstaan die moeilijk te onderhouden zijn. Design-tokens hanteren een andere aanpak door lagen van abstractie te creëren die scheiden wat iets is van hoe het eruitziet.
+
+## Inzicht in de variabele architectuur
+
+Laten we onderzoeken hoe we onze CSS-variabelen kunnen structureren om dit flexibele systeem te creëren:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+In het bovenstaande voorbeeld hebben we vier design-tokens:
+
+- `--background`, dat wordt gebruikt voor achtergrondkleuren (voornamelijk de achtergrond van de pagina)
+- `--foreground`, dat wordt gebruikt voor voorgrondkleuren (de algemene tekstkleur)
+- `--primary`, dat wordt gebruikt voor primaire kleuren (de hoofdkleur van het merk)
+- `--primary-foreground`, dat wordt gebruikt voor primaire voorgrondkleuren (de tekstkleur zoals die zichtbaar is tegen de primaire kleur)

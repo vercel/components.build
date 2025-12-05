@@ -1,0 +1,163 @@
+---
+title: Register
+description: Forstå konseptet med komponentregistre, hvordan de fungerer, og hvorfor de revolusjonerer måten utviklere deler og finner UI-komponenter på.
+---
+
+Komponentregistre er en måte å dele og oppdage UI-komponenter på. Popularisert av [shadcn/ui](https://ui.shadcn.com), lar de deg oppdage og kopiere komponenter direkte inn i prosjektene dine.
+
+Registre representerer et grunnleggende skifte i hvordan utviklere deler og oppdager UI-komponenter. I motsetning til tradisjonelle npm-pakker, baserer registre seg på en åpen kildekode-modell og fungerer ved å laste ned kildekoden til prosjektet ditt.
+
+## Hva kjennetegner et register?
+
+### 1. Distribusjon av kildekode
+
+I motsetning til npm-pakker som distribuerer kompilert kode, distribuerer registre kildekode:
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. Metadata og konfigurasjon
+
+Gode registre inkluderer rik metadata om komponenter som navn, beskrivelse, avhengigheter og kategori.
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. Forhåndsvisning og dokumentasjon
+
+Selv om de ikke lastes ned, tilbyr registrets nettsteder vanligvis:
+
+- Direkte forhåndsvisninger av komponenter
+- Interaktive eksempler
+- Detaljert dokumentasjon
+- Kodeutdrag klare til å kopieres
+
+## Fordeler med registerarkitektur
+
+Komponentregistre gir betydelige fordeler for både forfattere og brukere, og effektiviserer prosessen med å dele og ta i bruk UI-komponenter.
+
+### For komponentforfattere
+
+For komponentforfattere gjør registre distribusjonen bemerkelsesverdig enkel. Når en komponent er opprettet, kan den legges til i registeret og bli umiddelbart tilgjengelig for brukere uten behov for komplekse publiseringssteg. Denne enkelheten i distribusjon akselererer tilbakemeldingssløyfen og oppmuntrer til rask iterasjon.
+
+Versjonskontroll er en annen viktig fordel. Registre sporer typisk komponentversjoner, endringslogger og kompatibilitetsinformasjon. For eksempel kan en komponentoppføring angi sin gjeldende versjon, fremheve nylige endringer som forbedret tilgjengelighet eller nye funksjoner, og indikere hvilke versjoner av shadcn/ui den støtter. Denne åpenheten hjelper vedlikeholdere med å kommunisere oppdateringer og sikrer at brukere kan velge komponenter som passer prosjektkravene deres.
+
+Samfunnsengasjement forbedres også gjennom registre. Forfattere kan motta direkte tilbakemeldinger fra brukere, som kan rapportere problemer, be om funksjoner og bidra til samarbeidsforbedringer. Dette fremmer et mer interaktivt og responsivt utviklingsmiljø, som gagner både skapere og forbrukere.
+
+### For brukere
+
+Fra komponentbrukernes perspektiv forbedrer registre oppdagelsesprosessen betydelig. Brukere kan bla gjennom komponenter etter kategori, bruke søkefunksjonalitet, se popularitetsmålinger og utforske relaterte komponenter, noe som gjør det enklere å finne nøyaktig det de trenger til prosjektene sine.
+
+Før integrering av en komponent kan brukere forhåndsvise den i praksis, eksperimentere med ulike varianter og vurdere oppførsel og kodekvalitet. Denne muligheten til å evaluere komponenter på forhånd reduserer risiko og øker tilliten til at de kan tas i bruk.
+
+Kanskje viktigst av alt, gir registre brukerne reell eierskap. I stedet for å være bundet til en avhengighet, kopierer brukere kildekoden direkte inn i prosjektene sine. Dette betyr at de kan endre komponenter etter behov, unngå problemer med avhengighetsstyring og beholde full kontroll over kodebasen sin.
+
+## Opprette et register
+
+Du kan opprette et enkelt register ganske raskt. Praktisk talt trenger du bare 3 kjerneelements:
+
+### 1. Komponenter
+
+Lag en komponent, eller et sett med komponenter, som du ønsker å dele. Sørg for at du har kildekoden for komponentene, og at de er godt dokumentert og enkle å forstå.
+
+Vurder å legge til ting som Markdown-dokumentasjon, eksempelimplementasjoner og en måte å forhåndsvise komponenten på.
+
+### 2. Et offentlig endepunkt
+
+Opprett et offentlig endepunkt som server komponentene. Dette kan være en enkel JSON-fil, eller et mer komplekst nettsted. Så lenge det er offentlig og tilgjengelig, kan du bruke hvilket som helst endepunkt du vil.
+
+### 3. CLI
+
+Lag en CLI som lar deg installere komponentene i prosjektet ditt. Dette kan være så enkelt som en enkelt kommando, som `npx myregistry add button`, eller en mer kompleks kommando med alternativer og flagg.
+
+## Bruke shadcn-registeret
+
+Å bygge ditt eget register er en flott måte å dele komponentene dine med fellesskapet på, men det krever mye arbeid og vedlikehold. Hvis du bare vil dele en eller to komponenter, kan du bruke shadcn/ui-økosystemet — register, CLI og variabler.
+
+La oss se hvordan vi kan publisere en `MetricCard`-komponent live på mindre enn 5 minutter ved å bruke [Vercel](https://vercel.com)'s statiske hosting.
+
+### Trinn 1: Opprett en mappe
+
+Lag en mappe med denne strukturen:
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+Legg JSON-en for registerelementet ditt (f.eks. `metric-card.json`) i `public/`-mappen.
+
+### Trinn 2: Legg til en `vercel.json`
+
+Opprett en `vercel.json`-fil ved siden av `public/` med følgende:
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Dette sikrer at JSON-en din serveres med riktige CORS- og innholdshoder.
+
+### Trinn 3: Distribuer til Vercel
+
+Fra rotmappen til prosjektet, kjør:
+
+```bash
+vercel --prod
+```
+
+og svar på spørsmålene for å distribuere prosjektet ditt.
+
+Når det er ferdig, vil filen din være live på noe slikt som:
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### Trinn 4: Installer komponenten
+
+Hvem som helst kan nå kjøre:
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+Ingen npm-pakke, ingen byggesteg, ingen kompleksitet.

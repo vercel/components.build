@@ -1,0 +1,163 @@
+---
+title: Registro
+description: Comprendi il concetto di registri di componenti, come funzionano e perché stanno rivoluzionando il modo in cui gli sviluppatori condividono e scoprono componenti UI.
+---
+
+I registri di componenti sono un modo per condividere e scoprire componenti UI. Diffusi da [shadcn/ui](https://ui.shadcn.com), permettono di trovare e copiare componenti direttamente nei tuoi progetti.
+
+I registri rappresentano un cambiamento fondamentale nel modo in cui gli sviluppatori condividono e scoprono componenti UI. A differenza dei pacchetti npm tradizionali, i registri si basano su un modello open source e funzionano scaricando il codice sorgente nel tuo progetto.
+
+## Cosa definisce un registro?
+
+### 1. Distribuzione del codice sorgente
+
+A differenza dei pacchetti npm che distribuiscono codice compilato, i registri distribuiscono il codice sorgente:
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. Metadati e configurazione
+
+I buoni registri includono metadati ricchi sui componenti come il nome, la descrizione, le dipendenze e la categoria.
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. Anteprima e documentazione
+
+Sebbene non vengano scaricati, i siti dei registri tipicamente forniscono:
+
+- Anteprime dal vivo dei componenti
+- Esempi interattivi
+- Documentazione dettagliata
+- Frammenti di codice pronti da copiare
+
+## Vantaggi dell'architettura dei registri
+
+I registri di componenti offrono vantaggi significativi sia per gli autori che per gli utilizzatori, semplificando il processo di condivisione e adozione dei componenti UI.
+
+### Per gli autori
+
+Per gli autori di componenti, i registri rendono la distribuzione estremamente semplice. Una volta creato un componente, può essere aggiunto al registro e reso immediatamente accessibile agli utenti senza la necessità di passaggi di pubblicazione complessi. Questa facilità di distribuzione accelera il ciclo di feedback e incoraggia iterazioni rapide.
+
+Il controllo delle versioni è un altro vantaggio chiave. I registri tipicamente tengono traccia delle versioni dei componenti, dei changelog e delle informazioni di compatibilità. Per esempio, una voce del registro potrebbe specificare la versione corrente del componente, evidenziare le modifiche recenti come miglioramenti all'accessibilità o nuove funzionalità e indicare quali versioni di shadcn/ui sono supportate. Questa trasparenza aiuta i manutentori a comunicare gli aggiornamenti e garantisce che gli utenti possano selezionare componenti adatti ai requisiti del loro progetto.
+
+Anche il coinvolgimento della community viene potenziato tramite i registri. Gli autori possono ricevere feedback diretto dagli utenti, che possono segnalare problemi, richiedere funzionalità e contribuire a miglioramenti collaborativi. Questo favorisce un ambiente di sviluppo più interattivo e reattivo, a beneficio sia dei creatori che dei fruitori.
+
+### Per i consumatori
+
+Dal punto di vista degli utilizzatori dei componenti, i registri migliorano notevolmente il processo di scoperta. Gli utenti possono navigare i componenti per categoria, utilizzare funzioni di ricerca, visualizzare metriche di popolarità ed esplorare componenti correlati, rendendo più semplice trovare esattamente ciò di cui hanno bisogno per i loro progetti.
+
+Prima di integrare un componente, gli utenti possono visualizzarlo in azione, sperimentare diverse varianti e valutare il comportamento e la qualità del codice. Questa possibilità di valutare i componenti in anticipo riduce i rischi e aumenta la fiducia nell'adozione.
+
+Forse cosa più importante, i registri danno agli utenti una vera proprietà. Invece di restare vincolati a una dipendenza, gli utenti copiano il codice sorgente direttamente nel proprio progetto. Questo significa che possono modificare i componenti secondo necessità, evitare problemi di gestione delle dipendenze e mantenere il pieno controllo del proprio codice.
+
+## Creare un registro
+
+È possibile creare un registro semplice abbastanza rapidamente. Praticamente, hai bisogno solo di 3 elementi principali:
+
+### 1. Componenti
+
+Crea un componente, o un insieme di componenti, che vuoi condividere. Assicurati di avere il codice sorgente dei componenti e che siano ben documentati e facili da comprendere.
+
+Considera di aggiungere elementi come documentazione in Markdown, implementazioni di esempio e un modo per visualizzare in anteprima il componente.
+
+### 2. Un endpoint pubblico
+
+Crea un endpoint pubblico che fornisca i componenti. Questo può essere un semplice file JSON o un sito web più complesso. Finché è pubblico e accessibile, puoi usare qualsiasi endpoint desideri.
+
+### 3. CLI
+
+Crea una CLI che permetta di installare i componenti nel tuo progetto. Questo può essere semplice come un singolo comando, come `npx myregistry add button`, o un comando più complesso con opzioni e flag.
+
+## Utilizzare il registro shadcn
+
+Costruire il proprio registro è un ottimo modo per condividere i tuoi componenti con la community, ma richiede molto lavoro e manutenzione. Se vuoi solo condividere uno o due componenti, puoi usare l'ecosistema shadcn/ui — registro, CLI e variabili.
+
+Vediamo come pubblicare un componente `MetricCard` live in meno di 5 minuti usando l'hosting statico di [Vercel](https://vercel.com).
+
+### Passo 1: Crea una cartella
+
+Crea una cartella con questa struttura:
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+Metti il JSON del tuo elemento di registro (es. `metric-card.json`) nella cartella `public/`.
+
+### Passo 2: Aggiungi un `vercel.json`
+
+Crea un file `vercel.json` accanto a `public/` con il seguente contenuto:
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Questo garantisce che il tuo JSON venga servito con gli header CORS e di content-type corretti.
+
+### Passo 3: Distribuire su Vercel
+
+Dalla cartella principale del progetto, esegui:
+
+```bash
+vercel --prod
+```
+
+e rispondi alle richieste per distribuire il tuo progetto.
+
+Quando è pronto, il tuo file sarà disponibile online a un URL simile a:
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### Passo 4: Installa il componente
+
+Chiunque può ora eseguire:
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+Nessun pacchetto npm, nessuna fase di build, nessuna complessità.

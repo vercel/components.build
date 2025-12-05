@@ -1,0 +1,132 @@
+---
+title: Accessibilità
+description: Costruire componenti utilizzabili da tutti, incluse le persone con disabilità che si affidano a tecnologie assistive.
+---
+
+L'accessibilità (a11y) non è una funzionalità opzionale—è un requisito fondamentale per i componenti web moderni. Ogni componente deve essere utilizzabile da tutti, incluse persone con disabilità visive, motorie, uditive o cognitive.
+
+Questa guida è un elenco non esaustivo di principi e pattern di accessibilità che dovresti seguire quando costruisci componenti. Non è una guida completa, ma dovrebbe darti un'idea dei tipi di problemi di cui essere consapevole.
+
+Se usi un linter con regole di accessibilità rigorose come [Ultracite](https://www.ultracite.ai), questi tipi di problemi verranno probabilmente individuati automaticamente, ma è comunque importante comprendere i principi.
+
+## Principi fondamentali
+
+### 1. HTML semantico prima di tutto
+
+Inizia sempre con l'elemento HTML più appropriato. L'HTML semantico fornisce funzionalità di accessibilità integrate che le implementazioni personalizzate spesso non replicano.
+
+Semantic elements come con annunci di ruolo appropriati, interazione da tastiera, gestione del focus e partecipazione ai form.
+
+### 2. Navigazione da tastiera
+
+Ogni elemento interattivo deve essere accessibile tramite tastiera. Gli utenti dovrebbero poter navigare, attivare e interagire con tutte le funzionalità usando solo la tastiera.
+
+### 3. Supporto per screen reader
+
+Assicurati che tutti i contenuti e le interazioni siano annunciati correttamente agli screen reader usando attributi ARIA quando necessario.
+
+### 4. Accessibilità visiva
+
+Supporta gli utenti con disabilità visive attraverso contrasto adeguato, indicatori di focus e dimensionamento del testo reattivo.
+
+## Pattern ARIA
+
+### Comprendere ARIA
+
+ARIA (Accessible Rich Internet Applications) fornisce informazioni semantiche sugli elementi alle tecnologie assistive. Usa ARIA per migliorare, non per sostituire, l'HTML semantico.
+
+Ha alcune regole che dovresti seguire:
+
+1. Non usare ARIA se puoi usare HTML semantico
+2. Non cambiare la semantica nativa a meno che non sia necessario
+3. Tutti gli elementi interattivi devono essere accessibili da tastiera
+4. Non nascondere elementi focalizzabili alle tecnologie assistive
+5. Tutti gli elementi interattivi devono avere nomi accessibili
+
+### Attributi ARIA comuni
+
+#### Ruoli
+
+Definiscono cosa è un elemento.
+
+#### Stati
+
+Descrivono lo stato corrente di un elemento.
+
+#### Proprietà
+
+Forniscono informazioni aggiuntive.
+
+## Pattern dei componenti
+
+### Modale/Dialog
+
+I modali richiedono una gestione accurata del focus e il blocco della tastiera.
+
+### Menu a discesa
+
+I menu a discesa necessitano di attributi ARIA corretti e di navigazione da tastiera.
+
+### Schede (Tabs)
+
+Le interfacce a schede richiedono pattern ARIA specifici e navigazione da tastiera.
+
+### Moduli
+
+I moduli necessitano di etichette chiare, messaggi di errore e feedback di validazione.
+
+## Gestione del focus
+
+### Focus visibile
+
+Mostra gli indicatori di focus solo per la navigazione da tastiera.
+
+### Blocco del focus
+
+Mantieni il focus all'interno di una regione specifica.
+
+### Ripristino del focus
+
+Riporta il focus all'elemento appropriato dopo le interazioni.
+
+## Regioni live
+
+Annuncia i cambiamenti di contenuto dinamico agli screen reader:
+
+### Messaggi di stato
+
+### Indicatori di progresso
+
+## Colore e contrasto
+
+### Requisiti di contrasto
+
+Segui le linee guida WCAG per il contrasto dei colori.
+
+### Indipendenza dal colore
+
+Non trasmettere mai informazioni usando solo il colore.
+
+## Accessibilità mobile
+
+### Aree di tocco
+
+Assicurati che le aree toccabili siano sufficientemente grandi.
+
+### Viewport e zoom
+
+Permetti agli utenti di effettuare lo zoom.
+
+## Errori comuni
+
+### Testo placeholder come etichette
+
+Non usare i placeholder come unica etichetta.
+
+### Pulsanti vuoti
+
+Fornisci sempre testo accessibile per i pulsanti con icona.
+
+### Elementi di modulo disabilitati
+
+Gli elementi disabilitati non sono focalizzabili, il che può confondere gli utenti.

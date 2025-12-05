@@ -1,0 +1,54 @@
+---
+title: Kernprincipes
+description: Bij het bouwen van moderne UI-componenten is het belangrijk om deze kernprincipes in gedachten te houden.
+---
+
+## Compositie en herbruikbaarheid
+
+Geef de voorkeur aan compositie boven overerving – bouw componenten die gecombineerd en genest kunnen worden om complexere UIs te creëren, in plaats van te vertrouwen op diepe klassehiërarchieën.
+
+Samenstelbare componenten bieden een duidelijk API (via props/slots) waarmee ontwikkelaars gedrag en uiterlijk kunnen aanpassen door child-elementen of callbacks in te voegen.
+
+Dit maakt componenten zeer herbruikbaar in verschillende contexten. (React’s ontwerp versterkt dit: “Props and composition geven je alle flexibiliteit die je nodig hebt om het uiterlijk en gedrag van een component op een expliciete en veilige manier aan te passen.”)
+
+## Standaard toegankelijk
+
+Componenten moeten voor alle gebruikers bruikbaar zijn. Gebruik semantische HTML-elementen die passen bij de rol van de component (bijv. `<button>` voor klikbare acties, `<ul>/<li>` voor lijsten, enz.) en breid uit met WAI-ARIA-attributen wanneer dat nodig is.
+
+Zorg ervoor dat toetsenbordnavigatie en focusbeheer worden ondersteund (bijvoorbeeld navigatie met pijltjestoetsen in menu's, focusvallen in modals). Elke component moet vanaf het begin voldoen aan toegankelijkheidsnormen en -richtlijnen.
+
+Dit betekent het bieden van juiste ARIA-rollen/staten en testen met schermlezers. Toegankelijkheid is geen optie – het is een basiskenmerk van elke component.
+
+## Aanpasbaarheid en thematisering
+
+Een component moet eenvoudig te restylen of aan te passen zijn aan verschillende ontwerpeisen. Vermijd het hardcoderen van visuele stijlen die niet kunnen worden overschreven.
+
+Bied mechanismen voor theming en styling, zoals CSS-variabelen, duidelijk gedocumenteerde class-namen, of style props. Idealiter worden componenten geleverd met verstandige standaardstijlen maar stellen ze ontwikkelaars in staat het uiterlijk met minimale inspanning aan te passen (bijvoorbeeld door een className door te geven of design tokens te gebruiken).
+
+Dit principe zorgt ervoor dat componenten binnen elk merk of designsysteem passen zonder te 'vechten' tegen standaardstijlen.
+
+## Lichtgewicht en prestatiegericht
+
+Componenten moeten zo slank mogelijk zijn wat betreft assets en afhankelijkheden. Vermijd het opblazen van een component met grote bibliotheekafhankelijkheden of te complexe logica, vooral als die logica niet altijd nodig is.
+
+Streef naar goede prestaties (zowel rendering als interactie) door onnodige re-renders te minimaliseren en efficiënte algoritmen te gebruiken voor zware taken. Als een component data-intensief is (zoals een grote lijst of tabel), overweeg patronen zoals virtualisatie of incrementele rendering, maar houd dergelijke functies optioneel.
+
+Lichtgewicht componenten zijn gemakkelijker te onderhouden en sneller voor eindgebruikers.
+
+## Transparantie en code-eigenaarschap
+
+In open source profiteren gebruikers vaak van volledige zichtbaarheid en controle over de componentcode. Deze specificatie moedigt een 'open-source first'-mentaliteit aan: componenten mogen geen zwarte dozen zijn.
+
+Wanneer ontwikkelaars je component importeren of kopiëren, moeten ze kunnen zien hoe het werkt en het indien nodig aanpassen. Dit principe ligt ten grondslag aan het opkomende 'kopiëren-en-plakken'-distributiemodel (later besproken), waarbij ontwikkelaars componentcode rechtstreeks in hun projecten integreren.
+
+Door gebruikers eigendom van de code te geven, vergroot je het vertrouwen en maak je diepere aanpassing mogelijk.
+
+Zelfs als je via een package distribueert, omarm transparantie door source maps, leesbare code en grondige documentatie te bieden.
+
+## Goed gedocumenteerd en DX-vriendelijk
+
+Een geweldige component is niet alleen code – hij wordt geleverd met duidelijke documentatie en voorbeelden. Vanuit het perspectief van developer experience (DX) moeten je componenten eenvoudig te leren en te integreren zijn.
+
+Documenteer het doel van elke component, de props en gebruiksvoorbeelden. Voeg notities toe over toegankelijkheid (zoals toetsenbordbediening of gebruikte ARIA-attributen) en eventuele aanpassingsopties.
+
+Goede documentatie vermindert misbruik en verlaagt de drempel voor adoptie. We zullen de documentatieverwachtingen behandelen in de sectie Publiceren, maar het staat hier als principe omdat het plannen voor goede documentatie en DX tijdens de ontwerp-/bouwfase zou moeten plaatsvinden.

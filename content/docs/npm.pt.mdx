@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Como publicar seus componentes no NPM.
+---
+
+Pacotes npm representam a abordagem tradicional para distribuir bibliotecas de componentes. Enquanto os [registros](/registry) ganharam popularidade por sua flexibilidade, a publicação no npm continua sendo uma opção poderosa com vantagens distintas para certos casos de uso.
+
+A diferença fundamental entre pacotes npm e registros reside em como eles distribuem código e gerenciam propriedade.
+
+## Modelo de Pacote
+
+Quando você publica componentes como um pacote npm, você está distribuindo código pré-compilado e versionado que os usuários instalam como uma dependência:
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+Isso oferece várias vantagens significativas que os tornam a escolha certa para muitas bibliotecas de componentes.
+
+### Gerenciamento de Versões
+
+Como autor do pacote, você controla o versionamento e as atualizações. Os usuários podem fixar versões específicas, garantindo estabilidade:
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+Esse controle de versão centralizado significa que você pode enviar atualizações, correções de segurança e novos recursos que os usuários recebem por meio das atualizações de dependência padrão.
+
+### Instalação Simplificada
+
+Pacotes npm oferecem uma experiência de instalação sem atrito. Um único comando adiciona toda a sua biblioteca de componentes:
+
+```bash
+npm install @acme/ui-components
+```
+
+Não é necessário copiar arquivos manualmente, gerenciar dependências ou configurar ferramentas de build. Tudo funciona imediatamente.
+
+### Resolução de Dependências
+
+O npm lida automaticamente com dependências transitivas. Se seus componentes exigirem versões específicas do React, Framer Motion ou outras bibliotecas, o npm resolve essas dependências automaticamente, prevenindo conflitos de versão.
+
+### Suporte a TypeScript
+
+Pacotes publicados podem incluir definições de tipo pré-compiladas, fornecendo suporte imediato ao TypeScript sem configuração adicional:
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## Limitações dos Pacotes NPM
+
+Embora pacotes npm sejam excelentes para distribuição, eles têm trade-offs que os registros abordam especificamente.
+
+### Propriedade do Código Fonte
+
+A limitação mais significativa é a falta de acesso ao código fonte. Os usuários não podem:
+
+- Modificar o comportamento do componente diretamente
+- Corrigir bugs sem esperar por atualizações
+- Personalizar detalhes da implementação
+- Remover código não utilizado
+
+Isso cria uma relação de dependência em que os usuários devem confiar no mantenedor do pacote para todas as mudanças.
+
+### Restrições de Personalização
+
+Ajustar componentes requer trabalhar dentro da API exposta. Embora você possa fornecer props para personalização:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+Os usuários não podem alterar fundamentalmente como o componente funciona sem criar um fork de todo o pacote.
+
+### Tamanho do bundle
+
+Pacotes npm incluem todos os componentes, mesmo que os usuários só precisem de um subconjunto. Embora o tree-shaking ajude, nem sempre é perfeito, potencialmente adicionando peso desnecessário às aplicações.
+
+## Configuração de CSS e Tailwind
+
+Uma consideração crítica ao publicar componentes baseados em Tailwind via npm é garantir que os estilos funcionem corretamente na aplicação que consome.
+
+Por padrão, o Tailwind só gera estilos para classes que encontra nos arquivos do seu projeto. Ele não procura dentro de `node_modules`, o que significa que os estilos do seu componente não serão incluídos.
+
+Para corrigir isso, os usuários precisam adicionar uma diretiva `@source` à sua configuração do Tailwind, instruindo-o a escanear seu pacote em busca de nomes de classe:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+Documente sempre esse requisito de forma destacada no README do seu pacote.
+
+## Publicando Sua Biblioteca de Componentes
+
+Para publicar seus componentes no npm, você precisa de um `package.json` devidamente configurado, que pode ser semelhante a este:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+Pacotes npm continuam sendo uma parte vital do ecossistema de componentes. Enquanto os registros oferecem benefícios convincentes para propriedade do código-fonte e personalização, os pacotes npm fornecem estabilidade, gerenciamento de versões e facilidade de uso que muitas equipes exigem.
+
+A chave é entender as necessidades dos seus usuários e escolher o método de distribuição que melhor os atenda. Às vezes, isso significa oferecer ambas as opções e permitir que os desenvolvedores escolham o que funciona melhor para seu projeto.

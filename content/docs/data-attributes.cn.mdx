@@ -1,0 +1,400 @@
+---
+title: 数据属性
+description: 使用数据属性进行声明式样式和组件识别。
+---
+
+数据属性为向使用者暴露组件状态和结构提供了一种强大的方式，使得在不暴增 props 的情况下能够进行灵活的样式处理。现代组件库主要使用两种模式：`data-state` 用于视觉状态，`data-slot` 用于组件标识。
+
+## 使用 data-state 对状态进行样式化
+
+组件样式中最常见的反模式之一是为不同状态暴露单独的 className props。
+
+在较不现代的组件中，你经常会看到像这样的 API：
+
+```tsx
+<Dialog
+  openClassName="bg-black"
+  closedClassName="bg-white"
+  classes={{
+    open: "opacity-100",
+    closed: "opacity-0"
+  }}
+/>
+```
+
+这种方法存在多个问题：
+- 它将组件的内部状态与样式 API 耦合
+- 随着组件变得更复杂，会导致 props 激增
+- 使组件更难使用和维护
+- 阻止基于状态组合的样式处理
+
+### 解决方案：data-state 属性
+
+相反，使用 `data-*` 属性以声明式方式暴露组件状态。这样允许使用者使用标准的 CSS 选择器根据状态来为组件添加样式：
+
+```tsx title="component.tsx"
+const Dialog = ({ className, ...props }: DialogProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      data-state={isOpen ? 'open' : 'closed'}
+      className={cn('transition-all', className)}
+      {...props}
+    />
+  );
+};
+```
+
+现在使用者可以从外部根据状态对组件进行样式化：
+
+```tsx title="app.tsx"
+<Dialog className="data-[state=open]:opacity-100 data-[state=closed]:opacity-0" />
+```
+
+### 这种方法的好处
+
+1. **单一 className prop** - 无需多个针对状态的 className props  
+2. **可组合** - 可组合多个 data 属性以表示复杂状态  
+3. **标准 CSS** - 兼容任何 CSS-in-JS 方案或纯 CSS  
+4. **类型安全** - TypeScript 可以推断 data 属性的值  
+5. **可检查** - 状态在 DevTools 中以 HTML 属性的形式可见
+
+### 常见的状态模式
+
+对各种组件状态使用 data 属性：
+
+```tsx
+// Open/closed state
+<Accordion data-state={isOpen ? 'open' : 'closed'} />
+
+// Selected state
+<Tab data-state={isSelected ? 'active' : 'inactive'} />
+
+// Disabled state (in addition to disabled attribute)
+<Button data-disabled={isDisabled} disabled={isDisabled} />
+
+// Loading state
+<Button data-loading={isLoading} />
+
+// Orientation
+<Slider data-orientation="horizontal" />
+
+// Side/position
+<Tooltip data-side="top" />
+```
+
+### 使用 Tailwind 进行样式化
+
+Tailwind 支持任意变体，使得基于 data 属性的样式优雅且强大：
+
+```tsx
+<Dialog
+  className={cn(
+    // Base styles
+    'rounded-lg border p-4',
+    // State-based styles
+    'data-[state=open]:animate-in data-[state=open]:fade-in',
+    'data-[state=closed]:animate-out data-[state=closed]:fade-out',
+    // Multiple attributes
+    'data-[state=open][data-side=top]:slide-in-from-top-2'
+  )}
+/>
+```
+
+对于常用状态，你可以拓展 Tailwind 的配置：
+
+```js title="tailwind.config.js"
+module.exports = {
+  theme: {
+    extend: {
+      data: {
+        open: 'state="open"',
+        closed: 'state="closed"',
+        active: 'state="active"',
+      }
+    }
+  }
+}
+```
+
+现在你可以使用简写：
+
+```tsx
+<Dialog className="data-open:opacity-100 data-closed:opacity-0" />
+```
+
+### 与 Radix UI 的集成
+
+该模式被广泛用于 [Radix UI](https://www.radix-ui.com/)，它会自动将 data 属性应用到其 primitives：
+
+```tsx
+import * as Dialog from '@radix-ui/react-dialog';
+
+<Dialog.Root>
+  <Dialog.Trigger />
+  <Dialog.Portal>
+    {/* Radix automatically adds data-state="open" | "closed" */}
+    <Dialog.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out" />
+    <Dialog.Content className="data-[state=open]:fade-in data-[state=closed]:fade-out" />
+  </Dialog.Portal>
+</Dialog.Root>
+```
+
+Radix 提供的其他 data 属性包括：
+- `data-state` - open/closed、active/inactive、on/off
+- `data-side` - top/right/bottom/left（用于有定位的元素）
+- `data-align` - start/center/end（用于有定位的元素）
+- `data-orientation` - horizontal/vertical
+- `data-disabled` - 在禁用时存在
+- `data-placeholder` - 在显示占位符时存在
+
+## 使用 data-slot 进行组件识别
+
+当 `data-state` 跟踪视觉状态时，`data-slot` 用于在组合中识别组件类型。该模式由 [shadcn/ui](https://ui.shadcn.com/) 等推广，允许父组件在不依赖脆弱的类名或元素选择器的情况下定位并样式化特定子组件。
+
+### 子组件定位的问题
+
+传统的子组件样式方法存在显著限制：
+
+```tsx
+// Relies on element types - breaks if implementation changes
+<form className="[&_input]:rounded-lg [&_button]:mt-4" />
+
+// Relies on class names - breaks if classes change
+<form className="[&_.text-input]:rounded-lg" />
+
+// Requires passing classes through props - verbose
+<form>
+  <input className={inputClasses} />
+  <button className={buttonClasses} />
+</form>
+```
+
+### 解决方案：data-slot 属性
+
+使用 `data-slot` 为组件提供稳定的标识符，父组件即可针对这些标识符进行样式化：
+
+```tsx title="field-set.tsx"
+function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
+  return (
+    <fieldset
+      data-slot="field-set"
+      className={cn(
+        "flex flex-col gap-6",
+        // Target specific child slots
+        "has-[>[data-slot=checkbox-group]]:gap-3",
+        "has-[>[data-slot=radio-group]]:gap-3",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+```tsx title="checkbox-group.tsx"
+function CheckboxGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="checkbox-group"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  );
+}
+```
+
+### data-slot 的好处
+
+1. **稳定的标识符** - 当实现细节改变时不会中断  
+2. **语义化定位** - 基于组件用途进行定位，而非结构  
+3. **封装性** - 内部类保持私有  
+4. **可组合** - 适用于任意嵌套和组合模式  
+5. **类型安全** - 可以进行校验和文档化
+
+### 使用 `has-[]` 实现父级感知样式
+
+Tailwind 的 `has-[]` 选择器与 `data-slot` 结合可以创建强大的父级感知样式：
+
+```tsx title="form.tsx"
+function Form({ className, ...props }: React.ComponentProps<"form">) {
+  return (
+    <form
+      data-slot="form"
+      className={cn(
+        "space-y-4",
+        // Adjust spacing when specific slots are present
+        "has-[>[data-slot=form-section]]:space-y-6",
+        "has-[>[data-slot=inline-fields]]:space-y-2",
+        // Style based on slot states
+        "has-[[data-slot=submit-button][data-loading=true]]:opacity-50",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### 使用 `[&_]` 进行后代定位
+
+对于更深层的嵌套，使用 `[&_selector]` 模式来定位任意后代：
+
+```tsx title="card.tsx"
+function Card({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card"
+      className={cn(
+        "rounded-lg border p-4",
+        // Target any descendant with data-slot
+        "[&_[data-slot=card-header]]:mb-4",
+        "[&_[data-slot=card-title]]:text-lg [&_[data-slot=card-title]]:font-semibold",
+        "[&_[data-slot=card-description]]:text-sm [&_[data-slot=card-description]]:text-muted-foreground",
+        "[&_[data-slot=card-footer]]:mt-4 [&_[data-slot=card-footer]]:border-t [&_[data-slot=card-footer]]:pt-4",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### 使用全局 CSS 配合 data-slot
+
+Data slot 与全局 CSS 配合，可实现主题范围内的一致性：
+
+```css title="globals.css"
+/* Style all buttons within forms */
+[data-slot="form"] [data-slot="button"] {
+  @apply w-full sm:w-auto;
+}
+
+/* Style submit buttons specifically */
+[data-slot="form"] [data-slot="submit-button"] {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* Adjust inputs within inline layouts */
+[data-slot="inline-fields"] [data-slot="input"] {
+  @apply flex-1;
+}
+
+/* Style based on state combinations */
+[data-slot="dialog"][data-state="open"] [data-slot="dialog-content"] {
+  @apply animate-in fade-in;
+}
+```
+
+### 命名约定
+
+遵循以下约定以保证 `data-slot` 命名的一致性：
+
+1. **使用 kebab-case** - `data-slot="form-field"` 而不是 `data-slot="formField"`  
+2. **具体化** - `data-slot="submit-button"` 而不是 `data-slot="button"`  
+3. **匹配组件用途** - 名称应反映其功能，而不是外观  
+4. **避免实现细节** - `data-slot="user-avatar"` 而不是 `data-slot="rounded-image"`
+
+```tsx
+// Good examples
+data-slot="search-input"
+data-slot="navigation-menu"
+data-slot="error-message"
+data-slot="submit-button"
+data-slot="card-header"
+
+// Avoid
+data-slot="input"           // Too generic
+data-slot="blueButton"      // Includes styling
+data-slot="div-wrapper"     // Implementation detail
+data-slot="mainContent"     // Use camelCase
+```
+
+## 何时使用 data 属性 vs props
+
+理解何时使用每种模式对于保持清晰的 API 至关重要：
+
+### `data-state` 的使用场景
+- **视觉状态** - open/closed、active/inactive、loading 等  
+- **布局状态** - orientation、side、alignment  
+- **交互状态** - hover、focus、disabled（当需要对子元素进行样式化时）
+
+### `data-slot` 的使用场景
+- **组件识别** - 用于定位的稳定标识符  
+- **组合模式** - 父子关系的定位  
+- **全局样式** - 全主题范围内的组件样式化  
+- **与变体无关的定位** - 定位组件的任意变体
+
+### `props` 的使用场景
+- **变体** - 不同的视觉设计（primary、secondary、destructive）  
+- **尺寸** - sm、md、lg  
+- **行为配置** - controlled/uncontrolled、默认值  
+- **事件处理器** - onClick、onChange 等
+
+### 组合方法
+
+设计良好的组件会恰当地使用这三种模式：
+
+```tsx title="button.tsx"
+type ButtonProps = {
+  variant?: 'primary' | 'secondary' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
+  loading?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
+  className?: string;
+};
+
+const Button = ({
+  variant = 'primary',
+  size = 'md',
+  loading,
+  disabled,
+  className,
+  ...props
+}: ButtonProps) => {
+  return (
+    <button
+      // Slot for targeting
+      data-slot="button"
+      // State for conditional styling
+      data-loading={loading}
+      data-disabled={disabled}
+      className={cn(
+        // Variant styles via props
+        buttonVariants({ variant, size }),
+        // Additional state styling allowed via className
+        className
+      )}
+      disabled={disabled}
+      {...props}
+    />
+  );
+};
+```
+
+现在这个按钮可以以多种方式使用和样式化：
+
+```tsx
+// Basic usage with variants
+<Button variant="primary" size="lg">Submit</Button>
+
+// Parent targeting via data-slot
+<form className="[&_[data-slot=button]]:w-full">
+  <Button>Submit</Button>
+</form>
+
+// State-based styling via data-state
+<Button
+  loading={isLoading}
+  className="data-[loading=true]:opacity-50"
+>
+  Submit
+</Button>
+
+// Global CSS can target any button
+// [data-slot="button"][data-loading="true"] { ... }
+```
+
+数据属性为现代组件库的样式化提供了坚实的基础。通过将 `data-state` 用于视觉状态、将 `data-slot` 用于组件识别，你可以创建一个从简单组件到复杂设计系统都可扩展、可维护的灵活 API。

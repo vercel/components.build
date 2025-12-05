@@ -1,0 +1,140 @@
+---
+title: Dokumentacija
+description: Kako dokumentirati svoje komponente.
+---
+
+Dobra dokumentacija je bistvena za to, da so vaše komponente dostopne in enostavne za uporabo. Ta vodnik povzema ključne elemente, ki naj jih vključuje vsaka stran z dokumentacijo komponente.
+
+## Okvir za dokumentacijo
+
+Za razširjanje dokumentacije lahko uporabite okvir za dokumentacijo. Na voljo je veliko možnosti, odvisno od jezika vašega projekta in potreb projekta. Med priljubljenimi možnostmi so:
+
+- [Fumadocs](https://fumadocs.dev/) - Fast, feature-rich documentation framework for Next.js
+- [Nextra](https://nextra.site/) - Markdown-based documentation with built-in search and theming
+- [Content Collections](https://content-collections.dev/) - Type-safe content management for documentation
+- [Docusaurus](https://docusaurus.io/) - Feature-rich documentation sites with versioning support
+- [VitePress](https://vitepress.dev/) - Vue-powered static site generator optimized for documentation
+
+Po možnosti naj izbrani okvir podpira označevanje sintakse, lastne komponente in naj bo na splošno dobro zasnovan.
+
+## Bistveni odseki dokumentacije
+
+### Pregled
+
+Začnite s kratkim uvodom, ki pojasni, kaj komponenta počne in kdaj jo uporabiti.
+
+### Demo, izvorna koda in predogled
+
+Za dober prvi vtis pri razvijalcih vključite demonstracijo, ki prikaže komponento v akciji, ter kodo, uporabljeno za ustvarjanje demonstracije.
+
+Če uporabljate odprtokodni [Register](/registry), lahko vključite tudi predogled izvorne kode, ki se uporablja za ustvarjanje komponente.
+
+Uporabite blokovne izseke kode z označevanjem sintakse in funkcionalnostjo kopiranja v odložišče. Razmislite o uporabi vmesnikov z zavihki za preklapljanje med temi pogledi brez natrpanja strani.
+
+### Namestitev
+
+Vključite jasno navodilo, kako namestiti komponento. Najbolje je, da gre za en sam ukaz, ki ga lahko kopirate in prilepite v terminal.
+
+Če gradite na shadcn/ui, lahko za namestitev komponente uporabite [shadcn CLI](https://ui.shadcn.com/docs/cli), npr.
+
+```package-install
+npx shadcn@latest add <your-component-url>
+```
+
+Če objavljate na [Tržnici](/marketplaces), lahko za namestitev komponente uporabite CLI tržnice, npr.
+
+```package-install
+npx shadcn@latest add https://21st.dev/r/<your-author>/<your-component>
+```
+
+Če ne uporabljate shadcn/ui, ampak gradite [Register](/registry), lahko ustvarite lasten CLI za namestitev komponente, npr.
+
+```package-install
+npx your-registry-cli@latest add <your-component-url>
+```
+
+Nazadnje, če objavljate na npm, lahko za namestitev komponente uporabite npm CLI, npr.
+
+```package-install
+npm install <your-component-name>
+```
+
+<Callout>
+Če želite prikazati več možnosti namestitve, kot smo to naredili zgoraj, lahko uporabite nekaj podobnega Fumadocsovi [`package-install` sintaksi](https://fumadocs.dev/docs/headless/mdx/install).
+</Callout>
+
+### Značilnosti
+
+Naštejte ključne značilnosti vaše komponente, da uporabnikom hitro pokažete njene zmožnosti in prednosti. Na primer:
+
+- **Prilagodljiva** – Enostavno prilagodite sloge, velikosti in obnašanje, da ustrezajo vašim potrebam.
+- **Privzeto dostopna** – Sledi najboljšim praksam za navigacijo s tipkovnico, ARIA vloge in podporo za bralnike zaslona.
+- **Sestavljiva** – Zasnovana tako, da brezhibno deluje z drugimi komponentami in vzorci.
+- **Tipno varna** – Vključuje obsežne TypeScript tipe za največjo varnost in samodokončanje.
+- **Podpora za teme** – Integrira se z vašimi oblikovnimi tokeni ali sistemom tem.
+- **Lahka** – Minimalne odvisnosti in optimizirana za zmogljivost.
+- **Pripravljena za SSR/SSG** – Deluje s strežniškim in statičnim upodabljanjem.
+- **Dobro dokumentirana** – Vključuje jasne primere uporabe in referenco API-ja.
+
+Prilagodite ta seznam vaši specifični komponenti. Izpostavite, kaj jo naredi edinstveno ali še posebej koristno za razvijalce.
+
+### Primeri
+
+Prikažite prilagodljivost komponente s praktičnimi primeri:
+
+- **Variacije** - Različni vizualni slogi ali velikosti na voljo
+- **Stanja** - Nalaganje, onemogočeno, napaka ali uspeh
+- **Napredna uporaba** - Kompleksni scenariji in robni primeri
+- **Kompozicija** - Kako komponenta deluje z drugimi komponentami
+- **Prilagodljivo vedenje** - Kako se prilagodi različnim velikostim zaslona
+
+Vsak primer naj vključuje tako upodobljen izhod kot ustrezno kodo.
+
+### Props in API referenca
+
+Dokumentirajte vse razpoložljive props, metode in možnosti konfiguracije. Razmislite o združevanju sorodnih props in poudarjanju pogosto uporabljenih. Za vsak prop vključite:
+
+- **Ime** - Identifikator propa
+- **Tip** - Definicija TypeScript tipa
+- **Privzeto** - Privzeta vrednost, če ni določeno
+- **Zahtevano** - Ali je prop obvezen
+- **Opis** - Kaj prop počne in kdaj ga uporabiti
+
+<Callout>
+Če uporabljate Fumadocs, lahko razmislite o uporabi [Auto Type Table](https://fumadocs.dev/docs/ui/components/auto-type-table), da zagotovite natančnost in zmanjšate vzdrževalno obremenitev.
+</Callout>
+
+### Dostopnost
+
+Dokumentirajte, kako vaša komponenta podpira funkcije dostopnosti:
+
+- Vzorce navigacije s tipkovnico
+- ARIA atribute in vloge
+- Podpora za bralnike zaslona
+- Upravljanje fokusa
+- Premisleke glede kontrasta barv
+
+### Dnevnik sprememb in verzioniranje
+
+Uporabno je vzdrževati dnevnik sprememb na vsaki strani dokumentacije komponente, ki zajema:
+
+- Številke različic, ki sledijo semantičnemu verzioniranju
+- Nove funkcije in izboljšave
+- Popravki napak
+- Spremembe, ki prelomijo združljivost
+- Vodniki za migracijo pri večjih posodobitvah različic
+
+Pomagajte uporabnikom razumeti, kaj se je spremenilo med različicami in kako varno nadgraditi. Vključite primere kode, ki prikazujejo vzorce pred in po za prelomne spremembe.
+
+<Callout>
+Če vaš okvir za označevanje sintakse to podpira (kot je Shiki), boste morda želeli uporabiti [notacijo diff transformatorja](https://shiki.style/packages/transformers#transformernotationdiff) za prikaz sprememb med različicami.
+</Callout>
+
+## Najboljše prakse
+
+- Vzdržujte dokumentacijo posodobljeno z spremembami kode
+- Uporabljajte primerke iz resničnega sveta, ki rešujejo dejanske težave
+- Vključite pogoste pasti in nasvete za odpravljanje težav
+- Navedite premisleke glede zmogljivosti, kadar je to relevantno
+- Povežite na sorodne komponente in vzorce
+- Poskrbite, da so vsi primeri kode izvedljivi in testirani

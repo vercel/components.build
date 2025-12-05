@@ -1,0 +1,319 @@
+---
+title: asChild
+description: Kako koristiti `asChild` prop za renderovanje prilagođenog elementa unutar komponente.
+---
+
+`asChild` prop je moćan obrazac u modernim React bibliotekama komponenti. Popularizovan od strane [Radix UI](https://www.radix-ui.com/primitives/docs/guides/composition) i usvojen od strane [shadcn/ui](https://ui.shadcn.com), ovaj obrazac vam omogućava da zamenite podrazumevani markup prilagođenim elementima dok održavate funkcionalnost komponente.
+
+## Razumevanje `asChild`
+
+U suštini, `asChild` menja način na koji komponenta renderuje. Kada je podešeno na `true`, umesto da renderuje svoj podrazumevani DOM element, komponenta spaja svoje propse, ponašanja i rukovaoce događaja sa neposrednim child elementom.
+
+### Bez `asChild`
+
+```tsx
+<Dialog.Trigger>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+Ovo renderuje ugnježdene elemente:
+```html
+<button data-state="closed">
+  <button>Open Dialog</button>
+</button>
+```
+
+### Sa `asChild`
+
+```tsx
+<Dialog.Trigger asChild>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+Ovo renderuje jedan, spojeni element:
+```html
+<button data-state="closed">Open Dialog</button>
+```
+
+Funkcionalnost Dialog.Trigger-a je komponovana na vaš dugme, eliminišući nepotrebne wrapper elemente.
+
+## Kako to radi
+
+Ispod haube, `asChild` koristi React-ove mogućnosti kompozicije da spoji komponente:
+
+```tsx
+// Simplified implementation
+function Component({ asChild, children, ...props }) {
+  if (asChild) {
+    // Clone child and merge props
+    return React.cloneElement(children, {
+      ...props,
+      ...children.props,
+      // Merge event handlers
+      onClick: (e) => {
+        props.onClick?.(e);
+        children.props.onClick?.(e);
+      }
+    });
+  }
+
+  // Render default element
+  return <button {...props}>{children}</button>;
+}
+```
+
+Komponenta:
+1. Proverava da li je `asChild` true
+2. Klonira child element
+3. Spaja props-e iz roditelja i child-a
+4. Kombinuje rukovaoce događaja
+5. Vraća unapređeni child
+
+## Ključne prednosti
+
+### 1. Semantički HTML
+
+`asChild` vam omogućava da koristite najprikladniji HTML element za vaš slučaj upotrebe:
+
+```tsx
+// Use a link for navigation
+<AlertDialog.Trigger asChild>
+  <a href="/delete">Delete Account</a>
+</AlertDialog.Trigger>
+
+// Use a custom button component
+<Tooltip.Trigger asChild>
+  <IconButton icon={<InfoIcon />} />
+</Tooltip.Trigger>
+```
+
+### 2. Čista DOM struktura
+
+Tradicionalna kompozicija često stvara duboko ugnježdene DOM strukture. `asChild` eliminiše ovaj "wrapper hell":
+
+```tsx
+// Without asChild: Nested wrappers
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger>
+      <button>
+        <span>Hover me</span>
+      </button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+
+// With asChild: Clean structure
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <button>Hover me</button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+```
+
+### 3. Integracija sa dizajn sistemom
+
+`asChild` omogućava besprekornu integraciju sa postojećim komponentama vašeg dizajn sistema:
+
+```tsx
+import { Button } from '@/components/ui/button';
+
+<DropdownMenu.Trigger asChild>
+  <Button variant="outline" size="icon">
+    <MoreVertical className="h-4 w-4" />
+  </Button>
+</DropdownMenu.Trigger>
+```
+
+Vaša Button komponenta prima sve potrebne ponašanja trigger-a padajućeg menija bez izmena.
+
+### 4. Kompozicija komponenti
+
+Možete komponovati više ponašanja na jedan element:
+
+```tsx
+<Dialog.Trigger asChild>
+  <Tooltip.Trigger asChild>
+    <button>
+      Open dialog (with tooltip)
+    </button>
+  </Tooltip.Trigger>
+</Dialog.Trigger>
+```
+
+Ovo kreira dugme koje i otvara dijalog i prikazuje tooltip na hover.
+
+## Uobičajeni slučajevi upotrebe
+
+### Prilagođeni elementi okidača
+
+Zamenite podrazumevane okidače prilagođenim komponentama:
+
+```tsx
+// Custom link trigger
+<Collapsible.Trigger asChild>
+  <a href="#" className="text-blue-600 underline">
+    Toggle Details
+  </a>
+</Collapsible.Trigger>
+
+// Icon-only trigger
+<Popover.Trigger asChild>
+  <IconButton>
+    <Settings className="h-4 w-4" />
+  </IconButton>
+</Popover.Trigger>
+```
+
+### Pristupačna navigacija
+
+Održavajte pravilnu semantiku za navigacione elemente:
+
+```tsx
+<NavigationMenu.Link asChild>
+  <Link href="/products" className="nav-link">
+    Products
+  </Link>
+</NavigationMenu.Link>
+```
+
+### Integracija sa formama
+
+Integracija sa bibliotekama za forme uz očuvanje funkcionalnosti:
+
+```tsx
+<FormField
+  control={form.control}
+  name="acceptTerms"
+  render={({ field }) => (
+    <FormItem>
+      <Checkbox.Root asChild>
+        <input
+          type="checkbox"
+          {...field}
+          className="sr-only"
+        />
+      </Checkbox.Root>
+    </FormItem>
+  )}
+/>
+```
+
+## Najbolje prakse
+
+### 1. Održavajte pristupačnost
+
+Kada menjate tip elementa, osigurajte da pristupačnost bude očuvana:
+
+```tsx
+// ✅ Good - maintains button semantics
+<Dialog.Trigger asChild>
+  <button type="button">Open</button>
+</Dialog.Trigger>
+
+// ⚠️ Caution - ensure proper ARIA attributes
+<Dialog.Trigger asChild>
+  <div role="button" tabIndex={0}>Open</div>
+</Dialog.Trigger>
+```
+
+### 2. Dokumentujte zahteve komponente
+
+Jasno dokumentujte kada komponente podržavaju `asChild`:
+
+```tsx
+interface TriggerProps {
+  /**
+   * Change the default rendered element for the one passed as a child,
+   * merging their props and behavior.
+   *
+   * @default false
+   */
+  asChild?: boolean;
+  children: React.ReactNode;
+}
+```
+
+### 3. Testirajte komponente koje se prosleđuju kao deca
+
+Proverite da li prilagođene komponente pravilno rade sa `asChild`:
+
+```tsx
+// Test that props are properly forwarded
+const TestButton = (props) => {
+  console.log('Received props:', props);
+  return <button {...props} />;
+};
+
+<Tooltip.Trigger asChild>
+  <TestButton>Test</TestButton>
+</Tooltip.Trigger>
+```
+
+### 4. Rukujte rubnim slučajevima
+
+Razmotrite rubne slučajeve poput uslovnog renderovanja:
+
+```tsx
+// Handle conditional children
+<Dialog.Trigger asChild>
+  {isLoading ? (
+    <Skeleton className="h-10 w-20" />
+  ) : (
+    <Button>Open Dialog</Button>
+  )}
+</Dialog.Trigger>
+```
+
+## Uobičajene zamke
+
+### Ne prosleđivanje props
+
+Kao što je objašnjeno u [Tipovi](/docs/types), uvek treba proslediti props-e na osnovni element.
+
+```tsx
+// ❌ Won't receive trigger behavior
+const BadButton = ({ children }) => <button>{children}</button>;
+
+// ✅ Properly receives all props
+const GoodButton = ({ children, ...props }) => (
+  <button {...props}>{children}</button>
+);
+```
+
+### Više child elemenata
+
+Nemojte prosleđivati više child elemenata komponenti koja podržava `asChild`. Ovo će prouzrokovati grešku jer komponenta neće znati koji child da koristi.
+
+```tsx
+// ❌ Error - asChild expects single child
+<Trigger asChild>
+  <button>One</button>
+  <button>Two</button>
+</Trigger>
+
+// ✅ Single child element
+<Trigger asChild>
+  <button>Single Button</button>
+</Trigger>
+```
+
+### Fragment kao child
+
+Nemojte prosleđivati fragment komponenti koja podržava `asChild`. Ovo će prouzrokovati grešku jer fragmenti nisu validni elementi.
+
+```tsx
+// ❌ Fragment is not a valid element
+<Trigger asChild>
+  <>Button</>
+</Trigger>
+
+// ✅ Actual element
+<Trigger asChild>
+  <button>Button</button>
+</Trigger>
+```

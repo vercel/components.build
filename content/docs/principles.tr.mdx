@@ -1,0 +1,54 @@
+---
+title: Temel İlkeler
+description: Modern UI bileşenleri oluştururken bu temel ilkeleri akılda tutmak önemlidir.
+---
+
+## Bileşebilirlik ve Yeniden Kullanılabilirlik
+
+Miras almaktansa kompozisyonu tercih edin — derin sınıf hiyerarşilerine güvenmek yerine, daha karmaşık kullanıcı arayüzleri oluşturmak için birleştirilebilen ve iç içe yerleştirilebilen bileşenler oluşturun.
+
+Bileşebilir bileşenler, geliştiricilerin alt öğeler veya geri çağırmalar ekleyerek davranışı ve görünümü özelleştirmesine olanak tanıyan açık bir API (props/slots aracılığıyla) sunar.
+
+Bu, bileşenleri farklı bağlamlarda yüksek düzeyde yeniden kullanılabilir kılar. (React’in tasarımı bunu pekiştirir: “Props ve kompozisyon, bir bileşenin görünümünü ve davranışını açık ve güvenli bir şekilde özelleştirmeniz için gereken tüm esnekliği size sağlar.”)
+
+## Varsayılan Olarak Erişilebilir
+
+Bileşenler tüm kullanıcılar tarafından kullanılabilir olmalıdır. Bileşenin rolüne uygun semantik HTML öğeleri kullanın (ör. tıklanabilir eylemler için `<button>`, listeler için `<ul>/<li>`, vb.) ve gerektiğinde WAI-ARIA öznitelikleri ile destekleyin.
+
+Klavye navigasyonu ve odak yönetiminin desteklendiğinden emin olun (örneğin, menülerde ok tuşu ile gezinme, modal'larda odak tuzakları). Her bileşen kutudan çıktığı gibi erişilebilirlik standartlarına ve yönergelerine uymalıdır.
+
+Bu, uygun ARIA rollerini/durumlarını sağlamayı ve ekran okuyucularla test etmeyi gerektirir. Erişilebilirlik isteğe bağlı değildir — her bileşenin temel bir özelliğidir.
+
+## Özelleştirilebilirlik ve Tema
+
+Bir bileşen, yeniden stilize edilmesi veya farklı tasarım gereksinimlerine uyarlanması kolay olmalıdır. Geçersiz kılınamayan görsel stilleri sabit kod olarak yazmaktan kaçının.
+
+Tema ve stil uygulamaları için CSS değişkenleri, açıkça belgelenmiş sınıf adları veya style props gibi mekanizmalar sağlayın. İdeal olarak, bileşenler mantıklı varsayılan stillerle gelir, ancak geliştiricilerin görünümü minimum çaba ile özelleştirmesine izin verir (örneğin className geçirerek veya design tokens kullanarak).
+
+Bu ilke, bileşenlerin varsayılan stillerle “çatışmadan” herhangi bir marka veya tasarım sistemine uyum sağlamasını garanti eder.
+
+## Hafif ve Yüksek Performanslı
+
+Bileşenler, varlıklar ve bağımlılıklar açısından mümkün olduğunca sade olmalıdır. Özellikle her zaman gerekliyse olmayan karmaşık mantıklar veya büyük kütüphane bağımlılıklarıyla bileşeni şişirmekten kaçının.
+
+Gereksiz yeniden render'ları en aza indirerek ve ağır işler için verimli algoritmalar kullanarak (hem render hem etkileşim açısından) iyi performans hedefleyin. Bir bileşen veri yoğun ise (örneğin büyük bir liste veya tablo gibi), virtualizasyon veya artımlı render gibi desenleri düşünün, ancak bu tür özellikleri isteğe bağlı tutun.
+
+Hafif bileşenler bakım açısından daha kolaydır ve son kullanıcılar için daha hızlıdır.
+
+## Şeffaflık ve Kod Sahipliği
+
+Açık kaynakta, tüketiciler genellikle bileşen kodu üzerinde tam görünürlüğe ve kontrole sahip olmaktan fayda sağlar. Bu spesifikasyon, "önce açık kaynak" anlayışını teşvik eder: bileşenler karanlık kutular olmamalıdır.
+
+Geliştiriciler bileşeninizi içe aktardığında veya kopyaladığında, nasıl çalıştığını inceleyebilmeli ve gerekirse değiştirebilmelidir. Bu ilke, geliştiricilerin bileşen kodunu doğrudan projelerine entegre ettikleri ortaya çıkan "kopyala-yapıştır" dağıtım modelinin (daha sonra tartışılacaktır) temelini oluşturur.
+
+Kullanıcılara kodun sahipliğini vererek güveni artırır ve daha derin özelleştirmelere olanak tanırsınız.
+
+Bir paketi aracılığıyla dağıtsanız bile, kaynak haritaları (source maps), okunabilir kod ve kapsamlı dokümantasyon sağlayarak şeffaflığı benimseyin.
+
+## İyi Belgelenmiş ve DX Dostu
+
+Harika bir bileşen sadece kod değildir — açık bir dokümantasyon ve örneklerle birlikte gelir. Geliştirici deneyimi (DX) açısından, bileşenleriniz öğrenmesi ve entegre etmesi kolay olmalıdır.
+
+Her bileşenin amacını, props'larını ve kullanım örneklerini belgeleyin. Erişilebilirlikle ilgili notları (örneğin klavye kontrolleri veya kullanılan ARIA öznitelikleri) ve herhangi bir özelleştirme seçeneğini ekleyin.
+
+İyi dokümantasyon yanlış kullanımı azaltır ve benimsenme eşiğini düşürür. Dokümantasyon beklentilerini Yayınlama bölümünde ele alacağız, ancak iyi dokümantasyon ve DX için plan yapmanın tasarım/oluşturma aşamasında gerçekleşmesi gerektiği için burada bir ilke olarak listelenmiştir.

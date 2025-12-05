@@ -1,0 +1,578 @@
+---
+title: Polimorfizam
+description: Kako koristiti `as` prop za promenu renderovanog HTML elementa uz očuvanje funkcionalnosti komponente.
+---
+
+`as` prop je osnovni obrazac u modernim React biblioteka komponenti koji vam omogućava da promenite osnovni HTML element ili komponentu koja se renderuje.
+
+Popularizovano u bibliotekama kao što su [Styled Components](https://styled-components.com/), [Emotion](https://emotion.sh/), i [Chakra UI](https://chakra-ui.com/), ovaj obrazac daje fleksibilnost u izboru semantičkog HTML-a uz održavanje stilova i ponašanja komponente.
+
+`as` prop omogućava polimorfne komponente - komponente koje se mogu renderovati kao različiti tipovi elemenata uz očuvanje svoje osnovne funkcionalnosti:
+
+```tsx
+<Button as="a" href="/home">
+  Go Home
+</Button>
+
+<Button as="button" type="submit">
+  Submit Form
+</Button>
+
+<Button as="div" role="button" tabIndex={0}>
+  Custom Element
+</Button>
+```
+
+## Razumevanje `as`
+
+`as` prop vam omogućava da nadjačate podrazumevani tip elementa komponente. Umesto da budete ograničeni na određeni HTML element, možete prilagoditi komponentu da se renderuje kao bilo koji važeći HTML tag ili čak kao druga React komponenta.
+
+Na primer:
+
+```tsx
+// Default renders as a div
+<Box>Content</Box>
+
+// Renders as a section
+<Box as="section">Content</Box>
+
+// Renders as a nav
+<Box as="nav">Content</Box>
+```
+
+Ovo renderuje različite HTML elemente:
+```html
+<!-- Default -->
+<div>Content</div>
+
+<!-- With as="section" -->
+<section>Content</section>
+
+<!-- With as="nav" -->
+<nav>Content</nav>
+```
+
+## Metode implementacije
+
+Postoje dva glavna pristupa za implementaciju polimorfnih komponenti: ručna implementacija i korišćenje Radix UI `Slot` komponente.
+
+### Ručna implementacija
+
+Implementacija `as` propa koristi dinamičko renderovanje komponenti:
+
+```tsx
+// Simplified implementation
+function Component({
+  as: Element = 'div',
+  children,
+  ...props
+}) {
+  return <Element {...props}>{children}</Element>;
+}
+
+// More complete implementation with TypeScript
+type PolymorphicProps<E extends React.ElementType> = {
+  as?: E;
+  children?: React.ReactNode;
+} & React.ComponentPropsWithoutRef<E>;
+
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  children,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props}>{children}</Element>;
+}
+```
+
+Komponenta:
+1. Prihvata `as` prop sa podrazumevanim tipom elementa
+2. Koristi prosleđeni element ili pada na podrazumevani
+3. Raspakuje sve ostale prop-ove na renderovani element
+4. Održava bezbednost tipova pomoću TypeScript generika
+
+### Korišćenje Radix UI Slot
+
+[Radix UI](https://www.radix-ui.com/) pruža `Slot` komponentu koja nudi moćniju alternativu obrascu `as` propa. Umesto da samo menja tip elementa, `Slot` spaja prop-ove sa child komponentom, omogućavajući obrasce kompozicije.
+
+Prvo, instalirajte paket:
+
+```package-install
+npm install @radix-ui/react-slot
+```
+
+Obrazac `asChild` koristi boolean prop umesto specificiranja tipa elementa:
+
+```tsx
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+const itemVariants = cva(
+  "rounded-lg border p-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-white",
+        primary: "bg-blue-500 text-white",
+      },
+      size: {
+        default: "h-10 px-4",
+        sm: "h-8 px-3",
+        lg: "h-12 px-6",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+function Item({
+  className,
+  variant = "default",
+  size = "default",
+  asChild = false,
+  ...props
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof itemVariants> & { asChild?: boolean }) {
+  const Comp = asChild ? Slot : "div"
+  return (
+    <Comp
+      data-slot="item"
+      data-variant={variant}
+      data-size={size}
+      className={cn(itemVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
+}
+```
+
+Sada ga možete koristiti na dva načina:
+
+```tsx
+// Default: renders as a div
+<Item variant="primary">Content</Item>
+
+// With asChild: merges props with child component
+<Item variant="primary" asChild>
+  <a href="/home">Link with Item styles</a>
+</Item>
+```
+
+`Slot` komponenta:
+1. Klonira child element
+2. Spaja prop-ove komponente (className, data atribute, itd.) sa prop-ovima child-a
+3. Ispravno prosleđuje ref-ove
+4. Rukuje kompozicijom handler-a događaja
+
+### Poređenje: `as` vs `asChild`
+
+**`as` prop (ručna implementacija):**
+```tsx
+// Explicit element type
+<Button as="a" href="/home">Link Button</Button>
+<Button as="button" type="submit">Submit Button</Button>
+
+// Simple, predictable API
+// Limited to element types
+```
+
+**`asChild` with Slot:**
+```tsx
+// Implicit from child
+<Button asChild>
+  <a href="/home">Link Button</a>
+</Button>
+
+<Button asChild>
+  <button type="submit">Submit Button</button>
+</Button>
+
+// More flexible composition
+// Works with any component
+// Better prop merging
+```
+
+**Ključne razlike:**
+
+| Karakteristika | `as` prop | `asChild` + Slot |
+|---------|-----------|------------------|
+| **API stil** | `<Button as="a">` | `<Button asChild><a /></Button>` |
+| **Tip elementa** | Navedeno u prop-u | Izvedeno iz child-a |
+| **Kompozicija komponenti** | Ograničena | Potpuna podrška |
+| **Spajanje prop-ova** | Osnovno raspakivanje | Inteligentno spajanje |
+| **Prosleđivanje ref-a** | Potrebno ručno podesiti | Ugrađeno |
+| **Handler-i događaja** | Mogu biti u konfliktu | Ispravno kompozitno ponašanje |
+| **Veličina biblioteke** | Bez zavisnosti | Zahteva `@radix-ui/react-slot` |
+
+### Kada koristiti koji pristup
+
+**Koristite `as` prop kada:**
+- Želite jednostavniji API
+- Uglavnom menjate između HTML elemenata
+- Želite izbeći dodatne zavisnosti
+- Komponenta je jednostavna i ne zahteva složeno spajanje prop-ova
+
+**Koristite `asChild` + Slot kada:**
+- Trebate kompoziciju sa drugim komponentama
+- Želite automatsko spajanje prop-ova
+- Gradite biblioteku komponenti sličnu Radix UI ili shadcn/ui
+- Trebate pouzdano prosleđivanje ref-ova kroz različite tipove komponenti
+
+## Ključne prednosti
+
+### 1. Fleksibilnost semantičkog HTML-a
+
+`as` prop osigurava da uvek možete koristiti najsemantičniji HTML element za dati kontekst:
+
+```tsx
+// Navigation container
+<Container as="nav" className="navigation">
+  <NavItems />
+</Container>
+
+// Main content area
+<Container as="main" className="content">
+  <Article />
+</Container>
+
+// Sidebar
+<Container as="aside" className="sidebar">
+  <Widgets />
+</Container>
+```
+
+### 2. Ponovna upotrebljivost komponenti
+
+Jedna komponenta može služiti više svrha bez kreiranja varijanti:
+
+```tsx
+// Text component used for different elements
+<Text as="h1" size="2xl">Page Title</Text>
+<Text as="p" size="md">Body paragraph</Text>
+<Text as="span" size="sm">Inline text</Text>
+<Text as="label" size="sm">Form label</Text>
+```
+
+### 3. Poboljšanja pristupačnosti
+
+Birajte elemente koji pružaju najbolju pristupačnost za svaki kontekst:
+
+```tsx
+// Link that looks like a button
+<Button as="a" href="/signup">
+  Sign Up Now
+</Button>
+
+// Button that submits a form
+<Button as="button" type="submit">
+  Submit
+</Button>
+
+// Heading with button styles
+<Button as="h2" role="presentation">
+  Section Title
+</Button>
+```
+
+### 4. Integracija sa sistemom stilova
+
+Održavajte konzistentne stilove dok menjate elemente:
+
+```tsx
+const Card = styled.div`
+  padding: 1rem;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+`;
+
+// Same styles, different elements
+<Card as="article">Article content</Card>
+<Card as="section">Section content</Card>
+<Card as="li">List item content</Card>
+```
+
+## Uobičajeni slučajevi upotrebe
+
+### Tipografske komponente
+
+Kreirajte fleksibilne tekstualne komponente:
+
+```tsx
+function Text({
+  as: Element = 'span',
+  variant = 'body',
+  ...props
+}) {
+  const className = cn(
+    'text-base',
+    variant === 'heading' && 'text-2xl font-bold',
+    variant === 'body' && 'text-base',
+    variant === 'caption' && 'text-sm text-gray-600',
+    props.className
+  );
+
+  return <Element className={className} {...props} />;
+}
+
+// Usage
+<Text as="h1" variant="heading">Title</Text>
+<Text as="p" variant="body">Paragraph</Text>
+<Text as="figcaption" variant="caption">Caption</Text>
+```
+
+### Layout komponente
+
+Gradite semantičke rasporede:
+
+```tsx
+function Flex({ as: Element = 'div', ...props }) {
+  return (
+    <Element
+      className={cn('flex', props.className)}
+      {...props}
+    />
+  );
+}
+
+// Semantic HTML
+<Flex as="header" className="justify-between">
+  <Logo />
+  <Navigation />
+</Flex>
+
+<Flex as="main" className="flex-col">
+  <Content />
+</Flex>
+```
+
+### Interaktivni elementi
+
+Rukujte različitim tipovima interakcija:
+
+```tsx
+function Clickable({ as: Element = 'button', ...props }) {
+  const isButton = Element === 'button';
+  const isAnchor = Element === 'a';
+
+  return (
+    <Element
+      role={!isButton && !isAnchor ? 'button' : undefined}
+      tabIndex={!isButton && !isAnchor ? 0 : undefined}
+      {...props}
+    />
+  );
+}
+
+// Various clickable elements
+<Clickable as="button" onClick={handleClick}>Button</Clickable>
+<Clickable as="a" href="/link">Link</Clickable>
+<Clickable as="div" onClick={handleClick}>Div Button</Clickable>
+```
+
+## TypeScript najbolje prakse
+
+### Generički tipovi komponenti
+
+Kreirajte potpuno tip-sigurne polimorfne komponente:
+
+```tsx
+type PolymorphicRef<E extends React.ElementType> =
+  React.ComponentPropsWithRef<E>['ref'];
+
+type PolymorphicProps<
+  E extends React.ElementType,
+  Props = {}
+> = Props &
+  Omit<React.ComponentPropsWithoutRef<E>, keyof Props> & {
+    as?: E;
+  };
+
+// Component with full type safety
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E, { customProp?: string }>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### Zaključivanje props-a
+
+Automatski zaključite prop-ove na osnovu elementa:
+
+```tsx
+// Props are inferred from the element type
+<Component as="a" href="/home">Home</Component>  // ✅ href is valid
+<Component as="div" href="/home">Home</Component> // ❌ TS error: href not valid on div
+
+<Component as="button" type="submit">Submit</Component> // ✅ type is valid
+<Component as="span" type="submit">Submit</Component>   // ❌ TS error
+```
+
+### Diskriminisane unije
+
+Koristite diskriminisane unije za prop-ove specifične za element:
+
+```tsx
+type ButtonProps =
+  | { as: 'button'; type?: 'submit' | 'button' | 'reset' }
+  | { as: 'a'; href: string; target?: string }
+  | { as: 'div'; role: 'button'; tabIndex: number };
+
+function Button(props: ButtonProps & { children: React.ReactNode }) {
+  const Element = props.as;
+  return <Element {...props} />;
+}
+```
+
+## Najbolje prakse
+
+### 1. Podrazumevajte semantičke elemente
+
+Birajte smislen default koji predstavlja najčešći slučaj upotrebe:
+
+```tsx
+// ✅ Good defaults
+function Article({ as: Element = 'article', ...props }) { }
+function Navigation({ as: Element = 'nav', ...props }) { }
+function Heading({ as: Element = 'h2', ...props }) { }
+
+// ❌ Too generic
+function Component({ as: Element = 'div', ...props }) { }
+```
+
+### 2. Dokumentujte podržane elemente
+
+Jasno navedite koji elementi su podržani:
+
+```tsx
+interface BoxProps {
+  /**
+   * The HTML element to render as
+   * @default 'div'
+   * @example 'section', 'article', 'aside', 'main'
+   */
+  as?: 'div' | 'section' | 'article' | 'aside' | 'main' | 'header' | 'footer';
+}
+```
+
+### 3. Proverite prikladnost elementa
+
+Upozorite kada se koriste neprikladni elementi:
+
+```tsx
+function Button({ as: Element = 'button', ...props }) {
+  if (__DEV__ && Element === 'div' && !props.role) {
+    console.warn(
+      'Button: When using as="div", provide role="button" for accessibility'
+    );
+  }
+
+  return <Element {...props} />;
+}
+```
+
+### 4. Ispravno rukovanje obrađivačima događaja
+
+Obezbedite da handler-i događaja rade preko različitih elemenata:
+
+```tsx
+function Interactive({ as: Element = 'button', onClick, ...props }) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (Element !== 'button' && (e.key === 'Enter' || e.key === ' ')) {
+      onClick?.(e as any);
+    }
+  };
+
+  return (
+    <Element
+      onClick={onClick}
+      onKeyDown={Element !== 'button' ? handleKeyDown : undefined}
+      {...props}
+    />
+  );
+}
+```
+
+## Uobičajene zamke
+
+### Neispravno ugnježđavanje HTML-a
+
+Budite oprezni sa pravilima ugnježđavanja HTML-a:
+
+```tsx
+// ❌ Invalid - button inside button
+<Button as="button">
+  <Button as="button">Nested</Button>
+</Button>
+
+// ❌ Invalid - div inside p
+<Text as="p">
+  <Box as="div">Invalid nesting</Box>
+</Text>
+
+// ✅ Valid nesting
+<Text as="div">
+  <Box as="div">Valid nesting</Box>
+</Text>
+```
+
+### Nedostajući atributi pristupačnosti
+
+Ne zaboravite da dodate odgovarajuće ARIA atribute:
+
+```tsx
+// ❌ Missing accessibility
+<Box as="nav">
+  <MenuItems />
+</Box>
+
+// ✅ Proper accessibility
+<Box as="nav" aria-label="Main navigation">
+  <MenuItems />
+</Box>
+```
+
+### Gubitak bezbednosti tipova
+
+Izbegavajte previše permisivne tipove:
+
+```tsx
+// ❌ Too permissive - no type safety
+function Component({ as: Element = 'div', ...props }: any) {
+  return <Element {...props} />;
+}
+
+// ✅ Type safe
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### Razmatranja performansi
+
+Budite svesni implikacija pri re-renderovanju:
+
+```tsx
+// ❌ Creates new component on every render
+function Parent() {
+  const CustomDiv = (props) => <div {...props} />;
+  return <Component as={CustomDiv} />;
+}
+
+// ✅ Stable component reference
+const CustomDiv = (props) => <div {...props} />;
+function Parent() {
+  return <Component as={CustomDiv} />;
+}
+```

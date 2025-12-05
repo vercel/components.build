@@ -1,0 +1,132 @@
+---
+title: Tillgänglighet
+description: Att bygga komponenter som kan användas av alla, inklusive användare med funktionsnedsättningar som är beroende av hjälpmedel.
+---
+
+Tillgänglighet (a11y) är inte en valfri funktion—det är ett grundläggande krav för moderna webbkomponenter. Varje komponent måste kunna användas av alla, inklusive personer med syn-, motorik-, hörsel- eller kognitiva funktionsnedsättningar.
+
+Denna guide är en icke-uttömmande lista över tillgänglighetsprinciper och mönster som du bör följa när du bygger komponenter. Det är inte en fullständig guide, men den bör ge en uppfattning om vilka typer av problem du bör vara uppmärksam på.
+
+Om du använder en linter med strikta tillgänglighetsregler som [Ultracite](https://www.ultracite.ai) kommer dessa typer av problem sannolikt att fångas automatiskt, men det är fortfarande viktigt att förstå principerna.
+
+## Kärnprinciper
+
+### 1. Semantisk HTML i första hand
+
+Börja alltid med det mest lämpliga HTML-elementet. Semantisk HTML ger inbyggda tillgänglighetsfunktioner som anpassade implementationer ofta missar.
+
+Semantic elements come with proper role announcements, keyboard interaction, focus management, and form participation.
+
+### 2. Tangentbordsnavigering
+
+Varje interaktivt element måste vara åtkomligt via tangentbordet. Användare ska kunna navigera, aktivera och interagera med all funktionalitet endast med tangentbordet.
+
+### 3. Stöd för skärmläsare
+
+Se till att allt innehåll och alla interaktioner annonseras korrekt till skärmläsare genom att använda ARIA-attribut när det behövs.
+
+### 4. Visuell tillgänglighet
+
+Stöd användare med synnedsättningar genom korrekt kontrast, fokusindikatorer och responsiv textstorlek.
+
+## ARIA-mönster
+
+### Förstå ARIA
+
+ARIA (Accessible Rich Internet Applications) ger semantisk information om element till hjälpmedel. Använd ARIA för att förbättra, inte ersätta, semantisk HTML.
+
+Det finns några regler som du bör följa:
+
+1. Använd inte ARIA om du kan använda semantisk HTML
+2. Ändra inte inbyggd semantik om det inte är nödvändigt
+3. Alla interaktiva element måste vara åtkomliga via tangentbordet
+4. Dölj inte fokuserbara element för hjälpmedel
+5. Alla interaktiva element måste ha tillgängliga namn
+
+### Vanliga ARIA-attribut
+
+#### Roller
+
+Definierar vad ett element är:
+
+#### Tillstånd
+
+Beskriv det aktuella tillståndet för ett element:
+
+#### Egenskaper
+
+Ge ytterligare information:
+
+## Komponentmönster
+
+### Modal/Dialog
+
+Modaler kräver noggrann fokushantering och att fokus trapas:
+
+### Dropdown-meny
+
+Dropdowns behöver korrekta ARIA-attribut och tangentbordsnavigering:
+
+### Flikar
+
+Flikgränssnitt kräver specifika ARIA-mönster och tangentbordsnavigering:
+
+### Formulär
+
+Formulär behöver tydliga etiketter, felmeddelanden och valideringsfeedback:
+
+## Fokus-hantering
+
+### Synlig fokus
+
+Visa fokusindikatorer endast för tangentbordsnavigering:
+
+### Fokusfångst
+
+Håll fokus inom ett specifikt område:
+
+### Återställning av fokus
+
+Återför fokus till lämpligt element efter interaktioner:
+
+## Live-regioner
+
+Annonsera dynamiska innehållsändringar till skärmläsare:
+
+### Statusmeddelanden
+
+### Framstegsindikatorer
+
+## Färg och kontrast
+
+### Kontrastkrav
+
+Följ WCAG-riktlinjer för färgkontrast:
+
+### Färgoberoende
+
+Ange aldrig information enbart genom färg:
+
+## Mobil tillgänglighet
+
+### Beröringsmål
+
+Säkerställ att beröringsmål är tillräckligt stora:
+
+### Vyport och zoom
+
+Tillåt användare att zooma:
+
+## Vanliga fallgropar
+
+### Platshållartext som etiketter
+
+Använd inte platshållare som enda etikett:
+
+### Tomma knappar
+
+Ge alltid tillgänglig text för ikonknappar:
+
+### Inaktiverade formulärelement
+
+Inaktiverade element är inte fokuserbara, vilket kan förvirra användare:

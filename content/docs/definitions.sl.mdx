@@ -1,0 +1,234 @@
+---
+title: Definicije
+description: Ta stran določa natančno terminologijo, uporabljo v specifikaciji. Pojmi so namerno neodvisni od ogrodij, vendar bomo za primere uporabili React.
+---
+
+## 1. Taksonomija artefaktov
+
+### 1.1 Primitiv
+
+Primitiv (ali neoblikovana komponenta) je **najnižji gradnik**, ki zagotavlja vedenje in dostopnost brez kakršnegakoli oblikovanja.
+
+Primitivi so povsem neoblikovani (tj. unstyled) in enkapsulirajo semantiko, upravljanje fokusa, interakcijo s tipkovnico, plastenje/portale, povezave ARIA, merjenje in podobne skrbi. Zagotavljajo vedenjsko osnovo, vendar zahtevajo oblikovanje, da postanejo dokončen UI.
+
+Primeri:
+
+- [Radix UI Primitives](https://www.radix-ui.com/primitives) (Dialog, Popover, Tooltip, itd.)
+- [React Aria Components](https://react-spectrum.adobe.com/react-aria)
+- [Base UI](https://base-ui.com)
+- [Headless UI](https://headlessui.com/)
+
+Pričakovanja:
+
+- Popolnoma neoblikovani (headless).
+- Enotna odgovornost; sestavljivi v oblikovane komponente.
+- Dobavljeni z izčrpnim a11y vedenjem za svojo vlogo.
+- Upravljanje verzij daje prednost stabilnosti; prelomne spremembe so redke in dokumentirane.
+
+<Callout>
+Pojma „primitiv“ in „komponenta“ se na spletu pogosto uporabljata zamenljivo, vendar nista enaka.
+</Callout>
+
+### 1.2 Komponenta
+
+Komponenta je oblikovana, znova uporabna UI enota, ki doda vizualni dizajn primitivom ali združi več elementov, da ustvari popolne, funkcionalne elemente vmesnika.
+
+Komponente so še vedno sorazmerno nizkonivojske, vendar vključujejo oblikovanje, zaradi česar so takoj uporabne v aplikacijah. Običajno ovijejo neoblikovane primitive z privzetim vizualnim dizajnom, hkrati pa ostajajo prilagodljive.
+
+Primeri:
+- [shadcn/ui components](https://ui.shadcn.com/) (styled wrappers of Radix primitives)
+- [Material UI components](https://mui.com/components/)
+- [Ant Design components](https://ant.design/components/overview/)
+
+Pričakovanja:
+- Jasno props API; podpira nadzorovano in nenadzorovano uporabo, kjer je to primerno.
+- Vključuje privzeto oblikovanje, vendar omogoča enostavno preglasitev (classes, tokens, slots).
+- Popolnoma dostopna z tipkovnico in prijazna za bralnike zaslona (deduje iz primitivov).
+- Sestavljiva (children/slots, render props ali compound podkomponente).
+- Lahko je zgrajena iz primitivov ali pa implementira vedenje neposredno z oblikovanjem.
+
+### 1.3 Vzorec
+
+Vzorec je specifična kompozicija primitivov ali komponent, ki se uporablja za reševanje določenega UI/UX problema.
+
+Primeri:
+- Validacija obrazcev z vgrajenimi napakami
+- Potrditev destruktivnih dejanj
+- Typeahead iskanje
+- Optimističen UI
+
+Pričakovanja.
+- Opisuje vedenje, a11y, mapo tipkovnice in načine odpovedi.
+- Lahko vključuje referenčne implementacije v več ogrodjih.
+
+### 1.4 Blok
+
+Mnenjsko obarvana, produkcijsko pripravljena kompozicija komponent, ki rešuje konkreten primer uporabe vmesnika (pogosto specifičen za produkt) z ogrodjem vsebine. Bloki zamenjajo splošnost za hitrejše sprejemanje.
+
+Primeri:
+- Tabela cen
+- Avtentikacijski zasloni
+- Onboarding stepper
+- AI klepetalna plošča
+- Obrazec nastavitev obračunavanja
+
+Pričakovanja.
+- Močni privzeti nastavitvi, primerni za copy-paste, enostavno za blagovno znamčenje/tematizacijo.
+- Minimalna logika onkraj postavitve in orkestracije; domenna logika je zastavljena preko handlerjev.
+- Sprejema podatke preko props; nikoli ne skriva podatkov za fetchi brez dokumentiranega adapterja.
+
+<AuthorNote name="Rob Austin" role="Founder of shadcnblocks.com" githubUsername="JugglerX" link="https://www.shadcnblocks.com/">
+Bloki običajno niso tako ponovno uporabni kot komponenta. Ne uvažate jih, temveč običajno uvažajo komponente in primitive. To jih naredi za dobre kandidate za distribucijo preko [Registry](/registry).
+</AuthorNote>
+
+### 1.5 Stran
+
+Popoln pogled za enotno pot (single-route), sestavljen iz več blokov, razporejenih za dosego določenega uporabniškega namena. Strani združujejo bloke v kohezivno postavitev, ki predstavlja eno destinacijo v aplikaciji.
+
+Primeri:
+- Ciljna stran (hero block + features block + pricing block + footer block)
+- Stran s podrobnostmi izdelka (image gallery block + product info block + reviews block)
+- Nadzorna plošča (stats block + chart block + activity feed block)
+
+Pričakovanja:
+- Združi več blokov v enotno postavitev za eno pot/URL.
+- Osredotoča se na postavitev in orkestracijo blokov namesto na podrobnosti komponent.
+- Lahko vključuje logiko specifično za stran za koordinacijo podatkov med bloki.
+- Samostojna za en URL/route; ni namenjena ponovni uporabi čez poti.
+
+### 1.6 Predloga
+
+Večstranska zbirka ali ogrodje celotnega spletnega mesta, ki združuje strani, nastavitve usmerjanja, deljene postavitve, globalne providere in strukturo projekta. Predloge so popolni izhodiščni okvirji za celotne aplikacije ali večje sekcije aplikacij.
+
+Primeri:
+- [TailwindCSS Templates](https://tailwindui.com/templates)
+- [shadcnblocks Templates](https://www.shadcnblocks.com/templates) (celotni aplikacijski ovoji)
+- "SaaS starter" (strani za avtentikacijo + strani nadzorne plošče + strani z nastavitvami + marketinške strani)
+- "E-commerce template" (trgovina + strani izdelkov + potek nakupa + strani skrbnika)
+
+Pričakovanja:
+- Vključuje več strani z strukturo usmerjanja/navigacije.
+- Zagotavlja globalno konfiguracijo (theme providers, auth context, layout shells).
+- Mnenjsko obarvana struktura projekta s jasnimi konvencijami.
+- Namenjena kot celovito izhodišče; razvejajte in prilagodite namesto uvoza kot odvisnost.
+- Lahko vključuje build konfiguracijo, nastavitve za nameščanje in razvojna orodja.
+
+### 1.7 Utiliteta (nevizualno)
+
+Pomožni izvoz za ergonomijo razvijalca ali kompozicijo; brez upodabljanja v UI.
+
+Primeri:
+- React hooks (useControllableState, useId)
+- Utilitete za razrede (class utilities)
+- Pomočniki za tipke (keybinding helpers)
+- Focus scopes
+
+Pričakovanja.
+- Brez stranskih učinkov (razen kjer je izrecno dokumentirano).
+- Testabilno v izolaciji; podpira tree-shaking.
+
+## 2. API in besedišče kompozicije
+
+### 2.1 Props API
+
+Javna površina konfiguracije komponente. Props so stabilni, tipizirani in dokumentirani s privzetimi vrednostmi in vplivi na a11y.
+
+### 2.2 Children / Slots
+
+Rezervirana mesta za strukturo ali vsebino, ki jo zagotovi klicatelj.
+- Children (implicitni slot). JSX med začetnimi/zapiralnimi oznakami.
+- Poimenovani slots. Props, kot so icon, footer, ali `<Component.Slot>` podkomponente.
+- Posredovanje slotov. Prenašanje DOM atributov/className/refs na osnovni element.
+
+### 2.3 Render Prop (Function-as-Child)
+
+Funkcijski otrok, uporabljen za delegiranje upodabljanja, medtem ko starš zagotavlja stanje/podatke.
+
+```tsx
+<ParentComponent data={data}>
+  {(item) => (
+    <ChildComponent key={item.id} {...item} />
+  )}
+</ParentComponent>
+```
+
+Uporabi, ko mora starš imeti lastništvo nad podatki/vedenjem, vendar mora potrošnik popolnoma nadzorovati markup.
+
+### 2.4 Nadzorovano vs. nenadzorovano
+
+**Nadzorovano** in **nenadzorovano** sta termini, ki opisujeta stanje komponente.
+
+**Nadzorovane** komponente imajo svojo vrednost poganjano preko props in običajno sprožijo dogodek `onChange` (vir resnice je starš). **Nenadzorovane** komponente imajo notranje stanje; lahko razkrijejo `defaultValue` in imperativni reset.
+
+Veliko vnosnih komponent bi moralo podpirati obe. Preberi več o [controlled and uncontrolled state](/state).
+
+### 2.5 Provider / Context
+
+Vrhunska komponenta, ki zagotavlja deljeno stanje/konfiguracijo poddrevesu (npr. tema, lokalizacija, ID aktivnega taba). Providerji so eksplicitno dokumentirani z zahtevanim umestitvijo.
+
+### 2.6 Portal
+
+Upodabljanje UI izven DOM hierarhije za upravljanje plastenja/stekanja konteksta (npr. modali, popoverji, toasti), hkrati ohranja a11y (focus trap, aria-modal, neaktiven ozadje).
+
+## 3. Besedišče stilizacije in tematizacije
+
+### 3.1 Headless
+
+Izvaja vedenje in dostopnost brez predpisovanja videza. Zahteva, da potrošnik zagotovi oblikovanje.
+
+### 3.2 Styled
+
+Dobavljen s privzetim vizualnim dizajnom (CSS razredi, inline stili ali tokens), vendar ostaja prijazen do preglasitve (className merge, CSS vars, theming).
+
+### 3.3 Variants
+
+Diskretne, dokumentirane permutacije stila ali vedenja, izpostavljene preko props (npr. `size="sm|md|lg"`, `tone="neutral|destructive"`). Varianti niso ločene komponente.
+
+### 3.4 Design Tokens
+
+Poimenovane, platformno-neodvisne vrednosti (npr. `--color-bg`, `--radius-md`, `--space-2`), ki parameterizirajo vizualni dizajn in podpirajo tematizacijo.
+
+## 4. Besedišče dostopnosti
+
+### 4.1 Vloga / Stanje / Lastnost
+
+WAI-ARIA atributi, ki komunicirajo semantiko (`role="menu"`), stanje (`aria-checked`) in odnose (`aria-controls`, `aria-labelledby`).
+
+### 4.2 Mapa tipkovnice
+
+Dokumentiran nabor interakcij s tipkovnico za widget (npr. `Tab`, `Arrow keys`, `Home/End`, `Escape`). Vsaka interaktivna komponenta deklarira in implementira mapo tipkovnice.
+
+### 4.3 Upravljanje fokusa
+
+Pravila za začetni fokus, roving fokus, fokusna past ter vračanje fokusa ob razgradnji.
+
+## 5. Besedišče distribucije
+
+### 5.1 Paket (Registry distribucija)
+
+Komponenta/knižnica je objavljena v registry paketu (npr. `npm`) in uvožena preko bundlerja. Prednost daje verzijskim posodobitvam in upravljanju odvisnosti.
+
+### 5.2 Kopiraj-in-prilepi (Source distribucija)
+
+Izvorna koda je integrirana neposredno v repozitorij potrošnika (pogosto preko CLI). Prednost daje lastništvu, prilagoditvi in ničelni dodatni runtime.
+
+### 5.3 Registry (Katalog)
+
+Kuriran indeks artefaktov (primitive, komponente, bloki, predloge) z metapodatki, predogledi in navodili za namestitev/kopiranje. Registry ni nujno upravljalec paketov.
+
+## 6. Hevristika klasifikacije
+
+Uporabi ta odločilni tok za poimenovanje in umestitev artefakta:
+
+1. Ali enkapsulira eno vedenje ali a11y skrb, brez oblikovanja? → **Primitiv**
+2. Je to oblikovan, znova uporaben UI element, ki doda vizualni dizajn primitivom ali združuje več elementov? → **Komponenta**
+3. Ali rešuje konkreten produktni primer z mnenjsko obarvano kompozicijo in vsebino? → **Blok**
+4. Ali ogrodje strani/flow z usmerjanjem/providerji in zamenljivimi regijami? → **Predloga**
+5. Je to dokumentacija ponavljajoče se rešitve, neodvisna od implementacije? → **Vzorec**
+6. Je to nevizualna logika za ergonomijo/kompozicijo? → **Utiliteta**
+
+## 7. Ne-cilji in pojasnila
+
+- Web Components vs. "Components." V tej specifikaciji "component" se nanaša na znova uporabno UI enoto (primeri v React). Ne pomeni standarda HTML Custom Elements, razen če je izrecno navedeno. Enake smernice veljajo napreframi.
+- Widgets. Izraz „widget“ se izogibamo zaradi dvosmislenosti; uporabite component (splošno) ali pattern (dokumentacija-only rešitev).
+- Teme vs. slogi. Tema je parameterizacija slogov (prek tokens). Slogi so konkretna predstavitev. Komponente naj podpirajo teme; bloki/predloge lahko vključujejo mnenjsko obarvane sloge plus tematizacijske vtičnike.

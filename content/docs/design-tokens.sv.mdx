@@ -1,0 +1,51 @@
+---
+title: Designtokens
+description: Hur semantiska namngivningskonventioner och designtokens skapar ett flexibelt, underhållbart temasystem.
+---
+
+En av de centrala grundpelarna i moderna komponentbibliotek ligger i deras genomtänkta syn på styling. Istället för att hårdkoda färger eller skapa rigida klassystem kan vi använda en semantisk namngivningskonvention som separerar concerns för tema, kontext och användning.
+
+Denna semantiska namngivningskonvention är känd som designtokens. Detta arkitekturval skapar ett underhållbart, flexibelt system som skalar vackert över applikationer.
+
+## Filosofin bakom semantiska CSS-variabler
+
+Traditionella CSS-ansatser kopplar ofta färgvärden direkt till deras användningskontexter, vilket skapar sköra system som är svåra att underhålla. Designtokens tar en annan väg genom att skapa abstraktionslager som separerar vad något är från hur det ser ut.
+
+## Förstå variabelarkitekturen
+
+Låt oss undersöka hur vi kan strukturera våra CSS-variabler för att skapa detta flexibla system:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+I exemplet ovan har vi fyra designtokens:
+
+- `--background`, som används för bakgrundsfärger (huvudsakligen sidans bakgrund)
+- `--foreground`, som används för förgrundsfärger (den allmänna textfärgen)
+- `--primary`, som används för primära färger (varumärkets huvudfärg)
+- `--primary-foreground`, som används för primära förgrundsfärger (textfärgen när den visas mot den primära färgen)

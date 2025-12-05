@@ -1,0 +1,148 @@
+---
+title: Tilgjengelighet
+description: Bygge komponenter som kan brukes av alle, inkludert brukere med funksjonsnedsettelser som er avhengige av hjelpemidler.
+---
+
+Tilgjengelighet (a11y) er ikke et valg – det er et grunnleggende krav for moderne webkomponenter. Hver komponent må kunne brukes av alle, inkludert personer med syns-, motoriske-, hørsels- eller kognitive funksjonsnedsettelser.
+
+Denne veiledningen er en ikke-uttømmende liste over tilgjengelighetsprinsipper og mønstre du bør følge når du bygger komponenter. Den er ikke en fullstendig guide, men den skal gi deg en forståelse av hvilke typer problemer du bør være oppmerksom på.
+
+Hvis du bruker en linter med sterke tilgjengelighetsregler som [Ultracite](https://www.ultracite.ai), vil denne typen problemer sannsynligvis bli fanget automatisk, men det er fortsatt viktig å forstå prinsippene.
+
+## Kjerneprinsipper
+
+### 1. Semantisk HTML først
+
+Start alltid med det mest passende HTML-elementet. Semantisk HTML gir innebygde tilgjengelighetsfunksjoner som tilpassede implementasjoner ofte mangler.
+
+Semantic elements come with proper role announcements, keyboard interaction, focus management, and form participation.
+
+### 2. Tastaturnavigasjon
+
+Hvert interaktivt element må være tilgjengelig via tastatur. Brukere skal kunne navigere, aktivere og samhandle med all funksjonalitet kun ved hjelp av tastatur.
+
+### 3. Skjermleserstøtte
+
+Sørg for at alt innhold og alle interaksjoner blir annonsert riktig til skjermlesere ved å bruke ARIA-attributter når det er nødvendig.
+
+### 4. Visuell tilgjengelighet
+
+Støtt brukere med nedsatt syn ved å sørge for riktig kontrast, fokusindikatorer og responsiv tekststørrelse.
+
+## ARIA-mønstre
+
+### Forstå ARIA
+
+ARIA (Accessible Rich Internet Applications) gir semantisk informasjon om elementer til hjelpemidler. Bruk ARIA for å forbedre, ikke erstatte, semantisk HTML.
+
+Den har noen få regler du bør følge:
+
+1. Ikke bruk ARIA hvis du kan bruke semantisk HTML
+2. Ikke endre native semantikk med mindre det er nødvendig
+3. Alle interaktive elementer må være tastaturtilgjengelige
+4. Ikke skjul fokusbare elementer for hjelpemidler
+5. Alle interaktive elementer må ha tilgjengelige navn
+
+### Vanlige ARIA-attributter
+
+#### Roller
+
+Definer hva et element er.
+
+#### Tilstander
+
+Beskriv et elements nåværende tilstand.
+
+#### Egenskaper
+
+Gi tilleggssinformasjon.
+
+## Komponentmønstre
+
+### Modal/Dialog
+
+Modaler krever nøye fokusstyring og å fange tastaturfokus.
+
+### Dropdown-meny
+
+Dropdowns trenger riktige ARIA-attributter og tastaturnavigasjon.
+
+### Faner
+
+Fanegrensesnitt krever spesifikke ARIA-mønstre og tastaturnavigasjon.
+
+### Skjemaer
+
+Skjemaer trenger klare etiketter, feilmeldinger og valideringstilbakemeldinger.
+
+## Fokusstyring
+
+### Fokus synlig
+
+Vis fokusindikatorer kun ved tastaturnavigasjon.
+
+### Fokusfanging
+
+Hold fokus innenfor et spesifikt område.
+
+### Gjenoppretting av fokus
+
+Returner fokus til riktig element etter interaksjoner.
+
+## Live-regioner
+
+Annonser dynamiske innholdsendringer til skjermlesere:
+
+### Statusmeldinger
+
+- Polite-annonsering (venter på at skjermleseren er ferdig)
+- Assertive-annonsering (avbryter skjermleseren)
+- Lastetilstander
+
+### Fremdriftsindikatorer
+
+Vis fremdrift med passende ARIA-attributter og skjermlesertekst.
+
+## Farge og kontrast
+
+### Kontrastkrav
+
+Følg WCAG-retningslinjene for fargekontrast:
+
+- Normal tekst: 4.5:1 krav
+- Stor tekst: 3:1 krav
+- Ikke-tekst-elementer (ikoner, rammer): 3:1 anbefaling
+
+### Fargeuavhengighet
+
+Ikke formidle informasjon kun gjennom farge.
+
+## Mobil tilgjengelighet
+
+### Touch-mål
+
+Sørg for at touch-mål er store nok.
+
+- Minimum 44x44px for iOS, 48x48dp for Android
+- Legg til usynlige touch-områder for små ikoner
+
+### Viewport og zoom
+
+La brukere zoome.
+
+- Tillat zooming ved å ikke sette maksimumsskala eller user-scalable=no i meta viewport.
+
+## Vanlige fallgruver
+
+### Placeholder-tekst som etiketter
+
+Ikke bruk plassholder som eneste etikett.
+
+### Tomme knapper
+
+Gi alltid tilgjengelig tekst for ikonknapper.
+
+### Deaktiverte skjemaelementer
+
+Deaktiverte elementer er ikke fokuserbare, noe som kan forvirre brukere. Bruk heller aria-disabled og gi en forklaring på hvorfor elementet er deaktivert.
+

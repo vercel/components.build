@@ -1,0 +1,140 @@
+---
+title: Documentatie
+description: Hoe je je componenten documenteert.
+---
+
+Goede documentatie is essentieel om je componenten toegankelijk en gemakkelijk in gebruik te maken. Deze gids beschrijft de belangrijkste onderdelen die elke componentdocumentatiepagina zou moeten bevatten.
+
+## Documentatieframework
+
+Om je documentatie op te schalen kun je een documentatieframework gebruiken. Er zijn veel opties beschikbaar, afhankelijk van de programmeertaal en de behoeften van je project. Populaire opties zijn onder andere:
+
+- [Fumadocs](https://fumadocs.dev/) - Snel, rijk aan functies, documentatieframework voor Next.js
+- [Nextra](https://nextra.site/) - Op Markdown gebaseerde documentatie met ingebouwde zoekfunctie en thema-ondersteuning
+- [Content Collections](https://content-collections.dev/) - Type-veilig contentbeheer voor documentatie
+- [Docusaurus](https://docusaurus.io/) - Rijke documentatiesites met ondersteuning voor versiebeheer
+- [VitePress](https://vitepress.dev/) - Door Vue aangedreven static site generator, geoptimaliseerd voor documentatie
+
+Bij voorkeur ondersteunt je gekozen framework syntaxisaccentuering, aangepaste componenten en is het over het algemeen goed ontworpen.
+
+## Essentiële documentatiesecties
+
+### Overzicht
+
+Begin met een korte introductie die uitlegt wat de component doet en wanneer je deze moet gebruiken.
+
+### Demo, broncode en voorbeeld
+
+Voor een goede eerste indruk voor ontwikkelaars zou je een demo moeten opnemen die de component in actie laat zien, evenals de code die gebruikt is om de demo te maken.
+
+Als je een open source [Register](/registry) gebruikt, kun je ook een voorbeeld opnemen van de broncode die gebruikt wordt om de component te maken.
+
+Gebruik codeblokken met syntaxisaccentuering en copy-to-clipboard-functionaliteit. Overweeg tabbladen te gebruiken om tussen deze weergaven te schakelen zonder de pagina rommelig te maken.
+
+### Installatie
+
+Neem een duidelijke instructie op over hoe je de component installeert. Bij voorkeur is dit één commando dat je kunt kopiëren en plakken in je terminal.
+
+Als je bouwt op shadcn/ui, kun je de [shadcn CLI](https://ui.shadcn.com/docs/cli) gebruiken om de component te installeren, bijvoorbeeld:
+
+```package-install
+npx shadcn@latest add <your-component-url>
+```
+
+Als je publiceert naar een [Marktplaats](/marketplaces), kun je de CLI van de marktplaats gebruiken om de component te installeren, bijvoorbeeld:
+
+```package-install
+npx shadcn@latest add https://21st.dev/r/<your-author>/<your-component>
+```
+
+Als je shadcn/ui niet gebruikt maar wel een [Register](/registry) bouwt, kun je je eigen CLI maken om de component te installeren, bijvoorbeeld:
+
+```package-install
+npx your-registry-cli@latest add <your-component-url>
+```
+
+Ten slotte, als je publiceert naar npm, kun je de npm CLI gebruiken om de component te installeren, bijvoorbeeld:
+
+```package-install
+npm install <your-component-name>
+```
+
+<Callout>
+Om meerdere installatie-opties te tonen zoals hierboven, kun je iets gebruiken zoals Fumadocs' [`package-install` syntaxis](https://fumadocs.dev/docs/headless/mdx/install).
+</Callout>
+
+### Kenmerken
+
+Noem de belangrijkste kenmerken van je component om gebruikers snel inzicht te geven in de mogelijkheden en voordelen. Bijvoorbeeld:
+
+- **Aanpasbaar** – Pas eenvoudig stijlen, formaten en gedrag aan om aan je behoeften te voldoen.
+- **Toegankelijk standaard** – Volgt best practices voor toetsenbordnavigatie, ARIA-rollen en ondersteuning voor schermlezers.
+- **Composabel** – Ontworpen om naadloos samen te werken met andere componenten en patronen.
+- **Type-veilig** – Wordt geleverd met uitgebreide TypeScript-typen voor maximale veiligheid en autocomplete.
+- **Thema-ondersteuning** – Integreert met je designtokens of thema-systeem.
+- **Lichtgewicht** – Minimale afhankelijkheden en geoptimaliseerd voor prestaties.
+- **Klaar voor SSR/SSG** – Werkt met server-side en statische renderframeworks.
+- **Goed gedocumenteerd** – Bevat duidelijke gebruiksvoorbeelden en API-referentie.
+
+Pas deze lijst aan voor jouw specifieke component. Benadruk wat het uniek of bijzonder nuttig maakt voor ontwikkelaars.
+
+### Voorbeelden
+
+Toon de flexibiliteit van de component met praktische voorbeelden:
+
+- **Varianten** - Verschillende visuele stijlen of beschikbare formaten
+- **Staten** - Loading-, uitgeschakeld-, fout- of successtaten
+- **Geavanceerd gebruik** - Complexe scenario's en randgevallen
+- **Compositie** - Hoe de component samenwerkt met andere componenten
+- **Responsief gedrag** - Hoe hij zich aanpast aan verschillende schermformaten
+
+Elk voorbeeld moet zowel de gerenderde uitvoer als de bijbehorende code bevatten.
+
+### Props en API-referentie
+
+Documenteer alle beschikbare props, methoden en configuratieopties. Overweeg gerelateerde props te groeperen en veelgebruikte props te markeren. Voor elke prop, neem op:
+
+- **Naam** - De prop-identificatie
+- **Type** - TypeScript type-definitie
+- **Standaard** - Standaardwaarde als deze niet is opgegeven
+- **Vereist** - Of de prop verplicht is
+- **Beschrijving** - Wat de prop doet en wanneer je hem moet gebruiken
+
+<Callout>
+Als je Fumadocs gebruikt, kun je overwegen [Auto Type Table] te gebruiken om nauwkeurigheid te garanderen en de onderhoudslast te verminderen.
+</Callout>
+
+### Toegankelijkheid
+
+Documenteer hoe je component toegankelijkheidsfuncties ondersteunt:
+
+- Toetsenbordnavigatiepatronen
+- ARIA-attributen en -rollen
+- Ondersteuning voor schermlezers
+- Focusbeheer
+- Overwegingen voor kleurcontrast
+
+### Wijzigingslog en versiebeheer
+
+Het kan nuttig zijn om een wijzigingslog bij te houden op elke componentdocumentatiepagina met daarin:
+
+- Versienummers volgens semantisch versiebeheer
+- Nieuwe functies en verbeteringen
+- Bugfixes
+- Brekende wijzigingen
+- Migratiehandleidingen voor grote versie-updates
+
+Help gebruikers te begrijpen wat er tussen versies is veranderd en hoe ze veilig kunnen upgraden. Neem codevoorbeelden op die before/after-patronen laten zien voor brekende wijzigingen.
+
+<Callout>
+Als je syntaxisaccentuering-framework dit ondersteunt (zoals Shiki), wil je misschien een [diff-transformatornotatie](https://shiki.style/packages/transformers#transformernotationdiff) gebruiken om de wijzigingen tussen versies te tonen.
+</Callout>
+
+## Beste praktijken
+
+- Houd documentatie up-to-date met codewijzigingen
+- Gebruik praktijkvoorbeelden die echte problemen oplossen
+- Neem veelvoorkomende valkuilen en troubleshooting-tips op
+- Geef prestatieoverwegingen wanneer relevant
+- Link naar gerelateerde componenten en patronen
+- Zorg dat alle codevoorbeelden uitvoerbaar en getest zijn

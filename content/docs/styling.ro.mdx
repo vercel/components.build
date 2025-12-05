@@ -1,0 +1,280 @@
+---
+title: Stilizare
+description: Stilizare condițională și componibilă cu clase Tailwind.
+---
+
+Bibliotecile moderne de componente au nevoie de sisteme de stilizare flexibile care să poată gestiona cerințe complexe fără a sacrifica experiența dezvoltatorului. Combinația dintre Tailwind CSS și fuziunea inteligentă a claselor a devenit un model puternic pentru construirea de componente personalizabile.
+
+Această abordare rezolvă tensiunea fundamentală dintre furnizarea unor valori implicite rezonabile și permiterea unei personalizări complete - o provocare care a afectat bibliotecile de componente de ani de zile.
+
+## Problema cu stilizarea tradițională
+
+Abordările tradiționale CSS duc adesea la „războaie” de specificitate, conflicte de stil și suprascrieri imprevizibile. Când treci `className="bg-blue-500"` către o componentă care are deja `bg-red-500`, care dintre ele câștigă?
+
+Fără o gestionare adecvată, ambele clase se aplică și rezultatul depinde de mulți factori - ordinea sursei CSS, specificitatea claselor, algoritmul de fuziune al claselor al bundler-ului etc.
+
+## Îmbinarea claselor în mod inteligent
+
+Biblioteca `tailwind-merge` rezolvă acest lucru prin înțelegerea structurii claselor Tailwind și prin rezolvarea inteligentă a conflictelor. Când două clase țintesc aceeași proprietate CSS, păstrează doar pe ultima.
+
+```tsx title="Without tailwind-merge"
+// Both bg-red-500 and bg-blue-500 apply - unpredictable result
+<Button className="bg-blue-500" />
+// Renders: className="bg-red-500 bg-blue-500"
+```
+
+```tsx title="With tailwind-merge"
+import { twMerge } from 'tailwind-merge';
+
+// bg-blue-500 wins as it comes last
+const className = twMerge('bg-red-500', 'bg-blue-500');
+// Returns: "bg-blue-500"
+```
+
+Aceasta funcționează pentru toate utilitarele Tailwind:
+
+```tsx
+twMerge('px-4 py-2', 'px-8'); // Returns: "py-2 px-8"
+twMerge('text-sm', 'text-lg'); // Returns: "text-lg"
+twMerge('hover:bg-red-500', 'hover:bg-blue-500'); // Returns: "hover:bg-blue-500"
+```
+
+Biblioteca înțelege și sistemul de modificatori al Tailwind:
+
+```tsx
+// Modifiers are handled correctly
+twMerge('hover:bg-red-500 focus:bg-red-500', 'hover:bg-blue-500');
+// Returns: "focus:bg-red-500 hover:bg-blue-500"
+```
+
+## Clase condiționale
+
+De multe ori trebuie să aplici clase condiționat pe baza props-urilor sau a stării. Biblioteca `clsx` oferă un API curat pentru aceasta:
+
+```tsx title="Using clsx"
+import clsx from 'clsx';
+
+// Basic conditionals
+clsx('base', isActive && 'active');
+// Returns: "base active" (if isActive is true)
+
+// Object syntax
+clsx('base', {
+  'active': isActive,
+  'disabled': isDisabled,
+});
+
+// Arrays
+clsx(['base', isLarge ? 'text-lg' : 'text-sm']);
+
+// Mixed
+clsx(
+  'base',
+  ['array-item'],
+  { 'object-conditional': true },
+  isActive && 'conditional'
+);
+```
+
+Un model comun este să îmbini un set implicit de clase cu props-urile primite, precum și cu orice logică personalizată pe care o avem:
+
+```tsx title="component.tsx"
+const Component = ({ className, ...props }: ComponentProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      className={cn(
+        "rounded-lg border bg-white shadow-sm",
+        isOpen && "bg-blue-500",
+        className
+      )}
+      {...props}
+    />
+  );
+};
+```
+
+## Funcția utilitară `cn`
+
+Funcția `cn`, popularizată de [shadcn/ui](https://ui.shadcn.com/), combină `clsx` și `tailwind-merge` pentru a-ți oferi atât logică condițională, cât și fuziune inteligentă:
+
+```tsx title="lib/utils.ts"
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+Puterea vine din ordonare - stilurile de bază primul, condiționalele al doilea, suprascrierile utilizatorului ultimele. Aceasta asigură un comportament previzibil, menținând în același timp personalizarea completă.
+
+## Class Variance Authority (CVA)
+
+Pentru componente complexe cu multe variante, gestionarea manuală a claselor condiționale devine greu de întreținut. [Class Variance Authority (CVA)](https://cva.style/docs) oferă un API declarativ pentru definirea variantelor componentelor.
+
+De exemplu, iată un extras din componenta [Button](https://ui.shadcn.com/docs/components/button) din shadcn/ui:
+
+```tsx title="@/components/ui/button.tsx"
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline:
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        icon: "size-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+```
+
+## Cele mai bune practici
+
+### 1. Ordinea contează
+
+Aplică întotdeauna clasele în această ordine:
+1. Stiluri de bază (aplicate întotdeauna)
+2. Stiluri de variantă (bazate pe props)
+3. Stiluri condiționale (bazate pe stare)
+4. Suprascrieri ale utilizatorului (prop-ul className)
+
+```tsx
+className={cn(
+  'base-styles',            // 1. Base
+  variant && variantStyles, // 2. Variants
+  isActive && 'active',     // 3. Conditionals
+  className                 // 4. User overrides
+)}
+```
+
+### 2. Documentează variantele
+
+Folosește TypeScript și JSDoc pentru a documenta ce face fiecare variantă:
+
+```tsx
+type ButtonProps = {
+  /**
+   * The visual style of the button
+   * @default "primary"
+   */
+  variant?: 'primary' | 'secondary' | 'destructive' | 'ghost';
+
+  /**
+   * The size of the button
+   * @default "md"
+   */
+  size?: 'sm' | 'md' | 'lg';
+};
+```
+
+### 3. Extrage tiparele repetate
+
+Dacă te regăsești scriind aceeași logică condițională în mod repetat, extrage-o:
+
+```tsx title="utils/styles.ts"
+export const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500';
+export const disabled = 'disabled:pointer-events-none disabled:opacity-50';
+
+// Use in components
+className={cn(focusRing, disabled, className)}
+```
+
+## Ghid de migrare
+
+Dacă migrezi de la o abordare diferită de stilizare, iată cum să adaptezi tiparele comune:
+
+### Din CSS Modules
+
+```tsx title="Before - CSS Modules"
+import styles from './Button.module.css';
+
+<button className={`${styles.button} ${styles[variant]} ${className}`} />
+```
+
+```tsx title="After - cn + Tailwind"
+import { cn } from '@/lib/utils';
+
+<button className={cn(
+  'px-4 py-2 rounded-lg',
+  variant === 'primary' && 'bg-blue-500 text-white',
+  className
+)} />
+```
+
+### Din styled-components
+
+```tsx title="Before - styled-components"
+const Button = styled.button<{ $primary?: boolean }>`
+  padding: 8px 16px;
+  background: ${props => props.$primary ? 'blue' : 'gray'};
+`;
+```
+
+```tsx title="After - cn + Tailwind"
+function Button({ primary, className, ...props }) {
+  return (
+    <button
+      className={cn(
+        'px-4 py-2',
+        primary ? 'bg-blue-500' : 'bg-gray-500',
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+## Considerații de performanță
+
+Atât `clsx`, cât și `tailwind-merge` sunt foarte optimizate, dar ține cont de aceste sfaturi:
+
+1. **Definează variantele în afara componentelor** - Variantele CVA ar trebui definite în afara componentei pentru a evita recrearea la fiecare randare.
+
+2. **Memoizează calculele complexe** - Dacă ai logică condițională costisitoare, ia în considerare memoizarea:
+
+```tsx
+const className = useMemo(
+  () => cn(
+    baseStyles,
+    expensiveComputation(props),
+    className
+  ),
+  [props, className]
+);
+```
+
+3. **Folosește variabile CSS pentru valori dinamice** - În loc să generezi clase dinamic, folosește variabile CSS:
+
+```tsx title="Prefer CSS variables"
+// Good
+<div
+  className="bg-[var(--color)]"
+  style={{ '--color': dynamicColor } as React.CSSProperties}
+/>
+
+// Avoid
+<div className={`bg-[${dynamicColor}]`} />
+```
+
+Combinația dintre Tailwind CSS, fuziunea inteligentă a claselor și API-urile de variante oferă o fundație robustă pentru stilizarea componentelor. Această abordare se extinde de la butoane simple la sisteme de design complexe, menținând în același timp predictibilitatea și experiența dezvoltatorului.

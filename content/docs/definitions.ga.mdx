@@ -1,0 +1,234 @@
+---
+title: Sainmhínithe
+description: Bunaíonn an leathanach seo téarmaíocht shonrach a úsáidtear ar fud na sonrachta. Tá na téarmaí i gceist neamh-néamhspleách ar fhráma oibre, ach úsáidfimid React mar shampla.
+---
+
+## 1. Catagóiriú Réad
+
+### 1.1 Príomhréad
+
+Is é príomhréad (nó, comhpháirt gan stíliú) an **bloc thógála is ísle‑leibhéil** a sholáthraíonn iompraíocht agus inrochtaineacht gan aon stíl.
+
+Tá príomhréada go hiomlán gan cheann (m.sh. gan stíliú) agus cuimsíonn siad brí, bainistíocht fócas, idirghníomhú méarchláir, leibhéalú/portailí, sreangú ARIA, tomhas, agus imníní comhchosúla. Soláthraíonn siad an bonn iompraíochta ach éilíonn stíliú chun iad a dhéanamh ina UI críochnaithe.
+
+Samplaí:
+
+- [Radix UI Primitives](https://www.radix-ui.com/primitives) (Dialóg, Popover, Bloic uirlisí ionaid, srl.)
+- [React Aria Components](https://react-spectrum.adobe.com/react-aria)
+- [Base UI](https://base-ui.com)
+- [Headless UI](https://headlessui.com/)
+
+Rialacha ionchais:
+
+- Go hiomlán gan stíliú (gan cheann).
+- Freagracht shimplí amháin; inúsáidte le chéile isteach i gcomhpháirteanna stíleáilte.
+- Tagann sé le iompraíocht inrochtaíochta cuimsitheach dá ról.
+- Bíonn leaganú dírithe ar chobhsaíocht; is annamh a bhíonn athruithe briste agus má tá siad, déanfar iad a dhoiciméadú.
+
+<Callout>
+Is minic a úsáidtear na téarmaí príomhréad agus comhpháirt go malartach ar an ngréasán, ach níl siad an-chomhionann.
+</Callout>
+
+### 1.2 Comhpháirt
+
+Is comhpháirt í náad a bhfuil stíl uirthi, in-athúsáidte, a chuireann dearadh amhairc leis na príomhréada nó a chomhdhéanann roinnt eilimintí le chéile chun eilimintí idirghníomhacha iomlána a chruthú.
+
+Tá comhpháirteanna fós go réasúnta ísle-leibhéil ach bíonn stíliú iontu, rud a fhágann go bhfuil siad indéanta le húsáid láithreach i bhfeidhmchláir. De ghnáth clúdaíonn siad príomhréada gan stíliú le dearadh réamhshocraithe amhairc agus bíonn siad saincheaptha.
+
+Samplaí:
+- [shadcn/ui components](https://ui.shadcn.com/) (wrapaí stíleáilte de Radix primitives)
+- [Material UI components](https://mui.com/components/)
+- [Ant Design components](https://ant.design/components/overview/)
+
+Rialacha ionchais:
+- API soiléir props; tacaíonn le húsáid rialaithe agus neamh‑rialaithe nuair is infheidhme.
+- Cuimsíonn stíliú réamhshocraithe ach fanann sé éasca le haistriú (rudaí cosúil le classes, tokens, slots).
+- Go lán-inrochta ar méarchlár agus cairdiúil do scáileáinléithe (oidhreacht ó phríomhréada).
+- Comhdhéanach (children/slots, render props, nó fo‑chomhpháirteanna comhdhéanta).
+- Is féidir iad a thógáil ó phríomhréada nó iompraíocht a chur i bhfeidhm go díreach le stíliú.
+
+### 1.3 Pátrún
+
+Is cumas sonrach comhdhéanta de phríomhréada nó comhpháirteanna iad pátrúin a úsáidtear chun fadhb UI/UX shonrach a réiteach.
+
+Samplaí:
+- Bailíochtú foirme le earráidí líneach
+- Deimhniú gníomhartha scriosacha
+- Cuardach typeahead
+- UI mearbhach (Optimistic UI)
+
+Rialacha ionchais.
+- Cur síos ar iompraíocht, inrochtaíocht, léarscáil méarchláir, agus modhanna teipe.
+- D’fhéadfadh cur i bhfeidhm tagartha iolrach do fhrámaí oibre a áireamh.
+
+### 1.4 Bloc
+
+Comhdhéanamh tuairimis, réidh do tháirge, de chomhpháirteanna a réiteoidh cás úsáide comhéadanach sónrach (go minic sonrach don táirge) le scafallábhar ábhair. Malartaíonn blocanna ginearálacht ar son luas ghlacadh.
+
+Samplaí:
+- Tábla praghsála
+- Scáileáin údaraithe (Auth)
+- Céim seolaithe (Onboarding stepper)
+- Painéal comhrá AI
+- Fhoirm socruithe billeála
+
+Rialacha ionchais.
+- Réamhshocruithe láidre, réidh le cóip‑ghreamú, furasta a bhrandaú/teimpléadóireacht.
+- Loighic íosta lasmuigh de leagan amach agus eagrúchán; tá loighic réigiúin gearrtha trí láimhseálaithe.
+- Glacann sé sonraí trí props; ní chuireann sé sonraí i bhfolach taobh thiar de fhetches gan oiriúnóir doiciméadaithe.
+
+<AuthorNote name="Rob Austin" role="Founder of shadcnblocks.com" githubUsername="JugglerX" link="https://www.shadcnblocks.com/">
+Ní bhíonn blocanna inúsáidte mar a bhíonn comhpháirteanna de ghnáth. Ní importálann tú iad go minic, ach is minic a importálann siad comhpháirteanna agus príomhréada. Déanann sé seo iad a bheith ina rogha mhaith do mhodh dáilte [Clár](/registry).
+</AuthorNote>
+
+### 1.5 Leathanach
+
+Radharc iomlán, aon‑róg, comhdhéanta de roinnt blocanna eagraithe chun cruth faoi leith a sheirbheáil d’úsáideoir. Comhcheanglaíonn leathanacha blocanna isteach i leagan amach comhtháite a léiríonn ceanncheathrú amháin i bhfeidhmchlár.
+
+Samplaí:
+- Leathanach tuirlingthe (bloc laoch + bloc gnéithe + bloc praghsála + bloc cois)
+- Leathanach mionsonraí táirge (bloc gailearaí íomhánna + bloc eolais táirge + bloc léirmheasanna)
+- Leathanach painéil (bloc stat, bloc chairt, bloc sruth gníomhaíochta)
+
+Rialacha ionchais:
+- Comhcheanglaíonn sé roinnt blocanna isteach i leagan amach aonfhoirmeach do róg amháin.
+- Díriú ar leagan amach agus eagrú blocanna seachas sonraí leibhéal‑comhpháirte.
+- D’fhéadfadh loighic shonrach leathanach a bheith ann le haghaidh comhordúcháin sonraí idir blocanna.
+- Féin‑choinníollach do URL/róg aonair; ní bhíonn siad i gceist le bheith inúsáidte ar fud róganna.
+
+### 1.6 Teimpléad
+
+Sraith il‑leathanach nó scafall suíomh iomlán a chuireann le chéile leathanacha, cumraíocht bealaigh, leagan amach roinnte, soláthraithe domhanda, agus struchtúr tionscadail. Is pointí tosaigh iomlána iad teimpléid do fheidhmchláir iomlána nó do chuidiúcháin mhóra feidhmchlár.
+
+Samplaí:
+- [TailwindCSS Templates](https://tailwindui.com/templates)
+- [shadcnblocks Templates](https://www.shadcnblocks.com/templates) (sraithí iomlána feidhmchlár)
+- "Tús SaaS" (leathanaigh údaraithe + leathanaigh painéil + leathanaigh socruithe + leathanaigh margaíochta)
+- "Teimpléad ríomhthráchtála" (siopa tosaigh + leathanaigh táirge + sreabhadh seicéid + leathanaigh riaracháin)
+
+Rialacha ionchais:
+- Cuimsíonn sé il‑leathanaigh le struchtúr ródaithe/nascleanúna.
+- Soláthraíonn sé cumraíocht domhanda (soláthraithe téama, comhthéacs údaraithe, sleá leagan amach).
+- Struchtúr tionscadail tuairimis le treoirlínte soiléire.
+- Deartha mar phointe tosaigh cuimsitheach; déarfar é a fhreagairt agus a shaincheapadh seachas a importáil mar spleáchas.
+- D’fhéadfadh cumrú tógála, socrú seolta, agus uirlisí forbartha a bheith san áireamh.
+
+### 1.7 Uirlis (Neamh‑amhairc)
+
+Cabhair a eascraítear amach d’eagraíocht forbróra nó do chomhdhéanamh; níl sé mar UI taispeántach.
+
+Samplaí:
+- Hooks React (useControllableState, useId)
+- Uirlisí ranganna (Class utilities)
+- Cúnamh eochair‑rialaithe
+- Scóip fócas
+
+Rialacha ionchais.
+- Saothair neamh‑éifeacht (seachas áit a bhfuil sé sáchdoiciméadaithe dá mhalairt).
+- In‑imleor le haghaidh tástála ina n‑aonar; tacaíonn sé le tree‑shaking.
+
+## 2. Foclóir API agus Comhdhéanamh
+
+### 2.1 Props API
+
+Dromchla cumraíochta phoiblí comhpháirte. Tá props seasta, clárnaithe, agus doiciméadaithe le réamhshocruithe agus éifeachtaí inrochtaíochta.
+
+### 2.2 Children / Slots
+
+Áiteanna coinne do struchtúr nó ábhar a sholáthraíonn an glaoiteoir.
+- Children (slot dofheicthe). JSX idir clibeanna oscailte/dún.
+- Slots ainmnithe. Props cosúil le icon, footer, nó fo‑chomhpháirteanna `<Component.Slot>`.
+- Aistriú slota. Ag pasáil airíonna DOM/className/refs tríd chuig an eilimint bhunúsach.
+
+### 2.3 Render Prop (Function-as-Child)
+
+Páiste fheidhm a úsáidtear chun réamhchur i láthair a thabhairt faoi scáth an tuismitheora fad is a sholáthraíonn an tuismitheoir staid/sonraí.
+
+```tsx
+<ParentComponent data={data}>
+  {(item) => (
+    <ChildComponent key={item.id} {...item} />
+  )}
+</ParentComponent>
+```
+
+Úsáid nuair is gá don tuismitheoir bheith i ngreim ar shonraí/iompraíocht ach go gcaithfidh an tomhaltóir smacht iomlán a bheith aige ar an marcáil.
+
+### 2.4 Rialaithe vs Neamh‑rialaithe
+
+**Rialaithe** agus **neamh‑rialaithe** is téarmaí iad a chuireann síos staid chomhpháirte.
+
+**Rialaithe** comhpháirteanna a bhfuil a luach tiomáinte ag props, agus de ghnáth seolann siad imeacht `onChange` (is é an tuiscint fhírinne an tuismitheoir). **Neamh‑rialaithe** comhpháirteanna a choinníonn staid inmheánach; agus d’fhéadfadh siad `defaultValue` a nochtadh agus athshocrú iompraíoch a bheith acu.
+
+Ba chóir go dtacaíonn go leor ionchuir le an bheirt. Foghlaim níos mó faoi [rialaithe agus neamh‑rialaithe staid](/state).
+
+### 2.5 Provider / Context
+
+Comhpháirt ar bharr‑leibhéil a sholáthraíonn staid/cumraíocht roinnte faoin gsubtree (m.sh. téama, suíomh áitiúil, id gníomhach tab). Tá soláthraithe doiciméadaithe go soiléir le suíomh riachtanach.
+
+### 2.6 Portal
+
+Ag déanamh UI lasmuigh den orgánóireacht DOM chun bainistíocht leibhéalaithe/stacáil a dhéanamh (m.sh. modals, popovers, toasts), agus inrochtaíocht a choinneáil (trap fócas, aria-modal, cúlra inert).
+
+## 3. Foclóir Stíliú agus Teimpléid
+
+### 3.1 Gan‑stíliú (Headless)
+
+Cur i bhfeidhm iompraíochta agus inrochtaíochta gan cuma a leagan síos. Éilíonn sé ar an tomhaltóir stíliú a sholáthar.
+
+### 3.2 Stíleáilte
+
+Tagann sé le dearadh amhairc réamhshocraithe (ranganna CSS, stíleanna inlíne, nó tokens) ach fanann sé éasca le hathbhreithniú (comhtháthú className, athróg CSS, teimplí).
+
+### 3.3 Éagsúlachtaí (Variants)
+
+Idirphlé cinnte, doiciméadaithe de stíle nó iompraíochta a nochtar trí props (m.sh. `size="sm|md|lg"`, `tone="neutral|destructive"`). Níl éagsúlachtaí mar chomhpháirteanna ar leithligh.
+
+### 3.4 Tokens Dearaidh
+
+Luachanna ainmniúla, neamhspleácha ar an t‑ardán (m.sh. `--color-bg`, `--radius-md`, `--space-2`) a pharaiméadraíonn dearadh amhairc agus a thacaíonn le teimplí.
+
+## 4. Foclóir Inrochtaineachta
+
+### 4.1 Ról / Stát / Airíonna
+
+Airíonna WAI‑ARIA a chumarsáideann brí (`role="menu"`), stát (`aria-checked`), agus gaolta (`aria-controls`, `aria-labelledby`).
+
+### 4.2 Léarscáil Méarchláir
+
+An tacar doiciméadaithe d’idirghníomhaíochtaí méarchláir do ghiuirléid (m.sh. `Tab`, `Butóin saighead`, `Home/End`, `Escape`). Rinneann gach comhpháirt idirghníomhach léarscáil méarchláir a fhógairt agus a chur i bhfeidhm.
+
+### 4.3 Bainistíocht Fócas
+
+Rialacha maidir le fócas tosaigh, fócas roving, trap fócas, agus filleadh fócas ar dhúnadh.
+
+## 5. Foclóir Dáileacháin
+
+### 5.1 Pacáiste (Dáileadh Clár)
+
+Foilsítear an comhpháirt/leabharlann chuig clár pacáistí (m.sh. `npm`) agus importáladh trí bhunait. Tacaíonn sé le nuashonruithe leaganaithe agus bainistíocht spleáchas.
+
+### 5.2 Cóip‑agus‑Greamaigh (Dáileadh Foinse)
+
+Áiríonn an cód foinse go díreach i stór an tomhaltóra (go minic trí CLI). Tacaíonn sé le húinéireacht, saincheapadh, agus gan amanna reatha bhreise.
+
+### 5.3 Clár (Catagóir)
+
+Innéacs cúramach de réada (príomhréada, comhpháirteanna, blocanna, teimpléid) le meiteashonraí, réamhamharcanna, agus treoracha suiteála/cóip. Ní gá go mbeadh clár ina bhainisteoir pacáistí i ndáiríre.
+
+## 6. Heursitics Aicmithe
+
+Úsáid an sreabhadh cinntí seo chun réad a ainmniú agus a áit a shocrú:
+
+1. An bhfuil sé ag cur i gcrích iompraíocht shingil nó imní inrochtaíochta, gan aon stíliú? → **Príomhréad**
+2. An bhfuil sé ina eilimint UI stíleáilte, in‑athúsáidte a chuireann dearadh amhairc le príomhréada nó a chomhdhéanann roinnt eilimintí? → **Comhpháirt**
+3. An réiteoidh sé cás úsáide táirge sonrach le comhdhéanamh tuairimis agus cóip? → **Bloc**
+4. An scafálfaidh sé leathanach/sruth le bealaigh/soláthraithe agus réigiúin inathraithe? → **Teimpléad**
+5. An bhfuil sé mar dhoiciméadú réiteach athfhillteach, neamhspleách ar chur i bhfeidhm? → **Pátrún**
+6. An loighic neamhamhairc é do eirgeoneolaíocht/comhdhéanamh? → **Uirlis**
+
+## 7. Neamh‑Spriocanna agus Míniúcháin
+
+- Web Components vs. "Comhpháirteanna." Sa shonra seo, tagraíonn "comhpháirt" d’aonad UI in‑athúsáidte (samplaí i React). Ní chiallaíonn sé an caighdeán HTML Custom Elements, mura n‑deirtear sin go sainiúil. Tá na prionsabail chomhionann ar fud fhrámaí oibre.
+- Giuirléidí. Seachnaítear an téarma “giuirléid” de bharr neamhréire; bain úsáid as comhpháirt (ginearálta) nó pátrún (réiteach doiciméadaithe amháin).
+- Teimpléid vs. Stíleanna. Is parametrú stíl é téama (trí tokens). Is iad stíleanna an taispeántas comhsheasmhach. Ba chóir do chomhpháirteanna tacaíocht a thabhairt do théamaí; d’fhéadfadh blocanna/teimpléid stíleanna tuairimis agus greim teimpléadaíochta a sheoladh.

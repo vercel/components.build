@@ -1,0 +1,185 @@
+---
+title: Tipi
+description: Razširjanje vgrajenih HTML elementov brskalnika za največjo prilagodljivost.
+---
+
+Pri gradnji ponovno uporabnih komponent je pravilno tipiziranje bistveno za ustvarjanje prilagodljivih, nastavljivih in tipno varnih vmesnikov. Z upoštevanjem uveljavljenih vzorcev za tipe komponent lahko zagotovite, da so vaše komponente tako zmogljive kot enostavne za uporabo.
+
+## Zavijanje posameznega elementa
+
+Vsaka izvozena komponenta bi idealno morala obdajati en HTML ali JSX element. To načelo je temeljno za ustvarjanje sestavljivih, prilagodljivih komponent.
+
+Ko komponenta obdaja več elementov, postane težko prilagajati posamezne dele brez prenašanja propov ali zapletenih API-jev. Razmislite o tem anti-vzorcu:
+
+```tsx title="@/components/ui/card.tsx"
+const Card = ({ title, description, footer, ...props }) => (
+  <div {...props}>
+    <div className="card-header">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div className="card-footer">
+      {footer}
+    </div>
+  </div>
+);
+```
+
+Kot smo obravnavali v [Sestavljanje](/composition), ta pristop povzroča več težav:
+- Ne morete prilagoditi slogov glave brez dodajanja dodatnih propov
+- Ne morete nadzorovati HTML elementov, uporabljenih za naslov in opis
+- Prisiljeni ste v določeno DOM strukturo
+
+Namesto tega naj bo vsaka plast svojo komponento. To vam omogoča, da vsako plast neodvisno prilagodite in nadzorujete točne HTML elemente, uporabljene za naslov in opis.
+
+Prednosti tega pristopa so:
+- **Največja prilagodljivost** - Uporabniki lahko neodvisno stilizirajo in spreminjajo vsako plast
+- **Brez prenosa propov** - Propovi gredo neposredno elementu, ki jih potrebuje
+- **Semantični HTML** - Uporabniki lahko vidijo in nadzorujejo točno DOM strukturo
+- **Boljša dostopnost** - Neposreden nadzor nad ARIA atributi in semantičnimi elementi
+- **Enostavnejši mentalni model** - Ena komponenta = en element
+
+## Razširjanje HTML atributov
+
+Vsaka komponenta bi morala razširiti vgrajene HTML atribute elementa, ki ga obdaja. To zagotavlja, da imajo uporabniki popoln nadzor nad osnovnim HTML elementom.
+
+### Osnovni vzorec
+
+```tsx
+export type CardRootProps = React.ComponentProps<'div'> & {
+  // Add your custom props here
+  variant?: 'default' | 'outlined';
+};
+
+export const CardRoot = ({ variant = 'default', ...props }: CardRootProps) => (
+  <div {...props} />
+);
+```
+
+### Pogoste vrste HTML atributov
+
+React zagotavlja definicije tipov za vse HTML elemente. Uporabite ustrezno za vašo komponento:
+
+```tsx
+// For div elements
+type DivProps = React.ComponentProps<'div'>;
+
+// For button elements
+type ButtonProps = React.ComponentProps<'button'>;
+
+// For input elements
+type InputProps = React.ComponentProps<'input'>;
+
+// For form elements
+type FormProps = React.ComponentProps<'form'>;
+
+// For anchor elements
+type LinkProps = React.ComponentProps<'a'>;
+```
+
+### Obravnava različnih vrst elementov
+
+Ko se komponenta lahko upodablja kot različni elementi, uporabite generike ali unije tipov:
+
+```tsx
+// Using discriminated unions
+export type ButtonProps =
+  | (React.ComponentProps<'button'> & { asChild?: false })
+  | (React.ComponentProps<'div'> & { asChild: true });
+
+// Or with a polymorphic approach
+export type PolymorphicProps<T extends React.ElementType> = {
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
+```
+
+### Razširjanje lastnih komponent
+
+Če razširjate obstoječo komponento, lahko uporabite tip `ComponentProps` za pridobitev propov te komponente.
+
+```tsx title="@/components/ui/share-button.tsx"
+import type { ComponentProps } from 'react';
+
+export type ShareButtonProps = ComponentProps<'button'>;
+
+export const ShareButton = (props: ShareButtonProps) => (
+  <button {...props} />
+);
+```
+
+## Izvoz tipov
+
+Vedno izvozite tipe propov svojih komponent. To jih naredi dostopne potrošnikom za različne primere uporabe.
+
+Izvoz tipov omogoča več pomembnih vzorcev:
+
+```tsx
+// 1. Extracting specific prop types
+import type { CardRootProps } from '@/components/ui/card';
+type variant = CardRootProps['variant'];
+
+// 2. Extending components
+export type ExtendedCardProps = CardRootProps & {
+  isLoading?: boolean;
+};
+
+// 3. Creating wrapper components
+const MyCard = (props: CardRootProps) => (
+  <CardRoot {...props} className={cn('my-custom-class', props.className)} />
+);
+
+// 4. Type-safe prop forwarding
+function useCardProps(): Partial<CardRootProps> {
+  return {
+    variant: 'outlined',
+    className: 'custom-card',
+  };
+}
+```
+
+Vaši izvozani tipi naj se imenujejo `<ComponentName>Props`. To je konvencija, ki drugim razvijalcem pomaga razumeti namen tipa.
+
+## Najboljše prakse
+
+### 1. Vedno razširite props kot zadnje
+
+Zagotovite, da lahko uporabniki preglasijo privzete propse:
+
+```tsx
+// ✅ Good - user props override defaults
+<div className="default-class" {...props} />
+
+// ❌ Bad - defaults override user props
+<div {...props} className="default-class" />
+```
+
+### 2. Izogibajte se konfliktom imen propov
+
+Ne uporabljajte imen propov, ki se konfliktajo z HTML atributi, razen če jih namerno preglasite:
+
+```tsx
+// ❌ Bad - conflicts with HTML title attribute
+export type CardProps = React.ComponentProps<'div'> & {
+  title: string; // This conflicts with the HTML title attribute
+};
+
+// ✅ Good - use a different name
+export type CardProps = React.ComponentProps<'div'> & {
+  heading: string;
+};
+```
+
+### 3. Dokumentirajte prilagojene propse
+
+Dodajte JSDoc komentarje prilagojenim propom za boljšo izkušnjo razvijalcev:
+
+```tsx
+export type DialogProps = React.ComponentProps<'div'> & {
+  /** Whether the dialog is currently open */
+  open: boolean;
+  /** Callback when the dialog requests to be closed */
+  onOpenChange: (open: boolean) => void;
+  /** Whether to render the dialog in a portal */
+  modal?: boolean;
+};
+```

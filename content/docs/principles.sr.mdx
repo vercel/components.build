@@ -1,0 +1,54 @@
+---
+title: Osnovni principi
+description: Prilikom izrade modernih UI komponenti, važno je imati na umu ove osnovne principe.
+---
+
+## Složivost i ponovna upotrebljivost
+
+Prednost dajte kompoziciji umesto nasleđivanju – gradite komponente koje se mogu kombinovati i ugnježđavati da bi se kreirali složeniji UI, umesto oslanjanja na duboke hijerarhije klasa.
+
+Složive komponente izlažu jasan API (putem props/slotova) koji omogućava programerima da prilagode ponašanje i izgled ubacivanjem child elemenata ili callback funkcija.
+
+To čini komponente visoko ponovo upotrebljivim u različitim kontekstima. (Reactov dizajn to dodatno potkrepljuje: „Props i kompozicija vam daju svu fleksibilnost koja vam treba da prilagodite izgled i ponašanje komponente na jasan i bezbedan način.”)
+
+## Podrazumevano pristupačno
+
+Komponente moraju biti upotrebljive od strane svih korisnika. Koristite semantičke HTML elemente odgovarajuće ulozi komponente (npr. `<button>` za klikabilne akcije, `<ul>/<li>` za liste, itd.) i dopunite ih WAI-ARIA atributima kada je potrebno.
+
+Obezbedite podršku za navigaciju tastaturom i upravljanje fokusom (na primer, navigacija strelicama u menijima, zamke fokusa u modalima). Svaka komponenta treba da po podrazumevanju poštuje standarde i smernice pristupačnosti.
+
+To znači pružanje odgovarajućih ARIA uloga/stanja i testiranje sa čitačima ekrana. Pristupačnost nije opciona – to je osnovna funkcionalnost svake komponente.
+
+## Prilagodljivost i podrška za teme
+
+Komponenta bi trebalo da bude laka za promenu stila ili prilagođavanje različitim dizajn zahtevima. Izbegavajte hardkodirane vizuelne stilove koji se ne mogu prebrisati.
+
+Pružite mehanizme za temiranje i stilizaciju, kao što su CSS variables, jasno dokumentovana imena klasa, ili style props. Idealno je da komponente dolaze sa razumnim podrazumevanim stilom, ali da dozvoljavaju programerima da prilagode izgled uz minimalan napor (na primer, prosleđivanjem className ili korišćenjem design tokens).
+
+Ovo pravilo osigurava da se komponente mogu uklopiti u bilo koji brend ili dizajn sistem bez „borbe” protiv podrazumevanih stilova.
+
+## Laga i efikasna
+
+Komponente bi trebalo da budu što lakše u smislu asset-a i zavisnosti. Izbegavajte napumpavanje komponente velikim bibliotekama ili prekompleksnom logikom, pogotovo ako ta logika nije uvek potrebna.
+
+Težite dobrim performansama (i pri renderovanju i pri interakciji) minimiziranjem nepotrebnih re-rendera i korišćenjem efikasnih algoritama za zahtevne zadatke. Ako je komponenta intenzivna za podatke (npr. velika lista ili tabela), razmotrite obrasce poput virtualizacije ili inkrementalnog renderovanja, ali držite takve opcije neobaveznim.
+
+Lage komponente se lakše održavaju i brže su za krajnje korisnike.
+
+## Transparentnost i vlasništvo nad kodom
+
+U open-source-u, korisnici često imaju korist od pune vidljivosti i kontrole nad kodom komponente. Ova specifikacija podstiče stav „open-source first”: komponente ne bi trebalo da budu crne kutije.
+
+Kada programeri importuju ili kopiraju vašu komponentu, treba da mogu da pregledaju kako funkcioniše i da je po potrebi modifikuju. Ovaj princip leži u osnovi rastućeg modela distribucije „kopiraj-i-zalepi” gde programeri integrišu kod komponente direktno u svoje projekte.
+
+Davši korisnicima vlasništvo nad kodom, povećavate poverenje i omogućavate dublju prilagodbu.
+
+Čak i ako distribuirate putem paketa, prihvatite transparentnost pružajući source maps, čitljiv kod i detaljnu dokumentaciju.
+
+## Dobro dokumentovano i pogodno za DX
+
+Sjajna komponenta nije samo kod – dolazi sa jasnom dokumentacijom i primerima. Sa aspekta developer experience (DX), vaše komponente treba da budu lake za učenje i integraciju.
+
+Dokumentujte svrhu svake komponente, njene props i primere upotrebe. Uključite napomene o pristupačnosti (kao što su kontrole tastature ili korišćeni ARIA atributi) i sve opcije prilagođavanja.
+
+Dobra dokumentacija smanjuje zloupotrebu i snižava barijeru za usvajanje. Očekivanja u vezi dokumentacije pokrićemo u odeljku Objavljivanje, ali je navedeno ovde kao princip zato što planiranje dobre dokumentacije i DX treba da se dešava tokom faze dizajna/izrade.

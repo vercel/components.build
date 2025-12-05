@@ -1,0 +1,280 @@
+---
+title: Slogovanje
+description: Pogojno in sestavljivo slogovanje z razredi Tailwind.
+---
+
+Sodobne knjižnice komponent potrebujejo prilagodljive sisteme slogovanja, ki lahko obvladujejo kompleksne zahteve, ne da bi pri tem ogrozile razvojni potek. Kombinacija Tailwind CSS z inteligentnim združevanjem razredov se je izkazala za močan vzorec za gradnjo prilagodljivih komponent.
+
+Ta pristop rešuje temeljni konflikti med zagotavljanjem smiselnih privzetkov in omogočanjem popolne prilagoditve - izziv, ki je že leta pestil knjižnice komponent.
+
+## Težava s tradicionalnim slogovanjem
+
+Tradicionalni pristopi s CSS pogosto vodijo v vojne specifičnosti, konflikte slogov in nepredvidljive preglase. Ko komponenti podate `className="bg-blue-500"`, ki že ima `bg-red-500`, kateri razred zmaga?
+
+Brez primernega upravljanja se uporabljata oba razreda in rezultat je odvisen od številnih dejavnikov - vrstni red vira CSS, specifičnost razredov, algoritem združevanja razredov v bundlerju itd.
+
+## Pametno združevanje razredov
+
+Knjižnica `tailwind-merge` to reši tako, da razume strukturo Tailwind razredov in inteligentno razreši konflikte. Ko dva razreda ciljajata na isto CSS lastnost, ohrani le tistega, ki pride zadnji.
+
+```tsx title="Brez tailwind-merge"
+// Both bg-red-500 and bg-blue-500 apply - unpredictable result
+<Button className="bg-blue-500" />
+// Renders: className="bg-red-500 bg-blue-500"
+```
+
+```tsx title="S tailwind-merge"
+import { twMerge } from 'tailwind-merge';
+
+// bg-blue-500 wins as it comes last
+const className = twMerge('bg-red-500', 'bg-blue-500');
+// Returns: "bg-blue-500"
+```
+
+To deluje za vse Tailwind utilitete:
+
+```tsx
+twMerge('px-4 py-2', 'px-8'); // Returns: "py-2 px-8"
+twMerge('text-sm', 'text-lg'); // Returns: "text-lg"
+twMerge('hover:bg-red-500', 'hover:bg-blue-500'); // Returns: "hover:bg-blue-500"
+```
+
+Knjižnica razume tudi sistem modifierjev v Tailwindu:
+
+```tsx
+// Modifiers are handled correctly
+twMerge('hover:bg-red-500 focus:bg-red-500', 'hover:bg-blue-500');
+// Returns: "focus:bg-red-500 hover:bg-blue-500"
+```
+
+## Pogojni razredi
+
+Pogosto je treba razrede uporabiti pogojno glede na props ali stanje. Knjižnica `clsx` nudi čisto API za to:
+
+```tsx title="Uporaba clsx"
+import clsx from 'clsx';
+
+// Basic conditionals
+clsx('base', isActive && 'active');
+// Returns: "base active" (if isActive is true)
+
+// Object syntax
+clsx('base', {
+  'active': isActive,
+  'disabled': isDisabled,
+});
+
+// Arrays
+clsx(['base', isLarge ? 'text-lg' : 'text-sm']);
+
+// Mixed
+clsx(
+  'base',
+  ['array-item'],
+  { 'object-conditional': true },
+  isActive && 'conditional'
+);
+```
+
+Pogost vzorec je združevanje privzetega niza razredov z vhodnimi props ter morebitno lastno logiko:
+
+```tsx title="component.tsx"
+const Component = ({ className, ...props }: ComponentProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      className={cn(
+        "rounded-lg border bg-white shadow-sm",
+        isOpen && "bg-blue-500",
+        className
+      )}
+      {...props}
+    />
+  );
+};
+```
+
+## Pomožna funkcija `cn`
+
+Funkcija `cn`, popularizirana pri [shadcn/ui](https://ui.shadcn.com/), združuje `clsx` in `tailwind-merge`, da vam omogoči tako pogojno logiko kot inteligentno združevanje:
+
+```tsx title="lib/utils.ts"
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+Moč izhaja iz vrstnega reda - najprej osnovni slogi, nato pogojni, nazadnje uporabniške preglasitve. To zagotavlja predvidljivo vedenje, hkrati pa ohranja popolno prilagodljivost.
+
+## Class Variance Authority (CVA)
+
+Za kompleksne komponente z mnogimi varianti postane ročno upravljanje pogojnih razredov nepraktično. [Class Variance Authority (CVA)](https://cva.style/docs) nudi deklarativen API za definiranje variant komponent.
+
+Na primer, tu je odlomek iz komponente Button iz shadcn/ui:
+
+```tsx title="@/components/ui/button.tsx"
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline:
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        icon: "size-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+```
+
+## Najboljše prakse
+
+### 1. Vrstni red je pomemben
+
+Vedno uporabljajte razrede v tem vrstnem redu:
+1. Osnovni slogi (vedno uporabljeni)
+2. Stilske variante (na podlagi props)
+3. Pogojni slogi (na podlagi stanja)
+4. Uporniške preglasitve (props className)
+
+```tsx
+className={cn(
+  'base-styles',            // 1. Osnovno
+  variant && variantStyles, // 2. Varianti
+  isActive && 'active',     // 3. Pogojni
+  className                 // 4. Uporniške preglasitve
+)}
+```
+
+### 2. Dokumentirajte svoje variante
+
+Uporabite TypeScript in JSDoc za dokumentiranje, kaj posamezna varianta počne:
+
+```tsx
+type ButtonProps = {
+  /**
+   * The visual style of the button
+   * @default "primary"
+   */
+  variant?: 'primary' | 'secondary' | 'destructive' | 'ghost';
+
+  /**
+   * The size of the button
+   * @default "md"
+   */
+  size?: 'sm' | 'md' | 'lg';
+};
+```
+
+### 3. Izvlecite ponavljajoče vzorce
+
+Če pogosto pišete isto pogojno logiko, jo izvlecite:
+
+```tsx title="utils/styles.ts"
+export const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500';
+export const disabled = 'disabled:pointer-events-none disabled:opacity-50';
+
+// Use in components
+className={cn(focusRing, disabled, className)}
+```
+
+## Vodnik za migracijo
+
+Če migrirate s drugega pristopa k slogovanju, tukaj je, kako prilagoditi pogoste vzorce:
+
+### Iz CSS modulov
+
+```tsx title="Before - CSS Modules"
+import styles from './Button.module.css';
+
+<button className={`${styles.button} ${styles[variant]} ${className}`} />
+```
+
+```tsx title="After - cn + Tailwind"
+import { cn } from '@/lib/utils';
+
+<button className={cn(
+  'px-4 py-2 rounded-lg',
+  variant === 'primary' && 'bg-blue-500 text-white',
+  className
+)} />
+```
+
+### Iz styled-components
+
+```tsx title="Before - styled-components"
+const Button = styled.button<{ $primary?: boolean }>`
+  padding: 8px 16px;
+  background: ${props => props.$primary ? 'blue' : 'gray'};
+`;
+```
+
+```tsx title="After - cn + Tailwind"
+function Button({ primary, className, ...props }) {
+  return (
+    <button
+      className={cn(
+        'px-4 py-2',
+        primary ? 'bg-blue-500' : 'bg-gray-500',
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+## Premisleki glede zmogljivosti
+
+Tako `clsx` kot `tailwind-merge` sta zelo optimizirana, vendar upoštevajte naslednje nasvete:
+
+1. **Definirajte variante izven komponent** - CVA variante naj bodo definirane izven komponente, da se izognete ponovnemu ustvarjanju ob vsakem renderju.
+
+2. **Memorizirajte kompleksne izračune** - Če imate drago pogojno logiko, razmislite o memoizaciji:
+
+```tsx
+const className = useMemo(
+  () => cn(
+    baseStyles,
+    expensiveComputation(props),
+    className
+  ),
+  [props, className]
+);
+```
+
+3. **Uporabljajte CSS spremenljivke za dinamične vrednosti** - Namesto dinamičnega generiranja razredov uporabite CSS spremenljivke:
+
+```tsx title="Raje CSS spremenljivke"
+// Good
+<div
+  className="bg-[var(--color)]"
+  style={{ '--color': dynamicColor } as React.CSSProperties}
+/>
+
+// Avoid
+<div className={`bg-[${dynamicColor}]`} />
+```
+
+Kombinacija Tailwind CSS, inteligentnega združevanja razredov in API-jev za variante nudi robustno osnovo za slogovanje komponent. Ta pristop se razteza od enostavnih gumbov do kompleksnih sistemov oblikovanja, hkrati pa ohranja predvidljivost in razvojno izkušnjo.

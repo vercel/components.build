@@ -1,0 +1,185 @@
+---
+title: Types
+description: Étendre les éléments HTML natifs du navigateur pour une personnalisation maximale.
+---
+
+Lors de la création de composants réutilisables, un typage approprié est essentiel pour concevoir des interfaces flexibles, personnalisables et sûres au niveau des types. En suivant des modèles établis pour les types de composants, vous pouvez garantir que vos composants sont à la fois puissants et faciles à utiliser.
+
+## Encapsulation d'un seul élément
+
+Chaque composant exporté devrait idéalement encapsuler un seul élément HTML ou JSX. Ce principe est fondamental pour créer des composants composables et personnalisables.
+
+Lorsqu'un composant englobe plusieurs éléments, il devient difficile de personnaliser des parties spécifiques sans prop drilling ou des API complexes. Considérez cet anti-pattern :
+
+```tsx title="@/components/ui/card.tsx"
+const Card = ({ title, description, footer, ...props }) => (
+  <div {...props}>
+    <div className="card-header">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div className="card-footer">
+      {footer}
+    </div>
+  </div>
+);
+```
+
+Comme nous l'avons évoqué dans [Composition](/composition), cette approche crée plusieurs problèmes :
+- Vous ne pouvez pas personnaliser le style de l'en-tête sans ajouter plus de props
+- Vous ne pouvez pas contrôler les éléments HTML utilisés pour le titre et la description
+- Vous êtes contraint à une structure DOM spécifique
+
+Au lieu de cela, chaque couche devrait être son propre composant. Cela vous permet de personnaliser chaque couche indépendamment et de contrôler les éléments HTML exacts utilisés pour le titre et la description.
+
+Les avantages de cette approche sont :
+- **Personnalisation maximale** - Les utilisateurs peuvent styliser et modifier chaque couche indépendamment
+- **Pas de prop drilling** - Les props vont directement vers l'élément qui en a besoin
+- **HTML sémantique** - Les utilisateurs peuvent voir et contrôler la structure DOM exacte
+- **Meilleure accessibilité** - Contrôle direct des attributs ARIA et des éléments sémantiques
+- **Modèle mental plus simple** - Un composant = un élément
+
+## Étendre les attributs HTML
+
+Chaque composant devrait étendre les attributs HTML natifs de l'élément qu'il encapsule. Cela garantit que les utilisateurs ont un contrôle total sur l'élément HTML sous-jacent.
+
+### Modèle de base
+
+```tsx
+export type CardRootProps = React.ComponentProps<'div'> & {
+  // Add your custom props here
+  variant?: 'default' | 'outlined';
+};
+
+export const CardRoot = ({ variant = 'default', ...props }: CardRootProps) => (
+  <div {...props} />
+);
+```
+
+### Types d'attributs HTML courants
+
+React fournit des définitions de types pour tous les éléments HTML. Utilisez celui qui convient pour votre composant :
+
+```tsx
+// For div elements
+type DivProps = React.ComponentProps<'div'>;
+
+// For button elements
+type ButtonProps = React.ComponentProps<'button'>;
+
+// For input elements
+type InputProps = React.ComponentProps<'input'>;
+
+// For form elements
+type FormProps = React.ComponentProps<'form'>;
+
+// For anchor elements
+type LinkProps = React.ComponentProps<'a'>;
+```
+
+### Gestion des différents types d'éléments
+
+Lorsqu'un composant peut rendre différents éléments, utilisez des génériques ou des types union :
+
+```tsx
+// Using discriminated unions
+export type ButtonProps =
+  | (React.ComponentProps<'button'> & { asChild?: false })
+  | (React.ComponentProps<'div'> & { asChild: true });
+
+// Or with a polymorphic approach
+export type PolymorphicProps<T extends React.ElementType> = {
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
+```
+
+### Étendre des composants personnalisés
+
+Si vous étendez un composant existant, vous pouvez utiliser le type `ComponentProps` pour obtenir les props du composant.
+
+```tsx title="@/components/ui/share-button.tsx"
+import type { ComponentProps } from 'react';
+
+export type ShareButtonProps = ComponentProps<'button'>;
+
+export const ShareButton = (props: ShareButtonProps) => (
+  <button {...props} />
+);
+```
+
+## Exportation des types
+
+Exportez toujours les types de props de vos composants. Cela les rend accessibles aux consommateurs pour divers cas d'utilisation.
+
+L'exportation des types permet plusieurs schémas importants :
+
+```tsx
+// 1. Extracting specific prop types
+import type { CardRootProps } from '@/components/ui/card';
+type variant = CardRootProps['variant'];
+
+// 2. Extending components
+export type ExtendedCardProps = CardRootProps & {
+  isLoading?: boolean;
+};
+
+// 3. Creating wrapper components
+const MyCard = (props: CardRootProps) => (
+  <CardRoot {...props} className={cn('my-custom-class', props.className)} />
+);
+
+// 4. Type-safe prop forwarding
+function useCardProps(): Partial<CardRootProps> {
+  return {
+    variant: 'outlined',
+    className: 'custom-card',
+  };
+}
+```
+
+Vos types exportés devraient être nommés `<ComponentName>Props`. C'est une convention qui aide les autres développeurs à comprendre l'objectif du type.
+
+## Bonnes pratiques
+
+### 1. Toujours étaler les props en dernier
+
+Assurez-vous que les utilisateurs peuvent écraser n'importe quelle valeur par défaut :
+
+```tsx
+// ✅ Good - user props override defaults
+<div className="default-class" {...props} />
+
+// ❌ Bad - defaults override user props
+<div {...props} className="default-class" />
+```
+
+### 2. Éviter les conflits de noms de props
+
+N'utilisez pas de noms de props qui entrent en conflit avec les attributs HTML sauf si vous souhaitez intentionnellement les remplacer :
+
+```tsx
+// ❌ Bad - conflicts with HTML title attribute
+export type CardProps = React.ComponentProps<'div'> & {
+  title: string; // This conflicts with the HTML title attribute
+};
+
+// ✅ Good - use a different name
+export type CardProps = React.ComponentProps<'div'> & {
+  heading: string;
+};
+```
+
+### 3. Documenter les props personnalisées
+
+Ajoutez des commentaires JSDoc aux props personnalisées pour une meilleure expérience développeur :
+
+```tsx
+export type DialogProps = React.ComponentProps<'div'> & {
+  /** Whether the dialog is currently open */
+  open: boolean;
+  /** Callback when the dialog requests to be closed */
+  onOpenChange: (open: boolean) => void;
+  /** Whether to render the dialog in a portal */
+  modal?: boolean;
+};
+```

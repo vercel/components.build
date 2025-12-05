@@ -1,0 +1,185 @@
+---
+title: Tyypit
+description: Selaimen natiivien HTML-elementtien laajentaminen maksimaalista mukautettavuutta varten.
+---
+
+Kun rakennat uudelleenkäytettäviä komponentteja, asianmukainen tyypitys on olennaista joustavien, mukautettavien ja tyyppiturvallisten käyttöliittymien luomiseksi. Noudattamalla vakiintuneita malleja komponenttityypeille voit varmistaa, että komponenttisi ovat sekä tehokkaita että helppokäyttöisiä.
+
+## Yhden elementin ympäröiminen
+
+Jokaisen vietävän komponentin tulisi mieluiten kääriä yksi HTML- tai JSX-elementti. Tämä periaate on keskeinen, kun halutaan luoda yhdisteltäviä ja mukautettavia komponentteja.
+
+Kun komponentti käärii useita elementtejä, tiettyjen osien mukauttaminen ilman propien välitystä tai monimutkaisia API:ita muuttuu vaikeaksi. Harkitse tätä huonoa käytäntöä:
+
+```tsx title="@/components/ui/card.tsx"
+const Card = ({ title, description, footer, ...props }) => (
+  <div {...props}>
+    <div className="card-header">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div className="card-footer">
+      {footer}
+    </div>
+  </div>
+);
+```
+
+Kuten keskustelimme [Kokoaminen](/composition), tämä lähestymistapa aiheuttaa useita ongelmia:
+- Et voi mukauttaa otsikon tyyliä ilman lisäpropeja
+- Et voi kontrolloida otsikolle ja kuvaukselle käytettyjä HTML-elementtejä
+- Olet pakotettu tiettyyn DOM-rakenteeseen
+
+Sen sijaan jokaisen tason tulisi olla oma komponenttinsa. Tämä sallii kunkin tason mukauttamisen itsenäisesti ja mahdollistaa täsmällisten HTML-elementtien hallinnan otsikolle ja kuvaukselle.
+
+Tämän lähestymistavan hyödyt ovat:
+- **Maksimaalinen mukautettavuus** - Käyttäjät voivat tyylitellä ja muokata kutakin kerrosta itsenäisesti
+- **Ei propien välitystä** - Propsit menevät suoraan elementille, joka tarvitsee niitä
+- **Semanttinen HTML** - Käyttäjät näkevät ja hallitsevat tarkkaa DOM-rakennetta
+- **Parempi saavutettavuus** - Suora kontrolli ARIA-attribuuteista ja semanttisista elementeistä
+- **Yksinkertaisempi ajattelumalli** - Yksi komponentti = yksi elementti
+
+## HTML-attribuuttien laajentaminen
+
+Jokaisen komponentin tulisi laajentaa sen ympäröimän elementin natiivisia HTML-attribuutteja. Tämä varmistaa, että käyttäjillä on täysi kontrolli alkeis-HTML-elementistä.
+
+### Perusmalli
+
+```tsx
+export type CardRootProps = React.ComponentProps<'div'> & {
+  // Add your custom props here
+  variant?: 'default' | 'outlined';
+};
+
+export const CardRoot = ({ variant = 'default', ...props }: CardRootProps) => (
+  <div {...props} />
+);
+```
+
+### Yleiset HTML-attribuuttityypit
+
+React tarjoaa tyyppimääritykset kaikille HTML-elementeille. Käytä komponentillesi sopivaa:
+
+```tsx
+// For div elements
+type DivProps = React.ComponentProps<'div'>;
+
+// For button elements
+type ButtonProps = React.ComponentProps<'button'>;
+
+// For input elements
+type InputProps = React.ComponentProps<'input'>;
+
+// For form elements
+type FormProps = React.ComponentProps<'form'>;
+
+// For anchor elements
+type LinkProps = React.ComponentProps<'a'>;
+```
+
+### Eri elementtityyppien käsittely
+
+Kun komponentti voi renderöidä eri elementteinä, käytä generics-tyyppejä tai union-tyyppejä:
+
+```tsx
+// Using discriminated unions
+export type ButtonProps =
+  | (React.ComponentProps<'button'> & { asChild?: false })
+  | (React.ComponentProps<'div'> & { asChild: true });
+
+// Or with a polymorphic approach
+export type PolymorphicProps<T extends React.ElementType> = {
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
+```
+
+### Mukautettujen komponenttien laajentaminen
+
+Jos laajennat olemassa olevaa komponenttia, voit käyttää `ComponentProps`-tyyppiä saadaksesi komponentin propsit.
+
+```tsx title="@/components/ui/share-button.tsx"
+import type { ComponentProps } from 'react';
+
+export type ShareButtonProps = ComponentProps<'button'>;
+
+export const ShareButton = (props: ShareButtonProps) => (
+  <button {...props} />
+);
+```
+
+## Tyyppien vienti
+
+Vie aina komponenttien prop-tyypit. Tämä tekee niistä saatavilla kuluttajille erilaisiin käyttötapauksiin.
+
+Tyyppien vieminen mahdollistaa useita tärkeitä malleja:
+
+```tsx
+// 1. Extracting specific prop types
+import type { CardRootProps } from '@/components/ui/card';
+type variant = CardRootProps['variant'];
+
+// 2. Extending components
+export type ExtendedCardProps = CardRootProps & {
+  isLoading?: boolean;
+};
+
+// 3. Creating wrapper components
+const MyCard = (props: CardRootProps) => (
+  <CardRoot {...props} className={cn('my-custom-class', props.className)} />
+);
+
+// 4. Type-safe prop forwarding
+function useCardProps(): Partial<CardRootProps> {
+  return {
+    variant: 'outlined',
+    className: 'custom-card',
+  };
+}
+```
+
+Vietävien tyyppiesi nimet tulisi olla muotoa `<ComponentName>Props`. Tämä on konventio, joka auttaa muita kehittäjiä ymmärtämään tyypin tarkoituksen.
+
+## Parhaat käytännöt
+
+### 1. Levitä propsit aina viimeiseksi
+
+Varmista, että käyttäjät voivat ohittaa mitkä tahansa oletuspropsit:
+
+```tsx
+// ✅ Good - user props override defaults
+<div className="default-class" {...props} />
+
+// ❌ Bad - defaults override user props
+<div {...props} className="default-class" />
+```
+
+### 2. Vältä prop-nimien konflikteja
+
+Älä käytä prop-nimiä, jotka ovat ristiriidassa HTML-attribuuttien kanssa, ellei tarkoituksellisesti ylikirjoiteta:
+
+```tsx
+// ❌ Bad - conflicts with HTML title attribute
+export type CardProps = React.ComponentProps<'div'> & {
+  title: string; // This conflicts with the HTML title attribute
+};
+
+// ✅ Good - use a different name
+export type CardProps = React.ComponentProps<'div'> & {
+  heading: string;
+};
+```
+
+### 3. Dokumentoi mukautetut propsit
+
+Lisää JSDoc-kommentit mukautetuille propeille paremman kehittäjäkokemuksen vuoksi:
+
+```tsx
+export type DialogProps = React.ComponentProps<'div'> & {
+  /** Whether the dialog is currently open */
+  open: boolean;
+  /** Callback when the dialog requests to be closed */
+  onOpenChange: (open: boolean) => void;
+  /** Whether to render the dialog in a portal */
+  modal?: boolean;
+};
+```

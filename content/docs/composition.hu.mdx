@@ -1,0 +1,233 @@
+---
+title: Kompozíció
+description: A modern felhasználói felületi komponensek építésének alapja.
+---
+
+A kompozíció, vagy komponálhatóság, a modern felhasználói felületi komponensek építésének alapja. Ez az egyik legerősebb technika rugalmas, újrahasználható komponensek létrehozásához, amelyek képesek komplex követelmények kezelésére anélkül, hogy áldoznák az API átláthatóságát.
+
+Az összes funkcionalitás egyetlen, tucatnyi propot használó komponensbe zsúfolása helyett a kompozíció a felelősséget több, együttműködő komponensre osztja.
+
+Fernando nagyszerű előadást tartott erről a React Universe Conf 2025-ön, ahol bemutatta a Slack Message Composer újraépítéséhez alkalmazott megközelítését, mint komponálható komponenst.
+
+<Video src="https://www.youtube.com/watch?v=4KvbVq3Eg5w" />
+
+## Komponens komponálhatóvá tétele
+
+Ahhoz, hogy egy komponens komponálható legyen, kisebb, fókuszáltabb komponensekre kell bontani. Például vegyük ezt az Accordion komponenst:
+
+```tsx title="accordion.tsx"
+import { Accordion } from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion data={data} />
+);
+```
+
+Bár ez az Accordion komponens egyszerűnek tűnhet, túl sok felelősséget hordoz. Felelős a konténer, a trigger és a tartalom megjelenítéséért; valamint kezeli az akordeon állapotát és az adatokat.
+
+A komponens stílusának testreszabása nehézkes, mert szorosan összekapcsolódott. Valószínűleg globális CSS felülírásokat igényel. Ezen felül új funkcionalitás hozzáadása vagy a viselkedés módosítása a komponens forráskódjának módosítását igényli.
+
+Ennek megoldására bontsuk kisebb, fókuszáltabb komponensekre.
+
+### 1. Root komponens
+
+Először koncentráljunk a konténerre — arra a komponensre, ami mindent összetart, azaz a triggerre és a tartalomra. Ennek a konténernek nincs szüksége az adatok ismeretére, de nyomon kell tartania a nyitott állapotot.
+
+Ugyanakkor azt is szeretnénk, hogy ez az állapot elérhető legyen a gyermek komponensek számára. Ezért használjuk a Context API-t, hogy létrehozzunk egy kontextust a nyitott állapot számára.
+
+Végül, hogy lehetővé tegyük a `div` elem módosítását, kiterjesztjük az alapértelmezett HTML attribútumokat.
+
+Ezt a komponenst a "Root" komponensnek fogjuk hívni.
+
+```tsx title="@/components/ui/accordion.tsx"
+type AccordionProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+const AccordionContext = createContext<AccordionProps>({
+  open: false,
+  setOpen: () => {},
+});
+
+export type AccordionRootProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export const Root = ({
+  children,
+  open,
+  setOpen,
+  ...props
+}: AccordionRootProps) => (
+  <AccordionContext.Provider value={{ open, setOpen }}>
+    <div {...props}>{children}</div>
+  </AccordionContext.Provider>
+);
+```
+
+### 2. Item komponens
+
+Az Item komponens az az elem, amely az akordeon elemet tartalmazza. Egyszerűen egy wrapper minden egyes elemhez az akordeonban.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionItemProps = React.ComponentProps<'div'>;
+
+export const Item = (props: AccordionItemProps) => <div {...props} />;
+```
+
+### 3. Trigger komponens
+
+A Trigger komponens az az elem, amely aktiváláskor megnyitja az akordeont. Felelős:
+
+- Alapértelmezés szerint gombként való renderelésért (testreszabható az `asChild` segítségével)
+- A kattintási események kezeléséért az akordeon megnyitásához
+- A fókusz kezeléséért, amikor az akordeon bezárul
+- Megfelelő ARIA attribútumok biztosításáért
+
+Adjuk hozzá ezt a komponenst az Accordion komponensünkhöz.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionTriggerProps = React.ComponentProps<'button'> & {
+  asChild?: boolean;
+};
+
+export const Trigger = ({ asChild, ...props }: AccordionTriggerProps) => (
+  <AccordionContext.Consumer>
+    {({ open, setOpen }) => (
+      <button onClick={() => setOpen(!open)} {...props} />
+    )}
+  </AccordionContext.Consumer>
+);
+```
+
+### 4. Content komponens
+
+A Content komponens az az elem, amely az akordeon tartalmát tartalmazza. Felelős:
+
+- A tartalom megjelenítéséért, amikor az akordeon nyitva van
+- Megfelelő ARIA attribútumok biztosításáért
+
+Adjuk hozzá ezt a komponenst az Accordion komponensünkhöz.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionContentProps = React.ComponentProps<'div'> & {
+  asChild?: boolean;
+};
+
+export const Content = ({ asChild, ...props }: AccordionContentProps) => (
+  <AccordionContext.Consumer>
+    {({ open }) => <div {...props} />}
+  </AccordionContext.Consumer>
+);
+```
+
+### 5. Összerakás
+
+Most, hogy megvannak az összes komponensünk, összerakhatjuk őket az eredeti fájlunkban.
+
+```tsx title="accordion.tsx"
+import * as Accordion from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion.Root open={false} setOpen={() => {}}>
+    {data.map((item) => (
+      <Accordion.Item key={item.title}>
+        <Accordion.Trigger>{item.title}</Accordion.Trigger>
+        <Accordion.Content>{item.content}</Accordion.Content>
+      </Accordion.Item>
+    ))}
+  </Accordion.Root>
+);
+```
+
+## Nevezéktan
+
+Komponálható komponensek építésekor a következetes nevezéktan létfontosságú az intuitív és kiszámítható API-k kialakításához. A shadcn/ui és a Radix UI is olyan bevett mintákat követ, amelyek a React ökoszisztémában de facto szabvánnyá váltak.
+
+### Root komponensek
+
+A `Root` komponens szolgál fő konténerként, amely körülveszi az összes többi alkomponenst. Általában kezeli a megosztott állapotot és kontextust úgy, hogy kontextust biztosít minden gyermek komponens számára.
+
+```tsx
+<AccordionRoot>{/* Child components */}</AccordionRoot>
+```
+
+### Interaktív elemek
+
+Az olyan interaktív komponensek, amelyek műveleteket indítanak vagy állapotot váltanak, beszédes neveket használnak:
+
+- `Trigger` - Az az elem, amely műveletet indít (megnyitás, bezárás, váltás)
+- `Content` - Az az elem, amely a megjelenített/elrejtett fő tartalmat tartalmazza
+
+```tsx
+<CollapsibleTrigger>Click to expand</CollapsibleTrigger>
+<CollapsibleContent>
+  Hidden content revealed here
+</CollapsibleContent>
+```
+
+### Tartalmi szerkezet
+
+Olyan komponensekhez, amelyek strukturált tartalomterületekkel rendelkeznek, használjunk szemantikus neveket, amelyek leírják a céljukat:
+
+- `Header` - Felső rész, amely címeket vagy vezérlőket tartalmaz
+- `Body` - Fő tartalomterület
+- `Footer` - Alsó rész műveletekhez vagy metaadatokhoz
+
+```tsx
+<DialogHeader>
+  {/* Dialog title */}
+</DialogHeader>
+<DialogBody>
+  {/* Dialog content */}
+</DialogBody>
+<DialogFooter>
+  {/* Dialog footer */}
+</DialogFooter>
+```
+
+### Információs komponensek
+
+Az információt vagy kontextust nyújtó komponensek leíró utótagokat használnak:
+
+- `Title` - Elsődleges címsor vagy címke
+- `Description` - Támogató szöveg vagy magyarázó tartalom
+
+```tsx
+<CardTitle>Project Statistics</CardTitle>
+<CardDescription>
+  View your project's performance over time
+</CardDescription>
+```

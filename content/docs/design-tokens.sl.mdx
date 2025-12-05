@@ -1,0 +1,51 @@
+---
+title: Oblikovni žetoni
+description: Kako semantične konvencije poimenovanja in oblikovni žetoni ustvarjajo prilagodljiv, enostaven za vzdrževanje sistem tem.
+---
+
+Ena izmed temeljnih osnov sodobnih knjižnic komponent je njihov premišljen pristop k oblikovanju slogov. Namesto da bi barve trdo kodirali ali ustvarjali stroge sisteme razredov, lahko uporabimo semantično konvencijo poimenovanja, ki ločuje skrbi glede teme, konteksta in uporabe.
+
+Ta semantična konvencija poimenovanja je znana kot oblikovni žetoni. Ta arhitekturna odločitev ustvari sistem, ki je enostaven za vzdrževanje in prilagodljiv ter se lepo razširi med aplikacijami.
+
+## Filozofija semantičnih CSS spremenljivk
+
+Tradicionalni CSS pristopi pogosto povežejo barvne vrednosti neposredno s konteksti njihove uporabe, kar ustvarja krhke sisteme, ki jih je težko vzdrževati. Oblikovni žetoni uporabljajo drugačen pristop z ustvarjanjem plasti abstrakcije, ki ločijo, kaj nekaj je, od tega, kako izgleda.
+
+## Razumevanje arhitekture spremenljivk
+
+Poglejmo, kako lahko strukturiramo naše CSS spremenljivke, da ustvarimo takšen prilagodljiv sistem:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+V zgornjem primeru imamo štiri oblikovne žetone:
+
+- `--background`, ki se uporablja za barve ozadja (predvsem ozadje strani)
+- `--foreground`, ki se uporablja za barve sprednjega načrta (splošna barva besedila)
+- `--primary`, ki se uporablja za primarne barve (glavna barva znamke)
+- `--primary-foreground`, ki se uporablja za primarne barve sprednjega načrta (barva besedila, kot se prikaže na primarni barvi)

@@ -1,0 +1,233 @@
+---
+title: Composition
+description: モダンな UI コンポーネントを構築するための基盤。
+---
+
+Composition（コンポジション）、または composability（合成可能性）は、モダンな UI コンポーネントを構築するための基盤です。これは、API の明快さを損なうことなく複雑な要件に対応できる柔軟で再利用可能なコンポーネントを作成するための最も強力な手法の一つです。
+
+数十もの props を持つ単一コンポーネントにすべての機能を詰め込む代わりに、コンポジションは責任を複数の協調するコンポーネントに分散させます。
+
+Fernando は React Universe Conf 2025 でこのテーマについて素晴らしい講演を行い、Slack の Message Composer を再構築する際の、自身のコンポーザブルなコンポーネント設計アプローチを共有しました。
+
+<Video src="https://www.youtube.com/watch?v=4KvbVq3Eg5w" />
+
+## コンポーネントをコンポーザブルにする方法
+
+コンポーネントをコンポーザブルにするには、それをより小さく、より焦点を絞ったコンポーネントに分解する必要があります。たとえば、次の Accordion コンポーネントを見てみましょう。
+
+```tsx title="accordion.tsx"
+import { Accordion } from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion data={data} />
+);
+```
+
+この Accordion コンポーネントは一見シンプルに見えるかもしれませんが、あまりにも多くの責務を担っています。コンテナ、トリガー、コンテンツのレンダリングに加え、アコーディオンの状態とデータの管理まで行っています。
+
+このコンポーネントのスタイリングをカスタマイズするのは困難で、グローバルな CSS オーバーライドが必要になる可能性が高いです。さらに、新しい機能を追加したり振る舞いを調整したりするには、コンポーネントのソースコードを修正する必要があります。
+
+これを解決するために、これらをより小さく、より焦点を絞ったコンポーネントに分解できます。
+
+### 1. Root コンポーネント
+
+まず、トリガーとコンテンツを保持する、すべてをまとめるコンテナに注目しましょう。このコンテナはデータについて知っている必要はありませんが、開閉状態を追跡する必要があります。
+
+ただし、この状態を子コンポーネントからも参照できるようにしたいので、Context API を使って開閉状態のためのコンテキストを作成します。
+
+最後に、`div` 要素の修正を可能にするために、デフォルトの HTML 属性を拡張します。
+
+このコンポーネントを「Root」コンポーネントと呼びます。
+
+```tsx title="@/components/ui/accordion.tsx"
+type AccordionProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+const AccordionContext = createContext<AccordionProps>({
+  open: false,
+  setOpen: () => {},
+});
+
+export type AccordionRootProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export const Root = ({
+  children,
+  open,
+  setOpen,
+  ...props
+}: AccordionRootProps) => (
+  <AccordionContext.Provider value={{ open, setOpen }}>
+    <div {...props}>{children}</div>
+  </AccordionContext.Provider>
+);
+```
+
+### 2. Item コンポーネント
+
+Item コンポーネントはアコーディオン項目を包含する要素です。これは単純にアコーディオン内の各アイテムのラッパーです。
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionItemProps = React.ComponentProps<'div'>;
+
+export const Item = (props: AccordionItemProps) => <div {...props} />;
+```
+
+### 3. Trigger コンポーネント
+
+Trigger コンポーネントは、アクティベートされたときにアコーディオンを開く要素です。以下の責務を持ちます：
+
+- デフォルトではボタンとしてレンダリングする（`asChild` でカスタマイズ可能）
+- アコーディオンを開くためのクリックイベントを処理する
+- アコーディオンが閉じる際のフォーカス管理を行う
+- 適切な ARIA 属性を提供する
+
+このコンポーネントを Accordion コンポーネントに追加しましょう。
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionTriggerProps = React.ComponentProps<'button'> & {
+  asChild?: boolean;
+};
+
+export const Trigger = ({ asChild, ...props }: AccordionTriggerProps) => (
+  <AccordionContext.Consumer>
+    {({ open, setOpen }) => (
+      <button onClick={() => setOpen(!open)} {...props} />
+    )}
+  </AccordionContext.Consumer>
+);
+```
+
+### 4. Content コンポーネント
+
+Content コンポーネントはアコーディオンの内容を含む要素です。以下の責務を持ちます：
+
+- アコーディオンが開いているときに内容をレンダリングする
+- 適切な ARIA 属性を提供する
+
+このコンポーネントを Accordion コンポーネントに追加しましょう。
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionContentProps = React.ComponentProps<'div'> & {
+  asChild?: boolean;
+};
+
+export const Content = ({ asChild, ...props }: AccordionContentProps) => (
+  <AccordionContext.Consumer>
+    {({ open }) => <div {...props} />}
+  </AccordionContext.Consumer>
+);
+```
+
+### 5. まとめて組み合わせる
+
+すべてのコンポーネントが揃ったので、元のファイルでそれらを組み合わせることができます。
+
+```tsx title="accordion.tsx"
+import * as Accordion from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion.Root open={false} setOpen={() => {}}>
+    {data.map((item) => (
+      <Accordion.Item key={item.title}>
+        <Accordion.Trigger>{item.title}</Accordion.Trigger>
+        <Accordion.Content>{item.content}</Accordion.Content>
+      </Accordion.Item>
+    ))}
+  </Accordion.Root>
+);
+```
+
+## 命名規則
+
+コンポーザブルなコンポーネントを構築する際、直感的で予測可能な API を作るために一貫した命名規則は非常に重要です。shadcn/ui と Radix UI の両方は、React エコシステムで事実上の標準となっている確立されたパターンに従っています。
+
+### Root コンポーネント
+
+`Root` コンポーネントは、他のすべてのサブコンポーネントをラップするメインのコンテナとして機能します。通常、共有状態を管理し、子コンポーネント全体にコンテキストを提供します。
+
+```tsx
+<AccordionRoot>{/* Child components */}</AccordionRoot>
+```
+
+### インタラクティブ要素
+
+アクションをトリガーしたり状態を切り替えたりするインタラクティブなコンポーネントは、説明的な名前を使用します：
+
+- `Trigger` - アクション（開く、閉じる、トグル）を開始する要素
+- `Content` - 表示/非表示にされる主な内容を含む要素
+
+```tsx
+<CollapsibleTrigger>Click to expand</CollapsibleTrigger>
+<CollapsibleContent>
+  Hidden content revealed here
+</CollapsibleContent>
+```
+
+### コンテンツ構造
+
+構造化されたコンテンツ領域を持つコンポーネントには、その目的を説明するセマンティックな名前を使用します：
+
+- `Header` - タイトルやコントロールを含む上部セクション
+- `Body` - 主なコンテンツ領域
+- `Footer` - アクションやメタデータのための下部セクション
+
+```tsx
+<DialogHeader>
+  {/* Dialog title */}
+</DialogHeader>
+<DialogBody>
+  {/* Dialog content */}
+</DialogBody>
+<DialogFooter>
+  {/* Dialog footer */}
+</DialogFooter>
+```
+
+### 情報提供コンポーネント
+
+情報やコンテキストを提供するコンポーネントには、説明的なサフィックスを使用します：
+
+- `Title` - 主要な見出しやラベル
+- `Description` - 補助テキストや説明的コンテンツ
+
+```tsx
+<CardTitle>Project Statistics</CardTitle>
+<CardDescription>
+  View your project's performance over time
+</CardDescription>
+```

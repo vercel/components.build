@@ -1,0 +1,400 @@
+---
+title: Dataattributter
+description: Bruke dataattributter for deklarativ styling og komponentidentifikasjon.
+---
+
+Dataattributter gir en kraftig måte å eksponere komponenttilstand og -struktur til forbrukere, slik at man får fleksibel styling uten prop-eksplosjon. Moderne komponentbibliotek bruker to primære mønstre: `data-state` for visuelle tilstander og `data-slot` for komponentidentifikasjon.
+
+## Styling av tilstand med data-state
+
+Et av de vanligste anti-mønstrene innen komponentstyling er å eksponere separate className props for forskjellige tilstander.
+
+I mindre moderne komponenter vil du ofte se API-er som dette:
+
+```tsx
+<Dialog
+  openClassName="bg-black"
+  closedClassName="bg-white"
+  classes={{
+    open: "opacity-100",
+    closed: "opacity-0"
+  }}
+/>
+```
+
+Denne tilnærmingen har flere problemer:
+- Den kobler komponentens interne tilstand til styling-APIet
+- Den skaper en prop-eksplosjon etter hvert som komponenter blir mer komplekse
+- Den gjør komponenten vanskeligere å bruke og vedlikeholde
+- Den forhindrer styling basert på kombinasjoner av tilstander
+
+### Løsningen: data-state-attributter
+
+Bruk i stedet `data-*`-attributter for å eksponere komponenttilstand deklarativt. Dette lar forbrukere style komponenter basert på tilstand ved hjelp av standard CSS-selektorer:
+
+```tsx title="component.tsx"
+const Dialog = ({ className, ...props }: DialogProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      data-state={isOpen ? 'open' : 'closed'}
+      className={cn('transition-all', className)}
+      {...props}
+    />
+  );
+};
+```
+
+Nå kan forbrukere style komponenten basert på tilstand utenfra:
+
+```tsx title="app.tsx"
+<Dialog className="data-[state=open]:opacity-100 data-[state=closed]:opacity-0" />
+```
+
+### Fordeler med denne tilnærmingen
+
+1. **Én className-prop** - Ingen behov for flere state-spesifikke className-props  
+2. **Komponerbar** - Kombiner flere dataattributter for komplekse tilstander  
+3. **Standard CSS** - Fungerer med alle CSS-in-JS-løsninger eller vanlig CSS  
+4. **Typesikkert** - TypeScript kan utlede verdier for dataattributter  
+5. **Inspiserbart** - Tilstander er synlige i DevTools som HTML-attributter
+
+### Vanlige tilstandsmønstre
+
+Bruk dataattributter for alle typer komponenttilstand:
+
+```tsx
+// Open/closed state
+<Accordion data-state={isOpen ? 'open' : 'closed'} />
+
+// Selected state
+<Tab data-state={isSelected ? 'active' : 'inactive'} />
+
+// Disabled state (in addition to disabled attribute)
+<Button data-disabled={isDisabled} disabled={isDisabled} />
+
+// Loading state
+<Button data-loading={isLoading} />
+
+// Orientation
+<Slider data-orientation="horizontal" />
+
+// Side/position
+<Tooltip data-side="top" />
+```
+
+### Styling med Tailwind
+
+Tailwind støtter arbitrary variants, noe som gjør styling med dataattributter elegant:
+
+```tsx
+<Dialog
+  className={cn(
+    // Base styles
+    'rounded-lg border p-4',
+    // State-based styles
+    'data-[state=open]:animate-in data-[state=open]:fade-in',
+    'data-[state=closed]:animate-out data-[state=closed]:fade-out',
+    // Multiple attributes
+    'data-[state=open][data-side=top]:slide-in-from-top-2'
+  )}
+/>
+```
+
+For ofte brukte tilstander kan du utvide Tailwinds konfigurasjon:
+
+```js title="tailwind.config.js"
+module.exports = {
+  theme: {
+    extend: {
+      data: {
+        open: 'state="open"',
+        closed: 'state="closed"',
+        active: 'state="active"',
+      }
+    }
+  }
+}
+```
+
+Nå kan du bruke forkortelser:
+
+```tsx
+<Dialog className="data-open:opacity-100 data-closed:opacity-0" />
+```
+
+### Integrasjon med Radix UI
+
+Dette mønsteret brukes mye av [Radix UI](https://www.radix-ui.com/), som automatisk legger til dataattributter på sine primitives:
+
+```tsx
+import * as Dialog from '@radix-ui/react-dialog';
+
+<Dialog.Root>
+  <Dialog.Trigger />
+  <Dialog.Portal>
+    {/* Radix automatically adds data-state="open" | "closed" */}
+    <Dialog.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out" />
+    <Dialog.Content className="data-[state=open]:fade-in data-[state=closed]:fade-out" />
+  </Dialog.Portal>
+</Dialog.Root>
+```
+
+Andre dataattributter Radix tilbyr inkluderer:
+- `data-state` - open/closed, active/inactive, on/off  
+- `data-side` - top/right/bottom/left (for posisjonerte elementer)  
+- `data-align` - start/center/end (for posisjonerte elementer)  
+- `data-orientation` - horizontal/vertical  
+- `data-disabled` - til stede når deaktivert  
+- `data-placeholder` - til stede når placeholder vises
+
+## Komponentidentifikasjon med data-slot
+
+Mens `data-state` sporer visuelle tilstander, identifiserer `data-slot` komponenttyper innen en komposisjon. Dette mønsteret, popularisert av [shadcn/ui](https://ui.shadcn.com/), lar foreldrekomponenter målrette og style spesifikke barnekomponenter uten å stole på skjøre klassenavn eller elementselektorer.
+
+### Problemet med å målrette barn
+
+Tradisjonelle tilnærminger til styling av barnekomponenter har store begrensninger:
+
+```tsx
+// Relies on element types - breaks if implementation changes
+<form className="[&_input]:rounded-lg [&_button]:mt-4" />
+
+// Relies on class names - breaks if classes change
+<form className="[&_.text-input]:rounded-lg" />
+
+// Requires passing classes through props - verbose
+<form>
+  <input className={inputClasses} />
+  <button className={buttonClasses} />
+</form>
+```
+
+### Løsningen: data-slot-attributter
+
+Bruk `data-slot` for å gi komponenter stabile identifikatorer som kan målrettes av foreldre:
+
+```tsx title="field-set.tsx"
+function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
+  return (
+    <fieldset
+      data-slot="field-set"
+      className={cn(
+        "flex flex-col gap-6",
+        // Target specific child slots
+        "has-[>[data-slot=checkbox-group]]:gap-3",
+        "has-[>[data-slot=radio-group]]:gap-3",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+```tsx title="checkbox-group.tsx"
+function CheckboxGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="checkbox-group"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  );
+}
+```
+
+### Fordeler med data-slot
+
+1. **Stabile identifikatorer** - Holder når implementasjonsdetaljer endres  
+2. **Semantisk målretting** - Målrett basert på komponentens formål, ikke struktur  
+3. **Innkapsling** - Interne klasser forblir private  
+4. **Komponerbar** - Fungerer med vilkårlig nestning og komposisjon  
+5. **Typesikkert** - Kan valideres og dokumenteres
+
+### Bruke `has-[]` for foreldrebevisst styling
+
+Tailwinds `has-[]`-selektor kombinert med `data-slot` skaper kraftig foreldrebevisst styling:
+
+```tsx title="form.tsx"
+function Form({ className, ...props }: React.ComponentProps<"form">) {
+  return (
+    <form
+      data-slot="form"
+      className={cn(
+        "space-y-4",
+        // Adjust spacing when specific slots are present
+        "has-[>[data-slot=form-section]]:space-y-6",
+        "has-[>[data-slot=inline-fields]]:space-y-2",
+        // Style based on slot states
+        "has-[[data-slot=submit-button][data-loading=true]]:opacity-50",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### Bruke `[&_]` for å målrette etterkommere
+
+For dypere nestning, bruk mønsteret `[&_selector]` for å målrette hvilken som helst etterkommer:
+
+```tsx title="card.tsx"
+function Card({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card"
+      className={cn(
+        "rounded-lg border p-4",
+        // Target any descendant with data-slot
+        "[&_[data-slot=card-header]]:mb-4",
+        "[&_[data-slot=card-title]]:text-lg [&_[data-slot=card-title]]:font-semibold",
+        "[&_[data-slot=card-description]]:text-sm [&_[data-slot=card-description]]:text-muted-foreground",
+        "[&_[data-slot=card-footer]]:mt-4 [&_[data-slot=card-footer]]:border-t [&_[data-slot=card-footer]]:pt-4",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### Global CSS med data-slot
+
+Data slots fungerer utmerket med global CSS for konsistens i hele temaet:
+
+```css title="globals.css"
+/* Style all buttons within forms */
+[data-slot="form"] [data-slot="button"] {
+  @apply w-full sm:w-auto;
+}
+
+/* Style submit buttons specifically */
+[data-slot="form"] [data-slot="submit-button"] {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* Adjust inputs within inline layouts */
+[data-slot="inline-fields"] [data-slot="input"] {
+  @apply flex-1;
+}
+
+/* Style based on state combinations */
+[data-slot="dialog"][data-state="open"] [data-slot="dialog-content"] {
+  @apply animate-in fade-in;
+}
+```
+
+### Navnekonvensjoner
+
+Følg disse konvensjonene for konsistente `data-slot`-navn:
+
+1. **Bruk kebab-case** - `data-slot="form-field"` ikke `data-slot="formField"`  
+2. **Vær spesifikk** - `data-slot="submit-button"` ikke `data-slot="button"`  
+3. **Match komponentens formål** - Navnet reflekterer hva den gjør, ikke hvordan den ser ut  
+4. **Unngå implementasjonsdetaljer** - `data-slot="user-avatar"` ikke `data-slot="rounded-image"`
+
+```tsx
+// Good examples
+data-slot="search-input"
+data-slot="navigation-menu"
+data-slot="error-message"
+data-slot="submit-button"
+data-slot="card-header"
+
+// Avoid
+data-slot="input"           // Too generic
+data-slot="blueButton"      // Includes styling
+data-slot="div-wrapper"     // Implementation detail
+data-slot="mainContent"     // Use camelCase
+```
+
+## Når bør man bruke dataattributter vs props
+
+Å forstå når man skal bruke hvert mønster er viktig for et rent API:
+
+### `data-state` brukstilfeller
+- **Visuelle tilstander** - open/closed, active/inactive, loading osv.  
+- **Layout-tilstander** - orientation, side, alignment  
+- **Interaksjonstilstander** - hover, focus, disabled (når du trenger å style barn)
+
+### `data-slot` brukstilfeller
+- **Komponentidentifikasjon** - Stabile identifikatorer for målretting  
+- **Sammensettingsmønstre** - Foreldre-barn-relasjoner  
+- **Global styling** - Temaomfattende komponentstyling  
+- **Variant-uavhengig målretting** - Målrett hvilken som helst variant av en komponent
+
+### `props` brukstilfeller
+- **Varianter** - Ulike visuelle design (primary, secondary, destructive)  
+- **Størrelser** - sm, md, lg  
+- **Atferdskonfigurasjon** - controlled/uncontrolled, standardverdier  
+- **Event-handlere** - onClick, onChange osv.
+
+### Kombinert tilnærming
+
+En godt designet komponent bruker alle tre mønstrene riktig:
+
+```tsx title="button.tsx"
+type ButtonProps = {
+  variant?: 'primary' | 'secondary' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
+  loading?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
+  className?: string;
+};
+
+const Button = ({
+  variant = 'primary',
+  size = 'md',
+  loading,
+  disabled,
+  className,
+  ...props
+}: ButtonProps) => {
+  return (
+    <button
+      // Slot for targeting
+      data-slot="button"
+      // State for conditional styling
+      data-loading={loading}
+      data-disabled={disabled}
+      className={cn(
+        // Variant styles via props
+        buttonVariants({ variant, size }),
+        // Additional state styling allowed via className
+        className
+      )}
+      disabled={disabled}
+      {...props}
+    />
+  );
+};
+```
+
+Nå kan knappen brukes og styles på flere måter:
+
+```tsx
+// Basic usage with variants
+<Button variant="primary" size="lg">Submit</Button>
+
+// Parent targeting via data-slot
+<form className="[&_[data-slot=button]]:w-full">
+  <Button>Submit</Button>
+</form>
+
+// State-based styling via data-state
+<Button
+  loading={isLoading}
+  className="data-[loading=true]:opacity-50"
+>
+  Submit
+</Button>
+
+// Global CSS can target any button
+// [data-slot="button"][data-loading="true"] { ... }
+```
+
+Dataattributter gir et robust grunnlag for styling av moderne komponentbiblioteker. Ved å bruke `data-state` for visuelle tilstander og `data-slot` for komponentidentifikasjon, skaper du et fleksibelt, vedlikeholdbart API som skalerer fra enkle komponenter til komplekse designsystemer.

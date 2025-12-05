@@ -1,0 +1,51 @@
+---
+title: Token Desain
+description: Bagaimana konvensi penamaan semantik dan token desain menciptakan sistem tema yang fleksibel dan mudah dipelihara.
+---
+
+Salah satu dasar utama perpustakaan komponen modern terletak pada pendekatan mereka yang matang terhadap penataan gaya. Daripada menuliskan warna secara statis atau membuat sistem kelas yang kaku, kita dapat menggunakan konvensi penamaan semantik yang memisahkan kepentingan tema, konteks, dan penggunaan.
+
+Konvensi penamaan semantik ini dikenal sebagai token desain. Keputusan arsitektural ini menciptakan sistem yang mudah dipelihara dan fleksibel yang dapat diskalakan dengan baik di seluruh aplikasi.
+
+## Filosofi Variabel CSS Semantik
+
+Pendekatan CSS tradisional seringkali mengaitkan nilai warna secara langsung dengan konteks penggunaannya, menciptakan sistem rentan yang sulit dipelihara. Token desain mengambil pendekatan berbeda dengan membuat lapisan abstraksi yang memisahkan apa sesuatu itu dari bagaimana tampilannya.
+
+## Memahami Arsitektur Variabel
+
+Mari kita lihat bagaimana kita dapat menyusun variabel CSS kita untuk menciptakan sistem yang fleksibel ini:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+Dalam contoh di atas, kita memiliki empat token desain:
+
+- `--background`, yang digunakan untuk warna latar belakang (terutama latar belakang halaman)
+- `--foreground`, yang digunakan untuk warna depan (warna teks umum)
+- `--primary`, yang digunakan untuk warna utama (warna utama merek)
+- `--primary-foreground`, yang digunakan untuk warna depan utama (warna teks, seperti yang terlihat pada warna utama)

@@ -1,0 +1,280 @@
+---
+title: Stíliú
+description: Stíliú coinníollach agus iniompartha le ranganna Tailwind.
+---
+
+Teastaíonn córas stíleála solúbtha ó leabharlanna comhéadan nua-aimseartha a fhreastalaíonn ar riachtanais chasta gan taithí an fhorbróra a chur i mbaol. Tá meascán Tailwind CSS agus meascadh clasaí cliste tagtha chun cinn mar phróifíl chumhachtach chun comhpháirteanna inchoigeartaithe a thógáil.
+
+Réitíonn an cur chuige seo an teanndáíl bhunúsach idir réamhshocruithe inchuíseacha a sholáthar agus ceadúnas iomlán a thabhairt do shaincheapadh — dúshlán a bhí ag tráth leabharlanna comhéadan le blianta.
+
+## An fhadhb le stíliú traidisiúnta
+
+Is minic a chruthaíonn cur chuige traidisiúnta CSS troideanna sainiúlachta, coinbhleachtaí stíleanna, agus forléirithe nach bhfuil iontaofa. Nuair a gheann tú `className="bg-blue-500"` chuig comhpháirt a bhfuil `bg-red-500` ann cheana, cé acu a bhuaileann?
+
+Gan láimhseáil cheart, tá an dá rang i bhfeidhm agus braitheann an toradh ar fhachtóirí éagsúla — ord foinsí CSS, sainiúlacht na ranganna, algartam meascáin clasaí an bhuirdéileálaí, srl.
+
+## Meascadh clasaí go cliste
+
+Réitíonn an leabharlann `tailwind-merge` é seo trí struchtúr na ranganna Tailwind a thuiscint agus coinbhleachtaí a réiteach go cliste. Nuair a chuireann dhá rang sprioc le haghaidh an airíonna CSS céanna, coinníonn sé ach an ceann deireanach.
+
+```tsx title="Without tailwind-merge"
+// Both bg-red-500 and bg-blue-500 apply - unpredictable result
+<Button className="bg-blue-500" />
+// Renders: className="bg-red-500 bg-blue-500"
+```
+
+```tsx title="With tailwind-merge"
+import { twMerge } from 'tailwind-merge';
+
+// bg-blue-500 wins as it comes last
+const className = twMerge('bg-red-500', 'bg-blue-500');
+// Returns: "bg-blue-500"
+```
+
+Oibríonn sé seo do na haonaid Tailwind go léir:
+
+```tsx
+twMerge('px-4 py-2', 'px-8'); // Returns: "py-2 px-8"
+twMerge('text-sm', 'text-lg'); // Returns: "text-lg"
+twMerge('hover:bg-red-500', 'hover:bg-blue-500'); // Returns: "hover:bg-blue-500"
+```
+
+Tuigeann an leabharlann córas na modhnóraithe Tailwind freisin:
+
+```tsx
+// Modifiers are handled correctly
+twMerge('hover:bg-red-500 focus:bg-red-500', 'hover:bg-blue-500');
+// Returns: "focus:bg-red-500 hover:bg-blue-500"
+```
+
+## Clasaí coinníollacha
+
+Go minic beidh ort clasaí a chur i bhfeidhm go coinníollach bunaithe ar props nó ar staid. Soláthraíonn an leabharlann `clsx` API glan don rud seo:
+
+```tsx title="Using clsx"
+import clsx from 'clsx';
+
+// Basic conditionals
+clsx('base', isActive && 'active');
+// Returns: "base active" (if isActive is true)
+
+// Object syntax
+clsx('base', {
+  'active': isActive,
+  'disabled': isDisabled,
+});
+
+// Arrays
+clsx(['base', isLarge ? 'text-lg' : 'text-sm']);
+
+// Mixed
+clsx(
+  'base',
+  ['array-item'],
+  { 'object-conditional': true },
+  isActive && 'conditional'
+);
+```
+
+Pátrún coitianta ná tacar réamhshocraithe clasaí a mheascadh leis na props ionchuirte, chomh maith le haon loigic shaincheaptha atá againn:
+
+```tsx title="component.tsx"
+const Component = ({ className, ...props }: ComponentProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      className={cn(
+        "rounded-lg border bg-white shadow-sm",
+        isOpen && "bg-blue-500",
+        className
+      )}
+      {...props}
+    />
+  );
+};
+```
+
+## An fheidhm `cn`
+
+Comhcheanglaíonn an fheidhm `cn`, a rinne shadcn/ui coitianta, `clsx` agus `tailwind-merge` chun loighic choinníollach agus meascán chliste a thabhairt duit ag an am céanna:
+
+```tsx title="lib/utils.ts"
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+Tagann an cumhacht ón ordú — stíleanna bonn ar dtús, coinníollacha sa dara háit, síntiúí úsáideora ar an gcéad. Cinntíonn sé seo iompar intuartha agus solúbthacht iomlán.
+
+## Class Variance Authority (CVA)
+
+Maidir le comhpháirteanna casta le go leor éagsúlachtaí, éiríonn bainistiú láimhe ar choinníollacha an-chasta. Soláthraíonn Class Variance Authority (CVA) API fhorordaitheach do shonrú éagsúlachtaí comhpháirte.
+
+Mar shampla, seo sliocht ón gcomhpháirt [Button](https://ui.shadcn.com/docs/components/button) ó shadcn/ui:
+
+```tsx title="@/components/ui/button.tsx"
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline:
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        icon: "size-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+```
+
+## Cleachtais is fearr
+
+### 1. Tá tábhacht leis an ord
+
+Cuir clasaí i bhfeidhm i gcónaí sa ord seo:
+1. Stíleanna bonn (i gcónaí i bhfeidhm)
+2. Stíleanna éagsúlachta (bunaithe ar props)
+3. Stíleanna coinníollacha (bunaithe ar staid)
+4. Sínitheanna úsáideora (prop className)
+
+```tsx
+className={cn(
+  'base-styles',            // 1. Base
+  variant && variantStyles, // 2. Variants
+  isActive && 'active',     // 3. Conditionals
+  className                 // 4. User overrides
+)}
+```
+
+### 2. Doiciméadaigh do chuid éagsúlachtaí
+
+Bain úsáid as TypeScript agus JSDoc chun a shonrú cad a dhéanann gach éagsúlacht:
+
+```tsx
+type ButtonProps = {
+  /**
+   * The visual style of the button
+   * @default "primary"
+   */
+  variant?: 'primary' | 'secondary' | 'destructive' | 'ghost';
+
+  /**
+   * The size of the button
+   * @default "md"
+   */
+  size?: 'sm' | 'md' | 'lg';
+};
+```
+
+### 3. Earraigh patrúin athfhillteacha
+
+Mura bhfuil tú ag iarraidh an tsamhail choinníollach chéanna a scríobh arís agus arís eile, earraigh í:
+
+```tsx title="utils/styles.ts"
+export const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500';
+export const disabled = 'disabled:pointer-events-none disabled:opacity-50';
+
+// Use in components
+className={cn(focusRing, disabled, className)}
+```
+
+## Treoir inimirce
+
+Má tá tú ag inimirce ó chur chuige stíliúcháin eile, seo conas cur chuige coitianta a oiriúnú:
+
+### Ó Modules CSS
+
+```tsx title="Before - CSS Modules"
+import styles from './Button.module.css';
+
+<button className={`${styles.button} ${styles[variant]} ${className}`} />
+```
+
+```tsx title="After - cn + Tailwind"
+import { cn } from '@/lib/utils';
+
+<button className={cn(
+  'px-4 py-2 rounded-lg',
+  variant === 'primary' && 'bg-blue-500 text-white',
+  className
+)} />
+```
+
+### Ó styled-components
+
+```tsx title="Before - styled-components"
+const Button = styled.button<{ $primary?: boolean }>`
+  padding: 8px 16px;
+  background: ${props => props.$primary ? 'blue' : 'gray'};
+`;
+```
+
+```tsx title="After - cn + Tailwind"
+function Button({ primary, className, ...props }) {
+  return (
+    <button
+      className={cn(
+        'px-4 py-2',
+        primary ? 'bg-blue-500' : 'bg-gray-500',
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+## Smaointe maidir le feidhmíocht
+
+Tá `clsx` agus `tailwind-merge` an-optamaithe ach coinneoidh na leideanna seo i gcuimhne:
+
+1. **Sainmhínigh na héagsúlachtaí lasmuigh de chomhpháirteanna** - Ba chóir go mbeadh éagsúlachtaí CVA sainmhínithe lasmuigh den chomhpháirt chun iad a sheachaint a athchruthú ar gach rendrú.
+
+2. **Meamraigh ríomhanna casta** - Má tá loighic choinníollach fhada nó costasach agat, smaoinigh ar meamraíocht:
+
+```tsx
+const className = useMemo(
+  () => cn(
+    baseStyles,
+    expensiveComputation(props),
+    className
+  ),
+  [props, className]
+);
+```
+
+3. **Bain úsáid as athróga CSS do luachanna dinimiciúla** - In ionad ranganna a ghiniúint go dinimiciúil, bain úsáid as athróga CSS:
+
+```tsx title="Prefer CSS variables"
+// Good
+<div
+  className="bg-[var(--color)]"
+  style={{ '--color': dynamicColor } as React.CSSProperties}
+/>
+
+// Avoid
+<div className={`bg-[${dynamicColor}]`} />
+```
+
+Meascán Tailwind CSS, meascán clasaí cliste, agus APIs éagsúlachta soláthraíonn bunús láidir do stíliú comhpháirte. Scálaíonn an cur chuige seo ó chnaipe simplí go córais dearaidh chasta agus é ag coinneáil inrochtaineachta agus taithí an fhorbróra.

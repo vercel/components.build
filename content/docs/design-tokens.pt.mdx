@@ -1,0 +1,51 @@
+---
+title: Tokens de Design
+description: Como convenções de nomenclatura semântica e tokens de design criam um sistema de temas flexível e manutenível.
+---
+
+Um dos fundamentos centrais das bibliotecas de componentes modernas reside em sua abordagem cuidadosa à estilização. Em vez de codificar cores diretamente ou criar sistemas rígidos de classes, podemos empregar uma convenção de nomenclatura semântica que separa as preocupações de tema, contexto e uso.
+
+Essa convenção de nomenclatura semântica é conhecida como tokens de design. Essa decisão arquitetural cria um sistema manutenível e flexível que escala bem entre aplicações.
+
+## A Filosofia das Variáveis CSS Semânticas
+
+Abordagens tradicionais de CSS frequentemente vinculam valores de cor diretamente aos seus contextos de uso, criando sistemas frágeis que são difíceis de manter. Os tokens de design adotam uma abordagem diferente ao criar camadas de abstração que separam o que algo é de como ele se parece.
+
+## Entendendo a Arquitetura de Variáveis
+
+Vamos examinar como podemos estruturar nossas variáveis CSS para criar esse sistema flexível:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+No exemplo acima, temos quatro tokens de design:
+
+- `--background`, que é usado para cores de fundo (principalmente o fundo da página)
+- `--foreground`, que é usado para cores de primeiro plano (a cor geral do texto)
+- `--primary`, que é usado para cores primárias (a cor principal da marca)
+- `--primary-foreground`, que é usado para cores de primeiro plano primárias (a cor do texto, quando exibida sobre a cor primária)

@@ -1,0 +1,88 @@
+---
+title: Állapot
+description: Hogyan kezeljük az állapotot egy komponensben, valamint a vezérelt és nem vezérelt állapotok egyesítését.
+---
+
+Rugalmas komponensek létrehozása, amelyek mind vezérelt, mind nem vezérelt módban működnek, a professzionális komponensek ismertetőjegye.
+
+## Nem vezérelt állapot
+
+A nem vezérelt állapot az, amikor a komponens belsőleg kezeli a saját állapotát. Ez a legtöbb komponensnél az alapértelmezett használati minta.
+
+Például itt egy egyszerű `Stepper` komponens, amely belsőleg kezeli a saját állapotát:
+
+```tsx title="stepper.tsx"
+import { useState } from 'react';
+
+export const Stepper = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+};
+```
+
+## Vezérelt állapot
+
+A vezérelt állapot az, amikor a komponens állapotát a szülő komponens kezeli. Ahelyett, hogy belsőleg követnénk az állapotot, ezt a felelősséget a szülőre ruházzuk át.
+
+Dolgozzuk át a `Stepper` komponenst úgy, hogy a szülő komponens vezérelje:
+
+```tsx title="stepper.tsx"
+type StepperProps = {
+  value: number;
+  setValue: (value: number) => void;
+};
+
+export const Stepper = ({ value, setValue }: StepperProps) => (
+  <div>
+    <p>{value}</p>
+    <button onClick={() => setValue(value + 1)}>Increment</button>
+  </div>
+);
+```
+
+## Állapotok egyesítése
+
+A legjobb komponensek mind a vezérelt, mind a nem vezérelt állapotot támogatják. Ez lehetővé teszi, hogy a komponenst különböző helyzetekben használjuk, és könnyen testreszabható legyen.
+
+[Radix UI](https://www.radix-ui.com/) fenntart egy belső segédet a vezérelt és nem vezérelt állapotok egyesítésére, amelynek neve [`use-controllable-state`](https://github.com/radix-ui/primitives/tree/main/packages/react/use-controllable-state). Bár nem nyilvános használatra készült, olyan projektek, mint a [Kibo UI](https://www.kibo-ui.com) implementálták ezt a segédet, hogy saját Radix-szerű komponenseket építsenek.
+
+Telepítsük a hookot:
+
+```package-install
+npm install @radix-ui/react-use-controllable-state
+```
+
+Ez a könnyű hook ugyanazokat az állapotkezelési mintákat adja, amelyeket a Radix UI komponenskönyvtára belsőleg használ, biztosítva, hogy a komponenseid ipari szabványokkal összhangban viselkedjenek.
+
+A hook három fő paramétert fogad, és visszaad egy tuplét a jelenlegi értékkel és a beállító függvénnyel. Használjuk ezt a `Stepper` komponens vezérelt és nem vezérelt állapotának egyesítésére:
+
+```tsx title="stepper.tsx"
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+
+type StepperProps = {
+  value: number;
+  defaultValue: number;
+  onValueChange: (value: number) => void;
+};
+
+export const Stepper = ({ value: controlledValue, defaultValue, onValueChange }: StepperProps) => {
+  const [value, setValue] = useControllableState({
+    prop: controlledValue,        // The controlled value prop
+    defaultProp: defaultValue,    // Default value for uncontrolled mode
+    onChange: onValueChange,      // Called when value changes
+  });
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+}
+```

@@ -1,0 +1,163 @@
+---
+title: Registru
+description: Înțelegeți conceptul registrelor de componente, cum funcționează și de ce revoluționează modul în care dezvoltatorii partajează și descoperă componente UI.
+---
+
+Registrele de componente sunt o modalitate de a partaja și descoperi componente UI. Popularizate de [shadcn/ui](https://ui.shadcn.com), ele vă permit să descoperiți și să copiați componente direct în proiectele voastre.
+
+Registrele reprezintă o schimbare fundamentală în modul în care dezvoltatorii partajează și descoperă componente UI. Spre deosebire de pachetele npm tradiționale, registrele se bazează pe un model open source și funcționează prin descărcarea codului sursă în proiectul vostru.
+
+## Ce definește un registru?
+
+### 1. Distribuirea codului sursă
+
+Spre deosebire de pachetele npm care distribuie cod compilat, registrele distribuie cod sursă:
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. Metadate și configurare
+
+Registrele bune includ metadate bogate despre componente, precum numele, descrierea, dependențele și categoria.
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. Previzualizare și documentație
+
+Deși nu sunt descărcate, site-urile registrelor oferă de obicei:
+
+- Previzualizări live ale componentelor
+- Exemple interactive
+- Documentație detaliată
+- Fragmente de cod gata de copiat
+
+## Avantajele arhitecturii registrelor
+
+Registrele de componente oferă avantaje semnificative atât pentru autori, cât și pentru utilizatori, simplificând procesul de partajare și adoptare a componentelor UI.
+
+### Pentru autori
+
+Pentru autorii de componente, registrele fac distribuția remarcabil de simplă. Odată ce o componentă este creată, aceasta poate fi adăugată în registru, devenind instant accesibilă utilizatorilor fără necesitatea unor pași de publicare complicați. Această ușurință în distribuție accelerează bucla de feedback și încurajează iterația rapidă.
+
+Controlul versiunilor este un alt beneficiu important. Registrele urmăresc de obicei versiunile componentelor, changelog-urile și informațiile de compatibilitate. De exemplu, o înregistrare a unei componente poate specifica versiunea curentă, poate evidenția modificări recente precum îmbunătățiri de accesibilitate sau funcționalități noi și poate indica ce versiuni ale shadcn/ui sunt acceptate. Această transparență ajută întreținătorii să comunice actualizările și asigură utilizatorilor posibilitatea de a selecta componente care se potrivesc cerințelor proiectului lor.
+
+Implicarea comunității este, de asemenea, amplificată prin registre. Autorii pot primi feedback direct de la utilizatori, care pot raporta probleme, solicita funcționalități și contribui la îmbunătățiri colaborative. Acest lucru favorizează un mediu de dezvoltare mai interactiv și receptiv, beneficiind atât creatorii, cât și consumatorii.
+
+### Pentru consumatori
+
+Din perspectiva utilizatorilor de componente, registrele îmbunătățesc considerabil procesul de descoperire. Utilizatorii pot naviga componentele pe categorii, pot folosi funcționalitatea de căutare, pot vizualiza metrici de popularitate și pot explora componente conexe, ceea ce facilitează găsirea exact a ceea ce au nevoie pentru proiectele lor.
+
+Înainte de a integra o componentă, utilizatorii o pot previzualiza în acțiune, pot experimenta cu diverse variante și pot examina comportamentul și calitatea codului. Această posibilitate de a evalua componentele în prealabil reduce riscul și crește încrederea în adoptare.
+
+Poate cel mai important, registrele oferă utilizatorilor proprietate reală. În loc să fie blocați într-o dependență, utilizatorii copiază codul sursă direct în proiectele lor. Asta înseamnă că pot modifica componentele după necesitate, evită problemele de gestionare a dependențelor și păstrează control total asupra bazei lor de cod.
+
+## Crearea unui registru
+
+Puteți crea un registru simplu destul de rapid. În practică, aveți nevoie doar de 3 elemente de bază:
+
+### 1. Componente
+
+Creați o componentă sau un set de componente pe care doriți să le partajați. Asigurați-vă că aveți codul sursă pentru componente și că acestea sunt bine documentate și ușor de înțeles.
+
+Luați în considerare adăugarea de lucruri precum documentație în Markdown, implementări de exemplu și o modalitate de a previzualiza componenta.
+
+### 2. Un endpoint public
+
+Creați un endpoint public care servește componentele. Acesta poate fi un fișier JSON simplu sau un site mai complex. Atâta timp cât este public și accesibil, puteți folosi orice endpoint doriți.
+
+### 3. CLI
+
+Creați un CLI care vă permite să instalați componentele în proiectul vostru. Acesta poate fi la fel de simplu ca o singură comandă, precum `npx myregistry add button`, sau o comandă mai complexă cu opțiuni și flag-uri.
+
+## Folosirea registrului shadcn
+
+Construirea propriului registru este o modalitate excelentă de a vă partaja componentele cu comunitatea, dar necesită mult efort și întreținere. Dacă doriți doar să partajați una sau două componente, puteți folosi ecosistemul shadcn/ui - registru, CLI și variabile.
+
+Să vedem cum putem publica o componentă `MetricCard` live în mai puțin de 5 minute folosind găzduirea statică a [Vercel](https://vercel.com).
+
+### Pasul 1: Creați un folder
+
+Creați un folder cu această structură:
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+Puneți fișierul JSON al elementului din registru (de ex. `metric-card.json`) în folderul `public/`.
+
+### Pasul 2: Adăugați un `vercel.json`
+
+Creați un fișier `vercel.json` lângă `public/` cu următorul conținut:
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Acest lucru se asigură că JSON-ul vostru este servit cu antetele CORS și de conținut corecte.
+
+### Pasul 3: Deploați pe Vercel
+
+Din directorul rădăcină al folderului vostru, rulați:
+
+```bash
+vercel --prod
+```
+
+și răspundeți la prompturi pentru a vă implementa proiectul.
+
+Când este gata, fișierul vostru va fi live la ceva de genul:
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### Pasul 4: Instalați componenta
+
+Oricine poate rula acum:
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+Fără pachet npm, fără pas de build, fără complexitate.

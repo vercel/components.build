@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Bileşenlerinizi NPM'e nasıl yayınlayacağınız.
+---
+
+NPM paketleri, bileşen kütüphanelerini dağıtmanın geleneksel yaklaşımını temsil eder. Esneklikleri sayesinde [kayıt depoları](/registry) popülerlik kazanmış olsa da, npm yayıncılığı belirli kullanım durumları için belirgin avantajlar sunan güçlü bir seçenektir.
+
+npm paketleri ile kayıt depoları arasındaki temel fark, kodu nasıl dağıttıkları ve sahipliği nasıl yönettikleridir.
+
+## Paket Modeli
+
+Bileşenleri bir npm paketi olarak yayınladığınızda, kullanıcıların bir bağımlılık olarak yüklediği önceden derlenmiş, sürümlenmiş kodu dağıtırsınız:
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+Bu, birçok bileşen kütüphanesi için doğru seçim olmasını sağlayan birkaç önemli avantaj sunar.
+
+### Sürüm Yönetimi
+
+Paket yazarı olarak sürümleme ve güncellemeler üzerinde kontrol sizdedir. Kullanıcılar belirli sürümlere kilitlenebilir, bu da kararlılık sağlar:
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+Bu merkezi sürüm kontrolü, kullanıcıların standart bağımlılık güncellemeleri aracılığıyla güncellemeler, güvenlik yamaları ve yeni özellikler almasını sağlar.
+
+### Basitleştirilmiş Kurulum
+
+NPM paketleri sürtünmesiz bir kurulum deneyimi sağlar. Tek bir komut tüm bileşen kütüphanenizi ekler:
+
+```bash
+npm install @acme/ui-components
+```
+
+Dosyaları elle kopyalamaya, bağımlılıkları yönetmeye veya yapı araçlarını yapılandırmaya gerek yoktur. Her şey kutudan çıktığı gibi çalışır.
+
+### Bağımlılık Çözümü
+
+NPM, transitif bağımlılıkları otomatik olarak işler. Bileşenlerinizin React, Framer Motion veya diğer kitaplıkların belirli sürümlerini gerektirmesi durumunda, npm bu bağımlılıkları otomatik olarak çözer ve sürüm çakışmalarını engeller.
+
+### TypeScript Desteği
+
+Yayınlanan paketler önceden oluşturulmuş tip tanımları içerebilir ve ek yapılandırma olmadan anında TypeScript desteği sağlar:
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## NPM Paketlerinin Sınırlamaları
+
+NPM paketleri dağıtımda mükemmel olsa da, kayıt depolarının özellikle ele aldığı takasları beraberinde getirir.
+
+### Kaynak Kod Sahipliği
+
+En önemli sınırlama kaynak koda erişimin olmamasıdır. Kullanıcılar:
+
+- Bileşen davranışını doğrudan değiştiremez
+- Güncellemeleri beklemeden hataları düzeltemez
+- Uygulama detaylarını özelleştiremez
+- Kullanılmayan kodu kaldıramaz
+
+Bu, kullanıcıların tüm değişiklikler için paket bakımcısına güvenmek zorunda olduğu bir bağımlılık ilişkisi oluşturur.
+
+### Özelleştirme Kısıtları
+
+Bileşenleri ince ayar yapmak, açık API içinde çalışmayı gerektirir. Props ile özelleştirme sağlansa da:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+Kullanıcılar, paketi tamamen fork etmeden bileşenin çalışma şeklini temelden değiştiremez.
+
+### Paket Boyutu
+
+NPM paketleri, kullanıcıların yalnızca alt kümesine ihtiyaç duysa bile tüm bileşenleri içerir. Tree-shaking yardımcı olsa da her zaman mükemmel değildir ve uygulamalara gereksiz yük ekleyebilir.
+
+## CSS ve Tailwind Yapılandırması
+
+Tailwind tabanlı bileşenleri npm aracılığıyla yayınlarken dikkate alınması gereken kritik noktalardan biri stillerin tüketici uygulamada düzgün çalışmasını sağlamaktır.
+
+Varsayılan olarak, Tailwind yalnızca proje dosyalarınızda bulduğu sınıflar için stiller üretir. `node_modules`'un içine bakmaz; bu da bileşen stilinizin dahil edilmeyeceği anlamına gelir.
+
+Bunu düzeltmek için kullanıcıların Tailwind yapılandırmalarına paketinizdeki sınıf adlarını taramasını söyleyen bir `@source` yönergesi eklemeleri gerekir:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+Bu gereksinimi paketinizin README dosyasında mutlaka belirgin şekilde belgeleyin.
+
+## Bileşen Kitaplığınızı Yayınlama
+
+Bileşenlerinizi npm'e yayınlamak için düzgün yapılandırılmış bir `package.json` gerekir; bu şu şekilde görünebilir:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+NPM paketleri bileşen ekosisteminin hayati bir parçası olmaya devam ediyor. Kayıt depoları kaynak kod sahipliği ve özelleştirme açısından cazip avantajlar sunarken, npm paketleri birçok ekip için gerekli olan kararlılık, sürüm yönetimi ve kullanım kolaylığını sağlar.
+
+Önemli olan, kullanıcılarınızın ihtiyaçlarını anlamak ve onlara en iyi hizmet eden dağıtım yöntemini seçmektir. Bazen bu, her iki seçeneği sunmak ve geliştiricilerin projelerine en uygun olanı seçmesine izin vermek anlamına gelir.

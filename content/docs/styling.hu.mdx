@@ -1,0 +1,280 @@
+---
+title: Stílusok
+description: Feltételes és komponálható stílusozás Tailwind osztályokkal.
+---
+
+A modern komponenskönyvtáraknak rugalmas stílusrendszerekre van szükségük, amelyek képesek kezelni a bonyolult követelményeket anélkül, hogy rontanák a fejlesztői élményt. A Tailwind CSS és az intelligens osztályegyesítés kombinációja hatékony mintává vált testreszabható komponensek építéséhez.
+
+Ez a megközelítés megoldja az alapvető feszültséget az értelmes alapbeállítások biztosítása és a teljes testreszabhatóság engedése között — egy olyan kihívást, amely évek óta sújtja a komponenskönyvtárakat.
+
+## A hagyományos stílusozás problémája
+
+A hagyományos CSS-megközelítések gyakran vezetnek specificitási háborúkhoz, stílusütközésekhez és kiszámíthatatlan felülírásokhoz. Ha átadsz egy `className="bg-blue-500"` értéket egy olyan komponensnek, amely már rendelkezik `bg-red-500`-ral, melyik fog győzni?
+
+Megfelelő kezelés nélkül mindkét osztály érvényesülhet, és az eredmény sok tényezőtől függ — a CSS forrásrendjétől, az osztályok specificitásától, a bundler osztályegyesítési algoritmusától stb.
+
+## Osztályok intelligens egyesítése
+
+A `tailwind-merge` könyvtár ezt úgy oldja meg, hogy érti a Tailwind osztálystruktúráját és intelligensen oldja fel az ütközéseket. Amikor két osztály ugyanazt a CSS-tulajdonságot célozza meg, csak az utolsót tartja meg.
+
+```tsx title="Without tailwind-merge"
+// Both bg-red-500 and bg-blue-500 apply - unpredictable result
+<Button className="bg-blue-500" />
+// Renders: className="bg-red-500 bg-blue-500"
+```
+
+```tsx title="With tailwind-merge"
+import { twMerge } from 'tailwind-merge';
+
+// bg-blue-500 wins as it comes last
+const className = twMerge('bg-red-500', 'bg-blue-500');
+// Returns: "bg-blue-500"
+```
+
+Ez minden Tailwind segédosztályra működik:
+
+```tsx
+twMerge('px-4 py-2', 'px-8'); // Returns: "py-2 px-8"
+twMerge('text-sm', 'text-lg'); // Returns: "text-lg"
+twMerge('hover:bg-red-500', 'hover:bg-blue-500'); // Returns: "hover:bg-blue-500"
+```
+
+A könyvtár a Tailwind módosító rendszert is érti:
+
+```tsx
+// Modifiers are handled correctly
+twMerge('hover:bg-red-500 focus:bg-red-500', 'hover:bg-blue-500');
+// Returns: "focus:bg-red-500 hover:bg-blue-500"
+```
+
+## Feltételes osztályok
+
+Gyakran kell osztályokat feltételesen alkalmazni propok vagy state alapján. A `clsx` könyvtár tiszta API-t biztosít erre:
+
+```tsx title="Using clsx"
+import clsx from 'clsx';
+
+// Basic conditionals
+clsx('base', isActive && 'active');
+// Returns: "base active" (if isActive is true)
+
+// Object syntax
+clsx('base', {
+  'active': isActive,
+  'disabled': isDisabled,
+});
+
+// Arrays
+clsx(['base', isLarge ? 'text-lg' : 'text-sm']);
+
+// Mixed
+clsx(
+  'base',
+  ['array-item'],
+  { 'object-conditional': true },
+  isActive && 'conditional'
+);
+```
+
+Gyakori minta, hogy egy alapértelmezett osztálykészletet egyesítünk a bejövő propokkal, valamint az esetleges egyedi logikával:
+
+```tsx title="component.tsx"
+const Component = ({ className, ...props }: ComponentProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      className={cn(
+        "rounded-lg border bg-white shadow-sm",
+        isOpen && "bg-blue-500",
+        className
+      )}
+      {...props}
+    />
+  );
+};
+```
+
+## A `cn` segédfüggvény
+
+A `cn` függvény, amelyet a [shadcn/ui](https://ui.shadcn.com/) népszerűsített, kombinálja a `clsx`-et és a `tailwind-merge`-t, így egyszerre kapsz feltételes logikát és intelligens egyesítést:
+
+```tsx title="lib/utils.ts"
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+Az erő a sorrendből fakad — először az alapstílusok, másodszor a feltételesek, végül a felhasználói felülírások. Ez kiszámítható viselkedést biztosít, miközben megőrzi a teljes testreszabhatóságot.
+
+## Class Variance Authority (CVA)
+
+Komplex komponensek esetén, ahol sok variáns van, a feltételes osztályok kézi kezelése kezelhetetlenné válik. A [Class Variance Authority (CVA)](https://cva.style/docs) deklaratív API-t biztosít a komponensvariánsok definiálásához.
+
+Például itt egy kivonat a shadcn/ui [Button](https://ui.shadcn.com/docs/components/button) komponenséből:
+
+```tsx title="@/components/ui/button.tsx"
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline:
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        icon: "size-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+```
+
+## Legjobb gyakorlatok
+
+### 1. A sorrend számít
+
+Mindig alkalmazd az osztályokat ebben a sorrendben:
+1. Alapstílusok (mindig alkalmazva)
+2. Variáns stílusok (propok alapján)
+3. Feltételes stílusok (state alapján)
+4. Felhasználói felülírások (`className` prop)
+
+```tsx
+className={cn(
+  'base-styles',            // 1. Base
+  variant && variantStyles, // 2. Variants
+  isActive && 'active',     // 3. Conditionals
+  className                 // 4. User overrides
+)}
+```
+
+### 2. Dokumentáld a variánsokat
+
+Használd a TypeScriptet és a JSDoc-ot, hogy dokumentáld, mit csinál minden variáns:
+
+```tsx
+type ButtonProps = {
+  /**
+   * The visual style of the button
+   * @default "primary"
+   */
+  variant?: 'primary' | 'secondary' | 'destructive' | 'ghost';
+
+  /**
+   * The size of the button
+   * @default "md"
+   */
+  size?: 'sm' | 'md' | 'lg';
+};
+```
+
+### 3. Emeld ki az ismétlődő mintákat
+
+Ha azt veszed észre, hogy ugyanazt a feltételes logikát ismétled, vond ki:
+
+```tsx title="utils/styles.ts"
+export const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500';
+export const disabled = 'disabled:pointer-events-none disabled:opacity-50';
+
+// Use in components
+className={cn(focusRing, disabled, className)}
+```
+
+## Migrációs útmutató
+
+Ha egy másik stílusozási megközelítésről váltasz, így igazíthatod át a gyakori mintákat:
+
+### CSS Modules-ról
+
+```tsx title="Before - CSS Modules"
+import styles from './Button.module.css';
+
+<button className={`${styles.button} ${styles[variant]} ${className}`} />
+```
+
+```tsx title="After - cn + Tailwind"
+import { cn } from '@/lib/utils';
+
+<button className={cn(
+  'px-4 py-2 rounded-lg',
+  variant === 'primary' && 'bg-blue-500 text-white',
+  className
+)} />
+```
+
+### styled-components-ról
+
+```tsx title="Before - styled-components"
+const Button = styled.button<{ $primary?: boolean }>`
+  padding: 8px 16px;
+  background: ${props => props.$primary ? 'blue' : 'gray'};
+`;
+```
+
+```tsx title="After - cn + Tailwind"
+function Button({ primary, className, ...props }) {
+  return (
+    <button
+      className={cn(
+        'px-4 py-2',
+        primary ? 'bg-blue-500' : 'bg-gray-500',
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+## Teljesítmény szempontok
+
+Mind a `clsx`, mind a `tailwind-merge` nagyon optimalizáltak, de tartsd szem előtt ezeket a tippeket:
+
+1. **Definiáld a variánsokat a komponenseken kívül** - A CVA variánsokat a komponensen kívül kell definiálni, hogy elkerüld az újrakreálást minden renderelésnél.
+
+2. **Memoizáld a bonyolult számításokat** - Ha költséges feltételes logikád van, érdemes memoizálni:
+
+```tsx
+const className = useMemo(
+  () => cn(
+    baseStyles,
+    expensiveComputation(props),
+    className
+  ),
+  [props, className]
+);
+```
+
+3. **Használj CSS változókat dinamikus értékekhez** - Ahelyett, hogy dinamikusan generálsz osztályokat, használj CSS változókat:
+
+```tsx title="Prefer CSS variables"
+// Good
+<div
+  className="bg-[var(--color)]"
+  style={{ '--color': dynamicColor } as React.CSSProperties}
+/>
+
+// Avoid
+<div className={`bg-[${dynamicColor}]`} />
+```
+
+A Tailwind CSS, az intelligens osztályegyesítés és a variáns API-k kombinációja robusztus alapot nyújt a komponensek stílusozásához. Ez a megközelítés egyszerű gomboktól a komplex dizájnrendszerekig skálázódik, miközben megőrzi a kiszámíthatóságot és a fejlesztői élményt.

@@ -1,0 +1,88 @@
+---
+title: État
+description: Comment gérer l'état dans un composant, ainsi que la fusion d'états contrôlés et non contrôlés.
+---
+
+Construire des composants flexibles qui fonctionnent à la fois en modes contrôlé et non contrôlé est une marque de composants professionnels.
+
+## État non contrôlé
+
+L'état non contrôlé est lorsque le composant gère son propre état en interne. Il s'agit du modèle d'utilisation par défaut pour la plupart des composants.
+
+Par exemple, voici un simple composant `Stepper` qui gère son état en interne :
+
+```tsx title="stepper.tsx"
+import { useState } from 'react';
+
+export const Stepper = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+};
+```
+
+## État contrôlé
+
+L'état contrôlé est lorsque l'état du composant est géré par le composant parent. Plutôt que de suivre l'état en interne, nous déléguons cette responsabilité au composant parent.
+
+Réécrivons le composant `Stepper` pour qu'il soit contrôlé par le composant parent :
+
+```tsx title="stepper.tsx"
+type StepperProps = {
+  value: number;
+  setValue: (value: number) => void;
+};
+
+export const Stepper = ({ value, setValue }: StepperProps) => (
+  <div>
+    <p>{value}</p>
+    <button onClick={() => setValue(value + 1)}>Increment</button>
+  </div>
+);
+```
+
+## Fusion des états
+
+Les meilleurs composants prennent en charge à la fois l'état contrôlé et l'état non contrôlé. Cela permet d'utiliser le composant dans une variété de scénarios et de le personnaliser facilement.
+
+[Radix UI](https://www.radix-ui.com/) maintient un utilitaire interne pour fusionner les états contrôlables et non contrôlés appelé [`use-controllable-state`](https://github.com/radix-ui/primitives/tree/main/packages/react/use-controllable-state). Bien qu'il ne soit pas destiné à un usage public, des registres comme [Kibo UI](https://www.kibo-ui.com) ont implémenté cet utilitaire pour construire leurs propres composants similaires à Radix.
+
+Installons le hook :
+
+```package-install
+npm install @radix-ui/react-use-controllable-state
+```
+
+Ce hook léger vous fournit les mêmes schémas de gestion d'état utilisés en interne par la bibliothèque de composants de Radix UI, garantissant que vos composants se comportent de manière cohérente avec les standards du secteur.
+
+Le hook accepte trois paramètres principaux et renvoie un tuple contenant la valeur actuelle et la fonction setter. Utilisons-le pour fusionner l'état contrôlé et non contrôlé du composant `Stepper` :
+
+```tsx title="stepper.tsx"
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+
+type StepperProps = {
+  value: number;
+  defaultValue: number;
+  onValueChange: (value: number) => void;
+};
+
+export const Stepper = ({ value: controlledValue, defaultValue, onValueChange }: StepperProps) => {
+  const [value, setValue] = useControllableState({
+    prop: controlledValue,        // The controlled value prop
+    defaultProp: defaultValue,    // Default value for uncontrolled mode
+    onChange: onValueChange,      // Called when value changes
+  });
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+}
+```

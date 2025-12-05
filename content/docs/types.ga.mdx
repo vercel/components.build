@@ -1,0 +1,185 @@
+---
+title: Cineálacha
+description: Ag síneadh eilimintí HTML dúchasacha an bhrabhsálaí chun saincheaptha uasta.
+---
+
+Nuair a bhíonn tú ag tógáil comhpháirteanna inathúsáidte, tá cineálú cuí riachtanach chun comhéadaí solúbtha, inchoigeartaithe agus sábháilte ó thaobh cineálacha de a chruthú. Trí na patróin bhunaidh do chineálacha comhpháirte a leanúint, is féidir a chinntiú go bhfuil do chuid comhpháirteanna cumhachtacha agus éasca le húsáid.
+
+## Timpeallú Eilimint Aonair
+
+Ba chóir go ndéanfadh gach comhpháirt a easpórtáiltear, más féidir, timpeall ar eilimint HTML nó JSX aonair. Tá an prionsabal seo bunúsach chun comhpháirteanna in-imoibríoch agus inchoigeartaithe a chruthú.
+
+Nuair a dhéanann comhpháirt timpeall ar iliomad eilimintí, éiríonn sé deacair páirteanna ar leith a shaincheapadh gan prop drilling nó APIs casta. Smaoinigh ar an anti-phatrún seo:
+
+```tsx title="@/components/ui/card.tsx"
+const Card = ({ title, description, footer, ...props }) => (
+  <div {...props}>
+    <div className="card-header">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div className="card-footer">
+      {footer}
+    </div>
+  </div>
+);
+```
+
+Mar a pléadh againn i [Comhdhéanamh](/composition), cruthaíonn an cur chuige seo roinnt fadhbanna:
+- Ní féidir leat stíl an cheann a shaincheapadh gan níos mó props a chur leis
+- Ní féidir leat na heilimintí HTML a úsáidtear don title agus don description a rialú
+- Tá tú sáraithe i struchtúr DOM sonrach
+
+Ina theannta sin, ba chóir gach leibhéal a bheith ina chomhpháirt féin. Ligeann sé sin duit gach sraith a shaincheapadh go neamhspleách, agus rialú cruinn a bheith agat ar na heilimintí HTML a úsáidtear don title agus don description.
+
+Buntáistí an chur chuige seo:
+- **Saincheaptha uasta** - Is féidir le húsáideoirí gach sraith a stíleáil agus a mhodhnú go neamhspleách
+- **Gan prop drilling** - Téann props go díreach chuig an eilimint a theastaíonn uathu
+- **HTML seimantach** - Féachann agus rialóidh úsáideoirí struchtúr DOM cruinn
+- **Inrochtaineacht níos fearr** - Rialú díreach ar airíonna ARIA agus eilimintí seimantacha
+- **Múnla intinne níos simplí** - Comhpháirt amháin = eilimint amháin
+
+## Ag síneadh Airíonna HTML
+
+Ba chóir gach comhpháirt a shíneadh ar airíonna HTML dúchasacha na heilimint a dhéanann sí timpeall uirthi. Cinntíonn sé seo go mbeadh smacht iomlán ag úsáideoirí ar an eilimint HTML bhunúsach.
+
+### Patrún Bunúsach
+
+```tsx
+export type CardRootProps = React.ComponentProps<'div'> & {
+  // Add your custom props here
+  variant?: 'default' | 'outlined';
+};
+
+export const CardRoot = ({ variant = 'default', ...props }: CardRootProps) => (
+  <div {...props} />
+);
+```
+
+### Cineálacha Coitianta d'Airíonna HTML
+
+Soláthraíonn React sainmhínithe cineálacha do gach eilimint HTML. Úsáid an ceann cuí do do chomhpháirt:
+
+```tsx
+// For div elements
+type DivProps = React.ComponentProps<'div'>;
+
+// For button elements
+type ButtonProps = React.ComponentProps<'button'>;
+
+// For input elements
+type InputProps = React.ComponentProps<'input'>;
+
+// For form elements
+type FormProps = React.ComponentProps<'form'>;
+
+// For anchor elements
+type LinkProps = React.ComponentProps<'a'>;
+```
+
+### Ag Déileáil le Cineálacha Eilimintí Difriúla
+
+Nuair is féidir le comhpháirt a chur i láthair mar eilimintí éagsúla, bain úsáid as ginireacha nó cineálacha aontaithe:
+
+```tsx
+// Using discriminated unions
+export type ButtonProps =
+  | (React.ComponentProps<'button'> & { asChild?: false })
+  | (React.ComponentProps<'div'> & { asChild: true });
+
+// Or with a polymorphic approach
+export type PolymorphicProps<T extends React.ElementType> = {
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
+```
+
+### Ag síneadh comhpháirteanna saincheaptha
+
+Má tá tú ag síneadh comhpháirt atá ann cheana, is féidir an cineál `ComponentProps` a úsáid chun props na comhpháirte a fháil.
+
+```tsx title="@/components/ui/share-button.tsx"
+import type { ComponentProps } from 'react';
+
+export type ShareButtonProps = ComponentProps<'button'>;
+
+export const ShareButton = (props: ShareButtonProps) => (
+  <button {...props} />
+);
+```
+
+## Ag Easpórtáil Cineálacha
+
+Easpórtáil i gcónaí cineálacha prop do do chomhpháirt. Déanann sé sin iad inrochtana do thomhaltóirí ar mhaithe le húsáid i roinnt cásanna.
+
+Ceadaíonn easpórtáil cineálacha roinnt patrún tábhachtach:
+
+```tsx
+// 1. Extracting specific prop types
+import type { CardRootProps } from '@/components/ui/card';
+type variant = CardRootProps['variant'];
+
+// 2. Extending components
+export type ExtendedCardProps = CardRootProps & {
+  isLoading?: boolean;
+};
+
+// 3. Creating wrapper components
+const MyCard = (props: CardRootProps) => (
+  <CardRoot {...props} className={cn('my-custom-class', props.className)} />
+);
+
+// 4. Type-safe prop forwarding
+function useCardProps(): Partial<CardRootProps> {
+  return {
+    variant: 'outlined',
+    className: 'custom-card',
+  };
+}
+```
+
+Ba chóir do do chineálacha easpórtáilte a bheith sínithe mar `<ComponentName>Props`. Is nós é seo a chuidíonn le forbróirí eile tuiscint a fháil ar chuspóir an chineáil.
+
+## Cleachtais is Fearr
+
+### 1. I gcónaí scaip props ar deireadh
+
+Déan cinnte gur féidir le húsáideoirí aon props réamhshocraithe a shárú:
+
+```tsx
+// ✅ Good - user props override defaults
+<div className="default-class" {...props} />
+
+// ❌ Bad - defaults override user props
+<div {...props} className="default-class" />
+```
+
+### 2. Seachain Coinbhleachtaí Ainmneacha Prop
+
+Ná húsáid ainmneacha prop a choinbhleachtaíonn le hairíonna HTML, seachas má tá tú ag áibhéil ar intinn:
+
+```tsx
+// ❌ Bad - conflicts with HTML title attribute
+export type CardProps = React.ComponentProps<'div'> & {
+  title: string; // This conflicts with the HTML title attribute
+};
+
+// ✅ Good - use a different name
+export type CardProps = React.ComponentProps<'div'> & {
+  heading: string;
+};
+```
+
+### 3. Doiciméadú Props Saincheaptha
+
+Cuir tuairiscí JSDoc le props saincheaptha ar son taithí forbróra níos fearr:
+
+```tsx
+export type DialogProps = React.ComponentProps<'div'> & {
+  /** Whether the dialog is currently open */
+  open: boolean;
+  /** Callback when the dialog requests to be closed */
+  onOpenChange: (open: boolean) => void;
+  /** Whether to render the dialog in a portal */
+  modal?: boolean;
+};
+```

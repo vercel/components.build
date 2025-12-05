@@ -1,0 +1,140 @@
+---
+title: Doiciméadú
+description: Conas do chomhpháirteanna a dhoiciméadú.
+---
+
+Tá doiciméadú maith ríthábhachtach chun do chomhpháirteanna a dhéanamh inrochtana agus éasca le húsáid. Leagann an treoir seo amach na príomhchodanna ba chóir do gach leathanach doiciméadúcháin chomhpháirte a áireamh.
+
+## Fráma Doiciméadúcháin
+
+Chun do dhoiciméadú a scálú, is féidir leat fráma doiciméadúcháin a úsáid. Tá go leor roghanna ar fáil ag brath ar theanga agus ar riachtanais do thionscadail. I measc na roghanna coitianta tá:
+
+- [Fumadocs](https://fumadocs.dev/) - Fráma doiciméadúcháin tapa, saibhir i ngnéithe do Next.js
+- [Nextra](https://nextra.site/) - Doiciméadú bunaithe ar Markdown le cuardach ionsuite agus téamáil
+- [Content Collections](https://content-collections.dev/) - Bainistíocht ábhair cineál-sábháilte do dhoiciméadú
+- [Docusaurus](https://docusaurus.io/) - Suíomhanna doiciméadúcháin saibhir i ngnéithe le tacaíocht leaganacha
+- [VitePress](https://vitepress.dev/) - Gineadóir láithreán staitice faoi thiomáint ag Vue optamaithe don dhoiciméadú
+
+Is fearr go dtacaíonn an fráma a roghnaíonn tú le béimshíniú sintáise, le comhpháirteanna saincheaptha agus go bhfuil sé deartha go maith i gcoitinne.
+
+## Ranna Riachtanacha Doiciméadúcháin
+
+### Forbhreathnú
+
+Tosaigh le réamhrá gairid a mhíníonn cad a dhéanann an comhpháirt agus cathain ba chóir é a úsáid.
+
+### Démonstraíocht, Cód Foinse, agus Réamhamharc
+
+Chun tionchar maith tosaigh a dhéanamh ar fhorbróirí, ba chóir duit démo a áireamh a thaispeánann an comhpháirt ag feidhmiú, chomh maith leis an gcód a úsáideadh chun an démo a chruthú.
+
+Má tá tú ag úsáid [Clár](/registry) foinse oscailte, is féidir leat réamhamharc den chód foinse a úsáidtear chun an comhpháirt a chruthú a áireamh freisin.
+
+Bain úsáid as bloic chód le béimshíniú sintáise agus feidhmiúlacht cóipeála chuig an ngearrthaisce. Smaoinigh ar úsáid comhéadan cluaisíní chun athrú idir na radhairc seo gan an leathanach a chur i lár.
+
+### Suiteáil
+
+Cuir treoir shoiléir isteach ar conas an comhpháirt a shuiteáil. Is fearr go mbeadh seo ina aon ordú a féidir leat a chóipeáil agus a ghreamú isteach i do chríochfort.
+
+Má tá tú ag tógáil ar shadcn/ui, is féidir leat an [shadcn CLI](https://ui.shadcn.com/docs/cli) a úsáid chun an comhpháirt a shuiteáil m.sh.
+
+```package-install
+npx shadcn@latest add <your-component-url>
+```
+
+Má tá tú á foilsiú chuig [Margadh](/marketplaces), is féidir leat CLI an mhargaidh a úsáid chun an comhpháirt a shuiteáil m.sh.
+
+```package-install
+npx shadcn@latest add https://21st.dev/r/<your-author>/<your-component>
+```
+
+Má tá tú ag tógáil do [Clár](/registry) agus nach bhfuil tú ag úsáid shadcn/ui, d’fhéadfá do CLI féin a dhéanamh chun an comhpháirt a shuiteáil, m.sh.
+
+```package-install
+npx your-registry-cli@latest add <your-component-url>
+```
+
+Ar deireadh, má tá tú ag foilsiú chuig npm, is féidir leat an npm CLI a úsáid chun an comhpháirt a shuiteáil m.sh.
+
+```package-install
+npm install <your-component-name>
+```
+
+<Callout>
+Chun roghanna ilshuiteála a thaispeáint cosúil leis an sampla thuas, is féidir leat rud mar shintéis [`package-install`](https://fumadocs.dev/docs/headless/mdx/install) Fumadocs a úsáid.
+</Callout>
+
+### Gnéithe
+
+Liostaigh príomhghnéithe do chomhpháirte chun cabhrú le húsáideoirí tuiscint thapa a fháil ar a chumas agus ar a buntáistí. Mar shampla:
+
+- **Inoiriúnaithe** – Coigeartaigh stíleanna, méideanna agus iompar go héasca chun freastal ar do riachtanais.
+- **Inrochtaineach de réir réamhshocraithe** – Leanann sé na cleachtais is fearr do nascleanúint méarchláir, róil ARIA agus tacaíocht do léitheoirí scáileáin.
+- **Inúsáidte le chéile** – Deartha chun oibriú go réidh le comhpháirteanna agus patrúin eile.
+- **Cineál-sábháilte** – Tagann sé le cineálacha TypeScript cuimsithí le haghaidh sábháilteachta uasta agus uathoibriú comhlánaithe.
+- **Tacaíocht téama** – Comhtháthaíonn sé le do thacair dearaidh nó le córas téama.
+- **Éadrom** – Spleáchais íosta agus optamaithe don fheidhmíocht.
+- **Réidh do SSR/SSG** – Oibríonn sé le frámaí atá i gceist le rindreáil ar an bhfreastalaí agus rindreáil staiticiúil.
+- **Maith dhoiciméadaithe** – Áirítear samplaí úsáide soiléire agus tagairt API.
+
+Saincheap an liosta seo do do chomhpháirt shonrach. Aibhsigh cad a chuireann tú uathúil nó go háirithe úsáideach do fhorbróirí.
+
+### Samplaí
+
+Léirigh solúbthacht an chomhpháirte le samplaí praiticiúla:
+
+- **Éagsúlachtaí** - Stíleanna amhairc nó méideanna éagsúla atá ar fáil
+- **Stáit** - Luchtaithe, faoi mhíchumas, earráid nó staid rathúil
+- **Úsáid Chasta** - Scénáir chasta agus cásanna imeallacha
+- **Comhdhéanamh** - Conas a oibríonn an comhpháirt le comhpháirteanna eile
+- **Iompar Freagrúil** - Conas a oireann sé do mhéideanna scáileáin éagsúla
+
+Ba chóir go mbeadh an t-aschur rindreáilte agus an cód comhfhreagrach san áireamh i ngach sampla.
+
+### Airíonna (Props) agus Tagairt API
+
+Doiciméadáil gach prop, modh agus rogha cumraíochta atá ar fáil. Smaoinigh ar ghrúpáil airíonna gaolmhara le chéile agus béim a chur ar na cinn is coitianta. Do gach prop, cuir san áireamh:
+
+- **Ainm** - An aitheantóir prop
+- **Cineál** - Sainmhíniú cineál TypeScript
+- **Réamhshocraithe** - Luach réamhshocraithe mura sonraítear é
+- **Riachtanach** - An bhfuil an prop éigeantach
+- **Cur Síos** - Cad a dhéanann an prop agus cathain le húsáid é
+
+<Callout>
+Má tá tú ag úsáid Fumadocs, d’fhéadfá smaoineamh ar [Auto Type Table](https://fumadocs.dev/docs/ui/components/auto-type-table) a úsáid chun cruinneas a chinntiú agus ualach cothabhála a laghdú.
+</Callout>
+
+### Inrochtaineacht
+
+Doiciméadáil conas a thacaíonn do chomhpháirt le gnéithe inrochtaineachta:
+
+- Patrúin nascleanúna méarchláir
+- Airíonna agus róil ARIA
+- Tacaíocht do léitheoirí scáileáin
+- Bainistíocht fócas
+- Smaointe maidir le contrárthacht dathanna
+
+### Log Athruithe agus Versináil
+
+Is féidir a bheith úsáideach log athruithe a choinneáil ar gach leathanach doiciméadúcháin chomhpháirte a chlúdaíonn:
+
+- Uimhreacha leagan ag leanúint semantic versioning
+- Gnéithe nua agus feabhsúcháin
+- Deisiúcháin fabht
+- Athruithe briseacha
+- Treoracha inimirce do nuashonruithe phríomhleagain
+
+Cabhraigh le húsáideoirí tuiscint a fháil ar cad a d’athraigh idir leaganacha agus conas uasghrádú go sábháilte. Cuir samplaí cód isteach a thaispeánann na patrúin roimh/iar do athruithe briseacha.
+
+<Callout>
+Má tá do bhéimshíniú sintáise ag tacú leis (mar Shiki), b’fhéidir gur mhaith leat úsáid a bhaint as cur síos nó notáil do dhifríochtaí chun na hathruithe idir leaganacha a thaispeáint.
+</Callout>
+
+## Cleachtais Is Fearr
+
+- Coinnigh an doiciméadú suas chun dáta le hathruithe sa chód
+- Bain úsáid as samplaí réalaíocha a réitíonn fadhbanna praiticiúla
+- Cuir isteach drochphointí coitianta agus leideanna fabhtcheartúcháin
+- Tairg smaointe maidir le feidhmíocht nuair is ábhartha é
+- Cuir nasc le comhpháirteanna agus patrúin ghaolmhara
+- Déan gach sampla cód in-rithte agus tástáilte

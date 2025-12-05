@@ -1,0 +1,54 @@
+---
+title: Prionsabail Bhunúsacha
+description: Nuair a bhíonn tú ag tógáil comhpháirteanna comhéadan úsáideora nua-aimseartha, tá sé tábhachtach na prionsabail bhunúsacha seo a choinneáil i gcuimhne.
+---
+
+## Inchumais agus Inúsáidteacht
+
+Roghnaigh comhdhéanamh seachas oidhreacht – tóg comhpháirteanna is féidir a chur le chéile agus a shonrú go smúnna chun comhéadan úsáideora níos casta a chruthú, seachas spleáchas ar hordlathacha ranga domhain.
+
+Nochtann comhpháirteanna inaistrithe API shoiléir (trí props/slots) a cheadaíonn do fhorbróirí iompar agus cuma a shaincheapadh trí eilimintí páistí nó callbacks a nascadh.
+
+Cuireann sé seo ar chumas comhpháirteanna a bheith an-inúsáidte i gcomhthéacsanna difriúla. (Neartaíonn dearadh React é seo: “Tugann props agus comhdhéanamh an solúbthacht go léir a theastaíonn uait chun cuma agus iompar chomhpháirte a shaincheapadh ar bhealach soiléir agus sábháilte.”)
+
+## Inrochtaineacht de réir réamhshocraithe
+
+Ní mór go mbeadh comhpháirteanna inúsáidte do gach úsáideoir. Úsáid eilimintí HTML shéamantaigh atá oiriúnach do ról an chomhpháirte (m.sh. `<button>` do ghníomhanna cliceáilte, `<ul>/<li>` do liostaí, srl.) agus cuir gnéithe WAI-ARIA leis nuair is gá.
+
+Déan cinnte go dtacaítear le nascleanúint méarchláir agus bainistíocht fócas (mar shampla, nascleanúint le saigheada i roghchláir, trapaí fócas i módálacha). Ba chóir go n-leanfadh gach comhpháirt caighdeáin agus treoracha inrochtaineachta ón tús.
+
+Ciallaíonn sé seo róil/stáit ARIA cuí a sholáthar agus tástáil a dhéanamh le léitheoirí scáileáin. Níl inrochtaineacht roghnach – is gné bhunúsach í de gach comhpháirt.
+
+## Saincheaptha agus Téamú
+
+Ba chóir go mbeadh sé éasca comhpháirt a athstíliú nó a oiriúnú do riachtanais éagsúla dearadh. Seachain stíleanna amhairc a chódaíodh go daingean nach féidir a shárú.
+
+Soláthair meicníochtaí chun téamú agus stíliú a dhéanamh, mar shampla CSS variables, ainmneacha ranga go soiléir le doiciméadú, nó style props. Go hidealach, tagann comhpháirteanna le stíliú réamhshocraithe réasúnaíoch ach lig do fhorbróirí cuma a shaincheapadh le iarracht íosta (mar shampla tríd className a chur isteach nó ag baint úsáide as design tokens).
+
+Cinnteoidh an prionsabal seo go bhfeilfidh comhpháirteanna isteach i ngach branda nó córas dearadh gan 'streachailt' i gcoinne stíleanna réamhshocraithe.
+
+## Éadomhain agus Ard-Fheidhmíochta
+
+Ba chóir go mbeadh comhpháirteanna chomh tanaí agus is féidir ó thaobh sócmhainní agus spleáchais de. Seachain comhpháirt a mhéadú le spleáchais leabharlainne móra nó loighic ró-chasta, go háirithe má níl an loighic sin i gcónaí ag teastáil.
+
+Déan iarracht feidhmíocht mhaith a bhaint amach (san iompar agus sa rindreáil) trí ath-rindreálacha neamh-riartha a íoslaghdú agus algartaim éifeachtacha a úsáid do thascanna troma. Má tá comhpháirt an-líonmhar ó thaobh sonraí de (mar liosta nó tábla mór), smaoinigh ar phatrúin cosúil le virtualization nó rindreáil céimnithe, ach coinnigh na gnéithe sin roghnach.
+
+Bíonn comhpháirteanna éadomhain níos éasca le cothabháil agus níos tapúla do na húsáideoirí deiridh.
+
+## Trédhearcacht agus Úinéireacht an Chóid
+
+I dtionscadail foinse oscailte, bíonn buntáiste ag tomhaltóirí a bheith in ann radharc iomlán agus rialú a bheith acu ar chód an chomhpháirte. Spreagann an sonraíocht seo meon 'foinsí oscailte ar dtús': níor chóir go mbeadh comhpháirteanna ina bhoscaí dorcha.
+
+Nuair a iompórtálann nó a chóipeálann forbróirí do chomhpháirt, ba cheart dóibh a bheith in ann iniúchadh a dhéanamh ar conas a oibríonn sí agus í a mhodhnú más gá. Tá an prionsabal seo faoi bhun an mhúnla dáileacháin atá ag teacht chun cinn 'cóip-agus-greamaigh' (pléifear níos déanaí) ina gcuirfidh forbróirí cód an chomhpháirte isteach go díreach ina dtionscadail.
+
+Trí úinéireacht an chóid a thabhairt d’úsáideoirí, méadaíonn tú muinín agus ligfidh tú do shaincheapadh níos doimhne.
+
+Fiú má scaipeann tú trí phacáiste, glac le trédhearcacht trí source maps, cód inléite, agus doiciméadú mionsonraithe a sholáthar.
+
+## Go Maith Doiciméadaithe agus Cairdiúil don Taithí Forbróra (DX)
+
+Ní hamháin cód é comhpháirt den scoth – tagann sí le doiciméadú soiléir agus samplaí. Ó thaobh taithí forbróra (DX) de, ba chóir go mbeadh do chomhpháirteanna éasca le foghlaim agus le comhtháthú.
+
+Doiciméadaigh cuspóir gach comhpháirte, a props, agus samplaí úsáide. Cuir nótaí ar inrochtaineacht san áireamh (mar rialuithe méarchláir nó na hairíonna ARIA a úsáidtear) agus aon roghanna saincheaptha.
+
+Laghdóidh doiciméadú maith mí-úsáid agus laghdaíonn sé an bac d’fhonn glacadh leis. Clúdóimid ionchasanna do dhoiciméadaithe sa Rannóg Foilsithe, ach tá sé liostaithe anseo mar phriomhghné toisc gur chóir pleanáil le haghaidh doiciméadaithe mhaith agus DX a tharlaíonn le linn na céime dearadh/tógála.

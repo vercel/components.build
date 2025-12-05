@@ -1,0 +1,185 @@
+---
+title: Typen
+description: De native HTML-elementen van de browser uitbreiden voor maximale aanpasbaarheid.
+---
+
+Wanneer je herbruikbare componenten bouwt, is juiste typering essentieel om flexibele, aanpasbare en type-veilige interfaces te creëren. Door gevestigde patronen voor componenttypes te volgen, kun je ervoor zorgen dat je componenten zowel krachtig als gemakkelijk te gebruiken zijn.
+
+## Omsluiten van een enkel element
+
+Elk geëxporteerd component zou idealiter één enkel HTML- of JSX-element moeten omsluiten. Dit principe is fundamenteel voor het creëren van composeerbare, aanpasbare componenten.
+
+Wanneer een component meerdere elementen omsluit, wordt het moeilijk om specifieke delen aan te passen zonder props door te geven of complexe API's te gebruiken. Overweeg dit anti-patroon:
+
+```tsx title="@/components/ui/card.tsx"
+const Card = ({ title, description, footer, ...props }) => (
+  <div {...props}>
+    <div className="card-header">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div className="card-footer">
+      {footer}
+    </div>
+  </div>
+);
+```
+
+Zoals we bespraken in [Compositie](/composition), creëert deze benadering verschillende problemen:
+- Je kunt de header-styling niet aanpassen zonder extra props toe te voegen
+- Je kunt de HTML-elementen die voor title en description worden gebruikt niet controleren
+- Je wordt gedwongen in een specifieke DOM-structuur
+
+In plaats daarvan zou elke laag zijn eigen component moeten zijn. Dit stelt je in staat elke laag onafhankelijk aan te passen en de exacte HTML-elementen voor title en description te bepalen.
+
+De voordelen van deze benadering zijn:
+- **Maximale aanpasbaarheid** - Gebruikers kunnen elke laag onafhankelijk stylen en aanpassen
+- **Geen prop-drilling** - Props gaan rechtstreeks naar het element dat ze nodig heeft
+- **Semantische HTML** - Gebruikers kunnen de exacte DOM-structuur zien en controleren
+- **Betere toegankelijkheid** - Directe controle over ARIA-attributen en semantische elementen
+- **Eenvoudiger mentaal model** - Eén component = één element
+
+## Uitbreiden van HTML-attributen
+
+Elk component zou de native HTML-attributen van het element dat het omsluit moeten uitbreiden. Dit zorgt ervoor dat gebruikers volledige controle hebben over het onderliggende HTML-element.
+
+### Basispatroon
+
+```tsx
+export type CardRootProps = React.ComponentProps<'div'> & {
+  // Add your custom props here
+  variant?: 'default' | 'outlined';
+};
+
+export const CardRoot = ({ variant = 'default', ...props }: CardRootProps) => (
+  <div {...props} />
+);
+```
+
+### Veelvoorkomende HTML-attribuuttypes
+
+React biedt type-definities voor alle HTML-elementen. Gebruik de juiste voor je component:
+
+```tsx
+// For div elements
+type DivProps = React.ComponentProps<'div'>;
+
+// For button elements
+type ButtonProps = React.ComponentProps<'button'>;
+
+// For input elements
+type InputProps = React.ComponentProps<'input'>;
+
+// For form elements
+type FormProps = React.ComponentProps<'form'>;
+
+// For anchor elements
+type LinkProps = React.ComponentProps<'a'>;
+```
+
+### Omgaan met verschillende elementtypen
+
+Wanneer een component als verschillende elementen kan renderen, gebruik generics of union-types:
+
+```tsx
+// Using discriminated unions
+export type ButtonProps =
+  | (React.ComponentProps<'button'> & { asChild?: false })
+  | (React.ComponentProps<'div'> & { asChild: true });
+
+// Or with a polymorphic approach
+export type PolymorphicProps<T extends React.ElementType> = {
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
+```
+
+### Het uitbreiden van aangepaste componenten
+
+Als je een bestaand component uitbreidt, kun je het `ComponentProps`-type gebruiken om de props van dat component te verkrijgen.
+
+```tsx title="@/components/ui/share-button.tsx"
+import type { ComponentProps } from 'react';
+
+export type ShareButtonProps = ComponentProps<'button'>;
+
+export const ShareButton = (props: ShareButtonProps) => (
+  <button {...props} />
+);
+```
+
+## Types exporteren
+
+Exporteer altijd je component-proptype. Dit maakt ze toegankelijk voor consumenten voor verschillende use-cases.
+
+Het exporteren van types maakt meerdere belangrijke patronen mogelijk:
+
+```tsx
+// 1. Extracting specific prop types
+import type { CardRootProps } from '@/components/ui/card';
+type variant = CardRootProps['variant'];
+
+// 2. Extending components
+export type ExtendedCardProps = CardRootProps & {
+  isLoading?: boolean;
+};
+
+// 3. Creating wrapper components
+const MyCard = (props: CardRootProps) => (
+  <CardRoot {...props} className={cn('my-custom-class', props.className)} />
+);
+
+// 4. Type-safe prop forwarding
+function useCardProps(): Partial<CardRootProps> {
+  return {
+    variant: 'outlined',
+    className: 'custom-card',
+  };
+}
+```
+
+Je geëxporteerde types zouden `<ComponentName>Props` moeten heten. Dit is een conventie die andere ontwikkelaars helpt het doel van het type te begrijpen.
+
+## Beste praktijken
+
+### 1. Verspreid props altijd als laatste
+
+Zorg ervoor dat gebruikers eventuele standaardprops kunnen overschrijven:
+
+```tsx
+// ✅ Good - user props override defaults
+<div className="default-class" {...props} />
+
+// ❌ Bad - defaults override user props
+<div {...props} className="default-class" />
+```
+
+### 2. Vermijd prop-naamconflicten
+
+Gebruik geen prop-namen die conflicteren met HTML-attributen, tenzij je doelbewust wilt overschrijven:
+
+```tsx
+// ❌ Bad - conflicts with HTML title attribute
+export type CardProps = React.ComponentProps<'div'> & {
+  title: string; // This conflicts with the HTML title attribute
+};
+
+// ✅ Good - use a different name
+export type CardProps = React.ComponentProps<'div'> & {
+  heading: string;
+};
+```
+
+### 3. Documenteer aangepaste props
+
+Voeg JSDoc-commentaar toe aan aangepaste props voor een betere developer-ervaring:
+
+```tsx
+export type DialogProps = React.ComponentProps<'div'> & {
+  /** Whether the dialog is currently open */
+  open: boolean;
+  /** Callback when the dialog requests to be closed */
+  onOpenChange: (open: boolean) => void;
+  /** Whether to render the dialog in a portal */
+  modal?: boolean;
+};
+```

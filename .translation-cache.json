@@ -1,0 +1,1250 @@
+{
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/types.mdx": {
+    "tr": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.667Z"
+    },
+    "jp": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.670Z"
+    },
+    "id": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.671Z"
+    },
+    "cn": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.671Z"
+    },
+    "fr": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.671Z"
+    },
+    "nl": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.672Z"
+    },
+    "sr": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.672Z"
+    },
+    "es": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.673Z"
+    },
+    "fi": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.673Z"
+    },
+    "da": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.674Z"
+    },
+    "hu": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.674Z"
+    },
+    "pt": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.674Z"
+    },
+    "de": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.675Z"
+    },
+    "sv": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.675Z"
+    },
+    "it": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.675Z"
+    },
+    "no": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.676Z"
+    },
+    "ro": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.676Z"
+    },
+    "ga": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.676Z"
+    },
+    "sl": {
+      "hash": "2b9d8a3a94b968f2286bcef35dc9fb4a9bb9966a07ff7daa4e8233189e0b9a7a",
+      "translatedAt": "2025-12-05T07:07:31.677Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/styling.mdx": {
+    "jp": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.936Z"
+    },
+    "tr": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.939Z"
+    },
+    "cn": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.939Z"
+    },
+    "sv": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.940Z"
+    },
+    "fi": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.941Z"
+    },
+    "es": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.941Z"
+    },
+    "nl": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.942Z"
+    },
+    "da": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.942Z"
+    },
+    "id": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.943Z"
+    },
+    "fr": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.943Z"
+    },
+    "pt": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.944Z"
+    },
+    "ga": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.945Z"
+    },
+    "ro": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.947Z"
+    },
+    "de": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.947Z"
+    },
+    "sl": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.948Z"
+    },
+    "it": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.948Z"
+    },
+    "no": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.949Z"
+    },
+    "hu": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.949Z"
+    },
+    "sr": {
+      "hash": "7574bbfad312e8b7071a549a799bd6b2d9cf5ee1d30bd23541a8851738e9a77f",
+      "translatedAt": "2025-12-05T07:16:45.950Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/state.mdx": {
+    "fr": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.392Z"
+    },
+    "da": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.393Z"
+    },
+    "sv": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.394Z"
+    },
+    "de": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.394Z"
+    },
+    "it": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.395Z"
+    },
+    "nl": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.396Z"
+    },
+    "pt": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.397Z"
+    },
+    "sl": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.397Z"
+    },
+    "no": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.398Z"
+    },
+    "cn": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.399Z"
+    },
+    "id": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.400Z"
+    },
+    "ro": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.401Z"
+    },
+    "hu": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.401Z"
+    },
+    "sr": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.402Z"
+    },
+    "es": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.403Z"
+    },
+    "ga": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.403Z"
+    },
+    "fi": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.404Z"
+    },
+    "jp": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.405Z"
+    },
+    "tr": {
+      "hash": "744089fa5d6a7a35502011c8ae448a2dd14df566b9b99b5863ac1f324790b115",
+      "translatedAt": "2025-12-05T07:17:52.405Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/registry.mdx": {
+    "fr": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.187Z"
+    },
+    "nl": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.188Z"
+    },
+    "tr": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.189Z"
+    },
+    "cn": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.189Z"
+    },
+    "pt": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.190Z"
+    },
+    "sl": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.191Z"
+    },
+    "de": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.192Z"
+    },
+    "fi": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.192Z"
+    },
+    "ro": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.193Z"
+    },
+    "da": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.194Z"
+    },
+    "sr": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.194Z"
+    },
+    "sv": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.195Z"
+    },
+    "it": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.195Z"
+    },
+    "hu": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.196Z"
+    },
+    "jp": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.197Z"
+    },
+    "id": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.197Z"
+    },
+    "es": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.199Z"
+    },
+    "ga": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.199Z"
+    },
+    "no": {
+      "hash": "b61aed91e702629e0159cabaca066434938f61ac0b54ca7ebdb8f0b942d19b91",
+      "translatedAt": "2025-12-05T07:19:20.200Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/principles.mdx": {
+    "it": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.458Z"
+    },
+    "pt": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.459Z"
+    },
+    "da": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.459Z"
+    },
+    "sr": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.460Z"
+    },
+    "id": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.461Z"
+    },
+    "jp": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.467Z"
+    },
+    "fr": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.468Z"
+    },
+    "hu": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.468Z"
+    },
+    "sl": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.469Z"
+    },
+    "cn": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.469Z"
+    },
+    "nl": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.470Z"
+    },
+    "es": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.470Z"
+    },
+    "fi": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.471Z"
+    },
+    "sv": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.471Z"
+    },
+    "de": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.472Z"
+    },
+    "tr": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.473Z"
+    },
+    "ro": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.473Z"
+    },
+    "no": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.474Z"
+    },
+    "ga": {
+      "hash": "6f4e48c6c93a8efb1242b8e11c547a28e47043d512ee940091fae80e43d63c0b",
+      "translatedAt": "2025-12-05T07:20:46.474Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/polymorphism.mdx": {
+    "fr": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.067Z"
+    },
+    "jp": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.069Z"
+    },
+    "es": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.071Z"
+    },
+    "nl": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.073Z"
+    },
+    "da": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.076Z"
+    },
+    "tr": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.079Z"
+    },
+    "fi": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.081Z"
+    },
+    "no": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.083Z"
+    },
+    "sv": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.086Z"
+    },
+    "sl": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.088Z"
+    },
+    "it": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.090Z"
+    },
+    "pt": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.091Z"
+    },
+    "ro": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.092Z"
+    },
+    "sr": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.094Z"
+    },
+    "id": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.095Z"
+    },
+    "de": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.096Z"
+    },
+    "hu": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.097Z"
+    },
+    "ga": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.098Z"
+    },
+    "cn": {
+      "hash": "9a5c6c3f544007893e08c07b01be97c0e948c3f73aa8851ba2d56a566d3634c1",
+      "translatedAt": "2025-12-05T07:22:53.099Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/npm.mdx": {
+    "nl": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.498Z"
+    },
+    "sv": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.499Z"
+    },
+    "fr": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.499Z"
+    },
+    "it": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.500Z"
+    },
+    "tr": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.500Z"
+    },
+    "no": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.501Z"
+    },
+    "es": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.501Z"
+    },
+    "ro": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.501Z"
+    },
+    "cn": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.502Z"
+    },
+    "sl": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.502Z"
+    },
+    "id": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.503Z"
+    },
+    "pt": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.503Z"
+    },
+    "da": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.503Z"
+    },
+    "ga": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.504Z"
+    },
+    "jp": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.504Z"
+    },
+    "fi": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.505Z"
+    },
+    "de": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.505Z"
+    },
+    "sr": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.506Z"
+    },
+    "hu": {
+      "hash": "e46d1691ba2c9b3fa207a483298c804c2a40118184406cad0bf3f8a156781105",
+      "translatedAt": "2025-12-05T07:24:00.506Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/marketplaces.mdx": {
+    "jp": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.123Z"
+    },
+    "pt": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.125Z"
+    },
+    "id": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.126Z"
+    },
+    "fr": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.127Z"
+    },
+    "de": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.128Z"
+    },
+    "es": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.129Z"
+    },
+    "tr": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.129Z"
+    },
+    "da": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.130Z"
+    },
+    "hu": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.131Z"
+    },
+    "sr": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.131Z"
+    },
+    "no": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.132Z"
+    },
+    "sv": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.133Z"
+    },
+    "sl": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.134Z"
+    },
+    "cn": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.134Z"
+    },
+    "ga": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.135Z"
+    },
+    "nl": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.136Z"
+    },
+    "ro": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.137Z"
+    },
+    "it": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.137Z"
+    },
+    "fi": {
+      "hash": "5a9e98c9fa58016aa05ffa5c096177157023045fbe3e0470eaefad0e6baf3248",
+      "translatedAt": "2025-12-05T07:25:30.138Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/index.mdx": {
+    "fr": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.466Z"
+    },
+    "cn": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.467Z"
+    },
+    "id": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.468Z"
+    },
+    "da": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.470Z"
+    },
+    "ro": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.470Z"
+    },
+    "sr": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.471Z"
+    },
+    "pt": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.472Z"
+    },
+    "sl": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.473Z"
+    },
+    "sv": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.474Z"
+    },
+    "es": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.475Z"
+    },
+    "de": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.476Z"
+    },
+    "no": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.476Z"
+    },
+    "fi": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.477Z"
+    },
+    "nl": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.478Z"
+    },
+    "jp": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.478Z"
+    },
+    "tr": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.479Z"
+    },
+    "hu": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.479Z"
+    },
+    "it": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.480Z"
+    },
+    "ga": {
+      "hash": "5264860c3d3927a14789ed2eab0c4ab645afdabaa9fadd37d05ebdf2c23b9a6c",
+      "translatedAt": "2025-12-05T07:26:19.481Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/docs.mdx": {
+    "cn": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.688Z"
+    },
+    "fr": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.690Z"
+    },
+    "id": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.691Z"
+    },
+    "sr": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.693Z"
+    },
+    "pt": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.693Z"
+    },
+    "es": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.694Z"
+    },
+    "fi": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.695Z"
+    },
+    "it": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.696Z"
+    },
+    "sv": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.697Z"
+    },
+    "nl": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.697Z"
+    },
+    "no": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.698Z"
+    },
+    "tr": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.698Z"
+    },
+    "jp": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.699Z"
+    },
+    "hu": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.699Z"
+    },
+    "de": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.701Z"
+    },
+    "da": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.701Z"
+    },
+    "sl": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.702Z"
+    },
+    "ga": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.702Z"
+    },
+    "ro": {
+      "hash": "3426fedefd74a156ab709df5a92ef85a77f9e2c9c651781dbbd5db066ac9e0d7",
+      "translatedAt": "2025-12-05T07:28:08.703Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/design-tokens.mdx": {
+    "cn": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.943Z"
+    },
+    "sv": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.944Z"
+    },
+    "ro": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.944Z"
+    },
+    "fi": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.945Z"
+    },
+    "no": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.945Z"
+    },
+    "tr": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.946Z"
+    },
+    "it": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.947Z"
+    },
+    "es": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.947Z"
+    },
+    "de": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.948Z"
+    },
+    "fr": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.948Z"
+    },
+    "jp": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.948Z"
+    },
+    "sr": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.949Z"
+    },
+    "sl": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.950Z"
+    },
+    "pt": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.950Z"
+    },
+    "nl": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.951Z"
+    },
+    "id": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.951Z"
+    },
+    "hu": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.951Z"
+    },
+    "da": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.952Z"
+    },
+    "ga": {
+      "hash": "7d90b05fc04ea20ace44eb9114975466ddf5eb0a7fc9c7f7967670bd92e40f57",
+      "translatedAt": "2025-12-05T07:28:52.953Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/definitions.mdx": {
+    "cn": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.012Z"
+    },
+    "es": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.015Z"
+    },
+    "fi": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.015Z"
+    },
+    "fr": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.016Z"
+    },
+    "pt": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.016Z"
+    },
+    "da": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.017Z"
+    },
+    "ga": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.017Z"
+    },
+    "tr": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.018Z"
+    },
+    "de": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.019Z"
+    },
+    "sr": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.019Z"
+    },
+    "sv": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.020Z"
+    },
+    "ro": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.020Z"
+    },
+    "sl": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.021Z"
+    },
+    "jp": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.021Z"
+    },
+    "no": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.022Z"
+    },
+    "it": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.022Z"
+    },
+    "id": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.023Z"
+    },
+    "hu": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.023Z"
+    },
+    "nl": {
+      "hash": "6b0c9f2cb52f9a22ab098ac200df3c2ed7eccaf22ecea655400f2edc2cd35ca6",
+      "translatedAt": "2025-12-05T07:36:15.024Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/data-attributes.mdx": {
+    "ga": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.572Z"
+    },
+    "ro": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.575Z"
+    },
+    "no": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.575Z"
+    },
+    "hu": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.576Z"
+    },
+    "fi": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.577Z"
+    },
+    "es": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.578Z"
+    },
+    "id": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.578Z"
+    },
+    "sv": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.578Z"
+    },
+    "sr": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.579Z"
+    },
+    "de": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.580Z"
+    },
+    "fr": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.581Z"
+    },
+    "cn": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.581Z"
+    },
+    "tr": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.582Z"
+    },
+    "jp": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.583Z"
+    },
+    "sl": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.583Z"
+    },
+    "da": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.584Z"
+    },
+    "it": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.585Z"
+    },
+    "nl": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.586Z"
+    },
+    "pt": {
+      "hash": "5a8df6a502c45f71ada264d4f31b19c4e49c4becca74c0d884f45290b9e8f5c6",
+      "translatedAt": "2025-12-05T07:38:01.586Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/composition.mdx": {
+    "cn": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.087Z"
+    },
+    "fi": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.089Z"
+    },
+    "jp": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.090Z"
+    },
+    "de": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.091Z"
+    },
+    "hu": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.092Z"
+    },
+    "nl": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.093Z"
+    },
+    "sr": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.094Z"
+    },
+    "da": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.094Z"
+    },
+    "it": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.095Z"
+    },
+    "tr": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.096Z"
+    },
+    "sl": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.097Z"
+    },
+    "ro": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.098Z"
+    },
+    "es": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.098Z"
+    },
+    "sv": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.099Z"
+    },
+    "id": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.100Z"
+    },
+    "fr": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.101Z"
+    },
+    "no": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.102Z"
+    },
+    "pt": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.103Z"
+    },
+    "ga": {
+      "hash": "c0941726c98769239fd08b149c59d71cc19c9c75740f34233d038d8081a428cc",
+      "translatedAt": "2025-12-05T07:39:48.103Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/as-child.mdx": {
+    "no": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.576Z"
+    },
+    "sv": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.577Z"
+    },
+    "it": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.579Z"
+    },
+    "tr": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.580Z"
+    },
+    "ga": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.581Z"
+    },
+    "id": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.583Z"
+    },
+    "es": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.584Z"
+    },
+    "cn": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.584Z"
+    },
+    "pt": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.586Z"
+    },
+    "fi": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.587Z"
+    },
+    "sr": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.587Z"
+    },
+    "nl": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.588Z"
+    },
+    "de": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.590Z"
+    },
+    "ro": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.591Z"
+    },
+    "sl": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.592Z"
+    },
+    "fr": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.593Z"
+    },
+    "hu": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.594Z"
+    },
+    "jp": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.595Z"
+    },
+    "da": {
+      "hash": "b8262579973b458974eefd441407293f18fbd9e49c8a3402a45c902d1f2666d2",
+      "translatedAt": "2025-12-05T07:41:23.596Z"
+    }
+  },
+  "/Users/haydenbleasel/GitHub/components.build/content/docs/accessibility.mdx": {
+    "tr": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.391Z"
+    },
+    "no": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.392Z"
+    },
+    "fr": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.393Z"
+    },
+    "sl": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.394Z"
+    },
+    "it": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.394Z"
+    },
+    "fi": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.395Z"
+    },
+    "de": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.396Z"
+    },
+    "sv": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.396Z"
+    },
+    "cn": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.397Z"
+    },
+    "jp": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.397Z"
+    },
+    "nl": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.398Z"
+    },
+    "da": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.398Z"
+    },
+    "es": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.399Z"
+    },
+    "pt": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.399Z"
+    },
+    "ro": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.400Z"
+    },
+    "sr": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.401Z"
+    },
+    "hu": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.401Z"
+    },
+    "id": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.402Z"
+    },
+    "ga": {
+      "hash": "8e09ec8b46fd59327fae4285ab850f310859e38fc8713465da64641a1fb44436",
+      "translatedAt": "2025-12-05T07:43:09.402Z"
+    }
+  }
+}

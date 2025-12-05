@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Come pubblicare i tuoi componenti su NPM.
+---
+
+I pacchetti NPM rappresentano l'approccio tradizionale per distribuire librerie di componenti. Mentre i [registri](/registry) hanno guadagnato popolarità per la loro flessibilità, la pubblicazione su npm rimane un'opzione potente con vantaggi distinti per alcuni casi d'uso.
+
+La differenza fondamentale tra i pacchetti npm e i registri risiede nel modo in cui distribuiscono il codice e gestiscono la proprietà.
+
+## Modello del pacchetto
+
+Quando pubblichi i componenti come pacchetto npm, distribuisci codice precompilato e versionato che gli utenti installano come dipendenza:
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+Questo offre diversi vantaggi convincenti che li rendono la scelta giusta per molte librerie di componenti.
+
+### Gestione delle versioni
+
+In qualità di autore del pacchetto, controlli il versionamento e gli aggiornamenti. Gli utenti possono bloccare versioni specifiche, garantendo stabilità:
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+Questo controllo centralizzato delle versioni significa che puoi rilasciare aggiornamenti, patch di sicurezza e nuove funzionalità che gli utenti ricevono tramite i normali aggiornamenti delle dipendenze.
+
+### Installazione semplificata
+
+I pacchetti NPM offrono un'esperienza di installazione senza attriti. Un singolo comando aggiunge l'intera libreria di componenti:
+
+```bash
+npm install @acme/ui-components
+```
+
+Non è necessario copiare manualmente file, gestire dipendenze o configurare strumenti di build. Tutto funziona out of the box.
+
+### Risoluzione delle dipendenze
+
+NPM gestisce automaticamente le dipendenze transitive. Se i tuoi componenti richiedono versioni specifiche di React, Framer Motion o altre librerie, npm risolve automaticamente queste dipendenze, prevenendo conflitti di versione.
+
+### Supporto TypeScript
+
+I pacchetti pubblicati possono includere definizioni di tipi precompilate, fornendo supporto TypeScript immediato senza configurazioni aggiuntive:
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## Limitazioni dei pacchetti NPM
+
+Sebbene i pacchetti npm eccellano nella distribuzione, presentano compromessi che i registri affrontano specificamente.
+
+### Accesso al codice sorgente
+
+La limitazione più significativa è la mancanza di accesso al codice sorgente. Gli utenti non possono:
+
+- Modificare direttamente il comportamento del componente
+- Risolvere bug senza attendere aggiornamenti
+- Personalizzare i dettagli di implementazione
+- Rimuovere codice non utilizzato
+
+Questo crea una relazione di dipendenza in cui gli utenti devono fare affidamento sul manutentore del pacchetto per tutte le modifiche.
+
+### Vincoli di personalizzazione
+
+Modificare i componenti richiede di lavorare all'interno dell'API esposta. Pur potendo fornire props per la personalizzazione:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+gli utenti non possono alterare fondamentalmente il funzionamento del componente senza forkare l'intero pacchetto.
+
+### Dimensione del bundle
+
+I pacchetti NPM includono tutti i componenti, anche se gli utenti ne necessitano solo di un sottoinsieme. Sebbene il tree-shaking aiuti, non è sempre perfetto, aggiungendo potenzialmente peso non necessario alle applicazioni.
+
+## Configurazione CSS e Tailwind
+
+Un aspetto critico quando si pubblicano componenti basati su Tailwind tramite npm è garantire che gli stili funzionino correttamente nell'applicazione che consuma i componenti.
+
+Per impostazione predefinita, Tailwind genera stili solo per le classi che trova nei file del tuo progetto. Non analizza l'interno di `node_modules`, il che significa che gli stili del tuo componente non verranno inclusi.
+
+Per risolvere questo problema, gli utenti devono aggiungere una direttiva `@source` alla loro configurazione di Tailwind, indicando di scansionare il tuo pacchetto per i nomi delle classi:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+Documenta sempre questo requisito in modo evidente nel README del tuo pacchetto.
+
+## Pubblicazione della tua libreria di componenti
+
+Per pubblicare i tuoi componenti su npm, hai bisogno di un `package.json` configurato correttamente che potrebbe assomigliare a questo:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+I pacchetti NPM rimangono una parte vitale dell'ecosistema dei componenti. Mentre i registri offrono benefici significativi per la proprietà del codice sorgente e la personalizzazione, i pacchetti npm forniscono stabilità, gestione delle versioni e facilità d'uso di cui molti team necessitano.
+
+La chiave è comprendere le esigenze dei tuoi utenti e scegliere il metodo di distribuzione che li serve meglio. A volte ciò significa offrire entrambe le opzioni e lasciare che gli sviluppatori scelgano ciò che funziona meglio per il loro progetto.

@@ -1,0 +1,233 @@
+---
+title: Bileşen Birleştirme
+description: Modern UI bileşenleri oluşturmanın temeli.
+---
+
+Bileşim veya bileştirilebilirlik (composability), modern UI bileşenleri oluşturmanın temelidir. Esnek, yeniden kullanılabilir ve API açıklığını koruyarak karmaşık gereksinimleri karşılayabilen bileşenler oluşturmak için en güçlü tekniklerden biridir.
+
+Tüm işlevselliği onlarca prop ile tek bir bileşene doldurmak yerine, bileşim sorumluluğu birden çok işbirliği yapan bileşene dağıtır.
+
+Fernando bununla ilgili React Universe Conf 2025'te harika bir konuşma yaptı; bu konuşmada Slack'in Message Composer'ını bileştirilebilir bir bileşen olarak yeniden oluşturma yaklaşımını paylaştı.
+
+<Video src="https://www.youtube.com/watch?v=4KvbVq3Eg5w" />
+
+## Bir bileşeni bileştirilebilir hale getirme
+
+Bir bileşeni bileştirilebilir yapmak için, onu daha küçük ve daha odaklı bileşenlere bölmeniz gerekir. Örneğin, şu Accordion bileşenini ele alalım:
+
+```tsx title="accordion.tsx"
+import { Accordion } from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion data={data} />
+);
+```
+
+Bu Accordion bileşeni basit görünebilir, ancak çok fazla sorumluluk üstleniyor. Konteyneri, trigger ve içeriği render etmekten; ayrıca akordiyon durumunu ve veriyi yönetmekten sorumlu.
+
+Bu bileşenin stilini özelleştirmek zordur çünkü sıkı sıkıya bağlıdır. Muhtemelen global CSS üzerine yazmalar gerektirecektir. Ek olarak, yeni işlevsellik eklemek veya davranışı değiştirmek bileşen kaynak kodunu değiştirmeyi gerektirir.
+
+Bunu çözmek için, bunu daha küçük ve daha odaklı bileşenlere bölebiliriz.
+
+### 1. Root Bileşeni
+
+Öncelikle konteynere odaklanalım — her şeyi bir arada tutan bileşen, yani tetikleyici (trigger) ve içerik (content). Bu konteynerin verilere dair bilgi sahibi olması gerekmez, ancak açık durumunu (open state) takip etmesi gerekir.
+
+Ayrıca, bu duruma alt bileşenlerin de erişebilmesini istiyoruz. Bu nedenle açık durum için bir context oluşturmak üzere Context API'yi kullanalım.
+
+Son olarak, `div` elemanının değiştirilmesine izin vermek için varsayılan HTML özniteliklerini genişleteceğiz.
+
+Bu bileşeni "Root" bileşeni olarak adlandıracağız.
+
+```tsx title="@/components/ui/accordion.tsx"
+type AccordionProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+const AccordionContext = createContext<AccordionProps>({
+  open: false,
+  setOpen: () => {},
+});
+
+export type AccordionRootProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export const Root = ({
+  children,
+  open,
+  setOpen,
+  ...props
+}: AccordionRootProps) => (
+  <AccordionContext.Provider value={{ open, setOpen }}>
+    <div {...props}>{children}</div>
+  </AccordionContext.Provider>
+);
+```
+
+### 2. Item Bileşeni
+
+Item bileşeni, akordiyon öğesini içeren elemandır. Akordiyondaki her öğe için basit bir sarmalayıcıdır.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionItemProps = React.ComponentProps<'div'>;
+
+export const Item = (props: AccordionItemProps) => <div {...props} />;
+```
+
+### 3. Trigger Bileşeni
+
+Trigger bileşeni, etkinleştirildiğinde akordiyonu açan elemandır. Sorumlu olduğu görevler şunlardır:
+
+- Varsayılan olarak bir buton olarak render etmek (özelleştirme için `asChild` kullanılabilir)
+- Akordiyonu açmak için tıklama olaylarını işlemek
+- Akordiyon kapandığında odak yönetimi yapmak
+- Doğru ARIA özniteliklerini sağlamak
+
+Bu bileşeni Accordion bileşenimize ekleyelim.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionTriggerProps = React.ComponentProps<'button'> & {
+  asChild?: boolean;
+};
+
+export const Trigger = ({ asChild, ...props }: AccordionTriggerProps) => (
+  <AccordionContext.Consumer>
+    {({ open, setOpen }) => (
+      <button onClick={() => setOpen(!open)} {...props} />
+    )}
+  </AccordionContext.Consumer>
+);
+```
+
+### 4. Content Bileşeni
+
+Content bileşeni, akordiyon içeriğini barındıran elemandır. Sorumlu olduğu görevler şunlardır:
+
+- Akordiyon açık olduğunda içeriği render etmek
+- Doğru ARIA özniteliklerini sağlamak
+
+Bu bileşeni Accordion bileşenimize ekleyelim.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionContentProps = React.ComponentProps<'div'> & {
+  asChild?: boolean;
+};
+
+export const Content = ({ asChild, ...props }: AccordionContentProps) => (
+  <AccordionContext.Consumer>
+    {({ open }) => <div {...props} />}
+  </AccordionContext.Consumer>
+);
+```
+
+### 5. Hepsini bir araya getirme
+
+Artık tüm bileşenlere sahip olduğumuza göre, bunları orijinal dosyamızda bir araya getirebiliriz.
+
+```tsx title="accordion.tsx"
+import * as Accordion from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion.Root open={false} setOpen={() => {}}>
+    {data.map((item) => (
+      <Accordion.Item key={item.title}>
+        <Accordion.Trigger>{item.title}</Accordion.Trigger>
+        <Accordion.Content>{item.content}</Accordion.Content>
+      </Accordion.Item>
+    ))}
+  </Accordion.Root>
+);
+```
+
+## Adlandırma Kuralları
+
+Bileştirilebilir bileşenler oluştururken, sezgisel ve öngörülebilir API'ler yaratmak için tutarlı adlandırma kuralları kritik öneme sahiptir. shadcn/ui ve Radix UI her ikisi de React ekosisteminde de facto standart haline gelmiş yerleşik desenleri izler.
+
+### Root Bileşenleri
+
+`Root` bileşeni, diğer tüm alt bileşenleri saran ana konteyner görevi görür. Genellikle ortak durumu yönetir ve tüm çocuk bileşenlere bir context sağlar.
+
+```tsx
+<AccordionRoot>{/* Child components */}</AccordionRoot>
+```
+
+### Etkileşimli Elemanlar
+
+Eylem başlatan veya durumları değiştiren etkileşimli bileşenler açıklayıcı isimler kullanır:
+
+- `Trigger` - Bir eylemi başlatan öğe (açma, kapama, değiştirme)
+- `Content` - Gösterilen/gizlenen ana içeriği barındıran öğe
+
+```tsx
+<CollapsibleTrigger>Click to expand</CollapsibleTrigger>
+<CollapsibleContent>
+  Hidden content revealed here
+</CollapsibleContent>
+```
+
+### İçerik Yapısı
+
+Yapılandırılmış içerik alanlarına sahip bileşenler için amaçlarını tanımlayan anlamsal isimler kullanın:
+
+- `Header` - Başlıkları veya kontrolleri içeren üst bölüm
+- `Body` - Ana içerik alanı
+- `Footer` - Eylemler veya meta veriler için alt bölüm
+
+```tsx
+<DialogHeader>
+  {/* Dialog title */}
+</DialogHeader>
+<DialogBody>
+  {/* Dialog content */}
+</DialogBody>
+<DialogFooter>
+  {/* Dialog footer */}
+</DialogFooter>
+```
+
+### Bilgilendirici Bileşenler
+
+Bilgi veya bağlam sağlayan bileşenler açıklayıcı sonekler kullanır:
+
+- `Title` - Birincil başlık veya etiket
+- `Description` - Destekleyici metin veya açıklayıcı içerik
+
+```tsx
+<CardTitle>Project Statistics</CardTitle>
+<CardDescription>
+  View your project's performance over time
+</CardDescription>
+```

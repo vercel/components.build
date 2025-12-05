@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Hoe je je componenten op NPM publiceert.
+---
+
+NPM-pakketten vertegenwoordigen de traditionele benadering voor het distribueren van componentbibliotheken. Hoewel [registers](/registry) populairder zijn geworden vanwege hun flexibiliteit, blijft npm-publishing een krachtige optie met duidelijke voordelen voor bepaalde use-cases.
+
+Het fundamentele verschil tussen npm-pakketten en registers zit in hoe ze code distribueren en hoe eigendom wordt beheerd.
+
+## Pakketmodel
+
+Wanneer je componenten publiceert als een npm-pakket, distribueer je vooraf gebouwde, versiebeheerde code die gebruikers als afhankelijkheid installeren:
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+Dit biedt verschillende overtuigende voordelen die ze de juiste keuze maken voor veel componentbibliotheken.
+
+### Versiebeheer
+
+Als pakketbeheerder heb je controle over versionering en updates. Gebruikers kunnen zich vastzetten op specifieke versies, wat stabiliteit garandeert:
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+Deze gecentraliseerde versiecontrole betekent dat je updates, beveiligingspatches en nieuwe functies kunt uitrollen die gebruikers via standaard afhankelijkheidsupdates ontvangen.
+
+### Vereenvoudigde installatie
+
+NPM-pakketten bieden een frictieloze installatie-ervaring. Eén enkele opdracht voegt je complete componentbibliotheek toe:
+
+```bash
+npm install @acme/ui-components
+```
+
+Er is geen noodzaak om bestanden handmatig te kopiëren, afhankelijkheden te beheren of buildtools te configureren. Alles werkt direct out of the box.
+
+### Afhankelijkheden oplossen
+
+NPM handelt transitieve afhankelijkheden automatisch af. Als je componenten specifieke versies van React, Framer Motion of andere bibliotheken nodig hebben, lost npm deze afhankelijkheden automatisch op en voorkomt versieconflicten.
+
+### TypeScript-ondersteuning
+
+Gepubliceerde pakketten kunnen vooraf gebouwde type-definities bevatten, waardoor directe TypeScript-ondersteuning mogelijk is zonder extra configuratie:
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## Beperkingen van NPM-pakketten
+
+Hoewel npm-pakketten uitblinken in distributie, brengen ze trade-offs met zich mee die registers specifiek adresseren.
+
+### Eigendom van broncode
+
+De meest significante beperking is het gebrek aan toegang tot de broncode. Gebruikers kunnen niet:
+
+- De componentgedrag direct wijzigen
+- Bugs verhelpen zonder op updates te wachten
+- Implementatiedetails aanpassen
+- Ongebruikte code verwijderen
+
+Dit creëert een afhankelijkheidsrelatie waarbij gebruikers voor alle wijzigingen op de pakketbeheerder moeten vertrouwen.
+
+### Beperkingen bij aanpassing
+
+Het aanpassen van componenten vereist werken binnen de blootgestelde API. Hoewel je props kunt aanbieden voor aanpassing:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+kunnen gebruikers niet fundamenteel veranderen hoe de component werkt zonder het hele pakket te fork-en.
+
+### Bundlegrootte
+
+NPM-pakketten bevatten alle componenten, zelfs als gebruikers slechts een subset nodig hebben. Hoewel tree-shaking helpt, is het niet altijd perfect en kan het onnodig gewicht aan applicaties toevoegen.
+
+## CSS- en Tailwind-configuratie
+
+Een belangrijke overweging bij het publiceren van Tailwind-gebaseerde componenten via npm is ervoor te zorgen dat styles correct werken in de consumerende applicatie.
+
+Standaard genereert Tailwind alleen styles voor klassen die het in je projectbestanden vindt. Het kijkt niet in `node_modules`, wat betekent dat de styles van je component niet worden opgenomen.
+
+Om dit op te lossen, moeten gebruikers een `@source`-directive toevoegen aan hun Tailwind-configuratie, waarin aangegeven wordt dat je pakket gescand moet worden op class-namen:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+Documenteer deze vereiste altijd duidelijk in de README van je pakket.
+
+## Je componentbibliotheek publiceren
+
+Om je componenten naar npm te publiceren, heb je een correct geconfigureerd `package.json` nodig dat er bijvoorbeeld zo uit kan zien:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+NPM-pakketten blijven een vitaal onderdeel van het component-ecosysteem. Terwijl registers overtuigende voordelen bieden op het gebied van eigendom van broncode en aanpasbaarheid, bieden npm-pakketten stabiliteit, versiebeheer en gebruiksgemak die veel teams nodig hebben.
+
+Het belangrijkste is inzicht in de behoeften van je gebruikers en het kiezen van de distributiemethode die hen het beste dient. Soms betekent dat het aanbieden van beide opties en ontwikkelaars laten kiezen wat het beste werkt voor hun project.

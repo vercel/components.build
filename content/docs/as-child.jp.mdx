@@ -1,0 +1,319 @@
+---
+title: asChild
+description: コンポーネント内でカスタム要素をレンダリングするために `asChild` プロップを使用する方法。
+---
+
+`asChild` プロップは、モダンな React コンポーネントライブラリで広く使われている強力なパターンです。 [Radix UI](https://www.radix-ui.com/primitives/docs/guides/composition) によって普及し、[shadcn/ui](https://ui.shadcn.com) によって採用されたこのパターンにより、コンポーネントの機能を維持しつつ、デフォルトのマークアップをカスタム要素に置き換えることができます。
+
+## `asChild` の概要
+
+基本的に、`asChild` はコンポーネントのレンダリング方法を変更します。`true` に設定すると、デフォルトの DOM 要素をレンダリングする代わりに、コンポーネントはその props、behaviors、および event handlers を直下の子要素とマージします。
+
+### `asChild` を使わない場合
+
+```tsx
+<Dialog.Trigger>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+これは入れ子になった要素をレンダリングします:
+```html
+<button data-state="closed">
+  <button>Open Dialog</button>
+</button>
+```
+
+### `asChild` を使用した場合
+
+```tsx
+<Dialog.Trigger asChild>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+これは単一のマージされた要素をレンダリングします:
+```html
+<button data-state="closed">Open Dialog</button>
+```
+
+Dialog.Trigger の機能があなたのボタンに合成され、不必要なラッパー要素が排除されます。
+
+## 仕組み
+
+内部では、`asChild` は React のコンポジション機能を利用してコンポーネントをマージします:
+
+```tsx
+// Simplified implementation
+function Component({ asChild, children, ...props }) {
+  if (asChild) {
+    // Clone child and merge props
+    return React.cloneElement(children, {
+      ...props,
+      ...children.props,
+      // Merge event handlers
+      onClick: (e) => {
+        props.onClick?.(e);
+        children.props.onClick?.(e);
+      }
+    });
+  }
+
+  // Render default element
+  return <button {...props}>{children}</button>;
+}
+```
+
+コンポーネントは以下を行います:
+1. `asChild` が `true` かどうかを確認する
+2. 子要素をクローンする
+3. 親と子の両方の props をマージする
+4. イベントハンドラを結合する
+5. 拡張された子要素を返す
+
+## 主な利点
+
+### 1. セマンティックな HTML
+
+`asChild` により、ユースケースに最適な HTML 要素を使用できます:
+
+```tsx
+// Use a link for navigation
+<AlertDialog.Trigger asChild>
+  <a href="/delete">Delete Account</a>
+</AlertDialog.Trigger>
+
+// Use a custom button component
+<Tooltip.Trigger asChild>
+  <IconButton icon={<InfoIcon />} />
+</Tooltip.Trigger>
+```
+
+### 2. クリーンな DOM 構造
+
+従来のコンポジションでは、深くネストされた DOM 構造が生成されることがよくあります。`asChild` は不必要なラッパー要素（いわゆる「wrapper hell」）を排除します:
+
+```tsx
+// Without asChild: Nested wrappers
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger>
+      <button>
+        <span>Hover me</span>
+      </button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+
+// With asChild: Clean structure
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <button>Hover me</button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+```
+
+### 3. デザインシステムとの統合
+
+`asChild` により既存のデザインシステムのコンポーネントとシームレスに統合できます:
+
+```tsx
+import { Button } from '@/components/ui/button';
+
+<DropdownMenu.Trigger asChild>
+  <Button variant="outline" size="icon">
+    <MoreVertical className="h-4 w-4" />
+  </Button>
+</DropdownMenu.Trigger>
+```
+
+Button コンポーネントは変更なしで必要なドロップダウントリガーの振る舞いを受け取ります。
+
+### 4. コンポーネントの合成
+
+複数の振る舞いを単一の要素に合成できます:
+
+```tsx
+<Dialog.Trigger asChild>
+  <Tooltip.Trigger asChild>
+    <button>
+      Open dialog (with tooltip)
+    </button>
+  </Tooltip.Trigger>
+</Dialog.Trigger>
+```
+
+これにより、ダイアログを開き、ホバーでツールチップを表示するボタンが作られます。
+
+## よくあるユースケース
+
+### カスタムトリガー要素
+
+デフォルトのトリガーをカスタムコンポーネントに置き換えます:
+
+```tsx
+// Custom link trigger
+<Collapsible.Trigger asChild>
+  <a href="#" className="text-blue-600 underline">
+    Toggle Details
+  </a>
+</Collapsible.Trigger>
+
+// Icon-only trigger
+<Popover.Trigger asChild>
+  <IconButton>
+    <Settings className="h-4 w-4" />
+  </IconButton>
+</Popover.Trigger>
+```
+
+### アクセシブルなナビゲーション
+
+ナビゲーション要素の適切なセマンティクスを維持します:
+
+```tsx
+<NavigationMenu.Link asChild>
+  <Link href="/products" className="nav-link">
+    Products
+  </Link>
+</NavigationMenu.Link>
+```
+
+### フォーム統合
+
+機能を維持したままフォームライブラリと統合します:
+
+```tsx
+<FormField
+  control={form.control}
+  name="acceptTerms"
+  render={({ field }) => (
+    <FormItem>
+      <Checkbox.Root asChild>
+        <input
+          type="checkbox"
+          {...field}
+          className="sr-only"
+        />
+      </Checkbox.Root>
+    </FormItem>
+  )}
+/>
+```
+
+## ベストプラクティス
+
+### 1. アクセシビリティを維持する
+
+要素の型を変更する際は、アクセシビリティが維持されていることを確認してください:
+
+```tsx
+// ✅ Good - maintains button semantics
+<Dialog.Trigger asChild>
+  <button type="button">Open</button>
+</Dialog.Trigger>
+
+// ⚠️ Caution - ensure proper ARIA attributes
+<Dialog.Trigger asChild>
+  <div role="button" tabIndex={0}>Open</div>
+</Dialog.Trigger>
+```
+
+### 2. コンポーネント要件をドキュメント化する
+
+コンポーネントが `asChild` をサポートする場合は明確にドキュメント化してください:
+
+```tsx
+interface TriggerProps {
+  /**
+   * Change the default rendered element for the one passed as a child,
+   * merging their props and behavior.
+   *
+   * @default false
+   */
+  asChild?: boolean;
+  children: React.ReactNode;
+}
+```
+
+### 3. 子コンポーネントをテストする
+
+カスタムコンポーネントが `asChild` と正しく動作することを検証してください:
+
+```tsx
+// Test that props are properly forwarded
+const TestButton = (props) => {
+  console.log('Received props:', props);
+  return <button {...props} />;
+};
+
+<Tooltip.Trigger asChild>
+  <TestButton>Test</TestButton>
+</Tooltip.Trigger>
+```
+
+### 4. エッジケースを扱う
+
+条件付きレンダリングなどのエッジケースを考慮してください:
+
+```tsx
+// Handle conditional children
+<Dialog.Trigger asChild>
+  {isLoading ? (
+    <Skeleton className="h-10 w-20" />
+  ) : (
+    <Button>Open Dialog</Button>
+  )}
+</Dialog.Trigger>
+```
+
+## よくある落とし穴
+
+### Props をスプレッドしていない
+
+[Types](/docs/types) で説明されているように、常に props を基盤となる要素にスプレッドするべきです。
+
+```tsx
+// ❌ Won't receive trigger behavior
+const BadButton = ({ children }) => <button>{children}</button>;
+
+// ✅ Properly receives all props
+const GoodButton = ({ children, ...props }) => (
+  <button {...props}>{children}</button>
+);
+```
+
+### 複数の子要素
+
+`asChild` をサポートするコンポーネントに複数の子要素を渡さないでください。どの子要素を使用するか判別できずエラーになります。
+
+```tsx
+// ❌ Error - asChild expects single child
+<Trigger asChild>
+  <button>One</button>
+  <button>Two</button>
+</Trigger>
+
+// ✅ Single child element
+<Trigger asChild>
+  <button>Single Button</button>
+</Trigger>
+```
+
+### フラグメントの子要素
+
+`asChild` をサポートするコンポーネントにフラグメントを渡さないでください。フラグメントは有効な要素ではないためエラーになります。
+
+```tsx
+// ❌ Fragment is not a valid element
+<Trigger asChild>
+  <>Button</>
+</Trigger>
+
+// ✅ Actual element
+<Trigger asChild>
+  <button>Button</button>
+</Trigger>
+```

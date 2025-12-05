@@ -1,0 +1,185 @@
+---
+title: Typen
+description: Erweiterung der nativen HTML-Elemente des Browsers für maximale Anpassungsmöglichkeiten.
+---
+
+Beim Erstellen wiederverwendbarer Komponenten ist eine korrekte Typisierung entscheidend, um flexible, anpassbare und typensichere Schnittstellen zu schaffen. Wenn Sie etablierte Muster für Komponententypen befolgen, stellen Sie sicher, dass Ihre Komponenten sowohl leistungsfähig als auch einfach zu verwenden sind.
+
+## Umschließen eines einzelnen Elements
+
+Jede exportierte Komponente sollte idealerweise ein einzelnes HTML- oder JSX-Element umschließen. Dieses Prinzip ist grundlegend für die Erstellung komponierbarer, anpassbarer Komponenten.
+
+Wenn eine Komponente mehrere Elemente umschließt, wird es schwierig, bestimmte Teile zu individualisieren, ohne Props weiterzureichen oder komplexe APIs zu erstellen. Betrachten Sie dieses Anti-Pattern:
+
+```tsx title="@/components/ui/card.tsx"
+const Card = ({ title, description, footer, ...props }) => (
+  <div {...props}>
+    <div className="card-header">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div className="card-footer">
+      {footer}
+    </div>
+  </div>
+);
+```
+
+Wie wir in [Komposition](/composition) besprochen haben, erzeugt dieser Ansatz mehrere Probleme:
+- Sie können das Header-Styling nicht anpassen, ohne weitere Props hinzuzufügen
+- Sie können die HTML-Elemente für Titel und Beschreibung nicht steuern
+- Sie sind an eine bestimmte DOM-Struktur gebunden
+
+Stattdessen sollte jede Ebene ihre eigene Komponente sein. So können Sie jede Ebene unabhängig anpassen und die genauen HTML-Elemente für Titel und Beschreibung kontrollieren.
+
+Die Vorteile dieses Ansatzes sind:
+- **Maximale Anpassungsmöglichkeiten** - Benutzer können jede Ebene unabhängig stylen und ändern
+- **Kein Prop-Drilling** - Props gehen direkt an das Element, das sie benötigt
+- **Semantisches HTML** - Benutzer können die genaue DOM-Struktur sehen und steuern
+- **Bessere Zugänglichkeit** - Direkte Kontrolle über ARIA-Attribute und semantische Elemente
+- **Ein einfacheres mentales Modell** - Eine Komponente = ein Element
+
+## Erweiterung von HTML-Attributen
+
+Jede Komponente sollte die nativen HTML-Attribute des Elements, das sie umschließt, erweitern. So stellen Sie sicher, dass Benutzer volle Kontrolle über das zugrundeliegende HTML-Element haben.
+
+### Grundlegendes Muster
+
+```tsx
+export type CardRootProps = React.ComponentProps<'div'> & {
+  // Add your custom props here
+  variant?: 'default' | 'outlined';
+};
+
+export const CardRoot = ({ variant = 'default', ...props }: CardRootProps) => (
+  <div {...props} />
+);
+```
+
+### Gängige HTML-Attributtypen
+
+React stellt Typdefinitionen für alle HTML-Elemente bereit. Verwenden Sie den passenden Typ für Ihre Komponente:
+
+```tsx
+// For div elements
+type DivProps = React.ComponentProps<'div'>;
+
+// For button elements
+type ButtonProps = React.ComponentProps<'button'>;
+
+// For input elements
+type InputProps = React.ComponentProps<'input'>;
+
+// For form elements
+type FormProps = React.ComponentProps<'form'>;
+
+// For anchor elements
+type LinkProps = React.ComponentProps<'a'>;
+```
+
+### Umgang mit verschiedenen Elementtypen
+
+Wenn eine Komponente als verschiedene Elemente gerendert werden kann, verwenden Sie Generika oder Union-Typen:
+
+```tsx
+// Using discriminated unions
+export type ButtonProps =
+  | (React.ComponentProps<'button'> & { asChild?: false })
+  | (React.ComponentProps<'div'> & { asChild: true });
+
+// Or with a polymorphic approach
+export type PolymorphicProps<T extends React.ElementType> = {
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
+```
+
+### Erweiterung benutzerdefinierter Komponenten
+
+Wenn Sie eine bestehende Komponente erweitern, können Sie den Typ `ComponentProps` verwenden, um die Props der Komponente zu erhalten.
+
+```tsx title="@/components/ui/share-button.tsx"
+import type { ComponentProps } from 'react';
+
+export type ShareButtonProps = ComponentProps<'button'>;
+
+export const ShareButton = (props: ShareButtonProps) => (
+  <button {...props} />
+);
+```
+
+## Typen exportieren
+
+Exportieren Sie immer die Prop-Typen Ihrer Komponenten. Dadurch werden sie für Verwender in verschiedenen Anwendungsfällen zugänglich.
+
+Das Exportieren von Typen ermöglicht mehrere wichtige Muster:
+
+```tsx
+// 1. Extracting specific prop types
+import type { CardRootProps } from '@/components/ui/card';
+type variant = CardRootProps['variant'];
+
+// 2. Extending components
+export type ExtendedCardProps = CardRootProps & {
+  isLoading?: boolean;
+};
+
+// 3. Creating wrapper components
+const MyCard = (props: CardRootProps) => (
+  <CardRoot {...props} className={cn('my-custom-class', props.className)} />
+);
+
+// 4. Type-safe prop forwarding
+function useCardProps(): Partial<CardRootProps> {
+  return {
+    variant: 'outlined',
+    className: 'custom-card',
+  };
+}
+```
+
+Ihre exportierten Typen sollten `<ComponentName>Props` heißen. Dies ist eine Konvention, die anderen Entwicklern hilft, den Zweck des Typs zu verstehen.
+
+## Beste Vorgehensweisen
+
+### 1. Props immer zuletzt ausbreiten
+
+Stellen Sie sicher, dass Benutzer beliebige Standard-Props überschreiben können:
+
+```tsx
+// ✅ Good - user props override defaults
+<div className="default-class" {...props} />
+
+// ❌ Bad - defaults override user props
+<div {...props} className="default-class" />
+```
+
+### 2. Konflikte bei Prop-Namen vermeiden
+
+Verwenden Sie keine Prop-Namen, die mit HTML-Attributen in Konflikt stehen, es sei denn, Sie überschreiben dies bewusst:
+
+```tsx
+// ❌ Bad - conflicts with HTML title attribute
+export type CardProps = React.ComponentProps<'div'> & {
+  title: string; // This conflicts with the HTML title attribute
+};
+
+// ✅ Good - use a different name
+export type CardProps = React.ComponentProps<'div'> & {
+  heading: string;
+};
+```
+
+### 3. Benutzerdefinierte Props dokumentieren
+
+Fügen Sie JSDoc-Kommentare zu benutzerdefinierten Props hinzu, um die Entwicklererfahrung zu verbessern:
+
+```tsx
+export type DialogProps = React.ComponentProps<'div'> & {
+  /** Whether the dialog is currently open */
+  open: boolean;
+  /** Callback when the dialog requests to be closed */
+  onOpenChange: (open: boolean) => void;
+  /** Whether to render the dialog in a portal */
+  modal?: boolean;
+};
+```

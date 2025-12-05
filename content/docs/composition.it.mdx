@@ -1,0 +1,233 @@
+---
+title: Composizione
+description: Le basi per costruire componenti UI moderni.
+---
+
+La composizione, o componibilità, è la base per costruire componenti UI moderni. È una delle tecniche più potenti per creare componenti flessibili e riutilizzabili in grado di gestire requisiti complessi senza sacrificare la chiarezza dell'API.
+
+Invece di concentrare tutta la funzionalità in un unico componente con dozzine di props, la composizione distribuisce le responsabilità su più componenti che cooperano.
+
+Fernando ha tenuto un ottimo intervento su questo argomento al React Universe Conf 2025, dove ha condiviso il suo approccio per ricostruire il Message Composer di Slack come componente componibile.
+
+<Video src="https://www.youtube.com/watch?v=4KvbVq3Eg5w" />
+
+## Rendere un componente componibile
+
+Per rendere un componente componibile, è necessario suddividerlo in componenti più piccoli e con un focus più preciso. Per esempio, prendiamo questo componente Accordion:
+
+```tsx title="accordion.tsx"
+import { Accordion } from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion data={data} />
+);
+```
+
+Anche se questo componente Accordion può sembrare semplice, sta gestendo troppe responsabilità. Si occupa del rendering del container, del trigger e del contenuto; oltre a gestire lo stato dell'accordion e i dati.
+
+Personalizzare lo stile di questo componente è difficile perché è fortemente accoppiato. Probabilmente richiede override di CSS globali. Inoltre, aggiungere nuova funzionalità o modificare il comportamento richiede di modificare il codice sorgente del componente.
+
+Per risolvere questo, possiamo suddividerlo in componenti più piccoli e con un focus mirato.
+
+### 1. Componente Root
+
+Innanzitutto, concentriamoci sul container - il componente che tiene tutto insieme, cioè il trigger e il content. Questo container non ha bisogno di conoscere i dati, ma deve tenere traccia dello stato open.
+
+Tuttavia, vogliamo anche che questo stato sia accessibile dai componenti figli. Quindi, utilizziamo la Context API per creare un contesto per lo stato open.
+
+Infine, per permettere la modifica dell'elemento `div`, estenderemo gli attributi HTML predefiniti.
+
+Chiameremo questo componente "Root".
+
+```tsx title="@/components/ui/accordion.tsx"
+type AccordionProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+const AccordionContext = createContext<AccordionProps>({
+  open: false,
+  setOpen: () => {},
+});
+
+export type AccordionRootProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export const Root = ({
+  children,
+  open,
+  setOpen,
+  ...props
+}: AccordionRootProps) => (
+  <AccordionContext.Provider value={{ open, setOpen }}>
+    <div {...props}>{children}</div>
+  </AccordionContext.Provider>
+);
+```
+
+### 2. Componente Item
+
+Il componente Item è l'elemento che contiene l'item dell'accordion. È semplicemente un wrapper per ogni voce dell'accordion.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionItemProps = React.ComponentProps<'div'>;
+
+export const Item = (props: AccordionItemProps) => <div {...props} />;
+```
+
+### 3. Componente Trigger
+
+Il componente Trigger è l'elemento che apre l'accordion quando viene attivato. Si occupa di:
+
+- Effettuare il rendering come pulsante per impostazione predefinita (può essere personalizzato con `asChild`)
+- Gestire gli eventi di clic per aprire l'accordion
+- Gestire il focus quando l'accordion si chiude
+- Fornire i corretti attributi ARIA
+
+Aggiungiamo questo componente al nostro componente Accordion.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionTriggerProps = React.ComponentProps<'button'> & {
+  asChild?: boolean;
+};
+
+export const Trigger = ({ asChild, ...props }: AccordionTriggerProps) => (
+  <AccordionContext.Consumer>
+    {({ open, setOpen }) => (
+      <button onClick={() => setOpen(!open)} {...props} />
+    )}
+  </AccordionContext.Consumer>
+);
+```
+
+### 4. Componente Content
+
+Il componente Content è l'elemento che contiene il contenuto dell'accordion. Si occupa di:
+
+- Effettuare il rendering del contenuto quando l'accordion è aperto
+- Fornire i corretti attributi ARIA
+
+Aggiungiamo questo componente al nostro componente Accordion.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionContentProps = React.ComponentProps<'div'> & {
+  asChild?: boolean;
+};
+
+export const Content = ({ asChild, ...props }: AccordionContentProps) => (
+  <AccordionContext.Consumer>
+    {({ open }) => <div {...props} />}
+  </AccordionContext.Consumer>
+);
+```
+
+### 5. Mettere il tutto insieme
+
+Ora che abbiamo tutti i componenti, possiamo metterli insieme nel nostro file originale.
+
+```tsx title="accordion.tsx"
+import * as Accordion from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion.Root open={false} setOpen={() => {}}>
+    {data.map((item) => (
+      <Accordion.Item key={item.title}>
+        <Accordion.Trigger>{item.title}</Accordion.Trigger>
+        <Accordion.Content>{item.content}</Accordion.Content>
+      </Accordion.Item>
+    ))}
+  </Accordion.Root>
+);
+```
+
+## Convenzioni di denominazione
+
+Quando si costruiscono componenti componibili, convenzioni di denominazione coerenti sono fondamentali per creare API intuitive e prevedibili. Sia shadcn/ui sia Radix UI seguono pattern consolidati che sono diventati lo standard de facto nell'ecosistema React.
+
+### Componenti Root
+
+Il componente `Root` funge da contenitore principale che avvolge tutti gli altri sotto-componenti. Tipicamente gestisce lo stato condiviso e il contesto fornendo un context a tutti i componenti figli.
+
+```tsx
+<AccordionRoot>{/* Child components */}</AccordionRoot>
+```
+
+### Elementi interattivi
+
+I componenti interattivi che innescano azioni o commutano stati usano nomi descrittivi:
+
+- `Trigger` - L'elemento che avvia un'azione (apertura, chiusura, alternanza)
+- `Content` - L'elemento che contiene il contenuto principale mostrato/nascosto
+
+```tsx
+<CollapsibleTrigger>Click to expand</CollapsibleTrigger>
+<CollapsibleContent>
+  Hidden content revealed here
+</CollapsibleContent>
+```
+
+### Struttura del contenuto
+
+Per componenti con aree di contenuto strutturate, usa nomi semantici che descrivano il loro scopo:
+
+- `Header` - Sezione superiore contenente titoli o controlli
+- `Body` - Area principale del contenuto
+- `Footer` - Sezione inferiore per azioni o metadata
+
+```tsx
+<DialogHeader>
+  {/* Dialog title */}
+</DialogHeader>
+<DialogBody>
+  {/* Dialog content */}
+</DialogBody>
+<DialogFooter>
+  {/* Dialog footer */}
+</DialogFooter>
+```
+
+### Componenti informativi
+
+I componenti che forniscono informazioni o contesto usano suffissi descrittivi:
+
+- `Title` - Intestazione primaria o etichetta
+- `Description` - Testo di supporto o contenuto esplicativo
+
+```tsx
+<CardTitle>Project Statistics</CardTitle>
+<CardDescription>
+  View your project's performance over time
+</CardDescription>
+```

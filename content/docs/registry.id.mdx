@@ -1,0 +1,163 @@
+---
+title: Registri
+description: Pahami konsep registri komponen, cara kerjanya, dan mengapa pendekatan ini merevolusi cara pengembang berbagi dan menemukan komponen UI.
+---
+
+Registri komponen adalah cara untuk berbagi dan menemukan komponen UI. Dipopulerkan oleh [shadcn/ui](https://ui.shadcn.com), registri memungkinkan Anda menemukan dan menyalin komponen langsung ke proyek Anda.
+
+Registri mewakili pergeseran mendasar dalam cara pengembang berbagi dan menemukan komponen UI. Berbeda dengan paket npm tradisional, registri mengandalkan model sumber terbuka dan bekerja melalui pengunduhan kode sumber ke proyek Anda.
+
+## Apa yang Membuat Registri?
+
+### 1. Distribusi Kode Sumber
+
+Berbeda dengan paket npm yang mendistribusikan kode yang sudah dikompilasi, registri mendistribusikan kode sumber:
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. Metadata dan Konfigurasi
+
+Registri yang baik menyertakan metadata kaya tentang komponen seperti nama, deskripsi, dependensi, dan kategori.
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. Pratinjau dan Dokumentasi
+
+Meskipun tidak diunduh, situs web registri biasanya menyediakan:
+
+- Pratinjau komponen secara langsung
+- Contoh interaktif
+- Dokumentasi terperinci
+- Cuplikan kode siap untuk disalin
+
+## Manfaat Arsitektur Registri
+
+Registri komponen menawarkan keuntungan signifikan bagi penulis dan pengguna, menyederhanakan proses berbagi dan mengadopsi komponen UI.
+
+### Untuk Penulis
+
+Bagi penulis komponen, registri membuat distribusi menjadi sangat sederhana. Setelah komponen dibuat, komponen tersebut dapat ditambahkan ke registri, sehingga langsung dapat diakses oleh pengguna tanpa perlu langkah penerbitan yang kompleks. Kemudahan distribusi ini mempercepat siklus umpan balik dan mendorong iterasi cepat.
+
+Kontrol versi adalah manfaat kunci lainnya. Registri biasanya melacak versi komponen, catatan perubahan, dan informasi kompatibilitas. Misalnya, entri komponen mungkin menentukan versi saat ini, menyoroti perubahan terbaru seperti peningkatan aksesibilitas atau fitur baru, dan menunjukkan versi shadcn/ui yang didukung. Transparansi ini membantu pemelihara mengomunikasikan pembaruan dan memastikan pengguna dapat memilih komponen yang sesuai dengan kebutuhan proyek mereka.
+
+Keterlibatan komunitas juga meningkat melalui registri. Penulis dapat menerima umpan balik langsung dari pengguna, yang dapat melaporkan masalah, meminta fitur, dan berkontribusi pada perbaikan kolaboratif. Hal ini mendorong lingkungan pengembangan yang lebih interaktif dan responsif, menguntungkan pencipta maupun konsumen.
+
+### Untuk Pengguna
+
+Dari perspektif pengguna komponen, registri sangat meningkatkan proses penemuan. Pengguna dapat menjelajah komponen berdasarkan kategori, menggunakan fungsi pencarian, melihat metrik popularitas, dan mengeksplorasi komponen terkait, sehingga lebih mudah menemukan apa yang mereka butuhkan untuk proyek mereka.
+
+Sebelum mengintegrasikan sebuah komponen, pengguna dapat mempratinjaunya secara langsung, mencoba berbagai varian, dan meninjau perilaku serta kualitas kodenya. Kemampuan untuk mengevaluasi komponen sebelumnya mengurangi risiko dan meningkatkan kepercayaan dalam pengadopsian.
+
+Mungkin yang paling penting, registri memberi pengguna kepemilikan sejati. Alih-alih terikat pada sebuah dependensi, pengguna menyalin kode sumber langsung ke proyek mereka. Ini berarti mereka dapat memodifikasi komponen sesuai kebutuhan, menghindari masalah manajemen dependensi, dan mempertahankan kendali penuh atas basis kode mereka.
+
+## Membuat Registri
+
+Anda bisa membuat registri sederhana dengan cepat. Secara praktis, Anda hanya membutuhkan 3 elemen inti:
+
+### 1. Komponen
+
+Buat sebuah komponen, atau serangkaian komponen, yang ingin Anda bagikan. Pastikan Anda memiliki kode sumber untuk komponen tersebut, serta dokumentasi yang baik dan mudah dipahami.
+
+Pertimbangkan menambahkan hal-hal seperti dokumentasi Markdown, implementasi contoh, dan cara untuk mempratinjau komponen.
+
+### 2. Sebuah endpoint publik
+
+Buat endpoint publik yang menyajikan komponen-komponen tersebut. Ini bisa berupa berkas JSON sederhana, atau situs web yang lebih kompleks. Selama bersifat publik dan dapat diakses, Anda dapat menggunakan endpoint apa pun yang Anda inginkan.
+
+### 3. CLI
+
+Buat sebuah CLI yang memungkinkan Anda menginstal komponen ke dalam proyek Anda. Ini bisa sesederhana satu perintah, seperti `npx myregistry add button`, atau perintah yang lebih kompleks dengan opsi dan flag.
+
+## Menggunakan Registri shadcn
+
+Membangun registri Anda sendiri adalah cara yang fantastis untuk membagikan komponen Anda dengan komunitas, tetapi membutuhkan banyak usaha dan pemeliharaan. Jika Anda hanya ingin membagikan satu atau dua komponen, Anda dapat menggunakan ekosistem shadcn/ui — registri, CLI, dan variables.
+
+Mari kita lihat bagaimana kita dapat menerbitkan komponen `MetricCard` langsung dalam kurang dari 5 menit menggunakan hosting statis [Vercel](https://vercel.com).
+
+### Langkah 1: Buat Folder
+
+Buat sebuah folder dengan struktur ini:
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+Letakkan JSON item registri Anda (mis. `metric-card.json`) di folder `public/`.
+
+### Langkah 2: Tambahkan `vercel.json`
+
+Buat berkas `vercel.json` di samping `public/` dengan isi berikut:
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Ini memastikan JSON Anda disajikan dengan header CORS dan konten yang benar.
+
+### Langkah 3: Deploy ke Vercel
+
+Dari root folder Anda, jalankan:
+
+```bash
+vercel --prod
+```
+
+dan jawab prompt untuk menerapkan proyek Anda.
+
+Saat selesai, berkas Anda akan tersedia secara langsung di alamat seperti:
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### Langkah 4: Pasang Komponen
+
+Siapa pun kini dapat menjalankan:
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+Tanpa paket npm, tanpa langkah build, tanpa kompleksitas.

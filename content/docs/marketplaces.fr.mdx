@@ -1,0 +1,137 @@
+---
+title: Places de marché
+description: Utiliser des places de marché de composants pour partager vos composants.
+---
+
+Les places de marché de composants représentent un autre nouveau paradigme dans la façon dont les développeurs partagent et découvrent des composants UI. Des plateformes comme [21st.dev](https://21st.dev) ont émergé en tant que centres centralisés où les créateurs peuvent publier des composants et les consommateurs peuvent les découvrir, les prévisualiser et les installer de manière transparente.
+
+Ces places de marché combinent l'accessibilité des registres avec la découvrabilité des dépôts de paquets traditionnels, créant des écosystèmes dynamiques pour le partage de composants.
+
+## Comment fonctionnent les places de marché
+
+Lorsque vous publiez sur une place de marché, la plateforme :
+
+1. **Héberge le code de votre composant** - Pas besoin de gérer votre propre infrastructure
+2. **Fournit un CLI unifié** - Les utilisateurs installent les composants via l'outil de la place de marché
+3. **Génère des aperçus** - Des démos en direct et des exemples interactifs sont créés automatiquement
+4. **Gère la découverte** - La recherche, les catégories et les recommandations mettent en avant les composants pertinents
+
+Par exemple, l'installation depuis 21st.dev utilise le modèle familier du CLI shadcn :
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/haydenbleasel/dialog-stack
+```
+
+La place de marché s'occupe de fournir les métadonnées et le code source du composant, rendant le processus d'installation fluide.
+
+## Avantages des places de marché de composants
+
+Les places de marché offrent des avantages uniques que ni les registres ni les npm packages ne peuvent égaler seuls.
+
+### Pour les auteurs de composants
+
+#### Distribution sans infrastructure
+
+Publier sur une place de marché élimine les soucis d'infrastructure. Vous n'avez pas besoin de configurer l'hébergement de vos composants ni de gérer la distribution via CDN.
+
+La place de marché gère tout cela, vous permettant de vous concentrer sur la création de composants de qualité.
+
+#### Audience intégrée
+
+Les places de marché agrègent la demande. Lorsque les développeurs visitent 21st.dev ou des plateformes similaires, ils recherchent activement des composants. Votre travail est découvert de manière organique via la recherche, les catégories et les recommandations.
+
+Ce trafic intégré signifie que vous n'avez pas besoin de promouvoir vos composants indépendamment.
+
+#### Opportunités de monétisation
+
+Certaines places de marché permettent aux créateurs de monétiser leur travail via des niveaux de composants premium, des programmes de sponsoring, une tarification basée sur l'utilisation et des modèles d'achat unique.
+
+Cela crée des incitations durables pour maintenir des composants de haute qualité.
+
+#### Retour de la communauté
+
+Les places de marché incluent généralement des systèmes de notation, des sections de commentaires, des analyses d'utilisation et un suivi des problèmes.
+
+Cette boucle de rétroaction vous aide à comprendre comment les développeurs utilisent vos composants et quelles améliorations sont nécessaires.
+
+### Pour les consommateurs de composants
+
+#### Découverte organisée
+
+Contrairement à la recherche sur GitHub ou npm, les places de marché offrent des expériences organisées :
+
+```
+Browse by category:
+├── Marketing
+│   ├── Heroes
+│   ├── Pricing
+│   └── Testimonials
+├── Application
+│   ├── Dashboards
+│   ├── Forms
+│   └── Data Display
+└── E-commerce
+    ├── Product Cards
+    ├── Cart
+    └── Checkout
+```
+
+Cette organisation rend la recherche du composant adapté nettement plus rapide.
+
+#### Assurance qualité
+
+De nombreuses places de marché mettent en place des processus de revue. Les composants peuvent passer par des vérifications de qualité du code, des audits d'accessibilité, des tests de performance et des relectures de documentation.
+
+Cette curation garantit un niveau de qualité de base que les composants auto-publiés pourraient ne pas atteindre.
+
+#### Outils unifiés
+
+L'utilisation d'un seul CLI pour tous les composants de la place de marché simplifie le flux de travail. Vous pouvez installer n'importe quel composant de la place de marché en utilisant la même commande :
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/<author>/<component>
+```
+
+## Défis des places de marché
+
+Bien que les places de marché offrent des avantages convaincants, elles introduisent aussi des défis spécifiques.
+
+### Pour les auteurs
+
+#### Concurrence et visibilité
+
+Dans une place de marché saturée, se démarquer devient difficile. Vous êtes en concurrence avec des centaines de composants similaires, des créateurs établis ayant des abonnés, du contenu mis en avant ou sponsorisé, et des recommandations pilotées par des algorithmes.
+
+Le succès exige plus que du bon code : il faut des aperçus convaincants, une excellente documentation et souvent une promotion active.
+
+#### Dépendance à la plateforme
+
+Publier sur une place de marché signifie accepter leurs conditions de service, leurs modèles de partage des revenus, leurs exigences techniques et leurs processus de revue.
+
+Si la plateforme change ses politiques ou ferme, votre canal de distribution disparaît.
+
+#### Pression sur la qualité
+
+Les utilisateurs des places de marché attendent des composants polis et prêts pour la production. Cela implique une documentation complète, plusieurs variantes de démonstration, un design responsive, des tests cross-browser et la conformité à l'accessibilité.
+
+Répondre à ces attentes demande un investissement en temps important, au-delà de l'écriture du code du composant.
+
+### Pour les consommateurs
+
+#### Qualité variable
+
+Malgré les processus de revue, la qualité des places de marché varie énormément. Vous pouvez tomber sur des composants abandonnés avec des dépendances obsolètes, du code mal documenté, des composants qui fonctionnent en démonstration mais cassent en production, et des styles de codage incohérents entre différents auteurs.
+
+Une diligence raisonnable reste nécessaire lors du choix des composants.
+
+#### Risques de verrouillage
+
+Bien que les places de marché utilisent des outils standard comme le CLI shadcn, elles peuvent introduire des formats de métadonnées propriétaires, des exigences de configuration personnalisées et des dépendances spécifiques à la plateforme.
+
+Cela peut rendre la migration hors de la place de marché difficile.
+
+#### Paradoxe de la découverte
+
+Trop de choix peut paralyser. Lorsqu'on cherche un composant bouton, trouver 200 options n'aide pas forcément. Il faut évaluer plusieurs composants similaires, comparer des différences subtiles, apprécier la maintenabilité à long terme et considérer la réputation de l'auteur.
+
+Ce processus d'évaluation peut prendre plus de temps que de créer le composant soi-même.

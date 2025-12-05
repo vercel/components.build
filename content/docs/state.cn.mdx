@@ -1,0 +1,88 @@
+---
+title: 状态
+description: 如何在组件中管理状态，以及合并受控和非受控状态。
+---
+
+构建在可控与非受控模式下都能工作的灵活组件，是专业组件的标志。
+
+## 非受控状态
+
+非受控状态是指组件在内部管理自己的状态。这是大多数组件的默认使用模式。
+
+例如，这里有一个简单的 `Stepper` 组件，它在内部管理自己的状态：
+
+```tsx title="stepper.tsx"
+import { useState } from 'react';
+
+export const Stepper = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+};
+```
+
+## 受控状态
+
+受控状态是指组件的状态由父组件管理。我们不在内部跟踪状态，而是将此责任委托给父组件。
+
+让我们将 `Stepper` 组件重构为由父组件控制：
+
+```tsx title="stepper.tsx"
+type StepperProps = {
+  value: number;
+  setValue: (value: number) => void;
+};
+
+export const Stepper = ({ value, setValue }: StepperProps) => (
+  <div>
+    <p>{value}</p>
+    <button onClick={() => setValue(value + 1)}>Increment</button>
+  </div>
+);
+```
+
+## 合并状态
+
+优秀的组件同时支持受控和非受控状态。这使组件能够在各种场景下使用并且易于定制。
+
+[Radix UI](https://www.radix-ui.com/) 维护一个用于合并可控和非受控状态的内部工具，名为 [`use-controllable-state`](https://github.com/radix-ui/primitives/tree/main/packages/react/use-controllable-state)。虽然不打算公开使用，但像 [Kibo UI](https://www.kibo-ui.com) 这样的实现已经采用了该工具来构建它们自己的类 Radix 组件。
+
+让我们安装这个 hook：
+
+```package-install
+npm install @radix-ui/react-use-controllable-state
+```
+
+这个轻量级的 hook 为你提供了 Radix UI 组件库内部使用的相同状态管理模式，确保你的组件在行为上与行业标准保持一致。
+
+该 hook 接受三个主要参数，并返回一个包含当前值和设置函数的元组。让我们使用它来合并 `Stepper` 组件的受控与非受控状态：
+
+```tsx title="stepper.tsx"
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+
+type StepperProps = {
+  value: number;
+  defaultValue: number;
+  onValueChange: (value: number) => void;
+};
+
+export const Stepper = ({ value: controlledValue, defaultValue, onValueChange }: StepperProps) => {
+  const [value, setValue] = useControllableState({
+    prop: controlledValue,        // The controlled value prop
+    defaultProp: defaultValue,    // Default value for uncontrolled mode
+    onChange: onValueChange,      // Called when value changes
+  });
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+}
+```

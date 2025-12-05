@@ -1,0 +1,137 @@
+---
+title: Komponens-piacterek
+description: Komponens-piacterek használata komponensek megosztásához.
+---
+
+A komponens-piacterek egy új paradigma a fejlesztők számára a UI-komponensek megosztásában és felfedezésében. Olyan platformok, mint a [21st.dev](https://21st.dev) központosított központokká váltak, ahol készítők publikálhatják a komponenseiket, a fogyasztók pedig zökkenőmentesen felfedezhetik, előnézhetik és telepíthetik azokat.
+
+Ezek a piacterek ötvözik a regiszterek hozzáférhetőségét a hagyományos csomagtárak felfedezhetőségével, élénk ökoszisztémákat teremtve a komponensek megosztásához.
+
+## Hogyan működnek a piacterek
+
+Amikor egy piactérre publikálsz, a platform jellemzően:
+
+1. **A komponensed kódját tárolja** - Nem kell saját infrastruktúrát kezelned
+2. **Egységes CLI-t biztosít** - A felhasználók a piactér eszközeivel telepítik a komponenseket
+3. **Előnézeteket generál** - Élő demók és interaktív példák jönnek létre automatikusan
+4. **Kezeli a felfedezést** - Keresés, kategóriák és ajánlások segítik a releváns komponensek felbukkanását
+
+Például a 21st.dev-ről történő telepítés a megszokott shadcn CLI mintát használja:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/haydenbleasel/dialog-stack
+```
+
+A piactér kezeli a komponens metaadatainak és forráskódjának kiszolgálását, így a telepítési folyamat zökkenőmentes.
+
+## A komponens-piacterek előnyei
+
+A piacterek olyan egyedi előnyöket kínálnak, amelyeket a regiszterek vagy az npm csomagok önmagukban nem képesek nyújtani.
+
+### A komponens szerzők számára
+
+#### Terjesztés infrastruktúra nélkül
+
+A piactérre való publikálás megszünteti az infrastruktúrával kapcsolatos aggodalmakat. Nem kell tárhelyet beállítanod a komponenseidnek, vagy CDN-disztribúciót menedzselned.
+
+A piactér mindezt kezeli, így te a nagyszerű komponensek létrehozására koncentrálhatsz.
+
+#### Beépített közönség
+
+A piacterek összegyűjtik a keresletet. Amikor fejlesztők ellátogatnak a 21st.dev-re vagy hasonló platformokra, aktívan komponenseket keresnek. Munkád organikusan fedezhető fel a keresésen, kategóriákon és ajánlásokon keresztül.
+
+Ez a beépített forgalom azt jelenti, hogy nem kell külön marketinget folytatnod a komponenseidhez.
+
+#### Monetizációs lehetőségek
+
+Néhány piactér lehetővé teszi a készítők számára a bevételszerzést prémium komponensszintek, szponzorációs programok, használatalapú árazás és egyszeri vásárlási modellek révén.
+
+Ez fenntartható ösztönzést teremt a magas minőségű komponensek karbantartásához.
+
+#### Közösségi visszajelzés
+
+A piacterek általában tartalmaznak értékelő rendszereket, hozzászólás-szekciókat, használati analitikát és hibakezelést.
+
+Ez a visszacsatolási kör segít megérteni, hogyan használják a fejlesztők a komponenseidet, és milyen fejlesztésekre van szükség.
+
+### A komponenseket használók számára
+
+#### Kurált felfedezés
+
+A GitHubon vagy az npm-en való keresés helyett a piacterek kurált élményt kínálnak:
+
+```
+Browse by category:
+├── Marketing
+│   ├── Heroes
+│   ├── Pricing
+│   └── Testimonials
+├── Application
+│   ├── Dashboards
+│   ├── Forms
+│   └── Data Display
+└── E-commerce
+    ├── Product Cards
+    ├── Cart
+    └── Checkout
+```
+
+Ez a szervezés jelentősen felgyorsítja a megfelelő komponens megtalálását.
+
+#### Minőségbiztosítás
+
+Sok piactér bevezet áttekintési folyamatokat. A komponensek átmehetnek kódkvalitás-ellenőrzésen, akadálymentességi auditon, teljesítményteszteken és dokumentációs értékelésen.
+
+Ez a kuráció biztosít egy alapminőséget, ami hiányozhat az önállóan publikált komponensekből.
+
+#### Egységes eszközök
+
+Az összes piactéri komponensre kiterjedő egyetlen CLI használata egyszerűsíti a munkafolyamatot. Ugyanazzal a parancssal telepíthetsz bármely komponest a piactérről:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/<author>/<component>
+```
+
+## A piacterek kihívásai
+
+Bár a piacterek vonzó előnyöket kínálnak, egyedi kihívásokat is bevezetnek.
+
+### Szerzőknek
+
+#### Verseny és láthatóság
+
+Egy zsúfolt piactéren nehéz kitűnni. Százával versenyzel hasonló komponensekkel, ismert készítőkkel, kiemelt vagy szponzorált tartalommal és algoritmusok által vezérelt ajánlásokkal.
+
+A siker több kelléket igényel, mint pusztán jó kód — vonzó előnézetekre, kiváló dokumentációra és gyakran aktív népszerűsítésre is szükség van.
+
+#### Platformfüggőség
+
+A piactérre való publikálás azt jelenti, hogy elfogadod a szolgáltatás feltételeit, a bevételmegosztási modelleket, a technikai követelményeket és az értékelési folyamatokat.
+
+Ha a platform megváltoztatja a szabályait vagy megszűnik, a terjesztési csatornád eltűnik.
+
+#### Minőség miatti nyomás
+
+A piactér felhasználói polírozott, éles környezetbe szánt komponenseket várnak el. Ez átfogó dokumentációt, több demo variációt, reszponzív dizájnt, böngészőközi tesztelést és akadálymentességi megfelelőséget jelent.
+
+Ezek teljesítése jelentős időbefektetést igényel a komponenskód megírásán túl.
+
+### Fogyasztóknak
+
+#### Változó minőség
+
+Az ellenőrzési folyamatok ellenére a piactéri minőség erősen hullámzó lehet. Találkozhatsz elhagyott komponensekkel, elavult függőségekkel, gyengén dokumentált kóddal, demo környezetben működő, de élesben törő komponensekkel, valamint szerzőnként eltérő kódolási stílussal.
+
+A komponens kiválasztásakor továbbra is körültekintés szükséges.
+
+#### Elköteleződés miatti aggodalmak
+
+Bár a piacterek szabványos eszközöket használnak, mint a shadcn CLI, bevezethetnek proprietáris metaadat-formátumokat, egyedi konfigurációs követelményeket és platformspecifikus függőségeket.
+
+Ez megnehezítheti a piactértől való elvándorlást.
+
+#### Felfedezési paradoxon
+
+A túl sok választás bénító lehet. Egy gomb komponens keresésekor a 200 opció megtalálása nem feltétlenül segít. Több hasonló komponenst kell értékelned, összehasonlítanod a finom különbségeket, felmérned a hosszú távú fenntarthatóságot, és figyelembe venned a szerző jó hírnevét.
+
+Ez az értékelési folyamat tovább tarthat, mint maga a komponens elkészítése.

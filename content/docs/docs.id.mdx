@@ -1,0 +1,140 @@
+---
+title: Dokumentasi
+description: Cara mendokumentasikan komponen Anda.
+---
+
+Dokumentasi yang baik sangat penting untuk membuat komponen Anda dapat diakses dan mudah digunakan. Panduan ini menguraikan elemen kunci yang harus disertakan setiap halaman dokumentasi komponen.
+
+## Kerangka Dokumentasi
+
+Untuk menskalakan dokumentasi Anda, Anda dapat menggunakan sebuah kerangka dokumentasi. Ada banyak opsi yang tersedia tergantung pada bahasa proyek dan kebutuhan proyek Anda. Opsi populer meliputi:
+
+- [Fumadocs](https://fumadocs.dev/) - Kerangka dokumentasi cepat dan kaya fitur untuk Next.js
+- [Nextra](https://nextra.site/) - Dokumentasi berbasis Markdown dengan pencarian dan theming bawaan
+- [Content Collections](https://content-collections.dev/) - Manajemen konten yang aman-jenis untuk dokumentasi
+- [Docusaurus](https://docusaurus.io/) - Situs dokumentasi kaya fitur dengan dukungan versioning
+- [VitePress](https://vitepress.dev/) - Generator situs statis berbasis Vue yang dioptimalkan untuk dokumentasi
+
+Sebaiknya, pilihan kerangka Anda mendukung penyorotan sintaks, komponen kustom dan secara umum dirancang dengan baik.
+
+## Bagian Dokumentasi Penting
+
+### Ringkasan
+
+Mulailah dengan pengantar singkat yang menjelaskan apa yang dilakukan komponen dan kapan menggunakannya.
+
+### Demo, Kode Sumber, dan Pratinjau
+
+Untuk kesan pertama yang baik bagi pengembang, Anda harus menyertakan demo yang menampilkan komponen dalam aksi, serta kode yang digunakan untuk membuat demo tersebut.
+
+Jika Anda menggunakan [Registri](/registry) sumber terbuka, Anda juga dapat menyertakan pratinjau kode sumber yang digunakan untuk membuat komponen.
+
+Gunakan blok kode dengan penyorotan sintaks dan fungsi salin-ke-clipboard. Pertimbangkan menggunakan antarmuka ber-tab untuk beralih di antara tampilan ini tanpa membuat halaman berantakan.
+
+### Instalasi
+
+Sertakan instruksi yang jelas tentang cara menginstal komponen. Sebaiknya ini berupa satu perintah yang dapat Anda salin dan tempel ke terminal.
+
+Jika Anda membangun di atas shadcn/ui, Anda dapat menggunakan [shadcn CLI](https://ui.shadcn.com/docs/cli) untuk menginstal komponen, mis. 
+
+```package-install
+npx shadcn@latest add <your-component-url>
+```
+
+Jika Anda menerbitkan ke sebuah [Pasar](/marketplaces), Anda dapat menggunakan CLI marketplace tersebut untuk menginstal komponen, mis.
+
+```package-install
+npx shadcn@latest add https://21st.dev/r/<your-author>/<your-component>
+```
+
+Jika Anda tidak menggunakan shadcn/ui tetapi Anda sedang membangun sebuah [Registri](/registry), Anda bisa membuat CLI Anda sendiri untuk menginstal komponen, mis.
+
+```package-install
+npx your-registry-cli@latest add <your-component-url>
+```
+
+Terakhir, jika Anda menerbitkan ke npm, Anda dapat menggunakan CLI npm untuk menginstal komponen, mis.
+
+```package-install
+npm install <your-component-name>
+```
+
+<Callout>
+Untuk menampilkan beberapa opsi instalasi seperti yang kami lakukan di atas, Anda dapat menggunakan sesuatu seperti sintaks [`package-install`](https://fumadocs.dev/docs/headless/mdx/install) milik Fumadocs.
+</Callout>
+
+### Fitur
+
+Daftarkan fitur utama komponen Anda untuk membantu pengguna memahami kemampuan dan keuntungannya dengan cepat. Misalnya:
+
+- **Dapat Disesuaikan** – Mudah menyesuaikan gaya, ukuran, dan perilaku agar sesuai kebutuhan Anda.
+- **Dapat diakses secara default** – Mengikuti praktik terbaik untuk navigasi keyboard, peran ARIA, dan dukungan pembaca layar.
+- **Komposabel** – Dirancang untuk bekerja mulus dengan komponen dan pola lain.
+- **Bertipe aman** – Disertai definisi tipe TypeScript yang komprehensif untuk keamanan maksimum dan pelengkapan otomatis.
+- **Dukungan theming** – Berintegrasi dengan token desain atau sistem tema Anda.
+- **Ringan** – Ketergantungan minimal dan dioptimalkan untuk performa.
+- **Siap SSR/SSG** – Bekerja dengan framework rendering sisi-server dan rendering statis.
+- **Terdokumentasi dengan baik** – Menyertakan contoh penggunaan yang jelas dan referensi API.
+
+Sesuaikan daftar ini dengan komponen spesifik Anda. Sorot apa yang membuatnya unik atau sangat berguna bagi pengembang.
+
+### Contoh
+
+Tunjukkan fleksibilitas komponen dengan contoh praktis:
+
+- **Varian** - Berbagai gaya visual atau ukuran yang tersedia
+- **Status** - Status memuat, dinonaktifkan, error, atau sukses
+- **Penggunaan Lanjutan** - Skenario kompleks dan kasus tepi
+- **Komposisi** - Bagaimana komponen bekerja dengan komponen lain
+- **Perilaku Responsif** - Bagaimana ia menyesuaikan ke berbagai ukuran layar
+
+Setiap contoh harus menyertakan keluaran yang dirender dan kode yang sesuai.
+
+### Props dan Referensi API
+
+Dokumentasikan semua props, metode, dan opsi konfigurasi yang tersedia. Pertimbangkan mengelompokkan props terkait bersama dan menyoroti yang sering digunakan. Untuk setiap prop, sertakan:
+
+- **Nama** - Identifier prop
+- **Tipe** - Definisi tipe TypeScript
+- **Default** - Nilai default jika tidak ditentukan
+- **Wajib** - Apakah prop ini wajib
+- **Deskripsi** - Apa yang dilakukan prop dan kapan menggunakannya
+
+<Callout>
+Jika Anda menggunakan Fumadocs, Anda mungkin mempertimbangkan menggunakan [Tabel Tipe Otomatis](https://fumadocs.dev/docs/ui/components/auto-type-table) untuk memastikan akurasi dan mengurangi beban pemeliharaan.
+</Callout>
+
+### Aksesibilitas
+
+Dokumentasikan bagaimana komponen Anda mendukung fitur aksesibilitas:
+
+- Pola navigasi keyboard
+- Atribut dan peran ARIA
+- Dukungan pembaca layar
+- Manajemen fokus
+- Pertimbangan kontras warna
+
+### Catatan Perubahan dan Versi
+
+Sangat berguna untuk menjaga catatan perubahan pada setiap halaman dokumentasi komponen yang mencakup:
+
+- Nomor versi mengikuti semantic versioning
+- Fitur baru dan peningkatan
+- Perbaikan bug
+- Perubahan yang memutus kompatibilitas
+- Panduan migrasi untuk pembaruan versi mayor
+
+Bantu pengguna memahami apa yang berubah antar versi dan bagaimana cara melakukan upgrade dengan aman. Sertakan contoh kode yang menunjukkan pola sebelum/setelah untuk perubahan yang memutus kompatibilitas.
+
+<Callout>
+  Jika kerangka penyorotan sintaks Anda mendukungnya (seperti Shiki), Anda mungkin ingin menggunakan notasi [transformer diff](https://shiki.style/packages/transformers#transformernotationdiff) untuk menunjukkan perubahan antar versi.
+</Callout>
+
+## Praktik Terbaik
+
+- Jaga dokumentasi tetap mutakhir dengan perubahan kode
+- Gunakan contoh dunia nyata yang menyelesaikan masalah aktual
+- Sertakan jebakan umum dan tips pemecahan masalah
+- Berikan pertimbangan performa bila relevan
+- Tautkan ke komponen dan pola terkait
+- Buat semua contoh kode dapat dijalankan dan diuji

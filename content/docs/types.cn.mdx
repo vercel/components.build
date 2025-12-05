@@ -1,0 +1,185 @@
+---
+title: 类型
+description: 扩展浏览器原生 HTML 元素以实现最大程度的自定义。
+---
+
+在构建可复用组件时，正确的类型定义对于创建灵活、可定制且类型安全的接口至关重要。通过遵循已建立的组件类型模式，您可以确保组件既强大又易于使用。
+
+## 单一元素封装
+
+每个导出的组件理想情况下应该封装单个 HTML 或 JSX 元素。该原则是创建可组合、可定制组件的基础。
+
+当一个组件封装多个元素时，就很难在不进行 props 逐层传递（prop drilling）或引入复杂 API 的情况下定制特定部分。考虑以下反模式：
+
+```tsx title="@/components/ui/card.tsx"
+const Card = ({ title, description, footer, ...props }) => (
+  <div {...props}>
+    <div className="card-header">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div className="card-footer">
+      {footer}
+    </div>
+  </div>
+);
+```
+
+正如我们在 [组合](/composition) 中讨论的，这种做法会产生几个问题：
+- 无法在不添加更多 props 的情况下定制 header 的样式
+- 无法控制用于 title 和 description 的 HTML 元素
+- 被迫采用特定的 DOM 结构
+
+相反，每一层都应该是独立的组件。这样可以让您独立定制每一层，并控制用于 title 和 description 的确切 HTML 元素。
+
+这种做法的好处包括：
+- **最大程度的自定义** - 用户可以独立地为每一层设置样式和修改
+- **无 props 逐层传递** - props 直接传递到需要它们的元素
+- **语义化 HTML** - 用户可以查看并控制确切的 DOM 结构
+- **更好的无障碍性** - 可以直接控制 ARIA 属性和语义化元素
+- **更简单的心智模型** - 一个组件 = 一个元素
+
+## 扩展 HTML 属性
+
+每个组件都应扩展其所封装元素的原生 HTML 属性。这可确保用户对底层 HTML 元素拥有完全控制权。
+
+### 基本模式
+
+```tsx
+export type CardRootProps = React.ComponentProps<'div'> & {
+  // Add your custom props here
+  variant?: 'default' | 'outlined';
+};
+
+export const CardRoot = ({ variant = 'default', ...props }: CardRootProps) => (
+  <div {...props} />
+);
+```
+
+### 常见的 HTML 属性类型
+
+React 为所有 HTML 元素提供了类型定义。为您的组件使用相应的类型：
+
+```tsx
+// For div elements
+type DivProps = React.ComponentProps<'div'>;
+
+// For button elements
+type ButtonProps = React.ComponentProps<'button'>;
+
+// For input elements
+type InputProps = React.ComponentProps<'input'>;
+
+// For form elements
+type FormProps = React.ComponentProps<'form'>;
+
+// For anchor elements
+type LinkProps = React.ComponentProps<'a'>;
+```
+
+### 处理不同的元素类型
+
+当组件可以渲染为不同元素时，使用泛型或联合类型：
+
+```tsx
+// Using discriminated unions
+export type ButtonProps =
+  | (React.ComponentProps<'button'> & { asChild?: false })
+  | (React.ComponentProps<'div'> & { asChild: true });
+
+// Or with a polymorphic approach
+export type PolymorphicProps<T extends React.ElementType> = {
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
+```
+
+### 扩展自定义组件
+
+如果您在扩展现有组件，可以使用 `ComponentProps` 类型来获取该组件的 props。
+
+```tsx title="@/components/ui/share-button.tsx"
+import type { ComponentProps } from 'react';
+
+export type ShareButtonProps = ComponentProps<'button'>;
+
+export const ShareButton = (props: ShareButtonProps) => (
+  <button {...props} />
+);
+```
+
+## 导出类型
+
+始终导出您的组件 prop 类型。这使得消费者在多种用例中可以访问这些类型。
+
+导出类型支持若干重要模式：
+
+```tsx
+// 1. Extracting specific prop types
+import type { CardRootProps } from '@/components/ui/card';
+type variant = CardRootProps['variant'];
+
+// 2. Extending components
+export type ExtendedCardProps = CardRootProps & {
+  isLoading?: boolean;
+};
+
+// 3. Creating wrapper components
+const MyCard = (props: CardRootProps) => (
+  <CardRoot {...props} className={cn('my-custom-class', props.className)} />
+);
+
+// 4. Type-safe prop forwarding
+function useCardProps(): Partial<CardRootProps> {
+  return {
+    variant: 'outlined',
+    className: 'custom-card',
+  };
+}
+```
+
+您导出的类型应命名为 `<ComponentName>Props`。这是一个约定，能帮助其他开发者理解该类型的用途。
+
+## 最佳实践
+
+### 1. 始终将 props 放在最后展开
+
+确保用户可以覆盖任何默认 props：
+
+```tsx
+// ✅ Good - user props override defaults
+<div className="default-class" {...props} />
+
+// ❌ Bad - defaults override user props
+<div {...props} className="default-class" />
+```
+
+### 2. 避免 prop 名称冲突
+
+不要使用与 HTML 属性冲突的 prop 名称，除非您有意覆盖：
+
+```tsx
+// ❌ Bad - conflicts with HTML title attribute
+export type CardProps = React.ComponentProps<'div'> & {
+  title: string; // This conflicts with the HTML title attribute
+};
+
+// ✅ Good - use a different name
+export type CardProps = React.ComponentProps<'div'> & {
+  heading: string;
+};
+```
+
+### 3. 为自定义 props 编写文档
+
+为自定义 props 添加 JSDoc 注释以提升开发者体验：
+
+```tsx
+export type DialogProps = React.ComponentProps<'div'> & {
+  /** Whether the dialog is currently open */
+  open: boolean;
+  /** Callback when the dialog requests to be closed */
+  onOpenChange: (open: boolean) => void;
+  /** Whether to render the dialog in a portal */
+  modal?: boolean;
+};
+```

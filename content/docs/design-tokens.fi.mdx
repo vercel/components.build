@@ -1,0 +1,51 @@
+---
+title: Design-tunnisteet
+description: Miten semanttiset nimeämiskäytännöt ja design-tunnisteet luovat joustavan, ylläpidettävän teemajärjestelmän.
+---
+
+Yksi modernien komponenttikirjastojen keskeisistä peruspilareista on niiden harkittu lähestymistapa tyylittelyyn. Kovakoodattujen värien tai jäykkien luokkajärjestelmien sijaan voimme käyttää semanttista nimeämiskäytäntöä, joka erottaa teeman, kontekstin ja käytön huolellisesti.
+
+Tätä semanttista nimeämiskäytäntöä kutsutaan design-tunnisteiksi. Tämä arkkitehtoninen valinta luo ylläpidettävän, joustavan järjestelmän, joka skaalautuu kauniisti sovellusten välillä.
+
+## Semanttisten CSS-muuttujien filosofia
+
+Perinteiset CSS-lähestymistavat usein kytkevät värien arvot suoraan niiden käyttökonteksteihin, mikä luo hauraita järjestelmiä, joita on vaikea ylläpitää. Design-tunnisteet lähestyvät asiaa eri tavalla luomalla abstraktiokerroksia, jotka erottavat sen, mikä jokin on, siitä miltä se näyttää.
+
+## Muuttuja-arkkitehtuurin ymmärtäminen
+
+Tarkastellaan, miten voimme jäsentää CSS-muuttujiamme tämän joustavan järjestelmän luomiseksi:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+Yllä olevassa esimerkissä meillä on neljä design-tunnistetta:
+
+- `--background`, jota käytetään taustaväreihin (ensisijaisesti sivun taustaan)
+- `--foreground`, jota käytetään etualan väreihin (yleinen tekstin väri)
+- `--primary`, jota käytetään pääväreihin (brändin pääväri)
+- `--primary-foreground`, jota käytetään primaarin etualan väreihin (tekstin väri, kun se esitetään pääväriä vasten)

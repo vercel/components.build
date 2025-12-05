@@ -1,0 +1,133 @@
+---
+title: Erişilebilirlik
+description: Yardımcı teknolojilere bağımlı olanlar da dahil olmak üzere herkes tarafından kullanılabilir bileşenler oluşturma.
+---
+
+Erişilebilirlik (a11y) isteğe bağlı bir özellik değildir—modern web bileşenleri için temel bir gerekliliktir. Her bileşen herkes tarafından kullanılabilir olmalıdır; buna görme, motor, işitsel veya bilişsel engelleri olan kişiler de dahildir.
+
+Bu rehber, bileşen oluştururken izlemeniz gereken erişilebilirlik ilkeleri ve desenlerinin tükenmeyen olmayan bir listesidir. Kapsamlı bir rehber değildir, ancak hangi tür sorunların farkında olmanız gerektiği konusunda size bir fikir vermelidir.
+
+Eğer [Ultracite](https://www.ultracite.ai) gibi güçlü erişilebilirlik kurallarına sahip bir linter kullanıyorsanız, bu tür sorunlar muhtemelen otomatik olarak yakalanacaktır; ancak ilkeleri anlamak hâlâ önemlidir.
+
+## Temel İlkeler
+
+### 1. Önce Semantik HTML
+
+Her zaman en uygun HTML öğesiyle başlayın. Semantik HTML, özel uygulamaların sıklıkla kaçırdığı yerleşik erişilebilirlik özelliklerini sağlar.
+
+Semantic elements come with proper role announcements, keyboard interaction, focus management, and form participation.
+
+### 2. Klavye İle Gezinme
+
+Her etkileşimli öğe klavye ile erişilebilir olmalıdır. Kullanıcılar tüm işlevselliği yalnızca bir klavye kullanarak gezinebilmeli, etkinleştirebilmeli ve etkileşimde bulunabilmelidir.
+
+### 3. Ekran Okuyucu Desteği
+
+Tüm içerik ve etkileşimlerin ekran okuyuculara gerektiği gibi bildirildiğinden emin olun; gerektiğinde ARIA özniteliklerini kullanın.
+
+### 4. Görsel Erişilebilirlik
+
+Uygun kontrast, odak göstergeleri ve duyarlı metin boyutlandırma ile görme engelli kullanıcıları destekleyin.
+
+## ARIA Desenleri
+
+### ARIA'yı Anlamak
+
+ARIA (Accessible Rich Internet Applications), öğeler hakkında yardımcı teknolojilere anlam sağlar. ARIA'yı semantik HTML'i iyileştirmek için kullanın, yerine koymak için değil.
+
+Uyulması gereken birkaç kuralı vardır:
+
+1. Semantik HTML kullanabiliyorsanız ARIA kullanmayın  
+2. Gerektiği sürece yerel anlamsal yapıyı değiştirmeyin  
+3. Tüm etkileşimli öğeler klavye ile erişilebilir olmalıdır  
+4. Odaklanılabilir öğeleri yardımcı teknolojilerden gizlemeyin  
+5. Tüm etkileşimli öğelerin erişilebilir adları olmalıdır
+
+### Yaygın ARIA Öznitelikleri
+
+#### Roller
+
+Bir öğenin ne olduğunu tanımlar:
+
+#### Durumlar
+
+Bir öğenin mevcut durumunu tanımlar:
+
+#### Özellikler
+
+Ek bilgi sağlar:
+
+## Bileşen Desenleri
+
+### Modal/Dialog
+
+Modaller dikkatli odak yönetimi ve klavye kilitleme gerektirir:
+
+### Dropdown Menü
+
+Açılır menüler uygun ARIA öznitelikleri ve klavye gezinimi gerektirir:
+
+### Sekmeler
+
+Sekme arayüzleri belirli ARIA desenleri ve klavye gezinimi gerektirir:
+
+### Formlar
+
+Formlar net etiketler, hata mesajları ve doğrulama geri bildirimi gerektirir:
+
+## Odak Yönetimi
+
+### Odak Görünürlüğü
+
+Odak göstergelerini yalnızca klavye navigasyonu için gösterin:
+
+### Odak Kilitleme
+
+Odak belirli bir bölge içinde tutulmalıdır:
+
+### Odak Geri Yükleme
+
+Etkileşimlerden sonra odak uygun öğeye geri döndürülmelidir:
+
+## Canlı Bölgeler
+
+Dinamik içerik değişikliklerini ekran okuyuculara duyurun:
+
+### Durum Mesajları
+
+### İlerleme Göstergeleri
+
+## Renk ve Kontrast
+
+### Kontrast Gereksinimleri
+
+WCAG yönergelerine uygun renk kontrastını takip edin:
+
+### Renk Bağımsızlığı
+
+Bilgiyi yalnızca renk yoluyla iletmeyin:
+
+## Mobil Erişilebilirlik
+
+### Dokunma Hedefleri
+
+Dokunma hedeflerinin yeterince büyük olduğundan emin olun:
+
+### Görünüm ve Yakınlaştırma
+
+Kullanıcıların yakınlaştırmasına izin verin:
+
+## Yaygın Tuzaklar
+
+### Yalnızca Yer Tutucu Metin Kullanmak
+
+Yer tutucuları tek başına etiket olarak kullanmayın:
+
+### Boş Butonlar
+
+Simgeli butonlar için her zaman erişilebilir metin sağlayın:
+
+### Devre Dışı Bırakılmış Form Öğeleri
+
+Devre dışı bırakılmış öğeler odaklanamaz olduklarından kullanıcıları şaşırtabilir:
+

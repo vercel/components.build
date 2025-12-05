@@ -1,0 +1,319 @@
+---
+title: asChild
+description: 如何使用 `asChild` 属性在组件内渲染自定义元素。
+---
+
+`asChild` 属性是现代 React 组件库中的一种强大模式。由 [Radix UI](https://www.radix-ui.com/primitives/docs/guides/composition) 推广并被 [shadcn/ui](https://ui.shadcn.com) 采用，这种模式允许你在保持组件功能性的同时，用自定义元素替换默认标记。
+
+## 理解 `asChild`
+
+本质上，`asChild` 改变了组件的渲染方式。当设置为 `true` 时，组件不会渲染其默认的 DOM 元素，而是将其属性、行为和事件处理器与其直接子元素合并。
+
+### 不使用 `asChild`
+
+```tsx
+<Dialog.Trigger>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+这会渲染嵌套的元素：
+```html
+<button data-state="closed">
+  <button>Open Dialog</button>
+</button>
+```
+
+### 使用 `asChild`
+
+```tsx
+<Dialog.Trigger asChild>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+这会渲染为单个合并的元素：
+```html
+<button data-state="closed">Open Dialog</button>
+```
+
+Dialog.Trigger 的功能被组合到你的按钮上，从而消除了不必要的包装元素。
+
+## 工作原理
+
+在底层，`asChild` 使用 React 的组合能力来合并组件：
+
+```tsx
+// Simplified implementation
+function Component({ asChild, children, ...props }) {
+  if (asChild) {
+    // Clone child and merge props
+    return React.cloneElement(children, {
+      ...props,
+      ...children.props,
+      // Merge event handlers
+      onClick: (e) => {
+        props.onClick?.(e);
+        children.props.onClick?.(e);
+      }
+    });
+  }
+
+  // Render default element
+  return <button {...props}>{children}</button>;
+}
+```
+
+该组件会：
+1. 检查 `asChild` 是否为 true  
+2. 克隆子元素  
+3. 合并父组件和子元素的 props  
+4. 合并事件处理器  
+5. 返回增强后的子元素
+
+## 主要优点
+
+### 1. 语义化 HTML
+
+`asChild` 允许你为用例使用最合适的 HTML 元素：
+
+```tsx
+// Use a link for navigation
+<AlertDialog.Trigger asChild>
+  <a href="/delete">Delete Account</a>
+</AlertDialog.Trigger>
+
+// Use a custom button component
+<Tooltip.Trigger asChild>
+  <IconButton icon={<InfoIcon />} />
+</Tooltip.Trigger>
+```
+
+### 2. 干净的 DOM 结构
+
+传统的组合方式通常会创建深层嵌套的 DOM 结构。`asChild` 消除了这种“包装地狱”：
+
+```tsx
+// Without asChild: Nested wrappers
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger>
+      <button>
+        <span>Hover me</span>
+      </button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+
+// With asChild: Clean structure
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <button>Hover me</button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+```
+
+### 3. 设计系统集成
+
+`asChild` 可实现与你现有设计系统组件的无缝集成：
+
+```tsx
+import { Button } from '@/components/ui/button';
+
+<DropdownMenu.Trigger asChild>
+  <Button variant="outline" size="icon">
+    <MoreVertical className="h-4 w-4" />
+  </Button>
+</DropdownMenu.Trigger>
+```
+
+你的 Button 组件会在不做修改的情况下接收所有必要的下拉触发器行为。
+
+### 4. 组件组合
+
+你可以将多个行为组合到单个元素上：
+
+```tsx
+<Dialog.Trigger asChild>
+  <Tooltip.Trigger asChild>
+    <button>
+      Open dialog (with tooltip)
+    </button>
+  </Tooltip.Trigger>
+</Dialog.Trigger>
+```
+
+这将创建一个既能打开对话框又能在悬停时显示提示的按钮。
+
+## 常见用例
+
+### 自定义触发元素
+
+用自定义组件替换默认触发器：
+
+```tsx
+// Custom link trigger
+<Collapsible.Trigger asChild>
+  <a href="#" className="text-blue-600 underline">
+    Toggle Details
+  </a>
+</Collapsible.Trigger>
+
+// Icon-only trigger
+<Popover.Trigger asChild>
+  <IconButton>
+    <Settings className="h-4 w-4" />
+  </IconButton>
+</Popover.Trigger>
+```
+
+### 可访问的导航
+
+为导航元素保持正确的语义：
+
+```tsx
+<NavigationMenu.Link asChild>
+  <Link href="/products" className="nav-link">
+    Products
+  </Link>
+</NavigationMenu.Link>
+```
+
+### 表单集成
+
+在保留功能的同时与表单库集成：
+
+```tsx
+<FormField
+  control={form.control}
+  name="acceptTerms"
+  render={({ field }) => (
+    <FormItem>
+      <Checkbox.Root asChild>
+        <input
+          type="checkbox"
+          {...field}
+          className="sr-only"
+        />
+      </Checkbox.Root>
+    </FormItem>
+  )}
+/>
+```
+
+## 最佳实践
+
+### 1. 保持无障碍性
+
+在更改元素类型时，确保可访问性不受影响：
+
+```tsx
+// ✅ Good - maintains button semantics
+<Dialog.Trigger asChild>
+  <button type="button">Open</button>
+</Dialog.Trigger>
+
+// ⚠️ Caution - ensure proper ARIA attributes
+<Dialog.Trigger asChild>
+  <div role="button" tabIndex={0}>Open</div>
+</Dialog.Trigger>
+```
+
+### 2. 记录组件要求
+
+清楚地记录组件何时支持 `asChild`：
+
+```tsx
+interface TriggerProps {
+  /**
+   * Change the default rendered element for the one passed as a child,
+   * merging their props and behavior.
+   *
+   * @default false
+   */
+  asChild?: boolean;
+  children: React.ReactNode;
+}
+```
+
+### 3. 测试子组件
+
+验证自定义组件在 `asChild` 下能否正常工作：
+
+```tsx
+// Test that props are properly forwarded
+const TestButton = (props) => {
+  console.log('Received props:', props);
+  return <button {...props} />;
+};
+
+<Tooltip.Trigger asChild>
+  <TestButton>Test</TestButton>
+</Tooltip.Trigger>
+```
+
+### 4. 处理边缘情况
+
+考虑像条件渲染这样的边缘情况：
+
+```tsx
+// Handle conditional children
+<Dialog.Trigger asChild>
+  {isLoading ? (
+    <Skeleton className="h-10 w-20" />
+  ) : (
+    <Button>Open Dialog</Button>
+  )}
+</Dialog.Trigger>
+```
+
+## 常见陷阱
+
+### 未展开 props
+
+如在 [Types](/docs/types) 中讨论的，你应始终将 props 展开到底层元素。
+
+```tsx
+// ❌ Won't receive trigger behavior
+const BadButton = ({ children }) => <button>{children}</button>;
+
+// ✅ Properly receives all props
+const GoodButton = ({ children, ...props }) => (
+  <button {...props}>{children}</button>
+);
+```
+
+### 多个子元素
+
+不要向支持 `asChild` 的组件传入多个子元素。这会导致错误，因为组件不知道使用哪个子元素。
+
+```tsx
+// ❌ Error - asChild expects single child
+<Trigger asChild>
+  <button>One</button>
+  <button>Two</button>
+</Trigger>
+
+// ✅ Single child element
+<Trigger asChild>
+  <button>Single Button</button>
+</Trigger>
+```
+
+### 片段子元素
+
+不要向支持 `asChild` 的组件传入片段。这会导致错误，因为片段不是有效的元素。
+
+```tsx
+// ❌ Fragment is not a valid element
+<Trigger asChild>
+  <>Button</>
+</Trigger>
+
+// ✅ Actual element
+<Trigger asChild>
+  <button>Button</button>
+</Trigger>
+```

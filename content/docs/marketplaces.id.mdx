@@ -1,0 +1,137 @@
+---
+title: Marketplace Komponen
+description: Menggunakan marketplace komponen untuk membagikan komponen Anda.
+---
+
+Marketplace komponen merepresentasikan paradigma baru dalam bagaimana pengembang berbagi dan menemukan komponen UI. Platform seperti [21st.dev](https://21st.dev) muncul sebagai pusat terpusat di mana pembuat dapat menerbitkan komponen dan konsumen dapat menemukan, melihat pratinjau, dan menginstalnya secara mulus.
+
+Marketplace ini menggabungkan aksesibilitas registri dengan kemampuan penemuan repositori paket tradisional, menciptakan ekosistem yang dinamis untuk berbagi komponen.
+
+## Cara Kerja Marketplace
+
+Saat Anda menerbitkan ke sebuah marketplace, platform biasanya:
+
+1. **Hosts your component code** - Tidak perlu mengelola infrastruktur sendiri
+2. **Provides a unified CLI** - Pengguna menginstal komponen melalui tooling marketplace
+3. **Generates previews** - Demo langsung dan contoh interaktif dibuat secara otomatis
+4. **Handles discovery** - Pencarian, kategori, dan rekomendasi menampilkan komponen yang relevan
+
+Sebagai contoh, menginstal dari 21st.dev menggunakan pola CLI shadcn yang familier:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/haydenbleasel/dialog-stack
+```
+
+Marketplace menangani penyajian metadata dan kode sumber komponen, membuat proses instalasi menjadi mulus.
+
+## Manfaat Marketplace Komponen
+
+Marketplace menawarkan keuntungan unik yang tidak bisa ditandingi hanya dengan registri atau paket npm sendiri.
+
+### Untuk Penulis Komponen
+
+#### Distribusi Tanpa Infrastruktur
+
+Menerbitkan ke marketplace menghilangkan kekhawatiran tentang infrastruktur. Anda tidak perlu menyiapkan hosting untuk komponen Anda, atau mengelola distribusi CDN.
+
+Marketplace menangani semua ini, sehingga Anda bisa fokus pada pembuatan komponen yang hebat.
+
+#### Audiens Bawaan
+
+Marketplace mengagregasi permintaan. Ketika pengembang mengunjungi 21st.dev atau platform serupa, mereka secara aktif mencari komponen. Karya Anda ditemukan secara organik melalui pencarian, kategori, dan rekomendasi.
+
+Lalu lintas bawaan ini berarti Anda tidak perlu memasarkan komponen Anda secara terpisah.
+
+#### Peluang Monetisasi
+
+Beberapa marketplace memungkinkan pembuat untuk memonetisasi karya mereka melalui tingkatan komponen premium, program sponsor, harga berbasis penggunaan, dan model pembelian satu kali.
+
+Hal ini menciptakan insentif yang berkelanjutan untuk mempertahankan komponen berkualitas tinggi.
+
+#### Umpan Balik Komunitas
+
+Marketplace biasanya menyertakan sistem penilaian, bagian komentar, analitik penggunaan, dan pelacakan isu.
+
+Siklus umpan balik ini membantu Anda memahami bagaimana pengembang menggunakan komponen Anda dan perbaikan apa yang diperlukan.
+
+### Untuk Konsumen Komponen
+
+#### Penemuan yang Dikurasi
+
+Berbeda dengan mencari melalui GitHub atau npm, marketplace menawarkan pengalaman yang dikurasi:
+
+```
+Browse by category:
+├── Marketing
+│   ├── Heroes
+│   ├── Pricing
+│   └── Testimonials
+├── Application
+│   ├── Dashboards
+│   ├── Forms
+│   └── Data Display
+└── E-commerce
+    ├── Product Cards
+    ├── Cart
+    └── Checkout
+```
+
+Organisasi ini membuat pencarian komponen yang tepat menjadi jauh lebih cepat.
+
+#### Jaminan Kualitas
+
+Banyak marketplace menerapkan proses peninjauan. Komponen mungkin melewati pemeriksaan kualitas kode, audit aksesibilitas, pengujian performa, dan peninjauan dokumentasi.
+
+Kurasi ini memastikan adanya kualitas dasar yang mungkin tidak dimiliki komponen yang dipublikasikan sendiri.
+
+#### Tooling Terpadu
+
+Menggunakan satu CLI untuk semua komponen marketplace menyederhanakan alur kerja. Anda bisa menginstal komponen apa pun dari marketplace menggunakan perintah yang sama:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/<author>/<component>
+```
+
+## Tantangan Marketplace
+
+Meskipun marketplace menawarkan manfaat menarik, mereka juga memperkenalkan tantangan unik.
+
+### Untuk Penulis
+
+#### Kompetisi dan Visibilitas
+
+Di marketplace yang ramai, menonjol menjadi sulit. Anda bersaing dengan ratusan komponen serupa, pembuat yang sudah mapan dengan pengikut, konten unggulan atau bersponsor, dan rekomendasi yang digerakkan oleh algoritme.
+
+Keberhasilan membutuhkan lebih dari sekadar kode yang baik — Anda perlu pratinjau yang menarik, dokumentasi yang sangat baik, dan seringkali, promosi aktif.
+
+#### Ketergantungan pada Platform
+
+Menerbitkan di sebuah marketplace berarti menerima syarat layanan mereka, model berbagi pendapatan, persyaratan teknis, dan proses peninjauan mereka.
+
+Jika platform mengubah kebijakan atau tutup, saluran distribusi Anda menghilang.
+
+#### Tekanan Kualitas
+
+Pengguna marketplace mengharapkan komponen yang halus dan siap produksi. Ini berarti dokumentasi yang komprehensif, variasi demo, desain responsif, pengujian lintas browser, dan kepatuhan aksesibilitas.
+
+Memenuhi harapan ini membutuhkan investasi waktu yang signifikan di luar sekadar menulis kode komponen.
+
+### Untuk Konsumen
+
+#### Kualitas yang Bervariasi
+
+Meskipun ada proses peninjauan, kualitas marketplace bisa sangat beragam. Anda mungkin menemukan komponen yang ditinggalkan dengan dependensi usang, kode yang minim dokumentasi, komponen yang bekerja di demo tetapi rusak di produksi, dan gaya penulisan kode yang tidak konsisten antar penulis.
+
+Ketelitian tetap diperlukan saat memilih komponen.
+
+#### Kekhawatiran Lock-in
+
+Meskipun marketplace menggunakan alat standar seperti shadcn CLI, mereka mungkin memperkenalkan format metadata proprietari, persyaratan konfigurasi khusus, dan dependensi spesifik platform.
+
+Hal ini dapat membuat migrasi dari marketplace menjadi sulit.
+
+#### Paradoks Penemuan
+
+Terlalu banyak pilihan bisa menjadi melumpuhkan. Saat mencari komponen tombol, menemukan 200 opsi tidak selalu membantu. Anda perlu mengevaluasi beberapa komponen serupa, membandingkan perbedaan halus, menilai pemeliharaan jangka panjang, dan mempertimbangkan reputasi penulis.
+
+Proses evaluasi ini bisa memakan waktu lebih lama daripada membuat komponen sendiri.

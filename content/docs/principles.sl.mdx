@@ -1,0 +1,54 @@
+---
+title: Temeljna načela
+description: Pri izdelavi sodobnih komponent uporabniškega vmesnika je pomembno upoštevati ta temeljna načela.
+---
+
+## Composability and Reusability
+
+Raje uporabite kompozicijo kot dedovanje – gradite komponente, ki jih je mogoče kombinirati in vnašati druga v drugo za ustvarjanje bolj zapletenih UI-jev, namesto da bi se zanašali na globoke hierarhije razredov.
+
+Sestavljive komponente razkrivajo jasno API (prek props/slots), ki razvijalcem omogoča prilagajanje vedenja in videza z vstavljanjem otroških elementov ali klicev nazaj.
+
+To naredi komponente zelo ponovno uporabne v različnih kontekstih. (Zasnova Reacta to potrjuje: “Props in kompozicija vam dajeta vso prilagodljivost, ki jo potrebujete za prilagoditev videza in vedenja komponente na jasen in varen način.”)
+
+## Accessible by Default
+
+Komponente morajo biti uporabne za vse uporabnike. Uporabljajte semantične HTML elemente, ustrezne vlogi komponente (npr. `<button>` za klikabilne akcije, `<ul>/<li>` za sezname itd.) in po potrebi dopolnite z atributi WAI-ARIA.
+
+Poskrbite za podporo navigaciji s tipkovnico in upravljanju fokusa (na primer navigacija s puščičnimi tipkami v menijih, fokusne pasti v modals). Vsaka komponenta naj že privzeto izpolnjuje standarde in smernice dostopnosti.
+
+To pomeni zagotavljanje ustreznih ARIA vlog/stanj in testiranje z bralniki zaslona. Dostopnost ni izbirna – to je osnovna lastnost vsake komponente.
+
+## Customizability and Theming
+
+Komponento mora biti enostavno preoblikovati ali prilagoditi različnim oblikovalskim zahtevam. Izogibajte se trdo zapisanim vizualnim slogom, ki jih ni mogoče preglasiti.
+
+Nudite mehanizme za theming in stiliziranje, kot so CSS spremenljivke, jasno dokumentirane className vrednosti ali style props. Idealno je, da komponente pridejo z razumnim privzetim slogom, vendar razvijalcem omogočajo prilagajanje videza z minimalnim naporom (na primer z posredovanjem className ali uporabo design tokenov).
+
+To načelo zagotavlja, da se komponente lahko vključijo v katerokoli blagovno znamko ali oblikovalski sistem, ne da bi se “bile” s privzetimi slogi.
+
+## Lightweight and Performant
+
+Komponente naj bodo čim bolj lahke glede sredstev in odvisnosti. Izogibajte se napihovanju komponente z velikimi knjižničnimi odvisnostmi ali pretirano zapleteno logiko, še posebej če ta logika ni vedno potrebna.
+
+Stremite k dobri zmogljivosti (tako pri renderiranju kot pri interakciji) z zmanjševanjem nepotrebnih ponovnih upodobitev in uporabo učinkovitih algoritmov pri obremenilnih opravilih. Če je komponenta intenzivna glede podatkov (na primer velik seznam ali tabela), razmislite o vzorcih, kot sta virtualizacija ali inkrementalno upodabljanje, vendar naj bodo takšne funkcije izbirne.
+
+Lahke komponente so lažje za vzdrževanje in hitrejše za končne uporabnike.
+
+## Transparency and Code Ownership
+
+V odprtokodnem okolju potrošniki pogosto koristijo polno preglednost in nadzor nad kodo komponente. Ta specifikacija spodbuja miselnost “odprtokodno najprej”: komponente ne bi smele biti črne škatle.
+
+Ko razvijalci uvozijo ali kopirajo vašo komponento, naj bodo sposobni pregledati, kako deluje, in jo po potrebi spremeniti. To načelo podlaga nastajajoči model distribucije »kopiraj-in-prilepi« (o katerem bo govora kasneje), kjer razvijalci integrirajo kodo komponente neposredno v svoje projekte.
+
+Z omogočanjem lastništva kode povečate zaupanje uporabnikov in omogočite globlje prilagajanje.
+
+Tudi če distribuirate prek paketa, sprejmite preglednost z zagotavljanjem source maps, berljive kode in temeljite dokumentacije.
+
+## Well-documented and DX-Friendly
+
+Odlična komponenta ni le koda – pride z jasno dokumentacijo in primeri. Z vidika izkušnje razvijalca (DX) naj bodo vaše komponente enostavne za učenje in integracijo.
+
+Dokumentirajte namen posamezne komponente, njene props in primere uporabe. Vključite opombe o dostopnosti (kot so kontrola s tipkovnico ali uporabljeni ARIA atributi) in vse možnosti prilagoditve.
+
+Dobra dokumentacija zmanjšuje zlorabo in znižuje oviro za sprejetje. Pričakovanja glede dokumentacije bomo obravnavali v razdelku Objavljanje, vendar je to tukaj navedeno kot načelo, ker je načrtovanje dobre dokumentacije in DX smiselno že med fazo načrtovanja/izgradnje.

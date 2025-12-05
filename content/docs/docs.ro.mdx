@@ -1,0 +1,140 @@
+---
+title: Documentație
+description: Cum să-ți documentezi componentele.
+---
+
+O documentație bună este esențială pentru a face componentele tale accesibile și ușor de utilizat. Acest ghid conturează elementele cheie pe care fiecare pagină de documentație a unei componente ar trebui să le includă.
+
+## Cadru de documentație
+
+Pentru a scala documentația, poți folosi un framework de documentație. Există multe opțiuni disponibile, în funcție de limbajul proiectului și de nevoile proiectului. Opțiuni populare includ:
+
+- [Fumadocs](https://fumadocs.dev/) - Cadru de documentație rapid și bogat în funcționalități pentru Next.js
+- [Nextra](https://nextra.site/) - Documentație bazată pe Markdown, cu căutare și teme încorporate
+- [Content Collections](https://content-collections.dev/) - Gestionare de conținut tip-sigur pentru documentație
+- [Docusaurus](https://docusaurus.io/) - Site-uri de documentație bogate în funcționalități, cu suport pentru versionare
+- [VitePress](https://vitepress.dev/) - Generator static de site-uri bazat pe Vue, optimizat pentru documentație
+
+Preferabil, alegerea framework-ului ar trebui să suporte evidențierea sintaxei, componente personalizate și să fie, în general, bine conceput.
+
+## Secțiuni esențiale ale documentației
+
+### Prezentare generală
+
+Începe cu o scurtă introducere care explică ce face componenta și când să o folosești.
+
+### Demonstrație, cod sursă și previzualizare
+
+Pentru o impresie bună inițială pentru dezvoltatori, ar trebui să incluzi o demonstrație care arată componenta în acțiune, precum și codul folosit pentru a crea demonstrația.
+
+Dacă folosești un [Registru](/registry) open source, poți de asemenea include o previzualizare a codului sursă folosit pentru a crea componenta.
+
+Folosește blocuri de cod cu evidențierea sintaxei și funcționalitate copy-to-clipboard. Ia în considerare folosirea unor interfețe cu file pentru a comuta între aceste vizualizări fără a aglomera pagina.
+
+### Instalare
+
+Include o instrucțiune clară despre cum se instalează componenta. Preferabil, ar trebui să fie o singură comandă pe care o poți copia și lipi în terminal.
+
+Dacă folosești shadcn/ui, poți folosi [shadcn CLI](https://ui.shadcn.com/docs/cli) pentru a instala componenta, de exemplu
+
+```package-install
+npx shadcn@latest add <your-component-url>
+```
+
+Dacă publici într-o [Piață](/marketplaces), poți folosi CLI-ul marketplace-ului pentru a instala componenta, de exemplu
+
+```package-install
+npx shadcn@latest add https://21st.dev/r/<your-author>/<your-component>
+```
+
+Dacă nu folosești shadcn/ui, dar construiești un [Registru](/registry), ai putea construi propriul CLI pentru a instala componenta, de exemplu
+
+```package-install
+npx your-registry-cli@latest add <your-component-url>
+```
+
+În final, dacă publici pe npm, poți folosi CLI-ul npm pentru a instala componenta, de exemplu
+
+```package-install
+npm install <your-component-name>
+```
+
+<Callout>
+Pentru a afișa multiple opțiuni de instalare, așa cum am făcut mai sus, poți folosi ceva de genul [sintaxa `package-install` a Fumadocs](https://fumadocs.dev/docs/headless/mdx/install).
+</Callout>
+
+### Caracteristici
+
+Listează caracteristicile cheie ale componentei pentru a ajuta utilizatorii să înțeleagă rapid capabilitățile și avantajele. De exemplu:
+
+- **Personalizabil** – Ajustează cu ușurință stilurile, dimensiunile și comportamentul pentru a se potrivi nevoilor tale.
+- **Accesibil implicit** – Urmează bunele practici pentru navigare cu tastatura, roluri ARIA și suport pentru cititoare de ecran.
+- **Compozabil** – Proiectat să funcționeze fără probleme cu alte componente și pattern-uri.
+- **Tip-sigur** – Livrat cu tipuri TypeScript cuprinzătoare pentru maximă siguranță și autocomplete.
+- **Suport pentru teme** – Se integrează cu token-urile tale de design sau cu sistemul de teme.
+- **Ușor** – Dependențe minime și optimizat pentru performanță.
+- **SSR/SSG ready** – Funcționează cu framework-uri pentru randare pe server și randare statică.
+- **Bine documentat** – Include exemple clare de utilizare și referință API.
+
+Potrivește această listă pentru componenta ta specifică. Evidențiază ce o face unică sau deosebit de utilă pentru dezvoltatori.
+
+### Exemple
+
+Demonstrează flexibilitatea componentei cu exemple practice:
+
+- **Variante** - Diferite stiluri vizuale sau dimensiuni disponibile
+- **Stări** - Stări de încărcare, dezactivat, eroare sau succes
+- **Utilizare avansată** - Scenarii complexe și cazuri-limită
+- **Compoziție** - Cum funcționează componenta cu alte componente
+- **Comportament receptiv** - Cum se adaptează la diferite dimensiuni de ecran
+
+Fiecare exemplu ar trebui să includă atât rezultatul redat, cât și codul corespunzător.
+
+### Props și referință API
+
+Documentează toate props disponibile, metodele și opțiunile de configurare. Ia în considerare gruparea props-urilor înrudite și evidențierea celor folosite frecvent. Pentru fiecare prop, include:
+
+- **Nume** - Identificatorul prop-ului
+- **Tip** - Definiția tipului TypeScript
+- **Valoare implicită** - Valoarea implicită dacă nu este specificată
+- **Obligatoriu** - Dacă prop-ul este obligatoriu
+- **Descriere** - Ce face prop-ul și când să îl folosești
+
+<Callout>
+Dacă folosești Fumadocs, ai putea lua în considerare folosirea [Auto Type Table](https://fumadocs.dev/docs/ui/components/auto-type-table) pentru a asigura acuratețea și a reduce povara de întreținere.
+</Callout>
+
+### Accesibilitate
+
+Documentează cum componenta ta suportă funcționalitățile de accesibilitate:
+
+- Modele de navigare cu tastatura
+- Atribute și roluri ARIA
+- Suport pentru cititoare de ecran
+- Gestionarea focusului
+- Considerații privind contrastul culorilor
+
+### Jurnal de modificări și versionare
+
+Poate fi util să menții un jurnal de modificări pe fiecare pagină de documentație a componentei care acoperă:
+
+- Numere de versiune conform versionării semantice
+- Funcționalități noi și îmbunătățiri
+- Remedieri de erori
+- Modificări care rup compatibilitatea
+- Ghiduri de migrare pentru actualizări majore de versiune
+
+Ajută utilizatorii să înțeleagă ce s-a schimbat între versiuni și cum să facă upgrade în siguranță. Include exemple de cod care arată pattern-urile înainte/după pentru schimbările care rup compatibilitatea.
+
+<Callout>
+Dacă framework-ul tău de evidențiere a sintaxei îl suportă (cum ar fi Shiki), ai putea dori să folosești o [notație diff transformer](https://shiki.style/packages/transformers#transformernotationdiff) pentru a arăta schimbările dintre versiuni.
+</Callout>
+
+## Practici recomandate
+
+- Păstrează documentația actualizată cu modificările din cod
+- Folosește exemple din lumea reală care rezolvă probleme reale
+- Include capcane comune și sfaturi de depanare
+- Oferă considerații privind performanța atunci când este relevant
+- Leagă către componente și pattern-uri înrudite
+- Asigură-te că toate exemplele de cod pot fi rulate și sunt testate

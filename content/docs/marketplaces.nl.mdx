@@ -1,0 +1,135 @@
+---
+title: Marktplaatsen
+description: Gebruik van componentmarktplaatsen om je componenten te delen.
+---
+
+Componentmarktplaatsen vertegenwoordigen een nieuw paradigma in hoe ontwikkelaars UI-componenten delen en ontdekken. Platformen zoals [21st.dev](https://21st.dev) zijn ontstaan als gecentraliseerde hubs waar makers componenten kunnen publiceren en consumenten ze naadloos kunnen ontdekken, bekijken en installeren.
+
+Deze marktplaatsen combineren de toegankelijkheid van registries met de vindbaarheid van traditionele pakketrepositories, en creëren zo levendige ecosystemen voor het delen van componenten.
+
+## Hoe marktplaatsen werken
+
+Wanneer je publiceert naar een marktplaats, doet het platform doorgaans het volgende:
+
+1. **Biedt hosting voor je componentcode** - Je hoeft je eigen infrastructuur niet te beheren  
+2. **Biedt een uniforme CLI** - Gebruikers installeren componenten via de tooling van de marktplaats  
+3. **Genereert voorvertoningen** - Live demo's en interactieve voorbeelden worden automatisch aangemaakt  
+4. **Regelt vindbaarheid** - Zoeken, categorieën en aanbevelingen brengen relevante componenten naar voren
+
+Bijvoorbeeld, installeren vanaf 21st.dev gebruikt het vertrouwde shadcn CLI-patroon:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/haydenbleasel/dialog-stack
+```
+
+De marktplaats verzorgt het serveren van de componentmetadata en broncode, waardoor het installatieproces naadloos verloopt.
+
+## Voordelen van componentmarktplaatsen
+
+Marktplaatsen bieden unieke voordelen die noch registries noch npm-pakketten op zichzelf kunnen evenaren.
+
+### Voor componentauteurs
+
+#### Distributie zonder infrastructuur
+
+Publiceren op een marktplaats elimineert zorgen over infrastructuur. Je hoeft geen hosting voor je componenten op te zetten of CDN-distributie te beheren.
+
+De marktplaats regelt dit allemaal, zodat jij je kunt concentreren op het maken van geweldige componenten.
+
+#### Ingebouwd publiek
+
+Marktplaatsen bundelen de vraag. Wanneer ontwikkelaars 21st.dev of vergelijkbare platformen bezoeken, zijn ze actief op zoek naar componenten. Je werk wordt organisch ontdekt via zoekopdrachten, categorieën en aanbevelingen.
+
+Dit ingebouwde verkeer betekent dat je je componenten niet zelfstandig hoeft te marketen.
+
+#### Monetisatiekansen
+
+Sommige marktplaatsen stellen makers in staat hun werk te gelde te maken via premium componentlagen, sponsorprogramma's, gebruiksgebaseerde prijsmodellen en eenmalige aankoopopties.
+
+Dit creëert duurzame prikkels om hoogwaardige componenten te onderhouden.
+
+#### Feedback van de community
+
+Marktplaatsen bevatten doorgaans beoordelingssystemen, commentaarsecties, gebruiksanalyses en issue-tracking.
+
+Deze feedbackloop helpt je te begrijpen hoe ontwikkelaars je componenten gebruiken en welke verbeteringen nodig zijn.
+
+### Voor componentgebruikers
+
+#### Gecureerde ontdekking
+
+In tegenstelling tot zoeken via GitHub of npm, bieden marktplaatsen gecureerde ervaringen:
+
+Blader per categorie:
+├── Marketing
+│   ├── Hero-secties
+│   ├── Prijzen
+│   └── Getuigenissen
+├── Applicatie
+│   ├── Dashboards
+│   ├── Formulieren
+│   └── Gegevensweergave
+└── E-commerce
+    ├── Productkaarten
+    ├── Winkelwagen
+    └── Afrekenen
+
+Deze organisatie maakt het aanzienlijk sneller om het juiste component te vinden.
+
+#### Kwaliteitsborging
+
+Veel marktplaatsen voeren beoordelingsprocessen uit. Componenten kunnen door controles op codekwaliteit, toegankelijkheidsaudits, prestatietests en documentatiebeoordelingen gaan.
+
+Deze curatie zorgt voor een basiskwaliteit die zelfgepubliceerde componenten mogelijk missen.
+
+#### Uniforme tooling
+
+Het gebruik van één enkele CLI voor alle marktplaatscomponenten vereenvoudigt de workflow. Je kunt elk component van de marktplaats installeren met hetzelfde commando:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/<author>/<component>
+```
+
+## Uitdagingen van marktplaatsen
+
+Hoewel marktplaatsen overtuigende voordelen bieden, brengen ze ook unieke uitdagingen met zich mee.
+
+### Voor auteurs
+
+#### Concurrentie en zichtbaarheid
+
+In een drukke marktplaats wordt het moeilijk om op te vallen. Je concurreert met honderden soortgelijke componenten, gevestigde makers met volgers, uitgelichte of gesponsorde content en door algoritmen aangedreven aanbevelingen.
+
+Succes vereist meer dan alleen goede code — je hebt overtuigende voorvertoningen, uitstekende documentatie en vaak actieve promotie nodig.
+
+#### Afhankelijkheid van het platform
+
+Publiceren op een marktplaats betekent dat je hun algemene voorwaarden, inkomstdelingsmodellen, technische vereisten en beoordelingsprocessen accepteert.
+
+Als het platform het beleid wijzigt of stopt, verdwijnt je distributiekanaal.
+
+#### Kwaliteitsdruk
+
+Marktplaatsgebruikers verwachten gepolijste, productieklare componenten. Dit betekent uitgebreide documentatie, meerdere demo-varianten, responsive ontwerp, cross-browser testing en naleving van toegankelijkheidseisen.
+
+Aan deze verwachtingen voldoen vergt aanzienlijke tijdsinvestering naast het schrijven van componentcode.
+
+### Voor consumenten
+
+#### Variabele kwaliteit
+
+Ondanks beoordelingsprocessen varieert de kwaliteit op marktplaatsen sterk. Je kunt verlaten componenten tegenkomen met verouderde dependencies, slecht gedocumenteerde code, componenten die in demo's werken maar in productie breken, en inconsistente codeerstijlen tussen verschillende auteurs.
+
+Zorgvuldige beoordeling blijft vereist bij het selecteren van componenten.
+
+#### Zorgen over lock-in
+
+Hoewel marktplaatsen standaardtools zoals de shadcn CLI gebruiken, kunnen ze eigen metadataformaten, aangepaste configuratie-eisen en platform-specifieke afhankelijkheden introduceren.
+
+Dit kan het migreren weg van de marktplaats moeilijk maken.
+
+#### Paradox van ontdekking
+
+Te veel keuze kan verlammend werken. Bij het zoeken naar een button-component helpen 200 opties niet per se. Je moet meerdere vergelijkbare componenten evalueren, subtiele verschillen vergelijken, de lange termijn onderhoudbaarheid inschatten en rekening houden met de reputatie van de auteur.
+
+Dit evaluatieproces kan langer duren dan het zelf bouwen van het component.

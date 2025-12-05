@@ -1,0 +1,400 @@
+---
+title: Data atributi
+description: Korišćenje data atributa za deklarativno stilizovanje i identifikaciju komponenti.
+---
+
+Data atributi pružaju moćan način da izložite stanje i strukturu komponente potrošačima, omogućavajući fleksibilno stilizovanje bez eksplozije propova. Moderni biblioteci komponenti koriste dva primarna obrasca: `data-state` za vizuelna stanja i `data-slot` za identifikaciju komponenti.
+
+## Stilizovanje stanja pomoću data-state
+
+Jedan od najčešćih antipattern-a u stilizovanju komponenti je izlaganje zasebnih className propova za različita stanja.
+
+U manje modernim komponentama često ćete videti API-je poput ovog:
+
+```tsx
+<Dialog
+  openClassName="bg-black"
+  closedClassName="bg-white"
+  classes={{
+    open: "opacity-100",
+    closed: "opacity-0"
+  }}
+/>
+```
+
+Ovakav pristup ima nekoliko problema:
+- On povezuje interno stanje komponente sa njenim stilskim API-jem
+- Stvara eksploziju propova kako komponente postaju kompleksnije
+- Čini komponentu težom za korišćenje i održavanje
+- Sprečava stilizovanje zasnovano na kombinacijama stanja
+
+### Rešenje: data-state atributi
+
+Umesto toga, koristite `data-*` atribute da deklarativno izložite stanje komponente. Ovo omogućava potrošačima da stilizuju komponente na osnovu stanja koristeći standardne CSS selektore:
+
+```tsx title="component.tsx"
+const Dialog = ({ className, ...props }: DialogProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      data-state={isOpen ? 'open' : 'closed'}
+      className={cn('transition-all', className)}
+      {...props}
+    />
+  );
+};
+```
+
+Sada potrošači mogu stilizovati komponentu na osnovu stanja iz spoljašnjosti:
+
+```tsx title="app.tsx"
+<Dialog className="data-[state=open]:opacity-100 data-[state=closed]:opacity-0" />
+```
+
+### Prednosti ovog pristupa
+
+1. **Jedan className prop** - Nema potrebe za više propova specificnih za stanja
+2. **Moguće kombinovati** - Kombinujte više data atributa za kompleksna stanja
+3. **Standardni CSS** - Radi sa bilo kojim CSS-in-JS rešenjem ili običnim CSS-om
+4. **Bezbedno za tipove** - TypeScript može inferisati vrednosti data atributa
+5. **Pregledno** - Stanja su vidljiva u DevTools kao HTML atributi
+
+### Uobičajeni obrasci stanja
+
+Koristite data atribute za sve vrste stanja komponenti:
+
+```tsx
+// Open/closed state
+<Accordion data-state={isOpen ? 'open' : 'closed'} />
+
+// Selected state
+<Tab data-state={isSelected ? 'active' : 'inactive'} />
+
+// Disabled state (in addition to disabled attribute)
+<Button data-disabled={isDisabled} disabled={isDisabled} />
+
+// Loading state
+<Button data-loading={isLoading} />
+
+// Orientation
+<Slider data-orientation="horizontal" />
+
+// Side/position
+<Tooltip data-side="top" />
+```
+
+### Stilizovanje sa Tailwind-om
+
+Tailwind podržava proizvoljne varijante, što čini stilizovanje putem data atributa elegantnim:
+
+```tsx
+<Dialog
+  className={cn(
+    // Base styles
+    'rounded-lg border p-4',
+    // State-based styles
+    'data-[state=open]:animate-in data-[state=open]:fade-in',
+    'data-[state=closed]:animate-out data-[state=closed]:fade-out',
+    // Multiple attributes
+    'data-[state=open][data-side=top]:slide-in-from-top-2'
+  )}
+/>
+```
+
+Za često korišćena stanja, možete proširiti Tailwind konfiguraciju:
+
+```js title="tailwind.config.js"
+module.exports = {
+  theme: {
+    extend: {
+      data: {
+        open: 'state="open"',
+        closed: 'state="closed"',
+        active: 'state="active"',
+      }
+    }
+  }
+}
+```
+
+Sada možete koristiti skraćenice:
+
+```tsx
+<Dialog className="data-open:opacity-100 data-closed:opacity-0" />
+```
+
+### Integracija sa Radix UI
+
+Ovaj obrazac široko koristi [Radix UI](https://www.radix-ui.com/), koji automatski primenjuje data atribute na svoje primitive:
+
+```tsx
+import * as Dialog from '@radix-ui/react-dialog';
+
+<Dialog.Root>
+  <Dialog.Trigger />
+  <Dialog.Portal>
+    {/* Radix automatically adds data-state="open" | "closed" */}
+    <Dialog.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out" />
+    <Dialog.Content className="data-[state=open]:fade-in data-[state=closed]:fade-out" />
+  </Dialog.Portal>
+</Dialog.Root>
+```
+
+Drugi data atributi koje Radix obezbeđuje uključuju:
+- `data-state` - open/closed, active/inactive, on/off
+- `data-side` - top/right/bottom/left (za pozicionirane elemente)
+- `data-align` - start/center/end (za pozicionirane elemente)
+- `data-orientation` - horizontal/vertical
+- `data-disabled` - prisutan kada je deaktiviran
+- `data-placeholder` - prisutan kada se prikazuje placeholder
+
+## Identifikacija komponenti pomoću data-slot
+
+Dok `data-state` prati vizuelna stanja, `data-slot` identifikuje tipove komponenti unutar kompozicije. Ovaj obrazac, popularizovan od strane [shadcn/ui](https://ui.shadcn.com/), omogućava roditeljskim komponentama da ciljaju i stilizuju specifične child komponente bez oslanjanja na krhke class name-ove ili selektore elemenata.
+
+### Problem sa ciljanjem child elemenata
+
+Tradicionalni pristupi stilizovanju child komponenti imaju značajna ograničenja:
+
+```tsx
+// Relies on element types - breaks if implementation changes
+<form className="[&_input]:rounded-lg [&_button]:mt-4" />
+
+// Relies on class names - breaks if classes change
+<form className="[&_.text-input]:rounded-lg" />
+
+// Requires passing classes through props - verbose
+<form>
+  <input className={inputClasses} />
+  <button className={buttonClasses} />
+</form>
+```
+
+### Rešenje: data-slot atributi
+
+Koristite `data-slot` da dodelite komponentama stabilne identifikatore koje roditelji mogu ciljati:
+
+```tsx title="field-set.tsx"
+function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
+  return (
+    <fieldset
+      data-slot="field-set"
+      className={cn(
+        "flex flex-col gap-6",
+        // Target specific child slots
+        "has-[>[data-slot=checkbox-group]]:gap-3",
+        "has-[>[data-slot=radio-group]]:gap-3",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+```tsx title="checkbox-group.tsx"
+function CheckboxGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="checkbox-group"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  );
+}
+```
+
+### Prednosti data-slot
+
+1. **Stabilni identifikatori** - Neće se pokvariti kada se promeni implementacija
+2. **Semantičko ciljanje** - Ciljajte na osnovu svrhe komponente, ne strukture
+3. **Enkapsulacija** - Interni class-ovi ostaju privatni
+4. **Moguće kombinovati** - Radi sa proizvoljnim ugnježđivanjem i kompozicijom
+5. **Bezbedno za tipove** - Može se validirati i dokumentovati
+
+### Korišćenje `has-[]` za stilizovanje koje zavisi od roditelja
+
+Tailwind-ov `has-[]` selektor u kombinaciji sa `data-slot` stvara moćno stilizovanje koje zavisi od prisustva child elemenata:
+
+```tsx title="form.tsx"
+function Form({ className, ...props }: React.ComponentProps<"form">) {
+  return (
+    <form
+      data-slot="form"
+      className={cn(
+        "space-y-4",
+        // Adjust spacing when specific slots are present
+        "has-[>[data-slot=form-section]]:space-y-6",
+        "has-[>[data-slot=inline-fields]]:space-y-2",
+        // Style based on slot states
+        "has-[[data-slot=submit-button][data-loading=true]]:opacity-50",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### Korišćenje `[&_]` za ciljanje potomaka
+
+Za dublje ugnježđavanje, koristite obrazac `[&_selector]` da ciljate bilo kog potomka:
+
+```tsx title="card.tsx"
+function Card({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card"
+      className={cn(
+        "rounded-lg border p-4",
+        // Target any descendant with data-slot
+        "[&_[data-slot=card-header]]:mb-4",
+        "[&_[data-slot=card-title]]:text-lg [&_[data-slot=card-title]]:font-semibold",
+        "[&_[data-slot=card-description]]:text-sm [&_[data-slot=card-description]]:text-muted-foreground",
+        "[&_[data-slot=card-footer]]:mt-4 [&_[data-slot=card-footer]]:border-t [&_[data-slot=card-footer]]:pt-4",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### Globalni CSS sa data-slot
+
+Data slot-ovi odlično rade sa globalnim CSS-om za konzistentnost kroz temu:
+
+```css title="globals.css"
+/* Style all buttons within forms */
+[data-slot="form"] [data-slot="button"] {
+  @apply w-full sm:w-auto;
+}
+
+/* Style submit buttons specifically */
+[data-slot="form"] [data-slot="submit-button"] {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* Adjust inputs within inline layouts */
+[data-slot="inline-fields"] [data-slot="input"] {
+  @apply flex-1;
+}
+
+/* Style based on state combinations */
+[data-slot="dialog"][data-state="open"] [data-slot="dialog-content"] {
+  @apply animate-in fade-in;
+}
+```
+
+### Konvencije imenovanja
+
+Pridržavajte se ovih konvencija za dosledno imenovanje `data-slot`:
+
+1. **Koristite kebab-case** - `data-slot="form-field"` a ne `data-slot="formField"`
+2. **Budite specifični** - `data-slot="submit-button"` a ne `data-slot="button"`
+3. **Uskladite sa svrhom komponente** - Ime odražava šta radi, ne kako izgleda
+4. **Izbegavajte detalje implementacije** - `data-slot="user-avatar"` a ne `data-slot="rounded-image"`
+
+```tsx
+// Good examples
+data-slot="search-input"
+data-slot="navigation-menu"
+data-slot="error-message"
+data-slot="submit-button"
+data-slot="card-header"
+
+// Avoid
+data-slot="input"           // Too generic
+data-slot="blueButton"      // Includes styling
+data-slot="div-wrapper"     // Implementation detail
+data-slot="mainContent"     // Use camelCase
+```
+
+## Kada koristiti data atribute naspram propova
+
+Razumevanje kada koristiti koji obrazac ključno je za čist API:
+
+### `data-state` slučajevi upotrebe
+- **Vizuelna stanja** - open/closed, active/inactive, loading, itd.
+- **Stanja rasporeda** - orientation, side, alignment
+- **Interakcijska stanja** - hover, focus, disabled (kada treba stilizovati potomke)
+
+### `data-slot` slučajevi upotrebe
+- **Identifikacija komponente** - Stabilni identifikatori za ciljanje
+- **Obrasci kompozicije** - Odnosi roditelj-dete
+- **Globalno stilizovanje** - Stilizovanje komponenti kroz celu temu
+- **Ciljanje nezavisno od varijanti** - Ciljajte bilo koju varijantu komponente
+
+### `props` slučajevi upotrebe
+- **Varijante** - Različiti vizuelni dizajni (primary, secondary, destructive)
+- **Veličine** - sm, md, lg
+- **Konfiguracija ponašanja** - controlled/uncontrolled, podrazumevane vrednosti
+- **Event handler-i** - onClick, onChange, itd.
+
+### Kombinovani pristup
+
+Dobro dizajnirana komponenta koristi sva tri obrasca na odgovarajući način:
+
+```tsx title="button.tsx"
+type ButtonProps = {
+  variant?: 'primary' | 'secondary' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
+  loading?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
+  className?: string;
+};
+
+const Button = ({
+  variant = 'primary',
+  size = 'md',
+  loading,
+  disabled,
+  className,
+  ...props
+}: ButtonProps) => {
+  return (
+    <button
+      // Slot for targeting
+      data-slot="button"
+      // State for conditional styling
+      data-loading={loading}
+      data-disabled={disabled}
+      className={cn(
+        // Variant styles via props
+        buttonVariants({ variant, size }),
+        // Additional state styling allowed via className
+        className
+      )}
+      disabled={disabled}
+      {...props}
+    />
+  );
+};
+```
+
+Sada se dugme može koristiti i stilizovati na više načina:
+
+```tsx
+// Basic usage with variants
+<Button variant="primary" size="lg">Submit</Button>
+
+// Parent targeting via data-slot
+<form className="[&_[data-slot=button]]:w-full">
+  <Button>Submit</Button>
+</form>
+
+// State-based styling via data-state
+<Button
+  loading={isLoading}
+  className="data-[loading=true]:opacity-50"
+>
+  Submit
+</Button>
+
+// Global CSS can target any button
+// [data-slot="button"][data-loading="true"] { ... }
+```
+
+Data atributi pružaju robustnu osnovu za stilizovanje modernih biblioteka komponenti. Korišćenjem `data-state` za vizuelna stanja i `data-slot` za identifikaciju komponenti, kreirate fleksibilan, održiv API koji se skalira od jednostavnih komponenti do kompleksnih dizajn sistema.

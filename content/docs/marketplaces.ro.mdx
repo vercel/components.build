@@ -1,0 +1,137 @@
+---
+title: Piețe pentru componente
+description: Folosirea piețelor de componente pentru a-ți partaja componentele.
+---
+
+Piețele de componente reprezintă un nou paradigm în modul în care dezvoltatorii își partajează și descoperă componentele UI. Platforme precum [21st.dev](https://21st.dev) au apărut ca hub-uri centralizate unde creatorii pot publica componente, iar consumatorii le pot descoperi, previzualiza și instala fără fricțiuni.
+
+Aceste piețe combină accesibilitatea registriilor cu capacitatea de descoperire a depozitelor tradiționale de pachete, creând ecosisteme dinamice pentru partajarea componentelor.
+
+## Cum funcționează piețele
+
+Când publici pe o piață, platforma de obicei:
+
+1. **Găzduiește codul componentei tale** - Nu este nevoie să îți gestionezi propria infrastructură
+2. **Oferă un CLI unificat** - Utilizatorii instalează componentele prin instrumentele marketplace-ului
+3. **Generează previzualizări** - Demo-uri live și exemple interactive sunt create automat
+4. **Se ocupă de descoperire** - Căutarea, categoriile și recomandările aduc în prim-plan componente relevante
+
+De exemplu, instalarea din 21st.dev folosește modelul familiar al shadcn CLI:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/haydenbleasel/dialog-stack
+```
+
+Marketplace-ul se ocupă de furnizarea metadatelor și a codului sursă al componentelor, făcând procesul de instalare fluid.
+
+## Avantajele piețelor de componente
+
+Piețele oferă avantaje unice pe care nici registriile și nici pachetele npm nu le pot egala de unii singuri.
+
+### Pentru autorii de componente
+
+#### Distribuție fără infrastructură
+
+Publicarea pe o piață elimină grijile legate de infrastructură. Nu trebuie să configurezi hosting pentru componentele tale sau să gestionezi distribuția prin CDN.
+
+Marketplace-ul se ocupă de toate acestea, permițându-ți să te concentrezi pe crearea de componente excelente.
+
+#### Audiență integrată
+
+Piețele agregă cererea. Când dezvoltatorii vizitează 21st.dev sau platforme similare, ei caută activ componente. Lucrările tale sunt descoperite în mod organic prin căutare, categorii și recomandări. 
+
+Acest trafic integrat înseamnă că nu trebuie să-ți promovezi componentele în mod independent.
+
+#### Oportunități de monetizare
+
+Unele piețe permit creatorilor să-și monetizeze munca prin niveluri premium de componente, programe de sponsorizare, tarife bazate pe utilizare și modele de cumpărare unică.
+
+Aceasta creează stimulente sustenabile pentru menținerea componentelor de înaltă calitate.
+
+#### Feedback din partea comunității
+
+Piețele includ, de obicei, sisteme de evaluare, secțiuni de comentarii, analize de utilizare și urmărirea problemelor.
+
+Acest circuit de feedback te ajută să înțelegi cum folosesc dezvoltatorii componentele tale și ce îmbunătățiri sunt necesare.
+
+### Pentru consumatorii de componente
+
+#### Descoperire curatoriată
+
+Spre deosebire de căutarea pe GitHub sau npm, piețele oferă experiențe curatoriate:
+
+```
+Browse by category:
+├── Marketing
+│   ├── Heroes
+│   ├── Pricing
+│   └── Testimonials
+├── Application
+│   ├── Dashboards
+│   ├── Forms
+│   └── Data Display
+└── E-commerce
+    ├── Product Cards
+    ├── Cart
+    └── Checkout
+```
+
+Această organizare face găsirea componentului potrivit semnificativ mai rapidă.
+
+#### Asigurarea calității
+
+Multe piețe implementează procese de revizuire. Componentele pot trece prin verificări ale calității codului, audituri de accesibilitate, teste de performanță și revizuirea documentației.
+
+Această curare asigură un nivel minim de calitate pe care componentele auto-publicate s-ar putea să nu îl aibă.
+
+#### Instrumente unificate
+
+Folosirea unui singur CLI pentru toate componentele din piață simplifică fluxul de lucru. Poți instala orice componentă din piață folosind aceeași comandă:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/<author>/<component>
+```
+
+## Provocările piețelor
+
+Deși piețele oferă avantaje convingătoare, ele introduc și provocări unice.
+
+### Pentru autori
+
+#### Concurență și vizibilitate
+
+Într-o piață aglomerată, ieșitul în evidență devine dificil. Concurezi cu sute de componente similare, creatori consacrați cu urmăritori, conținut prezentat sau sponsorizat și recomandări generate de algoritmi.
+
+Succesul cere mai mult decât cod bun - ai nevoie de previzualizări convingătoare, documentație excelentă și, adesea, promovare activă.
+
+#### Dependența de platformă
+
+Publicarea pe o piață înseamnă acceptarea termenilor lor de serviciu, modelelor de împărțire a veniturilor, cerințelor tehnice și proceselor de revizuire.
+
+Dacă platforma își schimbă politicile sau se închide, canalul tău de distribuție dispare.
+
+#### Presiunea calității
+
+Utilizatorii piețelor se așteaptă la componente finisate, pregătite pentru producție. Asta înseamnă documentație cuprinzătoare, multiple variații de demo, design responsive, testare cross-browser și conformitate cu cerințele de accesibilitate.
+
+Îndeplinirea acestor așteptări necesită o investiție semnificativă de timp dincolo de simpla scriere a codului componentei.
+
+### Pentru consumatori
+
+#### Calitate variabilă
+
+În ciuda proceselor de revizuire, calitatea din piețe variază considerabil. Poți întâlni componente abandonate cu dependențe învechite, cod prost documentat, componente care funcționează în demo-uri dar se rup în producție și stiluri de cod inconsistent între diferiți autori.
+
+Este încă necesară diligența atunci când selectezi componente.
+
+#### Riscul de lock-in
+
+Chiar dacă piețele folosesc instrumente standard precum shadcn CLI, ele pot introduce formate de metadate proprietare, cerințe de configurare personalizate și dependențe specifice platformei.
+
+Acest lucru poate face migrarea departe de piață dificilă.
+
+#### Paradoxul descoperirii
+
+Prea multă alegere poate paraliza. Când cauți un component de tip buton, găsirea a 200 de opțiuni nu ajută neapărat. Trebuie să evaluezi mai multe componente similare, să compari diferențe subtile, să evaluezi mentenabilitatea pe termen lung și să iei în considerare reputația autorului.
+
+Acest proces de evaluare poate dura mai mult decât a construi componentul tu însuți.

@@ -1,0 +1,132 @@
+---
+title: Saavutettavuus
+description: Komponenttien rakentaminen niin, että ne ovat kaikkien käytettävissä, mukaan lukien apuvälineisiin tukeutuvat vammaiset käyttäjät.
+---
+
+Saavutettavuus (a11y) ei ole valinnainen ominaisuus—se on nykyaikaisten web-komponenttien perusedellytys. Jokaisen komponentin on oltava kaikkien käytettävissä, mukaan lukien näkö-, liike-, kuulo- tai kognitiivisista vammoista kärsivät käyttäjät.
+
+Tämä opas on ei-tyhjentävä luettelo saavutettavuuden periaatteista ja malleista, joita sinun tulisi noudattaa komponentteja rakentaessasi. Se ei ole kattava opas, mutta sen pitäisi antaa käsitys niistä ongelmista, joihin sinun kannattaa kiinnittää huomiota.
+
+Jos käytät linteriä, jossa on tiukat saavutettavuussäännöt kuten [Ultracite](https://www.ultracite.ai), nämä tyypit ongelmista todennäköisesti löydetään automaattisesti, mutta periaatteiden ymmärtäminen on silti tärkeää.
+
+## Keskeiset periaatteet
+
+### 1. Semanttinen HTML ensin
+
+Aloita aina sopivimmalla HTML-elementillä. Semanttinen HTML tarjoaa sisäänrakennettuja saavutettavuusominaisuuksia, jotka mukautetuista toteutuksista usein puuttuvat.
+
+Semantic elements come with proper role announcements, keyboard interaction, focus management, and form participation.
+
+### 2. Näppäimistön navigointi
+
+Jokaisen interaktiivisen elementin on oltava käytettävissä näppäimistöllä. Käyttäjien tulisi pystyä siirtymään, aktivoimaan ja käyttämään kaikkea toiminnallisuutta pelkän näppäimistön avulla.
+
+### 3. Näytönlukijan tuki
+
+Varmista, että kaikki sisältö ja vuorovaikutukset ilmoitetaan oikein näytönlukijoille käyttämällä ARIA-attribuutteja tarvittaessa.
+
+### 4. Visuaalinen saavutettavuus
+
+Tue näkövammaisia käyttäjiä asianmukaisella kontrastilla, fokusindikaattoreilla ja responsiivisella tekstin koon tuella.
+
+## ARIA-mallit
+
+### ARIA:n ymmärtäminen
+
+ARIA (Accessible Rich Internet Applications) antaa apuvälineille semanttista tietoa elementeistä. Käytä ARIA:a täydentämään, ei korvaamaan, semanttista HTML:ää.
+
+Siinä on muutama sääntö, joita sinun tulisi noudattaa:
+
+1. Älä käytä ARIA:a, jos voit käyttää semanttista HTML:ää
+2. Älä muuta natiivista semantiikkaa ellei se ole välttämätöntä
+3. Kaikkien interaktiivisten elementtien on oltava näppäimistöllä käytettävissä
+4. Älä piilota fokuskelpoisia elementtejä apuvälineiltä
+5. Kaikilla interaktiivisilla elementeillä on oltava saavutettava nimi
+
+### Yleisimmät ARIA-attribuutit
+
+#### Roolit
+
+Määritä, mitä elementti on:
+
+#### Tilat
+
+Kuvaile elementin nykyistä tilaa:
+
+#### Ominaisuudet
+
+Tarjoa lisätietoja:
+
+## Komponenttimallit
+
+### Modaali/Dialogi
+
+Modaaleissa vaaditaan huolellista fokusin hallintaa ja näppäimistön fokuksen rajaamista:
+
+### Pudotusvalikko
+
+Pudotusvalikoissa tarvitaan asianmukaiset ARIA-attribuutit ja näppäimistönavigointi:
+
+### Välilehdet
+
+Välilehti-interfacet vaativat tiettyjä ARIA-malleja ja näppäimistönavigointia:
+
+### Lomakkeet
+
+Lomakkeet tarvitsevat selkeitä etikettejä, virheilmoituksia ja validointipalautetta:
+
+## Fokusin hallinta
+
+### Näkyvä fokus
+
+Näytä fokusindikaattorit vain näppäimistönavigoinnissa:
+
+### Fokusrajoitus
+
+Pidä fokus tietyllä alueella:
+
+### Fokusin palautus
+
+Palauta fokus sopivalle elementille vuorovaikutusten jälkeen:
+
+## Dynaamiset alueet
+
+Ilmoita dynaamisista sisällön muutoksista näytönlukijoille:
+
+### Tilaviestit
+
+### Edistymisindikaattorit
+
+## Väri ja kontrasti
+
+### Kontrastivaatimukset
+
+Noudata WCAG-ohjeistusta värikontrastin osalta:
+
+### Väririippumattomuus
+
+Älä koskaan välitä tietoa pelkästään värin avulla:
+
+## Mobiilisaavutettavuus
+
+### Kosketuskohteet
+
+Varmista, että kosketuskohteet ovat riittävän suuria:
+
+### Näkymä ja zoomaus
+
+Salli käyttäjien zoomata:
+
+## Yleiset sudenkuopat
+
+### Paikkamerkin teksti etikettinä
+
+Älä käytä paikkamerkkitekstiä ainoana etikettilähteenä:
+
+### Tyhjät painikkeet
+
+Tarjoa aina saavutettava teksti kuvakepainikkeille:
+
+### Poissa käytöstä olevat lomake-elementit
+
+Poissa käytöstä olevat elementit eivät ole fokuskelpoisia, mikä voi hämmentää käyttäjiä:

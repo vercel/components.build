@@ -1,0 +1,137 @@
+---
+title: Marketplace di componenti
+description: Usare i marketplace di componenti per condividere i tuoi componenti.
+---
+
+I marketplace di componenti rappresentano un nuovo paradigma su come gli sviluppatori condividono e scoprono componenti UI. Piattaforme come [21st.dev](https://21st.dev) sono emerse come hub centralizzati dove i creatori possono pubblicare componenti e i consumatori possono scoprirli, visualizzarli in anteprima e installarli senza soluzione di continuità.
+
+Questi marketplace combinano l'accessibilità dei registri con la reperibilità dei tradizionali repository di pacchetti, creando ecosistemi vivaci per la condivisione di componenti.
+
+## Come funzionano i marketplace
+
+Quando pubblichi su un marketplace, la piattaforma tipicamente:
+
+1. **Ospita il codice del tuo componente** - Nessuna necessità di gestire la tua infrastruttura
+2. **Fornisce una CLI unificata** - Gli utenti installano i componenti tramite gli strumenti del marketplace
+3. **Genera anteprime** - Demo live ed esempi interattivi vengono creati automaticamente
+4. **Gestisce la scoperta** - Ricerca, categorie e raccomandazioni fanno emergere componenti rilevanti
+
+Per esempio, l'installazione da 21st.dev usa il familiare schema della CLI shadcn:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/haydenbleasel/dialog-stack
+```
+
+Il marketplace si occupa di fornire i metadata e il codice sorgente del componente, rendendo il processo di installazione fluido.
+
+## Vantaggi dei marketplace di componenti
+
+I marketplace offrono vantaggi unici che né i registri né i pacchetti npm possono eguagliare da soli.
+
+### Per gli autori di componenti
+
+#### Distribuzione senza infrastruttura
+
+Pubblicare su un marketplace elimina le preoccupazioni legate all'infrastruttura. Non devi impostare l'hosting per i tuoi componenti né gestire la distribuzione tramite CDN.
+
+Il marketplace si occupa di tutto questo, permettendoti di concentrarti sulla creazione di ottimi componenti.
+
+#### Pubblico integrato
+
+I marketplace aggregano la domanda. Quando gli sviluppatori visitano 21st.dev o piattaforme simili, cercano attivamente componenti. Il tuo lavoro viene scoperto organicamente tramite ricerca, categorie e raccomandazioni. 
+
+Questo traffico integrato significa che non devi promuovere i tuoi componenti in modo indipendente.
+
+#### Opportunità di monetizzazione
+
+Alcuni marketplace permettono ai creatori di monetizzare il proprio lavoro tramite livelli di componenti premium, programmi di sponsorizzazione, prezzi basati sull'uso e modelli di acquisto una tantum.
+
+Questo crea incentivi sostenibili per mantenere componenti di alta qualità.
+
+#### Feedback della comunità
+
+I marketplace tipicamente includono sistemi di valutazione, sezioni di commenti, analisi sull'utilizzo e tracciamento delle issue.
+
+Questo ciclo di feedback ti aiuta a capire come gli sviluppatori usano i tuoi componenti e quali miglioramenti sono necessari.
+
+### Per i consumatori di componenti
+
+#### Scoperta curata
+
+A differenza della ricerca su GitHub o npm, i marketplace offrono esperienze curate:
+
+```
+Browse by category:
+├── Marketing
+│   ├── Heroes
+│   ├── Pricing
+│   └── Testimonials
+├── Application
+│   ├── Dashboards
+│   ├── Forms
+│   └── Data Display
+└── E-commerce
+    ├── Product Cards
+    ├── Cart
+    └── Checkout
+```
+
+Questa organizzazione rende la ricerca del componente giusto significativamente più veloce.
+
+#### Assicurazione della qualità
+
+Molti marketplace implementano processi di revisione. I componenti possono passare controlli di qualità del codice, audit di accessibilità, test di performance e revisioni della documentazione.
+
+Questa cura assicura una qualità di base che i componenti autopubblicati potrebbero non avere.
+
+#### Tooling unificato
+
+Usare una singola CLI per tutti i componenti del marketplace semplifica il flusso di lavoro. Puoi installare qualsiasi componente dal marketplace usando lo stesso comando:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/<author>/<component>
+```
+
+## Sfide dei marketplace
+
+Sebbene i marketplace offrano vantaggi interessanti, introducono anche sfide uniche.
+
+### Per gli autori
+
+#### Concorrenza e visibilità
+
+In un marketplace affollato, distinguersi diventa difficile. Sei in competizione con centinaia di componenti simili, creatori affermati con follower, contenuti in evidenza o sponsorizzati e raccomandazioni guidate da algoritmi.
+
+Il successo richiede più del buon codice: hai bisogno di anteprime convincenti, documentazione eccellente e spesso di promozione attiva.
+
+#### Dipendenza dalla piattaforma
+
+Pubblicare su un marketplace significa accettare i loro termini di servizio, i modelli di condivisione dei ricavi, i requisiti tecnici e i processi di revisione.
+
+Se la piattaforma cambia le politiche o chiude, il tuo canale di distribuzione scompare.
+
+#### Pressione sulla qualità
+
+Gli utenti dei marketplace si aspettano componenti rifiniti e pronti per la produzione. Ciò significa documentazione completa, molteplici variazioni di demo, design responsive, test cross-browser e conformità all'accessibilità.
+
+Soddisfare queste aspettative richiede un significativo investimento di tempo oltre alla semplice scrittura del codice del componente.
+
+### Per i consumatori
+
+#### Qualità variabile
+
+Nonostante i processi di revisione, la qualità nei marketplace varia notevolmente. Potresti incontrare componenti abbandonati con dipendenze obsolete, codice scarsamente documentato, componenti che funzionano nelle demo ma si rompono in produzione e stili di codifica incoerenti tra i vari autori.
+
+È ancora necessaria la due diligence quando selezioni i componenti.
+
+#### Rischio di lock-in
+
+Sebbene i marketplace usino strumenti standard come la CLI shadcn, potrebbero introdurre formati di metadata proprietari, requisiti di configurazione personalizzati e dipendenze specifiche della piattaforma.
+
+Questo può rendere difficile allontanarsi dal marketplace.
+
+#### Paradosso della scoperta
+
+Troppa scelta può essere paralizzante. Quando cerchi un componente per pulsanti, trovare 200 opzioni non aiuta necessariamente. Devi valutare molteplici componenti simili, confrontare differenze sottili, valutare la manutenibilità a lungo termine e considerare la reputazione dell'autore.
+
+Questo processo di valutazione può richiedere più tempo che costruire il componente da solo.

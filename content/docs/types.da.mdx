@@ -1,0 +1,185 @@
+---
+title: Typer
+description: Udvidelse af browserens indbyggede HTML-elementer for maksimal tilpasning.
+---
+
+Når du bygger genanvendelige komponenter, er korrekt typning essentiel for at skabe fleksible, tilpasselige og typesikre interfaces. Ved at følge etablerede mønstre for komponenttyper kan du sikre, at dine komponenter både er kraftfulde og nemme at bruge.
+
+## Indpakning af et enkelt element
+
+Hver eksporteret komponent bør ideelt set indpakke et enkelt HTML- eller JSX-element. Dette princip er grundlæggende for at skabe komponerbare, tilpasselige komponenter.
+
+Når en komponent indpakker flere elementer, bliver det svært at tilpasse specifikke dele uden prop-drilling eller komplekse API'er. Overvej dette anti-mønster:
+
+```tsx title="@/components/ui/card.tsx"
+const Card = ({ title, description, footer, ...props }) => (
+  <div {...props}>
+    <div className="card-header">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div className="card-footer">
+      {footer}
+    </div>
+  </div>
+);
+```
+
+Som vi diskuterede i [Komposition](/composition), skaber denne tilgang flere problemer:
+- Du kan ikke tilpasse header-stylingen uden at tilføje flere props
+- Du kan ikke kontrollere hvilke HTML-elementer der bruges til title og description
+- Du er tvunget ind i en specifik DOM-struktur
+
+I stedet bør hvert lag være sin egen komponent. Dette giver dig mulighed for at tilpasse hvert lag uafhængigt og kontrollere de præcise HTML-elementer, der bruges til title og description.
+
+Fordelene ved denne tilgang er:
+- **Maksimal tilpasning** - Brugere kan style og ændre hvert lag uafhængigt
+- **Ingen prop-drilling** - Props går direkte til det element, der har brug for dem
+- **Semantisk HTML** - Brugere kan se og kontrollere den præcise DOM-struktur
+- **Bedre tilgængelighed** - Direkte kontrol over ARIA-attributter og semantiske elementer
+- **Enklere mental model** - Én komponent = ét element
+
+## Udvidelse af HTML-attributter
+
+Hver komponent bør udvide de native HTML-attributter for det element, den indpakker. Dette sikrer, at brugerne har fuld kontrol over det underliggende HTML-element.
+
+### Grundlæggende mønster
+
+```tsx
+export type CardRootProps = React.ComponentProps<'div'> & {
+  // Add your custom props here
+  variant?: 'default' | 'outlined';
+};
+
+export const CardRoot = ({ variant = 'default', ...props }: CardRootProps) => (
+  <div {...props} />
+);
+```
+
+### Almindelige HTML-attributtyper
+
+React leverer typedefinitioner for alle HTML-elementer. Brug den passende til din komponent:
+
+```tsx
+// For div elements
+type DivProps = React.ComponentProps<'div'>;
+
+// For button elements
+type ButtonProps = React.ComponentProps<'button'>;
+
+// For input elements
+type InputProps = React.ComponentProps<'input'>;
+
+// For form elements
+type FormProps = React.ComponentProps<'form'>;
+
+// For anchor elements
+type LinkProps = React.ComponentProps<'a'>;
+```
+
+### Håndtering af forskellige elementtyper
+
+Når en komponent kan renderes som forskellige elementer, brug generics eller unionstyper:
+
+```tsx
+// Using discriminated unions
+export type ButtonProps =
+  | (React.ComponentProps<'button'> & { asChild?: false })
+  | (React.ComponentProps<'div'> & { asChild: true });
+
+// Or with a polymorphic approach
+export type PolymorphicProps<T extends React.ElementType> = {
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
+```
+
+### Udvidelse af tilpassede komponenter
+
+Hvis du udvider en eksisterende komponent, kan du bruge typen `ComponentProps` til at få komponentens props.
+
+```tsx title="@/components/ui/share-button.tsx"
+import type { ComponentProps } from 'react';
+
+export type ShareButtonProps = ComponentProps<'button'>;
+
+export const ShareButton = (props: ShareButtonProps) => (
+  <button {...props} />
+);
+```
+
+## Eksport af typer
+
+Eksporter altid dine komponent-proptyper. Dette gør dem tilgængelige for forbrugere til forskellige anvendelsestilfælde.
+
+Eksport af typer muliggør flere vigtige mønstre:
+
+```tsx
+// 1. Extracting specific prop types
+import type { CardRootProps } from '@/components/ui/card';
+type variant = CardRootProps['variant'];
+
+// 2. Extending components
+export type ExtendedCardProps = CardRootProps & {
+  isLoading?: boolean;
+};
+
+// 3. Creating wrapper components
+const MyCard = (props: CardRootProps) => (
+  <CardRoot {...props} className={cn('my-custom-class', props.className)} />
+);
+
+// 4. Type-safe prop forwarding
+function useCardProps(): Partial<CardRootProps> {
+  return {
+    variant: 'outlined',
+    className: 'custom-card',
+  };
+}
+```
+
+Dine eksporterede typer bør navngives `<ComponentName>Props`. Dette er en konvention, der hjælper andre udviklere med at forstå typens formål.
+
+## Bedste praksis
+
+### 1. Spred altid props til sidst
+
+Sørg for, at brugere kan overskrive eventuelle standardprops:
+
+```tsx
+// ✅ Good - user props override defaults
+<div className="default-class" {...props} />
+
+// ❌ Bad - defaults override user props
+<div {...props} className="default-class" />
+```
+
+### 2. Undgå navnekonflikter for props
+
+Brug ikke prop-navne, der konflikter med HTML-attributter, medmindre du bevidst tilsidesætter dem:
+
+```tsx
+// ❌ Bad - conflicts with HTML title attribute
+export type CardProps = React.ComponentProps<'div'> & {
+  title: string; // This conflicts with the HTML title attribute
+};
+
+// ✅ Good - use a different name
+export type CardProps = React.ComponentProps<'div'> & {
+  heading: string;
+};
+```
+
+### 3. Dokumentér brugerdefinerede props
+
+Tilføj JSDoc-kommentarer til brugerdefinerede props for en bedre udvikleroplevelse:
+
+```tsx
+export type DialogProps = React.ComponentProps<'div'> & {
+  /** Whether the dialog is currently open */
+  open: boolean;
+  /** Callback when the dialog requests to be closed */
+  onOpenChange: (open: boolean) => void;
+  /** Whether to render the dialog in a portal */
+  modal?: boolean;
+};
+```

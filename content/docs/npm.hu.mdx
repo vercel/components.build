@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Hogyan publikáld a komponenseidet az npm-re.
+---
+
+Az NPM csomagok a komponenskönyvtárak terjesztésének hagyományos megközelítését képviselik. Míg a [regiszterek](/registry) rugalmasságuk miatt népszerűvé váltak, az npm-en való közzététel továbbra is erőteljes lehetőség, amely bizonyos esetekben egyedi előnyöket kínál.
+
+Az alapvető különbség az npm csomagok és a regiszterek között abban rejlik, hogyan terjesztik a kódot és hogyan kezelik a tulajdonjogot.
+
+## Csomagmodell
+
+Ha komponenseket npm csomagként teszel közzé, előre felépített, verziózott kódot terjesztesz, amelyet a felhasználók függőségként telepítenek:
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+Ez több meggyőző előnyt kínál, amelyek sok komponenskönyvtár számára ideálissá teszik őket.
+
+### Verziókezelés
+
+Csomagszerzőként te irányítod a verziózást és a frissítéseket. A felhasználók rögzíthetnek konkrét verziókat, ami stabilitást biztosít:
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+Ez a központosított verziókezelés azt jelenti, hogy frissítéseket, biztonsági javításokat és új funkciókat tudsz kiadni, amelyeket a felhasználók a szokásos függőségfrissítéseken keresztül megkapnak.
+
+### Egyszerűsített telepítés
+
+Az NPM csomagok zökkenőmentes telepítési élményt biztosítanak. Egyetlen parancs hozzáadja az egész komponenskönyvtáradat:
+
+```bash
+npm install @acme/ui-components
+```
+
+Nem kell fájlokat kézzel másolni, függőségeket kezelni vagy build eszközöket konfigurálni. Minden azonnal működik.
+
+### Függőségfeloldás
+
+Az npm automatikusan kezeli a tranzitív függőségeket. Ha a komponenseid bizonyos verziójú Reactet, Framer Motiont vagy más könyvtárakat igényelnek, az npm automatikusan feloldja ezeket a függőségeket, megelőzve a verzióütközéseket.
+
+### TypeScript támogatás
+
+A közzétett csomagok tartalmazhatnak előre felépített típusdefiníciókat, amelyek azonnali TypeScript támogatást biztosítanak további konfiguráció nélkül:
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## Az NPM csomagok korlátai
+
+Bár az npm csomagok kiválóak a terjesztésben, kompromisszumokkal járnak, amelyeket a regiszterek kifejezetten kezelnek.
+
+### Forráskód tulajdonjoga
+
+A legjelentősebb korlát a forráskódhoz való hozzáférés hiánya. A felhasználók nem tudnak:
+
+- Közvetlenül módosítani a komponens viselkedését
+- Javítani a hibákat anélkül, hogy frissítésekre várnának
+- Testreszabni a megvalósítás részleteit
+- Eltávolítani a nem használt kódot
+
+Ez olyan függőségi kapcsolatot hoz létre, amelyben a felhasználóknak a csomag karbantartójára kell támaszkodniuk minden változtatás esetén.
+
+### Testreszabási korlátok
+
+A komponensek finomhangolása az exponált API-n belüli munkát igényli. Bár props-okat adhatsz a testreszabáshoz:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+A felhasználók nem tudják alapvetően megváltoztatni a komponens működését anélkül, hogy el ne forkolnák az egész csomagot.
+
+### Csomagméret
+
+Az NPM csomagok az összes komponenst tartalmazzák, még akkor is, ha a felhasználóknak csak egy részhalmazra van szüksége. Bár a tree-shaking segít, nem mindig tökéletes, ami felesleges terhet adhat az alkalmazásokhoz.
+
+## CSS és Tailwind konfiguráció
+
+Egy kritikus szempont, amikor Tailwind alapú komponenseket publikálsz npm-en keresztül, az, hogy a stílusok helyesen működjenek a felhasználó alkalmazásában.
+
+Alapértelmezés szerint a Tailwind csak azokra az osztályokra generál stílusokat, amelyeket a projekt fájljaidban talál. Nem néz bele a `node_modules`-ba, ami azt jelenti, hogy a komponensed stílusai nem lesznek beillesztve.
+
+Ennek javításához a felhasználóknak egy `@source` direktívát kell hozzáadniuk a Tailwind konfigurációjukhoz, amely megmondja neki, hogy vizsgálja át a csomagodat osztálynevek után kutatva:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+Mindig dokumentáld ezt a követelményt kiemelten a csomagod README fájljában.
+
+## Komponenskönyvtár közzététele
+
+Ahhoz, hogy a komponenseidet npm-re publikáld, megfelelően konfigurált `package.json`-ra van szükséged, ami így nézhet ki:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+Az NPM csomagok továbbra is létfontosságú részét képezik a komponens ökoszisztémának. Míg a regiszterek vonzó előnyöket kínálnak a forráskód-tulajdonjog és a testreszabhatóság terén, addig az npm csomagok stabilitást, verziókezelést és könnyű használatot biztosítanak, amelyre sok csapatnak szüksége van.
+
+A kulcs a felhasználóid igényeinek megértése és annak a terjesztési módszernek a kiválasztása, amely a legjobban szolgálja őket. Néha ez azt jelenti, hogy mindkét lehetőséget felkínálod, és hagyod a fejlesztőket dönteni, mi működik a legjobban az ő projektjük számára.

@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Kako objaviti svoje komponente na NPM.
+---
+
+NPM paketi predstavljajo tradicionalni pristop k distribuciji knjižnic komponent. Čeprav so se [registri](/registry) uveljavili zaradi svoje prilagodljivosti, objavljanje na npm ostaja močna možnost z določenimi prednostmi za nekatere primere uporabe.
+
+Temeljna razlika med npm paketi in registri je v tem, kako distribuirajo kodo in upravljajo lastništvo.
+
+## Model paketa
+
+Ko objavite komponente kot npm paket, distribuirate vnaprej zgrajeno, verzionirano kodo, ki jo uporabniki namestijo kot odvisnost:
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+To prinaša več prepričljivih prednosti, zaradi katerih so prava izbira za mnoge knjižnice komponent.
+
+### Upravljanje različic
+
+Kot avtor paketa nadzorujete verzioniranje in posodobitve. Uporabniki se lahko zaklenejo na določene različice, kar zagotavlja stabilnost:
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+To centralizirano upravljanje različic pomeni, da lahko izdate posodobitve, varnostne popravke in nove funkcionalnosti, ki jih uporabniki prejmejo prek standardnih posodobitev odvisnosti.
+
+### Poenostavljena namestitev
+
+NPM paketi zagotavljajo brezhibno izkušnjo namestitve. En ukaz doda celotno knjižnico komponent:
+
+```bash
+npm install @acme/ui-components
+```
+
+Ni treba ročno kopirati datotek, upravljati odvisnosti ali konfigurirati orodij za gradnjo. Vse deluje takoj.
+
+### Reševanje odvisnosti
+
+NPM samodejno upravlja tranzitivne odvisnosti. Če vaše komponente zahtevajo določene različice React, Framer Motion ali drugih knjižnic, npm samodejno reši te odvisnosti in prepreči konflikte različic.
+
+### Podpora za TypeScript
+
+Objavljeni paketi lahko vključujejo vnaprej zgrajene definicije tipov, kar zagotavlja takojšnjo podporo za TypeScript brez dodatne konfiguracije:
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## Omejitve NPM paketov
+
+Čeprav so npm paketi odlični za distribucijo, prinašajo kompromisne vidike, ki jih registri posebej naslavljajo.
+
+### Lastništvo izvorne kode
+
+Najpomembnejša omejitev je pomanjkanje dostopa do izvorne kode. Uporabniki ne morejo:
+
+- Neposredno spreminjati vedenja komponente
+- Popraviti napake brez čakanja na posodobitve
+- Prilagajati podrobnosti implementacije
+- Odstraniti neuporabljene kode
+
+To ustvari razmerje odvisnosti, kjer morajo uporabniki za vse spremembe zanašati na vzdrževalca paketa.
+
+### Omejitve prilagoditve
+
+Prilagajanje komponent zahteva delo znotraj izpostavljenega API-ja. Čeprav lahko zagotovite props za prilagoditev:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+Uporabniki ne morejo temeljito spremeniti delovanja komponente brez forkanja celotnega paketa.
+
+### Velikost paketa
+
+NPM paketi vključujejo vse komponente, tudi če uporabniki potrebujejo le podnabor. Čeprav tree-shaking pomaga, ni vedno popolna in lahko aplikacijam doda nepotreben balast.
+
+## Konfiguracija CSS in Tailwind
+
+Ena ključna stvar pri objavljanju komponent, temelječih na Tailwind, preko npm je zagotoviti, da se slogi pravilno uporabljajo v aplikaciji, ki jih uporablja.
+
+Privzeto Tailwind generira sloge le za razrede, ki jih najde v datotekah vašega projekta. Ne pregleda `node_modules`, kar pomeni, da slogi vaših komponent ne bodo vključeni.
+
+Da to odpravite, morajo uporabniki v svojo Tailwind konfiguracijo dodati direktivo `@source`, ki ji pove, naj pregleda vaš paket za imena razredov:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+To zahtevo vedno jasno dokumentirajte v README datoteki vašega paketa.
+
+## Objavljanje vaše knjižnice komponent
+
+Za objavo vaših komponent na npm potrebujete ustrezno konfiguriran `package.json`, ki bi lahko izgledal tako:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+NPM paketi ostajajo pomemben del ekosistema komponent. Medtem ko registri ponujajo prepričljive prednosti glede lastništva izvorne kode in prilagodljivosti, npm paketi zagotavljajo stabilnost, upravljanje različic in enostavnost uporabe, ki jih marsikatera ekipa zahteva.
+
+Ključno je razumeti potrebe vaših uporabnikov in izbrati način distribucije, ki jim najbolj ustreza. Včasih to pomeni ponuditi obe možnosti in razvijalcem dati svobodo izbire, kaj najbolje deluje za njihov projekt.

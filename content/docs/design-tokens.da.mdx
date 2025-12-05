@@ -1,0 +1,51 @@
+---
+title: Designtokens
+description: Hvordan semantiske navngivningskonventioner og designtokens skaber et fleksibelt og vedligeholdelsesvenligt tematiseringssystem.
+---
+
+Et af kernefundamenterne i moderne komponentbiblioteker ligger i deres gennemarbejdede tilgang til styling. I stedet for at hardkode farver eller skabe stive klassesystemer kan vi anvende en semantisk navngivningskonvention, som adskiller tema, kontekst og anvendelse.
+
+Denne semantiske navngivningskonvention kaldes designtokens. Denne arkitektoniske beslutning skaber et vedligeholdelsesvenligt, fleksibelt system, der skalerer smukt på tværs af applikationer.
+
+## Filosofien bag semantiske CSS-variabler
+
+Traditionelle CSS-tilgange kobler ofte farveværdier direkte til deres brugskontekster, hvilket skaber skrøbelige systemer, der er svære at vedligeholde. Designtokens tager en anden tilgang ved at skabe abstraheringslag, der adskiller hvad noget er fra hvordan det ser ud.
+
+## Forstå variabelarkitekturen
+
+Lad os se på, hvordan vi kan strukturere vores CSS-variabler for at skabe dette fleksible system:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+I eksemplet ovenfor har vi fire designtokens:
+
+- `--background`, som bruges til baggrundsfarver (primært sidens baggrund)
+- `--foreground`, som bruges til forgrundsfarver (den generelle tekstfarve)
+- `--primary`, som bruges til primære farver (brandets hovedfarve)
+- `--primary-foreground`, som bruges til primære forgrundsfarver (tekstfarven, når den ses mod primærfarven)

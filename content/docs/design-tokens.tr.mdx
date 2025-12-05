@@ -1,0 +1,51 @@
+---
+title: Tasarım Tokenları
+description: Anlamsal adlandırma kuralları ve tasarım tokenlarının esnek, bakımı kolay bir tema sistemi nasıl oluşturduğunu.
+---
+
+Modern bileşen kütüphanelerinin temel taşlarından biri, stil verme konusundaki özenli yaklaşımıdır. Renkleri sert kodlamak veya katı sınıf sistemleri oluşturmak yerine, tema, bağlam ve kullanım sorumluluklarını ayıran anlamsal bir adlandırma kuralı uygulayabiliriz.
+
+Bu anlamsal adlandırma kuralına tasarım tokenları denir. Bu mimari karar, uygulamalar arasında güzelce ölçeklenen, bakımı kolay ve esnek bir sistem oluşturur.
+
+## Anlamsal CSS Değişkenlerinin Felsefesi
+
+Geleneksel CSS yaklaşımları genellikle renk değerlerini doğrudan kullanım bağlamlarına bağlar ve bu da bakımı zor, kırılgan sistemler yaratır. Tasarım tokenları, bir şeyin ne olduğunu ile nasıl göründüğünü ayıran soyutlama katmanları oluşturarak farklı bir yaklaşım benimser.
+
+## Değişken Mimarisini Anlamak
+
+Bu esnek sistemi oluşturmak için CSS değişkenlerimizi nasıl yapılandırabileceğimizi inceleyelim:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+Yukarıdaki örnekte dört tasarım tokenımız var:
+
+- `--background`, arka plan renkleri için kullanılır (öncelikle sayfanın arka planı)
+- `--foreground`, ön plan renkleri için kullanılır (genel metin rengi)
+- `--primary`, birincil renkler için kullanılır (markanın ana rengi)
+- `--primary-foreground`, birincil ön plan renkleri için kullanılır (birincil rengin üzerinde görülen metin rengi)

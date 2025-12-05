@@ -1,0 +1,137 @@
+---
+title: Markedspladser
+description: Brug af komponent-markedspladser til at dele dine komponenter.
+---
+
+Komponentmarkedspladser repræsenterer endnu et nyt paradigme i, hvordan udviklere deler og opdager UI-komponenter. Platforme som [21st.dev](https://21st.dev) er dukket op som centraliserede knudepunkter, hvor skabere kan publicere komponenter, og forbrugere kan finde, forhåndsvise og installere dem problemfrit.
+
+Disse markedspladser kombinerer tilgængeligheden fra registre med opdagelsesmulighederne fra traditionelle pakkerepositorier og skaber levende økosystemer for deling af komponenter.
+
+## Hvordan markedspladser fungerer
+
+Når du publicerer til en markedsplads, gør platformen typisk:
+
+1. **Vært for din komponentkode** - Ingen grund til at administrere din egen infrastruktur
+2. **Still er en samlet CLI til rådighed** - Brugere installerer komponenter via markedspladsens værktøjer
+3. **Genererer forhåndsvisninger** - Live-demos og interaktive eksempler oprettes automatisk
+4. **Håndterer opdagelse** - Søgning, kategorier og anbefalinger viser relevante komponenter
+
+For eksempel bruger installation fra 21st.dev det velkendte shadcn CLI-mønster:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/haydenbleasel/dialog-stack
+```
+
+Markedspladsen håndterer servering af komponentmetadata og kildekode, hvilket gør installationsprocessen problemfri.
+
+## Fordele ved komponentmarkedspladser
+
+Markedspladser tilbyder unikke fordele, som hverken registre eller npm-pakker kan matche alene.
+
+### For komponentforfattere
+
+#### Distribution uden infrastruktur
+
+Publicering til en markedsplads fjerner bekymringer om infrastruktur. Du behøver ikke at sætte hosting op for dine komponenter eller håndtere CDN-distribution.
+
+Markedspladsen tager sig af alt dette, så du kan fokusere på at skabe gode komponenter.
+
+#### Indbygget publikum
+
+Markedspladser aggregerer efterspørgsel. Når udviklere besøger 21st.dev eller lignende platforme, søger de aktivt efter komponenter. Dit arbejde bliver opdaget organisk gennem søgning, kategorier og anbefalinger.
+
+Denne indbyggede trafik betyder, at du ikke behøver markedsføre dine komponenter selvstændigt.
+
+#### Monetiseringsmuligheder
+
+Nogle markedspladser gør det muligt for skabere at tjene penge på deres arbejde gennem premium-komponentlag, sponsorprogrammer, prisfastsættelse baseret på brug og engangskøb.
+
+Det skaber bæredygtige incitamenter til at vedligeholde komponenter af høj kvalitet.
+
+#### Feedback fra fællesskabet
+
+Markedspladser inkluderer typisk bedømmelsessystemer, kommentarsektioner, brugsanalyser og issue-tracking.
+
+Denne feedback-loop hjælper dig med at forstå, hvordan udviklere bruger dine komponenter, og hvilke forbedringer de har brug for.
+
+### For komponentbrugere
+
+#### Kurateret opdagelse
+
+I modsætning til at søge gennem GitHub eller npm tilbyder markedspladser kuraterede oplevelser:
+
+```
+Browse by category:
+├── Marketing
+│   ├── Heroes
+│   ├── Pricing
+│   └── Testimonials
+├── Application
+│   ├── Dashboards
+│   ├── Forms
+│   └── Data Display
+└── E-commerce
+    ├── Product Cards
+    ├── Cart
+    └── Checkout
+```
+
+Denne organisering gør det betydeligt hurtigere at finde den rette komponent.
+
+#### Kvalitetssikring
+
+Mange markedspladser implementerer review-processer. Komponenter kan gennemgå kodekvalitetschecks, tilgængelighedsaudits, performance-test og dokumentationsgennemgang.
+
+Denne kuratering sikrer et minimumsniveau af kvalitet, som selvudgivne komponenter måske mangler.
+
+#### Ensartede værktøjer
+
+At bruge en enkelt CLI til alle markedspladsens komponenter forenkler arbejdsgangen. Du kan installere enhver komponent fra markedspladsen med den samme kommando:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/<author>/<component>
+```
+
+## Udfordringer ved markedspladser
+
+Selvom markedspladser tilbyder attraktive fordele, introducerer de også unikke udfordringer.
+
+### For forfattere
+
+#### Konkurrence og synlighed
+
+I et overfyldt marked bliver det svært at skille sig ud. Du konkurrerer med hundredvis af lignende komponenter, etablerede skabere med følgere, fremhævet eller sponsoreret indhold og algoritmedrevne anbefalinger.
+
+Succes kræver mere end blot god kode — du har brug for overbevisende forhåndsvisninger, fremragende dokumentation og ofte aktiv promovering.
+
+#### Afhængighed af platformen
+
+Publicering på en markedsplads betyder accept af deres servicevilkår, indtægtsdelingsmodeller, tekniske krav og review-processer.
+
+Hvis platformen ændrer politikker eller lukker ned, forsvinder din distributionskanal.
+
+#### Kvalitetspres
+
+Markedspladsbrugere forventer polerede, produktionsklare komponenter. Det betyder omfattende dokumentation, flere demo-varianter, responsivt design, tvær-browser-test og overholdelse af tilgængelighedsstandarder.
+
+At opfylde disse forventninger kræver betydelig tidsinvestering ud over blot at skrive komponentkode.
+
+### For forbrugere
+
+#### Variabel kvalitet
+
+På trods af review-processer varierer markedspladsers kvalitet meget. Du kan støde på forladte komponenter med forældede afhængigheder, dårligt dokumenteret kode, komponenter der virker i demoer men bryder i produktion, og inkonsistente kodestile hos forskellige forfattere.
+
+Der kræves stadig omhyggelig vurdering, når du vælger komponenter.
+
+#### Bekymringer om lock-in
+
+Selvom markedspladser bruger standardværktøjer som shadcn CLI, kan de indføre proprietære metadataformater, brugerdefinerede konfigurationskrav og platformsspecifikke afhængigheder.
+
+Det kan gøre det svært at flytte væk fra markedspladsen.
+
+#### Opdagelsesparadokset
+
+For meget valg kan gøre én handlingslammet. Når du søger efter en knapkomponent, hjælper det ikke nødvendigvis at finde 200 muligheder. Du er nødt til at evaluere flere lignende komponenter, sammenligne subtile forskelle, vurdere langsigtet vedligeholdelse og overveje forfatterens omdømme.
+
+Denne evalueringsproces kan tage længere tid end at bygge komponenten selv.

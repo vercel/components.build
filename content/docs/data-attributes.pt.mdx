@@ -1,0 +1,400 @@
+---
+title: Atributos data
+description: Usando atributos data para estilização declarativa e identificação de componentes.
+---
+
+Atributos data oferecem uma forma poderosa de expor o estado e a estrutura de um componente aos consumidores, permitindo estilização flexível sem explosão de props. Bibliotecas modernas de componentes usam dois padrões principais: `data-state` para estados visuais e `data-slot` para identificação de componentes.
+
+## Estilizando estado com data-state
+
+Um dos anti-padrões mais comuns em estilização de componentes é expor props className separadas para diferentes estados.
+
+Em componentes menos modernos, você frequentemente verá APIs como esta:
+
+```tsx
+<Dialog
+  openClassName="bg-black"
+  closedClassName="bg-white"
+  classes={{
+    open: "opacity-100",
+    closed: "opacity-0"
+  }}
+/>
+```
+
+Essa abordagem tem vários problemas:
+- Acopla o estado interno do componente à sua API de estilização
+- Cria uma explosão de props à medida que os componentes ficam mais complexos
+- Torna o componente mais difícil de usar e manter
+- Impede a estilização baseada em combinações de estado
+
+### A solução: atributos data-state
+
+Em vez disso, use atributos `data-*` para expor o estado do componente de forma declarativa. Isso permite que consumidores estilizem componentes com base no estado usando seletores CSS padrão:
+
+```tsx title="component.tsx"
+const Dialog = ({ className, ...props }: DialogProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      data-state={isOpen ? 'open' : 'closed'}
+      className={cn('transition-all', className)}
+      {...props}
+    />
+  );
+};
+```
+
+Agora os consumidores podem estilizar o componente com base no estado a partir de fora:
+
+```tsx title="app.tsx"
+<Dialog className="data-[state=open]:opacity-100 data-[state=closed]:opacity-0" />
+```
+
+### Benefícios dessa abordagem
+
+1. **Single className prop** - Não há necessidade de múltiplas props className específicas para estados
+2. **Composable** - Combine múltiplos atributos data para estados complexos
+3. **Standard CSS** - Funciona com qualquer solução CSS-in-JS ou CSS puro
+4. **Type-safe** - O TypeScript pode inferir os valores dos atributos data
+5. **Inspectable** - Estados ficam visíveis nas DevTools como atributos HTML
+
+### Padrões comuns de estado
+
+Use atributos data para todo tipo de estado de componente:
+
+```tsx
+// Open/closed state
+<Accordion data-state={isOpen ? 'open' : 'closed'} />
+
+// Selected state
+<Tab data-state={isSelected ? 'active' : 'inactive'} />
+
+// Disabled state (in addition to disabled attribute)
+<Button data-disabled={isDisabled} disabled={isDisabled} />
+
+// Loading state
+<Button data-loading={isLoading} />
+
+// Orientation
+<Slider data-orientation="horizontal" />
+
+// Side/position
+<Tooltip data-side="top" />
+```
+
+### Estilizando com Tailwind
+
+Tailwind suporta variantes arbitrárias, tornando a estilização por atributos data elegante:
+
+```tsx
+<Dialog
+  className={cn(
+    // Base styles
+    'rounded-lg border p-4',
+    // State-based styles
+    'data-[state=open]:animate-in data-[state=open]:fade-in',
+    'data-[state=closed]:animate-out data-[state=closed]:fade-out',
+    // Multiple attributes
+    'data-[state=open][data-side=top]:slide-in-from-top-2'
+  )}
+/>
+```
+
+Para estados comumente usados, você pode estender a configuração do Tailwind:
+
+```js title="tailwind.config.js"
+module.exports = {
+  theme: {
+    extend: {
+      data: {
+        open: 'state="open"',
+        closed: 'state="closed"',
+        active: 'state="active"',
+      }
+    }
+  }
+}
+```
+
+Agora você pode usar a forma abreviada:
+
+```tsx
+<Dialog className="data-open:opacity-100 data-closed:opacity-0" />
+```
+
+### Integração com Radix UI
+
+Esse padrão é usado extensivamente pelo [Radix UI](https://www.radix-ui.com/), que aplica automaticamente atributos data aos seus primitivos:
+
+```tsx
+import * as Dialog from '@radix-ui/react-dialog';
+
+<Dialog.Root>
+  <Dialog.Trigger />
+  <Dialog.Portal>
+    {/* Radix automatically adds data-state="open" | "closed" */}
+    <Dialog.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out" />
+    <Dialog.Content className="data-[state=open]:fade-in data-[state=closed]:fade-out" />
+  </Dialog.Portal>
+</Dialog.Root>
+```
+
+Outros atributos data que o Radix fornece incluem:
+- `data-state` - aberto/fechado, ativo/inativo, ligado/desligado
+- `data-side` - top/right/bottom/left (para elementos posicionados)
+- `data-align` - start/center/end (para elementos posicionados)
+- `data-orientation` - horizontal/vertical
+- `data-disabled` - presente quando desabilitado
+- `data-placeholder` - presente quando estiver mostrando placeholder
+
+## Identificação de componentes com data-slot
+
+Enquanto `data-state` rastreia estados visuais, `data-slot` identifica tipos de componente dentro de uma composição. Esse padrão, popularizado pelo [shadcn/ui](https://ui.shadcn.com/), permite que componentes pais atinjam e estilize componentes filhos específicos sem depender de nomes de classe frágeis ou seletores de elemento.
+
+### O problema ao direcionar filhos
+
+Abordagens tradicionais para estilizar componentes filhos têm limitações significativas:
+
+```tsx
+// Relies on element types - breaks if implementation changes
+<form className="[&_input]:rounded-lg [&_button]:mt-4" />
+
+// Relies on class names - breaks if classes change
+<form className="[&_.text-input]:rounded-lg" />
+
+// Requires passing classes through props - verbose
+<form>
+  <input className={inputClasses} />
+  <button className={buttonClasses} />
+</form>
+```
+
+### A solução: atributos data-slot
+
+Use `data-slot` para dar aos componentes identificadores estáveis que podem ser alvejados pelos componentes pais:
+
+```tsx title="field-set.tsx"
+function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
+  return (
+    <fieldset
+      data-slot="field-set"
+      className={cn(
+        "flex flex-col gap-6",
+        // Target specific child slots
+        "has-[>[data-slot=checkbox-group]]:gap-3",
+        "has-[>[data-slot=radio-group]]:gap-3",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+```tsx title="checkbox-group.tsx"
+function CheckboxGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="checkbox-group"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  );
+}
+```
+
+### Benefícios do data-slot
+
+1. **Stable identifiers** - Não quebram quando detalhes de implementação mudam
+2. **Semantic targeting** - Direcione com base na finalidade do componente, não na estrutura
+3. **Encapsulation** - Classes internas permanecem privadas
+4. **Composable** - Funciona com aninhamento e composição arbitrários
+5. **Type-safe** - Pode ser validado e documentado
+
+### Usando `has-[]` para estilização sensível ao pai
+
+O seletor `has-[]` do Tailwind combinado com `data-slot` cria uma estilização poderosa consciente do elemento pai:
+
+```tsx title="form.tsx"
+function Form({ className, ...props }: React.ComponentProps<"form">) {
+  return (
+    <form
+      data-slot="form"
+      className={cn(
+        "space-y-4",
+        // Adjust spacing when specific slots are present
+        "has-[>[data-slot=form-section]]:space-y-6",
+        "has-[>[data-slot=inline-fields]]:space-y-2",
+        // Style based on slot states
+        "has-[[data-slot=submit-button][data-loading=true]]:opacity-50",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### Usando `[&_]` para direcionamento de descendentes
+
+Para aninhamentos mais profundos, use o padrão `[&_selector]` para direcionar qualquer descendente:
+
+```tsx title="card.tsx"
+function Card({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card"
+      className={cn(
+        "rounded-lg border p-4",
+        // Target any descendant with data-slot
+        "[&_[data-slot=card-header]]:mb-4",
+        "[&_[data-slot=card-title]]:text-lg [&_[data-slot=card-title]]:font-semibold",
+        "[&_[data-slot=card-description]]:text-sm [&_[data-slot=card-description]]:text-muted-foreground",
+        "[&_[data-slot=card-footer]]:mt-4 [&_[data-slot=card-footer]]:border-t [&_[data-slot=card-footer]]:pt-4",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### CSS global com data-slot
+
+Data slots funcionam muito bem com CSS global para consistência em todo o tema:
+
+```css title="globals.css"
+/* Style all buttons within forms */
+[data-slot="form"] [data-slot="button"] {
+  @apply w-full sm:w-auto;
+}
+
+/* Style submit buttons specifically */
+[data-slot="form"] [data-slot="submit-button"] {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* Adjust inputs within inline layouts */
+[data-slot="inline-fields"] [data-slot="input"] {
+  @apply flex-1;
+}
+
+/* Style based on state combinations */
+[data-slot="dialog"][data-state="open"] [data-slot="dialog-content"] {
+  @apply animate-in fade-in;
+}
+```
+
+### Convenções de nomenclatura
+
+Siga estas convenções para uma nomeação consistente de `data-slot`:
+
+1. **Use kebab-case** - `data-slot="form-field"` não `data-slot="formField"`
+2. **Be specific** - `data-slot="submit-button"` não `data-slot="button"`
+3. **Match component purpose** - O nome reflete o que ele faz, não como ele se parece
+4. **Avoid implementation details** - `data-slot="user-avatar"` não `data-slot="rounded-image"`
+
+```tsx
+// Good examples
+data-slot="search-input"
+data-slot="navigation-menu"
+data-slot="error-message"
+data-slot="submit-button"
+data-slot="card-header"
+
+// Avoid
+data-slot="input"           // Too generic
+data-slot="blueButton"      // Includes styling
+data-slot="div-wrapper"     // Implementation detail
+data-slot="mainContent"     // Use camelCase
+```
+
+## Quando usar atributos data vs props
+
+Entender quando usar cada padrão é chave para uma API limpa:
+
+### `data-state` casos de uso
+- **Visual states** - aberto/fechado, ativo/inativo, loading, etc.
+- **Layout states** - orientação, side, alignment
+- **Interaction states** - hover, focus, disabled (quando você precisar estilizar filhos)
+
+### `data-slot` casos de uso
+- **Component identification** - Identificadores estáveis para direcionamento
+- **Composition patterns** - Relações pai-filho
+- **Global styling** - Estilização de componentes em todo o tema
+- **Variant-independent targeting** - Direcione qualquer variante de um componente
+
+### `props` casos de uso
+- **Variantes** - Diferentes designs visuais (primary, secondary, destructive)
+- **Tamanhos** - sm, md, lg
+- **Configuração de comportamento** - controlled/uncontrolled, valores padrão
+- **Manipuladores de eventos** - onClick, onChange, etc.
+
+### Abordagem combinada
+
+Um componente bem projetado usa os três padrões apropriadamente:
+
+```tsx title="button.tsx"
+type ButtonProps = {
+  variant?: 'primary' | 'secondary' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
+  loading?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
+  className?: string;
+};
+
+const Button = ({
+  variant = 'primary',
+  size = 'md',
+  loading,
+  disabled,
+  className,
+  ...props
+}: ButtonProps) => {
+  return (
+    <button
+      // Slot for targeting
+      data-slot="button"
+      // State for conditional styling
+      data-loading={loading}
+      data-disabled={disabled}
+      className={cn(
+        // Variant styles via props
+        buttonVariants({ variant, size }),
+        // Additional state styling allowed via className
+        className
+      )}
+      disabled={disabled}
+      {...props}
+    />
+  );
+};
+```
+
+Agora o botão pode ser usado e estilizado de várias maneiras:
+
+```tsx
+// Basic usage with variants
+<Button variant="primary" size="lg">Submit</Button>
+
+// Parent targeting via data-slot
+<form className="[&_[data-slot=button]]:w-full">
+  <Button>Submit</Button>
+</form>
+
+// State-based styling via data-state
+<Button
+  loading={isLoading}
+  className="data-[loading=true]:opacity-50"
+>
+  Submit
+</Button>
+
+// Global CSS can target any button
+// [data-slot="button"][data-loading="true"] { ... }
+```
+
+Atributos data fornecem uma base robusta para estilizar bibliotecas de componentes modernas. Ao usar `data-state` para estados visuais e `data-slot` para identificação de componentes, você cria uma API flexível e manutenível que escala desde componentes simples até complexos sistemas de design.

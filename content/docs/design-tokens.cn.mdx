@@ -1,0 +1,51 @@
+---
+title: 设计令牌
+description: 语义命名约定和设计令牌如何创建一个灵活、可维护的主题系统。
+---
+
+组件库现代化的核心基础之一在于其对样式的深思熟虑的方法。我们可以不通过硬编码颜色或创建僵化的类系统，而是采用一种语义命名约定，将主题、上下文和使用方式的关注点分离开来。
+
+这种语义命名约定被称为设计令牌。这一架构决策创造了一个可维护、灵活的系统，能够在应用中出色地扩展。
+
+## 语义 CSS 变量的哲学
+
+传统的 CSS 方法通常将颜色值直接与其使用场景耦合，导致系统脆弱且难以维护。设计令牌采取不同的方法，通过创建抽象层来把“某物是什么”和“它看起来如何”分离开来。
+
+## 了解变量架构
+
+下面让我们来看看如何构建我们的 CSS 变量以创建这个灵活的系统：
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+在上述示例中，我们有四个设计令牌：
+
+- `--background`，用于背景颜色（主要是页面背景）
+- `--foreground`，用于前景颜色（常规文本颜色）
+- `--primary`，用于主色（品牌的主色）
+- `--primary-foreground`，用于主色的前景颜色（即在主色上显示的文本颜色）

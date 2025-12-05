@@ -1,0 +1,54 @@
+---
+title: Kernprinzipien
+description: Beim Erstellen moderner UI-Komponenten ist es wichtig, diese Kernprinzipien zu beachten.
+---
+
+## Komponierbarkeit und Wiederverwendbarkeit
+
+Bevorzuge Komposition gegenüber Vererbung – erstelle Komponenten, die kombiniert und verschachtelt werden können, um komplexere UIs zu erzeugen, anstatt sich auf tiefe Klassenhierarchien zu verlassen.
+
+Komponierbare Komponenten stellen eine klare API bereit (via props/slots), die es Entwicklern ermöglicht, Verhalten und Erscheinungsbild anzupassen, indem sie Kind-Elemente oder Callbacks einstecken.
+
+Das macht Komponenten in unterschiedlichen Kontexten hochgradig wiederverwendbar. (Das Design von React untermauert dies: „Props und Komposition geben Ihnen alle Flexibilität, die Sie benötigen, um Aussehen und Verhalten einer Komponente auf eine explizite und sichere Weise anzupassen.“)
+
+## Standardmäßig barrierefrei
+
+Komponenten müssen für alle Benutzer nutzbar sein. Verwenden Sie semantische HTML-Elemente, die der Rolle der Komponente entsprechen (z. B. `<button>` für klickbare Aktionen, `<ul>/<li>` für Listen usw.) und ergänzen Sie diese bei Bedarf mit WAI-ARIA-Attributen.
+
+Stellen Sie sicher, dass Tastaturnavigation und Fokusverwaltung unterstützt werden (zum Beispiel Pfeiltasten-Navigation in Menüs, Fokusfallen in modalen Dialogen). Jede Komponente sollte von Haus aus den Barrierefreiheitsstandards und -richtlinien entsprechen.
+
+Das bedeutet, geeignete ARIA-Rollen/-Zustände bereitzustellen und Tests mit Screenreadern durchzuführen. Barrierefreiheit ist keine Option – sie ist eine Baseline-Funktion jeder Komponente.
+
+## Anpassbarkeit und Theming
+
+Eine Komponente sollte einfach neu gestylt oder an unterschiedliche Designanforderungen angepasst werden können. Vermeiden Sie das Festcodieren visueller Stile, die nicht überschreibbar sind.
+
+Bieten Sie Mechanismen für Theming und Styling an, wie CSS variables, klar dokumentierte class names oder style props. Idealerweise werden Komponenten mit sinnvollen Standardstilen geliefert, erlauben es Entwicklern jedoch, das Erscheinungsbild mit minimalem Aufwand anzupassen (zum Beispiel durch Übergeben einer className oder durch Nutzung von design tokens).
+
+Dieses Prinzip stellt sicher, dass Komponenten in jede Marke oder jedes Designsystem passen, ohne gegen Standardstile „anzukämpfen“.
+
+## Leichtgewichtig und performant
+
+Komponenten sollten hinsichtlich Assets und Abhängigkeiten so schlank wie möglich sein. Vermeiden Sie es, eine Komponente mit großen Bibliotheksabhängigkeiten oder übermäßig komplexer Logik aufzublähen, insbesondere wenn diese Logik nicht immer benötigt wird.
+
+Streben Sie nach guter Performance (sowohl beim Rendern als auch bei Interaktionen), indem Sie unnötige Re-Renders minimieren und effiziente Algorithmen für rechenintensive Aufgaben verwenden. Wenn eine Komponente datenintensiv ist (wie eine große Liste oder Tabelle), erwägen Sie Muster wie Virtualisierung oder inkrementelles Rendering, halten Sie solche Funktionen aber optional.
+
+Leichtgewichtige Komponenten sind einfacher zu warten und schneller für Endbenutzer.
+
+## Transparenz und Eigentum am Code
+
+Im Open-Source-Bereich profitieren Konsumenten oft davon, vollständige Einsicht und Kontrolle über den Komponenten-Code zu haben. Diese Spezifikation fördert eine „Open-Source-first“-Mentalität: Komponenten sollten keine Blackboxes sein.
+
+Wenn Entwickler Ihre Komponente importieren oder kopieren, sollten sie in der Lage sein, nachzuvollziehen, wie sie funktioniert, und sie bei Bedarf zu modifizieren. Dieses Prinzip liegt dem entstehenden „Kopieren-und-Einfügen“-Distributionsmodell (weiter unten beschrieben) zugrunde, bei dem Entwickler Komponenten-Code direkt in ihre Projekte integrieren.
+
+Indem Sie Nutzern Besitz über den Code geben, erhöhen Sie Vertrauen und ermöglichen tiefere Anpassungen.
+
+Selbst wenn Sie über ein Paket distribuieren, fördern Sie Transparenz, indem Sie Source Maps, lesbaren Code und umfassende Dokumentation bereitstellen.
+
+## Gut dokumentiert und DX-freundlich
+
+Eine großartige Komponente ist nicht nur Code – sie wird von klarer Dokumentation und Beispielen begleitet. Aus Sicht der Entwicklererfahrung (Entwicklererfahrung (DX)) sollten Ihre Komponenten leicht zu erlernen und zu integrieren sein.
+
+Dokumentieren Sie Zweck, props und Anwendungsbeispiele jeder Komponente. Fügen Sie Hinweise zur Barrierefreiheit hinzu (wie Tastatursteuerungen oder verwendete ARIA-Attribute) sowie alle Anpassungsoptionen.
+
+Gute Dokumentation reduziert Fehlgebrauch und senkt die Hürde für die Adoption. Wir werden die Dokumentationsanforderungen im Abschnitt „Veröffentlichen“ behandeln, aber es ist hier als Prinzip aufgeführt, weil die Planung für gute Dokumentation und DX während der Design-/Build-Phase erfolgen sollte.

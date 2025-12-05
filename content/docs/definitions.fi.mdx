@@ -1,0 +1,234 @@
+---
+title: Määritelmät
+description: Tällä sivulla määritellään tarkka terminologia, jota käytetään koko spesifikaatiossa. Termit ovat tietoisesti kehysriippumattomia, mutta käytämme esimerkeissä Reactia.
+---
+
+## 1. Artefaktien taksonomia
+
+### 1.1 Primiitiivi
+
+Primiitiivi (tai tyylitön komponentti) on **alin rakennusosa**, joka tarjoaa käyttäytymisen ja saavutettavuuden ilman mitään tyylittelyä.
+
+Primiitiivit ovat täysin headless‑periaatteella (eli tyylittömiä) ja kapseloivat semantiikan, fokuksen hallinnan, näppäimistöinteraktion, kerrostamisen/portaalit, ARIA‑liitännät, mittauksen ja vastaavat huomiot. Ne tarjoavat käyttäytymispohjan mutta vaativat tyylityksen, jotta niistä tulee valmiita käyttöliittymäelementtejä.
+
+Esimerkkejä:
+
+- [Radix UI Primitives](https://www.radix-ui.com/primitives) (Dialog, Popover, Tooltip, jne.)
+- [React Aria Components](https://react-spectrum.adobe.com/react-aria)
+- [Base UI](https://base-ui.com)
+- [Headless UI](https://headlessui.com/)
+
+Odotukset:
+
+- Täysin tyylitön (headless).
+- Yksi vastuualue; koostettavissa tyylitellyiksi komponenteiksi.
+- Toimitetaan roolia vastaavalla kattavalla a11y‑käyttäytymisellä.
+- Versiointi suosii vakautta; rikkomukset muutoksissa ovat harvinaisia ja dokumentoituja.
+
+<Callout>
+Termit primiitiivi ja komponentti käytetään usein verkossa toistensa synonyymeinä, mutta ne eivät ole sama asia.
+</Callout>
+
+### 1.2 Komponentti
+
+Komponentti on tyylitelty, uudelleenkäytettävä käyttöliittymäyksikkö, joka lisää visuaalisen suunnittelun primiitiiveihin tai koostaa useita elementtejä luodakseen täydellisiä, toiminnallisia käyttöliittymäelementtejä.
+
+Komponentit ovat edelleen suhteellisen matalan tason, mutta sisältävät tyylityksen, mikä tekee niistä välittömästi käytettäviä sovelluksissa. Tyypillisesti ne kääriä tyylittömät primiitiivit oletusvisuaalisella suunnittelulla mutta pysyvät mukautettavina.
+
+Esimerkkejä:
+- [shadcn/ui components](https://ui.shadcn.com/) (Radix‑primiitiivien tyylitetyt kääreet)
+- [Material UI components](https://mui.com/components/)
+- [Ant Design components](https://ant.design/components/overview/)
+
+Odotukset:
+- Selkeä props‑API; tukee kontrolloitua ja kontrolloimatonta käyttöä tarvittaessa.
+- Sisältää oletustyylityksen mutta on helposti ylikirjoitettavissa (luokat, tokenit, slots).
+- Täysin näppäimistöllä saavutettava ja ruudunlukijaystävällinen (perii primiitiiveiltä).
+- Koostettavissa (children/slots, render props tai compound‑alikomponentit).
+- Saatetaan rakentaa primiitiiveistä tai toteuttaa käyttäytyminen suoraan tyylityksen avulla.
+
+### 1.3 Malli
+
+Mallit ovat erityisiä koostumia primiitiiveistä tai komponenteista, joita käytetään ratkaisemaan tietty UI/UX‑ongelma.
+
+Esimerkkejä:
+- Lomakkeen validointi rivivirheiden kanssa
+- Tuhoavien toimintojen varmistaminen
+- Ehdotushaun (typeahead) toteutus
+- Optimistinen käyttöliittymä
+
+Odotukset.
+- Kuvaa käyttäytymisen, a11y:n, näppäimistökartan ja virhetilat.
+- Saattaa sisältää referenssitoteutuksia useissa kehyksissä.
+
+### 1.4 Block
+
+Mielipideohjattu, tuotantovalmiiksi tarkoitettu komponenttikompositio, joka ratkaisee konkreettisen käyttöliittymätapauksen (usein tuotekohtainen) sisältäen sisältörakenteen. Blockit vaihtavat yleispätevyyttä käyttöönoton nopeuteen.
+
+Esimerkkejä:
+- Hintataulukko
+- Autentikointinäytöt
+- Onboarding‑stepperi
+- AI‑chat‑paneeli
+- Laskutuksen asetusten lomake
+
+Odotukset.
+- Vahvat oletukset, copy‑paste‑ystävällinen, helppo brändättävä/teemattava.
+- Vähäinen logiikka rajoittuen layoutiin ja orkestrointiin; domain‑logiikka stubattu käsittelijöillä.
+- Hyväksyy dataa propsien kautta; ei koskaan piilota dataa hakujen taakse ilman dokumentoitua adapteria.
+
+<AuthorNote name="Rob Austin" role="Founder of shadcnblocks.com" githubUsername="JugglerX" link="https://www.shadcnblocks.com/">
+Blockit eivät tyypillisesti ole uudelleenkäytettäviä samalla tavalla kuin komponentit. Et tuo niitä sisään, vaan ne tyypillisesti tuovat sisään komponentteja ja primiitiivejä. Tämä tekee niistä hyvän ehdokkaan [Registry](/registry)‑jakelutavaksi.
+</AuthorNote>
+
+### 1.5 Sivusto
+
+Täydellinen, yhden reitin näkymä, joka koostuu useista blockeista, järjestetty palvelemaan tiettyä käyttäjälle suunnattua tarkoitusta. Sivut yhdistävät blockit yhtenäiseksi layoutiksi, joka edustaa yhtä määränpäätä sovelluksessa.
+
+Esimerkkejä:
+- Laskeutumissivu (hero‑block + ominaisuudet‑block + hinnoittelu‑block + footer‑block)
+- Tuotesivun yksityiskohdat (kuvagalleria‑block + tuotetiedot‑block + arvostelut‑block)
+- Hallintapaneeli (statistiikka‑block + kaavio‑block + aktiviteettisyöte‑block)
+
+Odotukset:
+- Yhdistää useita blockeja yhtenäiseksi layoutiksi yhdelle reitille.
+- Keskittyy layoutiin ja block‑orchestrointiin enemmän kuin komponenttitason yksityiskohtiin.
+- Saattaa sisältää sivukohtaista logiikkaa datan koordinointiin blockien välillä.
+- Itsenäinen yhdelle URL:lle/reitille; ei ole tarkoitettu uudelleenkäytettäväksi eri reiteillä.
+
+### 1.6 Mallipohja
+
+Monisivuinen koko sivuston scaffold, joka pakkaa sivut, reititysasetukset, jaetut layoutit, globaalit providerit ja projektirakenteen. Mallipohjat ovat täydellisiä lähtökohtia koko sovelluksille tai suurille sovellusosille.
+
+Esimerkkejä:
+- [TailwindCSS Templates](https://tailwindui.com/templates)
+- [shadcnblocks Templates](https://www.shadcnblocks.com/templates) (täydelliset sovellusshellit)
+- "SaaS starter" (auth‑sivut + dashboard‑sivut + asetussivut + markkinointisivut)
+- "Verkkokaupan mallipohja" (myymälä + tuotesivut + kassavirta + ylläpitosivut)
+
+Odotukset:
+- Sisältää useita sivuja reititys/navigaatiorakenteella.
+- Tarjoaa globaalia konfiguraatiota (teema‑providerit, auth‑context, layout‑shellit).
+- Mielipideohjattu projektirakenne selkeillä konventioilla.
+- Suunniteltu kokonaisvaltaiseksi lähtökohdaksi; forkaa ja muokkaa sen sijaan, että tuotaisiin riippuvuutena.
+- Saattaa sisältää build‑konfiguraation, deployment‑asetukset ja kehitystyökalut.
+
+### 1.7 Utility (Ei‑visuaalinen)
+
+Apuväline, joka viedään kehittäjäergonomian tai koostamisen helpottamiseksi; ei renderöitävä UI.
+
+Esimerkkejä:
+- React‑hookit (useControllableState, useId)
+- Luokkien apu­funktiot
+- Pikanäppäinavustajat
+- Focus scopet
+
+Odotukset.
+- Sivuvaikutukseton (paitsi missä erikseen dokumentoitu).
+- Testattavissa eristetysti; tukee tree‑shakingia.
+
+## 2. API‑ ja koostamis sanasto
+
+### 2.1 Props API
+
+Komponentin julkinen konfiguraatiopinta. Propsit ovat vakaita, tyypitettyjä ja dokumentoitu oletuksineen ja a11y‑vaikutuksineen.
+
+### 2.2 Children / Slots
+
+Paikat kutsujan tarjoamalle rakenteelle tai sisällölle.
+- Children (implisiittinen slot). JSX avaavien/sulkevien tagien välissä.
+- Nimetyt slotit. Propsit kuten icon, footer tai `<Component.Slot>`‑alikomponentit.
+- Slotin välitys (slot forwarding). DOM‑attribuuttien/className/refs‑välitys alielementille.
+
+### 2.3 Render Prop (Function-as-Child)
+
+Funktiolapsi, jota käytetään renderöinnin delegointiin, samalla kun vanhempi toimittaa tilan/datan.
+
+```tsx
+<ParentComponent data={data}>
+  {(item) => (
+    <ChildComponent key={item.id} {...item} />
+  )}
+</ParentComponent>
+```
+
+Käytä kun vanhemman on omistettava data/käyttäytyminen, mutta kuluttajan on hallittava merkintä täysin.
+
+### 2.4 Kontrolloitu vs. kontrolloimaton
+
+**Kontrolloitu** ja **kontrolloimaton** ovat termejä, joita käytetään kuvaamaan komponentin tilaa.
+
+**Kontrolloiduilla** komponenteilla arvo ohjautuu propsien kautta, ja ne tyypillisesti lähettävät `onChange`‑tapahtuman (totuuden lähde on vanhemmassa). **Kontrolloimattomat** komponentit pitävät sisäistä tilaa; ne saattavat tarjota `defaultValue`‑propin ja imperatiivisen resetin.
+
+Monien inputtien tulisi tukea molempia. Lue lisää [kontrolloidusta ja kontrolloimattomasta tilasta](/state).
+
+### 2.5 Provider / Context
+
+Ylin komponentti, joka toimittaa jaettua tilaa/konfiguraatiota alipuuun (esim. teema, locale, aktiivinen välilehden id). Providereita dokumentoidaan selkeästi vaaditun sijoituksen kanssa.
+
+### 2.6 Portaali
+
+UI:n renderöinti DOM‑hierarkian ulkopuolelle kerrostuksen/pinon hallintaa varten (esim. modaalit, popoverit, toastit), samalla säilyttäen saavutettavuuden (focus trap, aria‑modal, inert tausta).
+
+## 3. Tyylitys ja teemointi sanasto
+
+### 3.1 Headless
+
+Toteuttaa käyttäytymisen ja saavutettavuuden ilman ulkoasun määritystä. Kuluttajan on toimitettava tyylit.
+
+### 3.2 Styled
+
+Toimitetaan oletusvisuaalisen suunnittelun kanssa (CSS‑luokat, inline‑tyylit tai tokenit) mutta pysyy helposti ylikirjoitettavana (className‑yhdistäminen, CSS‑muuttujat, teemointi).
+
+### 3.3 Variantit
+
+Diskreetit, dokumentoidut tyylin tai käyttäytymisen variaatiot, jotka paljastetaan propsien kautta (esim. `size="sm|md|lg"`, `tone="neutral|destructive"`). Variantit eivät ole erillisiä komponentteja.
+
+### 3.4 Design Tokenit
+
+Nimettyjä, alustariippumattomia arvoja (esim. `--color-bg`, `--radius-md`, `--space-2`), jotka parametrisoi visuaalista suunnittelua ja tukevat teemointia.
+
+## 4. Saavutettavuus‑sanasto
+
+### 4.1 Rooli / Tila / Ominaisuus
+
+WAI‑ARIA‑attribuutit, jotka välittävät semantiikkaa (`role="menu"`), tilaa (`aria-checked`) ja suhteita (`aria-controls`, `aria-labelledby`).
+
+### 4.2 Näppäimistökartta
+
+Dokumentoitu näppäimistöinteraktioiden sarja widgetille (esim. `Tab`, `Arrow keys`, `Home/End`, `Escape`). Jokainen interaktiivinen komponentti määrittelee ja toteuttaa näppäimistökartan.
+
+### 4.3 Fokus‑hallinta
+
+Säännöt alkufokukselle, liikkeelle lähtevälle fokukselle (roving focus), fokusloukkuille ja fokuksen palautukselle purkautumisen yhteydessä.
+
+## 5. Jakelu‑sanasto
+
+### 5.1 Paketti (Registry‑jakelu)
+
+Komponentti/kirjasto julkaistaan pakettirekisteriin (esim. `npm`) ja tuodaan bundlerin kautta. Suosii versioituja päivityksiä ja riippuvuuksien hallintaa.
+
+### 5.2 Kopioi‑ja‑liitä (Lähdejakelu)
+
+Lähdekoodi integroidaan suoraan kuluttajan repositorioon (usein CLI:n kautta). Suosii omistajuutta, mukauttamista ja nollaa ylimääräistä runtime‑riippuvuutta.
+
+### 5.3 Rekisteri (Katalogi)
+
+Kuratoitu indeksi artefakteista (primiitiivit, komponentit, blockit, mallipohjat) metadatalla, esikatseluilla ja asennus/kopiointi‑ohjeilla. Rekisteri ei välttämättä ole paketinhallinta.
+
+## 6. Luokittelun heuristiikat
+
+Käytä tätä päätöksentekovirtaa nimeämään ja sijoittamaan artefakti:
+
+1. Kapseloiko se yhden käyttäytymisen tai a11y‑huolen ilman tyylitystä? → **Primiitiivi**
+2. Onko se tyylitelty, uudelleenkäytettävä käyttöliikelementti, joka lisää visuaalista suunnittelua primiitiiveihin tai koostaa useita elementtejä? → **Komponentti**
+3. Ratkaiseeko se konkreettisen tuotetapauksen mielipideohjatulla koostamisella ja kopioinnilla? → **Block**
+4. Rakentaako se sivun/virran reitityksineen, provideereineen ja vaihdettavine alueineen? → **Mallipohja**
+5. Onko se toistuvan ratkaisun dokumentaatio, riippumatta toteutuksesta? → **Malli**
+6. Onko se ei‑visuaalista logiikkaa ergonomiaan/koostamiseen? → **Utility**
+
+## 7. Ei‑tavoitteet ja tarkennukset
+
+- Web Components vs. "Komponentit." Tässä spesifikaatiossa "komponentti" viittaa uudelleenkäytettävään käyttöliittymäyksikköön (esimerkit Reactissa). Se ei tarkoita HTML‑Custom Elements ‑standardia ellei sitä erikseen mainita. Vastaavat periaatteet pätevät kehyksissä.
+- Widgetit. Termi “widget” vältetään epäselvyyden vuoksi; käytä komponenttia (yleinen) tai mallia (vain dokumentaatio).
+- Teemat vs. Tyylit. Teema on tyylien parametrisoimista (tokenien kautta). Tyylit ovat konkreettista esitystä. Komponenttien tulisi tukea teemoja; blockit/mallipohjat saattavat lähettää mielipideohjattuja tyylejä plus teemointikoukkuja.

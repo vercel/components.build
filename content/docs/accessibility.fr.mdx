@@ -1,0 +1,132 @@
+---
+title: Accessibilité
+description: Construire des composants utilisables par tous, y compris les utilisateurs en situation de handicap qui dépendent de technologies d'assistance.
+---
+
+Accessibilité (a11y) n'est pas une fonctionnalité optionnelle — c'est une exigence fondamentale pour les composants web modernes. Chaque composant doit être utilisable par tout le monde, y compris les personnes ayant des déficiences visuelles, motrices, auditives ou cognitives.
+
+Ce guide est une liste non exhaustive de principes et de modèles d'accessibilité que vous devriez suivre lors de la création de composants. Ce n'est pas un guide complet, mais il devrait vous donner une idée des types de problèmes dont vous devez être conscient.
+
+Si vous utilisez un linter avec des règles d'accessibilité strictes comme [Ultracite](https://www.ultracite.ai), ce type de problème sera probablement détecté automatiquement, mais il reste important de comprendre les principes.
+
+## Principes de base
+
+### 1. Priorité au HTML sémantique
+
+Commencez toujours par l'élément HTML le plus approprié. Le HTML sémantique fournit des fonctionnalités d'accessibilité intégrées que les implémentations personnalisées oublient souvent.
+
+Semantic elements come with proper role announcements, keyboard interaction, focus management, and form participation.
+
+### 2. Navigation au clavier
+
+Chaque élément interactif doit être accessible au clavier. Les utilisateurs doivent pouvoir naviguer, activer et interagir avec toutes les fonctionnalités en n'utilisant que le clavier.
+
+### 3. Support pour les lecteurs d'écran
+
+Assurez-vous que tout le contenu et les interactions sont correctement annoncés aux lecteurs d'écran en utilisant les attributs ARIA lorsque c'est nécessaire.
+
+### 4. Accessibilité visuelle
+
+Soutenez les utilisateurs malvoyants par un contraste approprié, des indicateurs de focus et une taille de texte responsive.
+
+## Modèles ARIA
+
+### Comprendre ARIA
+
+ARIA (Accessible Rich Internet Applications) fournit des informations sémantiques sur les éléments aux technologies d'assistance. Utilisez ARIA pour améliorer, et non remplacer, le HTML sémantique.
+
+Elle suit quelques règles que vous devriez respecter :
+
+1. N'utilisez pas ARIA si vous pouvez utiliser du HTML sémantique
+2. Ne changez pas la sémantique native sauf si nécessaire
+3. Tous les éléments interactifs doivent être accessibles au clavier
+4. Ne cachez pas les éléments focalisables aux technologies d'assistance
+5. Tous les éléments interactifs doivent avoir des noms accessibles
+
+### Attributs ARIA courants
+
+#### Rôles
+
+Définissent ce qu'est un élément :
+
+#### États
+
+Décrivent l'état courant d'un élément :
+
+#### Propriétés
+
+Fournissent des informations supplémentaires :
+
+## Modèles de composants
+
+### Modal/Dialog
+
+Les modales nécessitent une gestion du focus attentive et un piégeage du clavier :
+
+### Dropdown Menu
+
+Les menus déroulants nécessitent des attributs ARIA appropriés et une navigation au clavier :
+
+### Onglets
+
+Les interfaces à onglets requièrent des modèles ARIA spécifiques et une navigation au clavier :
+
+### Formulaires
+
+Les formulaires ont besoin d'étiquettes claires, de messages d'erreur et d'un retour de validation :
+
+## Gestion du focus
+
+### Focus Visible
+
+Affichez les indicateurs de focus uniquement pour la navigation au clavier :
+
+### Piégeage du focus
+
+Gardez le focus à l'intérieur d'une région spécifique :
+
+### Restauration du focus
+
+Rendez le focus à l'élément approprié après les interactions :
+
+## Régions dynamiques (Live Regions)
+
+Annoncez les changements de contenu dynamique aux lecteurs d'écran :
+
+### Messages d'état
+
+### Indicateurs de progression
+
+## Couleur et contraste
+
+### Exigences de contraste
+
+Suivez les directives WCAG pour le contraste des couleurs :
+
+### Indépendance de la couleur
+
+Ne transmettez jamais d'information uniquement par la couleur :
+
+## Accessibilité mobile
+
+### Zones tactiles
+
+Assurez-vous que les cibles tactiles sont suffisamment grandes :
+
+### Viewport et zoom
+
+Permettez aux utilisateurs de zoomer :
+
+## Pièges courants
+
+### Texte d'espace réservé comme étiquette
+
+N'utilisez pas les placeholders comme seule étiquette :
+
+### Boutons vides
+
+Fournissez toujours un texte accessible pour les boutons icônes :
+
+### Éléments de formulaire désactivés
+
+Les éléments désactivés ne sont pas focalisables, ce qui peut dérouter les utilisateurs :

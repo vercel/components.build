@@ -1,0 +1,132 @@
+---
+title: Barrierefreiheit
+description: Komponenten erstellen, die von allen nutzbar sind, einschließlich Benutzer mit Behinderungen, die auf Hilfstechnologien angewiesen sind.
+---
+
+Barrierefreiheit (a11y) ist kein optionales Feature — sie ist eine grundlegende Voraussetzung für moderne Webkomponenten. Jede Komponente muss von allen nutzbar sein, einschließlich Personen mit visuellen, motorischen, auditiven oder kognitiven Beeinträchtigungen.
+
+Dieser Leitfaden ist eine nicht erschöpfende Liste von Barrierefreiheitsprinzipien und -mustern, die Sie beim Erstellen von Komponenten befolgen sollten. Er ist kein umfassendes Handbuch, gibt Ihnen aber ein Gefühl für die Arten von Problemen, die Sie beachten sollten.
+
+Wenn Sie einen Linter mit strengen Barrierefreiheitsregeln wie [Ultracite](https://www.ultracite.ai) verwenden, werden diese Arten von Problemen wahrscheinlich automatisch erkannt, dennoch ist es wichtig, die Prinzipien zu verstehen.
+
+## Kernprinzipien
+
+### 1. Semantisches HTML zuerst
+
+Beginnen Sie immer mit dem geeignetsten HTML-Element. Semantisches HTML bietet eingebaute Barrierefreiheitsfunktionen, die bei benutzerdefinierten Implementierungen oft fehlen.
+
+Semantic elements come with proper role announcements, keyboard interaction, focus management, and form participation.
+
+### 2. Tastaturnavigation
+
+Jedes interaktive Element muss per Tastatur erreichbar sein. Nutzer sollten in der Lage sein, alle Funktionen nur mit der Tastatur zu navigieren, zu aktivieren und zu bedienen.
+
+### 3. Screenreader-Unterstützung
+
+Stellen Sie sicher, dass alle Inhalte und Interaktionen für Screenreader korrekt angekündigt werden, und verwenden Sie ARIA-Attribute nur dort, wo es notwendig ist.
+
+### 4. Visuelle Zugänglichkeit
+
+Unterstützen Sie Benutzer mit Sehbeeinträchtigungen durch angemessenen Kontrast, Fokusindikatoren und responsive Textgrößen.
+
+## ARIA-Muster
+
+### ARIA verstehen
+
+ARIA (Accessible Rich Internet Applications) liefert semantische Informationen über Elemente für Hilfstechnologien. Verwenden Sie ARIA, um semantisches HTML zu ergänzen, nicht zu ersetzen.
+
+Es gibt ein paar Regeln, die Sie befolgen sollten:
+
+1. Verwenden Sie ARIA nicht, wenn Sie semantisches HTML verwenden können
+2. Ändern Sie native Semantik nicht, es sei denn, es ist notwendig
+3. Alle interaktiven Elemente müssen per Tastatur zugänglich sein
+4. Verstecken Sie fokussierbare Elemente nicht vor Hilfstechnologien
+5. Alle interaktiven Elemente müssen zugängliche Namen haben
+
+### Gängige ARIA-Attribute
+
+#### Rollen
+
+Definieren, was ein Element ist:
+
+#### Zustände
+
+Beschreiben den aktuellen Zustand eines Elements:
+
+#### Eigenschaften
+
+Geben zusätzliche Informationen:
+
+## Komponentenmuster
+
+### Modal/Dialog
+
+Modals erfordern sorgfältiges Fokusmanagement und Tastatur-Fokusfalle:
+
+### Dropdown-Menü
+
+Dropdowns benötigen korrekte ARIA-Attribute und Tastaturnavigation:
+
+### Tabs
+
+Tab-Schnittstellen benötigen spezifische ARIA-Muster und Tastaturnavigation:
+
+### Formulare
+
+Formulare benötigen klare Labels, Fehlermeldungen und Validierungsfeedback:
+
+## Fokusverwaltung
+
+### Fokus sichtbar
+
+Zeigen Sie Fokusindikatoren nur für die Tastaturnavigation an:
+
+### Fokus-Einsperrung
+
+Halten Sie den Fokus innerhalb eines bestimmten Bereichs:
+
+### Wiederherstellung des Fokus
+
+Stellen Sie den Fokus nach Interaktionen wieder auf das passende Element zurück:
+
+## Live-Regionen
+
+Sagen Sie dynamische Inhaltsänderungen Screenreadern an:
+
+### Statusmeldungen
+
+### Fortschrittsanzeigen
+
+## Farbe und Kontrast
+
+### Kontrastanforderungen
+
+Befolgen Sie die WCAG-Richtlinien für den Farbkontrast:
+
+### Unabhängigkeit von Farben
+
+Geben Sie Informationen niemals ausschließlich über Farbe weiter:
+
+## Mobile Zugänglichkeit
+
+### Touch-Ziele
+
+Stellen Sie sicher, dass Touch-Ziele groß genug sind:
+
+### Viewport und Zoom
+
+Ermöglichen Sie Nutzern das Zoomen:
+
+## Gängige Fallstricke
+
+### Platzhaltertext nicht als Label verwenden
+
+Verwenden Sie Platzhalter nicht als einziges Label:
+
+### Leere Buttons
+
+Geben Sie Icon-Buttons immer einen zugänglichen Text:
+
+### Deaktivierte Formularelemente
+
+Deaktivierte Elemente sind nicht fokussierbar, was Benutzer verwirren kann:

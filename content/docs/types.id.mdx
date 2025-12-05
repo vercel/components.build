@@ -1,0 +1,185 @@
+---
+title: Tipe
+description: Memperluas elemen HTML bawaan browser untuk kustomisasi maksimal.
+---
+
+Saat membangun komponen yang dapat digunakan kembali, pengetikan yang tepat sangat penting untuk membuat antarmuka yang fleksibel, dapat dikustomisasi, dan aman secara tipe. Dengan mengikuti pola yang sudah mapan untuk tipe komponen, Anda dapat memastikan komponen Anda kuat dan mudah digunakan.
+
+## Pembungkusan Elemen Tunggal
+
+Setiap komponen yang diekspor sebaiknya membungkus satu elemen HTML atau JSX. Prinsip ini penting untuk membuat komponen yang dapat disusun ulang dan dikustomisasi.
+
+Ketika sebuah komponen membungkus banyak elemen, menjadi sulit untuk menyesuaikan bagian tertentu tanpa penyaluran props atau API yang kompleks. Pertimbangkan anti-pola ini:
+
+```tsx title="@/components/ui/card.tsx"
+const Card = ({ title, description, footer, ...props }) => (
+  <div {...props}>
+    <div className="card-header">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div className="card-footer">
+      {footer}
+    </div>
+  </div>
+);
+```
+
+Seperti yang kita bahas di [Komposisi](/composition), pendekatan ini menimbulkan beberapa masalah:
+- Anda tidak bisa menyesuaikan styling header tanpa menambah lebih banyak props
+- Anda tidak bisa mengontrol elemen HTML yang digunakan untuk title dan description
+- Anda terpaksa menggunakan struktur DOM tertentu
+
+Sebaliknya, setiap lapisan harus menjadi komponen sendiri. Ini memungkinkan Anda mengustomisasi setiap lapisan secara independen, dan mengontrol elemen HTML yang tepat yang digunakan untuk title dan description.
+
+Manfaat dari pendekatan ini adalah:
+- **Kustomisasi maksimal** - Pengguna dapat memberi gaya dan memodifikasi setiap lapisan secara independen
+- **Tanpa penyaluran props** - Props langsung menuju elemen yang membutuhkannya
+- **HTML semantik** - Pengguna dapat melihat dan mengontrol struktur DOM yang tepat
+- **Aksesibilitas yang lebih baik** - Kontrol langsung atas atribut ARIA dan elemen semantik
+- **Model mental yang lebih sederhana** - Satu komponen = satu elemen
+
+## Memperluas Atribut HTML
+
+Setiap komponen harus memperluas atribut HTML native dari elemen yang dibungkusnya. Ini memastikan pengguna memiliki kontrol penuh atas elemen HTML dasar.
+
+### Pola Dasar
+
+```tsx
+export type CardRootProps = React.ComponentProps<'div'> & {
+  // Add your custom props here
+  variant?: 'default' | 'outlined';
+};
+
+export const CardRoot = ({ variant = 'default', ...props }: CardRootProps) => (
+  <div {...props} />
+);
+```
+
+### Tipe Atribut HTML Umum
+
+React menyediakan definisi tipe untuk semua elemen HTML. Gunakan yang sesuai untuk komponen Anda:
+
+```tsx
+// For div elements
+type DivProps = React.ComponentProps<'div'>;
+
+// For button elements
+type ButtonProps = React.ComponentProps<'button'>;
+
+// For input elements
+type InputProps = React.ComponentProps<'input'>;
+
+// For form elements
+type FormProps = React.ComponentProps<'form'>;
+
+// For anchor elements
+type LinkProps = React.ComponentProps<'a'>;
+```
+
+### Menangani Berbagai Tipe Elemen
+
+Ketika sebuah komponen dapat dirender sebagai berbagai elemen, gunakan generik atau tipe union:
+
+```tsx
+// Using discriminated unions
+export type ButtonProps =
+  | (React.ComponentProps<'button'> & { asChild?: false })
+  | (React.ComponentProps<'div'> & { asChild: true });
+
+// Or with a polymorphic approach
+export type PolymorphicProps<T extends React.ElementType> = {
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
+```
+
+### Memperluas komponen kustom
+
+Jika Anda memperluas komponen yang sudah ada, Anda dapat menggunakan tipe `ComponentProps` untuk mengambil props dari komponen tersebut.
+
+```tsx title="@/components/ui/share-button.tsx"
+import type { ComponentProps } from 'react';
+
+export type ShareButtonProps = ComponentProps<'button'>;
+
+export const ShareButton = (props: ShareButtonProps) => (
+  <button {...props} />
+);
+```
+
+## Mengekspor Tipe
+
+Selalu ekspor tipe props komponen Anda. Ini membuatnya dapat diakses oleh konsumen untuk berbagai kasus penggunaan.
+
+Mengekspor tipe memungkinkan beberapa pola penting:
+
+```tsx
+// 1. Extracting specific prop types
+import type { CardRootProps } from '@/components/ui/card';
+type variant = CardRootProps['variant'];
+
+// 2. Extending components
+export type ExtendedCardProps = CardRootProps & {
+  isLoading?: boolean;
+};
+
+// 3. Creating wrapper components
+const MyCard = (props: CardRootProps) => (
+  <CardRoot {...props} className={cn('my-custom-class', props.className)} />
+);
+
+// 4. Type-safe prop forwarding
+function useCardProps(): Partial<CardRootProps> {
+  return {
+    variant: 'outlined',
+    className: 'custom-card',
+  };
+}
+```
+
+Tipe yang diekspor harus dinamai `<ComponentName>Props`. Ini adalah konvensi yang membantu pengembang lain memahami tujuan dari tipe tersebut.
+
+## Praktik Terbaik
+
+### 1. Always Spread Props Last
+
+Pastikan pengguna dapat menimpa semua props default:
+
+```tsx
+// ✅ Good - user props override defaults
+<div className="default-class" {...props} />
+
+// ❌ Bad - defaults override user props
+<div {...props} className="default-class" />
+```
+
+### 2. Avoid Prop Name Conflicts
+
+Jangan gunakan nama prop yang bertentangan dengan atribut HTML kecuali sengaja menimpanya:
+
+```tsx
+// ❌ Bad - conflicts with HTML title attribute
+export type CardProps = React.ComponentProps<'div'> & {
+  title: string; // This conflicts with the HTML title attribute
+};
+
+// ✅ Good - use a different name
+export type CardProps = React.ComponentProps<'div'> & {
+  heading: string;
+};
+```
+
+### 3. Document Custom Props
+
+Tambahkan komentar JSDoc pada props kustom untuk pengalaman pengembang yang lebih baik:
+
+```tsx
+export type DialogProps = React.ComponentProps<'div'> & {
+  /** Whether the dialog is currently open */
+  open: boolean;
+  /** Callback when the dialog requests to be closed */
+  onOpenChange: (open: boolean) => void;
+  /** Whether to render the dialog in a portal */
+  modal?: boolean;
+};
+```

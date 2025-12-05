@@ -1,0 +1,234 @@
+---
+title: Definitioner
+description: Denne side fastlægger præcis terminologi, der anvendes gennem hele specifikationen. Termer er bevidst rammeagnostiske, men vi bruger React til eksempler.
+---
+
+## 1. Artefakt‑taksonomi
+
+### 1.1 Primitiv
+
+En primitiv (eller en ustylet komponent) er den **laveste byggesten**, der leverer adfærd og tilgængelighed uden nogen styling.
+
+Primitiver er fuldstændig headless (dvs. ustylet) og indkapsler semantik, fokusstyring, tastaturinteraktion, lagring/portaler, ARIA‑forbindelser, måling og lignende bekymringer. De leverer det adfærdsmæssige fundament, men kræver styling for at blive færdig UI.
+
+Eksempler:
+
+- [Radix UI Primitives](https://www.radix-ui.com/primitives) (Dialog, Popover, Tooltip osv.)
+- [React Aria Components](https://react-spectrum.adobe.com/react-aria)
+- [Base UI](https://base-ui.com)
+- [Headless UI](https://headlessui.com/)
+
+Forventninger:
+
+- Fuldstændig ustylet (headless).
+- Enkelt ansvar; kan sammensættes til stylet komponenter.
+- Leveres med udtømmende a11y‑adfærd for sin rolle.
+- Versionering prioriterer stabilitet; breaking changes er sjældne og dokumenterede.
+
+<Callout>
+Begreberne primitive og component bruges typisk i flæng på nettet, men de er ikke det samme.
+</Callout>
+
+### 1.2 Komponent
+
+En komponent er en stylet, genanvendelig UI‑enhed, der tilføjer visuelt design til primitiver eller sammensætter flere elementer for at skabe komplette, funktionelle grænsefladeelementer.
+
+Komponenter er stadig relativt lavniveau, men inkluderer styling, hvilket gør dem umiddelbart brugbare i applikationer. De indpakker typisk ustylet primitives med et standard visuelt design, samtidig med at de forbliver tilpasningsvenlige.
+
+Eksempler:
+- [shadcn/ui components](https://ui.shadcn.com/) (stylet indpakning af Radix primitives)
+- [Material UI components](https://mui.com/components/)
+- [Ant Design components](https://ant.design/components/overview/)
+
+Forventninger:
+- Tydeligt props‑API; understøtter kontrolleret og ukontrolleret brug hvor relevant.
+- Inkluderer standardstyling, men er nem at tilsidesætte (classes, tokens, slots).
+- Fuld tastaturtilgængelighed og skærmlæservenlig (arver fra primitiver).
+- Komponerbar (children/slots, render props eller compound subcomponents).
+- Kan være bygget fra primitiver eller implementere adfærd direkte med styling.
+
+### 1.3 Mønster
+
+Mønstre er en specifik sammensætning af primitiver eller komponenter, der bruges til at løse et bestemt UI/UX‑problem.
+
+Eksempler:
+- Formularvalidering med inline‑fejl
+- Bekræftelse af destruktive handlinger
+- Typeahead‑søgning
+- Optimistisk UI
+
+Forventninger.
+- Beskriver adfærd, a11y, tastaturkort og fejlsituationer.
+- Kan inkludere referenceimplementeringer i flere frameworks.
+
+### 1.4 Blok
+
+En opinioneret, produktionsklar sammensætning af komponenter, der løser et konkret interface‑brugstilfælde (ofte produkt‑specifikt) med indholds‑scaffolding. Blokke bytter generalitet for hurtig adoption.
+
+Eksempler:
+- Pristabel
+- Auth‑skærme
+- Onboarding‑stepper
+- AI‑chatpanel
+- Faktureringsindstillingsformular
+
+Forventninger.
+- Stærke defaults, copy‑paste‑venlige, nemt brandbare/themable.
+- Minimal logik ud over layout og orkestrering; domænelogik er stubbet via handlers.
+- Modtager data via props; skjuler aldrig data bag fetches uden en dokumenteret adapter.
+
+<AuthorNote name="Rob Austin" role="Founder of shadcnblocks.com" githubUsername="JugglerX" link="https://www.shadcnblocks.com/">
+Blokke er typisk ikke genanvendelige på samme måde som en komponent. Du importerer dem ikke, men de importerer typisk komponenter og primitiver. Det gør dem til gode kandidater for en [Register](/registry) distributionsmetode.
+</AuthorNote>
+
+### 1.5 Side
+
+En komplet, enkelt‑rute visning sammensat af flere blokke arrangeret for at tjene et specifikt brugerrettet formål. Sider kombinerer blokke i et sammenhængende layout, der repræsenterer én destination i en applikation.
+
+Eksempler:
+- Landingsside (hero‑blok + features‑blok + pricing‑blok + footer‑blok)
+- Produktdetaljeside (billedgalleri‑blok + produktinfo‑blok + anmeldelser‑blok)
+- Dashboard‑side (stats‑blok + diagram‑blok + aktivitetsfeed‑blok)
+
+Forventninger:
+- Kombinerer flere blokke til et samlet layout for en enkelt rute.
+- Fokus på layout og blok‑orkestrering frem for komponent‑detaljer.
+- Kan inkludere sidespecifik logik til datakoordination mellem blokke.
+- Selvstændig for en enkelt URL/rute; ikke beregnet til genbrug på tværs af ruter.
+
+### 1.6 Template
+
+En multipagesamling eller fuld‑site scaffold, der pakker sider, routing‑konfiguration, delte layouts, globale providere og projektstruktur. Templates er komplette startpunkter for hele applikationer eller større applikationssektioner.
+
+Eksempler:
+- [TailwindCSS Templates](https://tailwindui.com/templates)
+- [shadcnblocks Templates](https://www.shadcnblocks.com/templates) (fulde applikationsskaller)
+- "SaaS starter" (auth‑sider + dashboard‑sider + indstillingssider + marketing‑sider)
+- "E‑commerce template" (butiksvindue + produktsider + checkout‑flow + admin‑sider)
+
+Forventninger:
+- Indeholder flere sider med routing/navigation struktur.
+- Tilbyder global konfiguration (theme providers, auth context, layout shells).
+- Opinioneret projektstruktur med klare konventioner.
+- Designet som et omfattende udgangspunkt; forgrene og tilpas fremfor at importere som dependency.
+- Kan inkludere build‑konfiguration, deploy‑setup og udviklingsværktøj.
+
+### 1.7 Utility (Non‑visual)
+
+Et hjælpeværktøj eksporteret for udviklerergonomi eller sammensætning; ikke‑renderet UI.
+
+Eksempler:
+- React hooks (useControllableState, useId)
+- Klasse‑utilities
+- Keybinding‑hjælpere
+- Fokus‑scopes
+
+Forventninger.
+- Bivirkningfri (undtagen hvor eksplicit dokumenteret).
+- Testbar i isolation; understøtter tree‑shaking.
+
+## 2. API‑ og kompositionsordforråd
+
+### 2.1 Props API
+
+Den offentlige konfigurationsflade for en komponent. Props er stabile, typed og dokumenterede med defaults og a11y‑konsekvenser.
+
+### 2.2 Children / Slots
+
+Pladsholdere til struktur eller indhold leveret af kaldende kode.
+- Children (implicit slot). JSX mellem åbne/lukke tags.
+- Navngivne slots. Props som icon, footer eller `<Component.Slot>` subcomponents.
+- Slot‑videresendelse. Videregivelse af DOM‑attributter/className/refs til det underliggende element.
+
+### 2.3 Render Prop (Function‑as‑Child)
+
+Et funktions‑child brugt til at delegere rendering, mens parent leverer state/data.
+
+```tsx
+<ParentComponent data={data}>
+  {(item) => (
+    <ChildComponent key={item.id} {...item} />
+  )}
+</ParentComponent>
+```
+
+Brug når parent skal eje data/adfærd, men forbrugeren fuldstændig skal kontrollere markup.
+
+### 2.4 Kontrolleret vs. Ukontrolleret
+
+**Controlled** og **uncontrolled** er termer brugt til at beskrive en komponent‑tilstand.
+
+**Controlled** komponenter har deres værdi drevet af props, og udsender typisk en `onChange`‑begivenhed (sandhedskilden er parent). **Uncontrolled** komponenter holder intern state; og kan eksponere en `defaultValue` og en imperativ reset.
+
+Mange inputs bør understøtte begge. Læs mere om [controlled and uncontrolled state](/state).
+
+### 2.5 Provider / Context
+
+En top‑niveau komponent, der leverer delt state/konfiguration til et subtree (f.eks. theme, locale, aktiv fane‑id). Providers dokumenteres eksplicit med påkrævet placering.
+
+### 2.6 Portal
+
+Rendering af UI uden for DOM‑hierarkiet for at håndtere lagring/stacking‑kontekst (f.eks. modals, popovers, toasts), samtidig med at a11y bevares (fokusfælde, aria‑modal, inert baggrund).
+
+## 3. Styling‑ og theming‑ordforråd
+
+### 3.1 Headless
+
+Implementerer adfærd og tilgængelighed uden at foreskrive udseende. Kræver at forbrugeren leverer styling.
+
+### 3.2 Stylet
+
+Leveres med standard visuelt design (CSS‑classes, inline‑styles eller tokens), men forbliver let at tilsidesætte (className merge, CSS vars, theming).
+
+### 3.3 Varianter
+
+Diskrete, dokumenterede stil‑ eller adfærdspermutationer eksponeret via props (f.eks. `size="sm|md|lg"`, `tone="neutral|destructive"`). Varianter er ikke separate komponenter.
+
+### 3.4 Designtokens
+
+Navngivne, platformagnostiske værdier (f.eks. `--color-bg`, `--radius-md`, `--space-2`), der parametrisere visuelt design og understøtter theming.
+
+## 4. Tilgængelighedsordforråd
+
+### 4.1 Rolle / State / Egenskab
+
+WAI‑ARIA attributter, der kommunikerer semantik (`role="menu"`), tilstand (`aria-checked`) og relationer (`aria-controls`, `aria-labelledby`).
+
+### 4.2 Tastaturkort
+
+Det dokumenterede sæt af tastaturinteraktioner for en widget (f.eks. `Tab`, `Arrow keys`, `Home/End`, `Escape`). Hver interaktiv komponent erklærer og implementerer et tastaturkort.
+
+### 4.3 Fokusstyring
+
+Regler for initialt fokus, roving focus, fokusfælde og tilbageførsel af fokus ved teardown.
+
+## 5. Distributionsordforråd
+
+### 5.1 Package (Registry Distribution)
+
+Komponenten/biblioteket publiceres til et pakke‑register (f.eks. `npm`) og importeres via en bundler. Favoriserer versionerede opdateringer og dependency‑styring.
+
+### 5.2 Copy‑and‑Paste (Source Distribution)
+
+Kildekoden integreres direkte i forbrugerens repo (ofte via en CLI). Favoriserer ejerskab, tilpasning og nul ekstra runtime.
+
+### 5.3 Register (Catalog)
+
+Et kurateret indeks af artefakter (primitiver, komponenter, blokke, templates) med metadata, previews og install/copy‑instruktioner. Et register er ikke nødvendigvis en pakkehåndtering.
+
+## 6. Klassifikationsheuristikker
+
+Brug dette beslutningsflow til at navngive og placere et artefakt:
+
+1. Indkapsler det en enkelt adfærd eller a11y‑bekymring, uden styling? → **Primitiv**
+2. Er det et stylet, genanvendeligt UI‑element, der tilføjer visuelt design til primitiver eller sammensætter flere elementer? → **Komponent**
+3. Løser det et konkret produktbrugstilfælde med opinioneret sammensætning og tekst? → **Blok**
+4. Scaffoldes en side/flow med routing/providers og udskiftelige områder? → **Template**
+5. Er det dokumentation af en tilbagevendende løsning, uafhængig af implementering? → **Mønster**
+6. Er det ikke‑visuel logik til ergonomi/sammensætning? → **Utility**
+
+## 7. Ikke‑mål og afklaringer
+
+- Web Components vs. "Components." I denne spec henviser "component" til en genanvendelig UI‑enhed (eksempler i React). Det implicerer ikke HTML Custom Elements‑standarden medmindre eksplicit angivet. Ækvivalente principper gælder på tværs af frameworks.
+- Widgets. Begrebet "widget" undgås på grund af tvetydighed; brug component (generelt) eller pattern (dokumentations‑kun løsning).
+- Themes vs. Styles. Et theme er en parameterisering af styles (via tokens). Styles er den konkrete præsentation. Komponenter bør understøtte themes; blokke/templates kan levere opinionerede styles plus theming‑hooks.

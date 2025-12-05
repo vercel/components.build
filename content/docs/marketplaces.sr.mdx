@@ -1,0 +1,137 @@
+---
+title: Tržišta komponenti
+description: Korišćenje tržišta komponenti za deljenje vaših komponenti.
+---
+
+Component marketplaces predstavljaju još jedan novi paradigm u načinu na koji programeri dele i otkrivaju UI komponente. Platforme poput [21st.dev](https://21st.dev) pojavile su se kao centralizovani čvorišta gde kreatori mogu objavljivati komponente, a korisnici mogu otkrivati, pregledati i instalirati ih bez prekida.
+
+Ova tržišta kombinuju dostupnost registara sa mogućnostima otkrivanja tradicionalnih repozitorijuma paketa, stvarajući živahne ekosisteme za deljenje komponenti.
+
+## Kako tržišta funkcionišu
+
+Kada objavite na tržištu, platforma obično:
+
+1. **Hostuje kod vaše komponente** - Nema potrebe da upravljate sopstvenom infrastrukturom
+2. **Obezbeđuje jedinstveni CLI** - Korisnici instaliraju komponente putem alata tržišta
+3. **Generiše preglede** - Uživo demonstracije i interaktivni primeri se kreiraju automatski
+4. **Rukuje otkrivanjem** - Pretraga, kategorije i preporuke ističu relevantne komponente
+
+Na primer, instalacija sa 21st.dev koristi poznati shadcn CLI obrazac:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/haydenbleasel/dialog-stack
+```
+
+Tržište se brine o posluženju metapodataka komponente i izvornog koda, čime se proces instalacije čini besprekornim.
+
+## Prednosti tržišta komponenti
+
+Tržišta nude jedinstvene prednosti koje ni registri ni npm paketi sami po sebi ne mogu pružiti.
+
+### Za autore komponenti
+
+#### Distribucija bez infrastrukture
+
+Objavljivanje na tržištu eliminiše brigu o infrastrukturi. Ne morate da postavljate hosting za svoje komponente niti da upravljate CDN distribucijom.
+
+Tržište se time bavi, omogućavajući vam da se fokusirate na kreiranje odličnih komponenti.
+
+#### Ugrađena publika
+
+Tržišta agregiraju potražnju. Kada programeri posete 21st.dev ili slične platforme, oni aktivno traže komponente. Vaš rad se organski otkriva putem pretrage, kategorija i preporuka.
+
+Ovaj ugrađeni saobraćaj znači da ne morate samostalno da plasirate svoje komponente.
+
+#### Mogućnosti monetizacije
+
+Neka tržišta omogućavaju kreatorima da monetizuju svoj rad kroz premium nivoe komponenti, programe sponzorstva, naplatu po upotrebi i modele jednokratne kupovine.
+
+To stvara održive podsticaje za održavanje visokokvalitetnih komponenti.
+
+#### Povratne informacije iz zajednice
+
+Tržišta obično uključuju sisteme ocenjivanja, sekcije za komentare, analitiku upotrebe i praćenje problema.
+
+Ova povratna sprega pomaže vam da razumete kako programeri koriste vaše komponente i koje izmene su potrebne.
+
+### Za potrošače komponenti
+
+#### Kurirano pronalaženje
+
+Za razliku od pretraživanja kroz GitHub ili npm, tržišta nude kurirana iskustva:
+
+```
+Browse by category:
+├── Marketing
+│   ├── Heroes
+│   ├── Pricing
+│   └── Testimonials
+├── Application
+│   ├── Dashboards
+│   ├── Forms
+│   └── Data Display
+└── E-commerce
+    ├── Product Cards
+    ├── Cart
+    └── Checkout
+```
+
+Ova organizacija čini pronalaženje prave komponente znatno bržim.
+
+#### Osiguranje kvaliteta
+
+Mnoge platforme implementiraju procese pregleda. Komponente mogu proći provere kvaliteta koda, revizije pristupačnosti, testiranja performansi i pregleda dokumentacije.
+
+Ova kuracija osigurava osnovni nivo kvaliteta koji kod samostalno objavljenih komponenti može nedostajati.
+
+#### Jedinstveno alatstvo
+
+Korišćenje jednog CLI-ja za sve komponente sa tržišta pojednostavljuje tok rada. Možete instalirati bilo koju komponentu sa tržišta koristeći istu komandu:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/<author>/<component>
+```
+
+## Izazovi tržišta
+
+Iako tržišta nude ubedljive prednosti, ona takođe uvode jedinstvene izazove.
+
+### Za autore
+
+#### Konkurencija i vidljivost
+
+Na zasićenom tržištu, isticanje postaje teško. Takmičite se sa stotinama sličnih komponenti, etabliranim kreatorima sa pratiocima, istaknutim ili sponzorisanim sadržajem i preporukama vođenim algoritmima.
+
+Uspeh zahteva više od dobrog koda — potrebni su ubedljivi pregledi, odlična dokumentacija i često aktivna promocija.
+
+#### Zavisnost od platforme
+
+Objavljivanje na tržištu znači prihvatanje njihovih uslova korišćenja, modela deljenja prihoda, tehničkih zahteva i procesa pregleda.
+
+Ako platforma promeni politike ili prestane sa radom, vaš kanal distribucije nestaje.
+
+#### Pritisak na kvalitet
+
+Korisnici tržišta očekuju dotjerane, spremne za produkciju komponente. To podrazumeva sveobuhvatnu dokumentaciju, više varijacija demonstracija, responzivan dizajn, testiranje na različitim pregledačima i usklađenost sa pristupačnošću.
+
+Ispunjavanje ovih očekivanja zahteva značajno ulaganje vremena izvan samog pisanja koda komponente.
+
+### Za potrošače
+
+#### Promenljiv kvalitet
+
+Uprkos procesima pregleda, kvalitet na tržištu može znatno varirati. Možete naići na napuštene komponente sa zastarelim zavisnostima, loše dokumentovan kod, komponente koje funkcionišu u demo okruženju ali ne i u produkciji, i nedosledne stilove kodiranja među različitim autorima.
+
+I dalje je potrebna dužna pažnja prilikom izbora komponenti.
+
+#### Brige oko zaključavanja
+
+Iako tržišta koriste standardne alate kao što je shadcn CLI, mogu uvesti proprietarne formate metapodataka, prilagođene konfiguracione zahteve i zavisnosti specifične za platformu.
+
+To može otežati migraciju sa tržišta.
+
+#### Paradoks otkrivanja
+
+Previše izbora može biti paralizujuće. Kada tražite komponentu za dugme, pronalaženje 200 opcija ne mora nužno pomoći. Potrebno je evaluirati više sličnih komponenti, uporediti suptilne razlike, proceniti dugoročnu održivost i razmotriti reputaciju autora.
+
+Ovaj proces procene može potrajati duže nego što bi vam trebalo da sami izgradite komponentu.

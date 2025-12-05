@@ -1,0 +1,140 @@
+---
+title: Dokumentasjon
+description: Hvordan dokumentere komponentene dine.
+---
+
+God dokumentasjon er viktig for å gjøre komponentene dine tilgjengelige og enkle å bruke. Denne veiledningen skisserer nøkkelkomponentene hver komponentdokumentasjonsside bør inneholde.
+
+## Dokumentasjonsrammeverk
+
+For å skalere dokumentasjonen din kan du bruke et dokumentasjonsrammeverk. Det finnes mange alternativer avhengig av prosjektets språk og behov. Populære alternativer inkluderer:
+
+- [Fumadocs](https://fumadocs.dev/) - Raskt, funksjonsrikt dokumentasjonsrammeverk for Next.js
+- [Nextra](https://nextra.site/) - Markdown-basert dokumentasjon med innebygd søk og tema
+- [Content Collections](https://content-collections.dev/) - Typesikker innholdsstyring for dokumentasjon
+- [Docusaurus](https://docusaurus.io/) - Funksjonsrike dokumentasjonsnettsteder med støtte for versjonering
+- [VitePress](https://vitepress.dev/) - Vue-drevet statisk sidegenerator optimalisert for dokumentasjon
+
+Helst bør valget av rammeverk støtte syntaksutheving, tilpassede komponenter og være generelt godt utformet.
+
+## Viktige dokumentasjonsseksjoner
+
+### Oversikt
+
+Start med en kort introduksjon som forklarer hva komponenten gjør og når man bør bruke den.
+
+### Demo, kildekode og forhåndsvisning
+
+For et godt førsteinntrykk hos utviklere bør du inkludere en demo som viser komponenten i bruk, samt koden som ble brukt for å lage demoen.
+
+Hvis du bruker et åpen kilde [Register](/registry), kan du også inkludere en forhåndsvisning av kildekoden som brukes til å opprette komponenten.
+
+Bruk kodeblokker med syntaksutheving og kopier-til-utklippstavle-funksjonalitet. Vurder å bruke fanebasert grensesnitt for å bytte mellom disse visningene uten å rote til siden.
+
+### Installasjon
+
+Inkluder en klar instruksjon for hvordan du installerer komponenten. Helst bør dette være en enkelt kommando du kan kopiere og lime inn i terminalen din.
+
+Hvis du bygger på shadcn/ui, kan du bruke [shadcn CLI](https://ui.shadcn.com/docs/cli) for å installere komponenten, f.eks.
+
+```package-install
+npx shadcn@latest add <your-component-url>
+```
+
+Hvis du publiserer til en [Markedsplass](/marketplaces), kan du bruke markedsplassens CLI for å installere komponenten, f.eks.
+
+```package-install
+npx shadcn@latest add https://21st.dev/r/<your-author>/<your-component>
+```
+
+Hvis du ikke bruker shadcn/ui, men bygger et [Register](/registry), kan du lage din egen CLI for å installere komponenten, f.eks.
+
+```package-install
+npx your-registry-cli@latest add <your-component-url>
+```
+
+Til slutt, hvis du publiserer til npm, kan du bruke npm CLI for å installere komponenten, f.eks.
+
+```package-install
+npm install <your-component-name>
+```
+
+<Callout>
+For å vise flere installasjonsalternativer som vi har gjort ovenfor, kan du bruke noe som Fumadocs' [`package-install` syntaks](https://fumadocs.dev/docs/headless/mdx/install).
+</Callout>
+
+### Funksjoner
+
+List opp nøkkelfunksjonene til komponenten din for å hjelpe brukere å raskt forstå dens evner og fordeler. For eksempel:
+
+- **Tilpassbar** – Juster enkelt stiler, størrelser og oppførsel etter behov.
+- **Tilgjengelig som standard** – Følger beste praksis for tastaturnavigasjon, ARIA-roller og støtte for skjermlesere.
+- **Komponerbar** – Designet for å fungere sømløst med andre komponenter og mønstre.
+- **Typesikker** – Leveres med omfattende TypeScript-typer for maksimal sikkerhet og autoutfylling.
+- **Støtte for theming** – Integreres med design-tokens eller temasystemet ditt.
+- **Lettvektig** – Minimale avhengigheter og optimalisert for ytelse.
+- **Klar for SSR/SSG** – Fungerer med server-side og statiske renderingsrammeverk.
+- **Godt dokumentert** – Inkluderer klare bruks-eksempler og API-referanse.
+
+Tilpass denne listen til din spesifikke komponent. Fremhev hva som gjør den unik eller spesielt nyttig for utviklere.
+
+### Eksempler
+
+Vis komponentens fleksibilitet med praktiske eksempler:
+
+- **Varianter** - Forskjellige visuelle stiler eller størrelser tilgjengelig
+- **Tilstander** - Laster, deaktivert, feil eller suksess-tilstander
+- **Avansert bruk** - Komplekse scenarios og kanttilfeller
+- **Komposisjon** - Hvordan komponenten fungerer sammen med andre komponenter
+- **Responsiv oppførsel** - Hvordan den tilpasser seg forskjellige skjermstørrelser
+
+Hvert eksempel bør inneholde både rendret resultat og tilsvarende kode.
+
+### Props og API-referanse
+
+Dokumenter alle tilgjengelige props, metoder og konfigurasjonsmuligheter. Vurder å gruppere relaterte props sammen og fremheve de som brukes ofte. For hver prop, inkluder:
+
+- **Name** - Prop-identifikatoren
+- **Type** - TypeScript-type-definisjon
+- **Default** - Standardverdi hvis ikke spesifisert
+- **Required** - Om prop-en er obligatorisk
+- **Description** - Hva prop-en gjør og når den bør brukes
+
+<Callout>
+Hvis du bruker Fumadocs, kan du vurdere å bruke [Auto Type Table](https://fumadocs.dev/docs/ui/components/auto-type-table) for å sikre nøyaktighet og redusere vedlikeholdsbyrden.
+</Callout>
+
+### Tilgjengelighet
+
+Dokumenter hvordan komponenten din støtter tilgjengelighetsfunksjoner:
+
+- Tastaturnavigasjonsmønstre
+- ARIA-attributter og -roller
+- Støtte for skjermlesere
+- Fokusstyring
+- Fargekontrasthensyn
+
+### Endringslogg og versjonering
+
+Det kan være nyttig å vedlikeholde en endringslogg på hver komponentdokumentasjonsside som dekker:
+
+- Versjonsnumre etter semantisk versjonering
+- Nye funksjoner og forbedringer
+- Feilrettinger
+- Breaking changes
+- Migrasjonsveiledninger for store versjonsoppdateringer
+
+Hjelp brukere å forstå hva som endret seg mellom versjoner og hvordan de oppgraderer trygt. Inkluder kodeeksempler som viser før/etter-mønstre for breaking changes.
+
+<Callout>
+Hvis syntaksutheving-rammeverket ditt støtter det (som Shiki), kan det være lurt å bruke en [diff transformer notation](https://shiki.style/packages/transformers#transformernotationdiff) for å vise endringene mellom versjoner.
+</Callout>
+
+## Beste praksis
+
+- Hold dokumentasjonen oppdatert med kodeendringer
+- Bruk virkelige eksempler som løser faktiske problemer
+- Inkluder vanlige fallgruver og feilsøkningstips
+- Gi ytelsesvurderinger når det er relevant
+- Lenke til relaterte komponenter og mønstre
+- Gjør alle kodeeksempler kjørbare og testet

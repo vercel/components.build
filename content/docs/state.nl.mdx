@@ -1,0 +1,88 @@
+---
+title: Toestand
+description: Hoe je toestand in een component beheert en hoe je bestuurbare en niet-bestuurbare toestand samenvoegt.
+---
+
+Het bouwen van flexibele componenten die zowel in gecontroleerde als ongecontroleerde modi werken is een kenmerk van professionele componenten.
+
+## Ongecontroleerde toestand
+
+Ongecontroleerde toestand is wanneer de component zijn eigen toestand intern beheert. Dit is het standaard gebruikspatroon voor de meeste componenten.
+
+Bijvoorbeeld, hier is een eenvoudige `Stepper` component die zijn eigen toestand intern beheert:
+
+```tsx title="stepper.tsx"
+import { useState } from 'react';
+
+export const Stepper = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+};
+```
+
+## Gecontroleerde toestand
+
+Gecontroleerde toestand is wanneer de toestand van de component wordt beheerd door de oudercomponent. In plaats van de toestand intern bij te houden, delegeren we deze verantwoordelijkheid aan de oudercomponent.
+
+Laten we de `Stepper` component herwerken zodat deze door de oudercomponent wordt aangestuurd:
+
+```tsx title="stepper.tsx"
+type StepperProps = {
+  value: number;
+  setValue: (value: number) => void;
+};
+
+export const Stepper = ({ value, setValue }: StepperProps) => (
+  <div>
+    <p>{value}</p>
+    <button onClick={() => setValue(value + 1)}>Increment</button>
+  </div>
+);
+```
+
+## Toestanden samenvoegen
+
+De beste componenten ondersteunen zowel gecontroleerde als ongecontroleerde toestand. Dit maakt het mogelijk om de component in uiteenlopende scenario's te gebruiken en eenvoudig aan te passen.
+
+[Radix UI](https://www.radix-ui.com/) onderhoudt een interne utility voor het samenvoegen van gecontroleerde en ongecontroleerde toestand genaamd [`use-controllable-state`](https://github.com/radix-ui/primitives/tree/main/packages/react/use-controllable-state). Hoewel het niet bedoeld is voor openbaar gebruik, hebben registries zoals [Kibo UI](https://www.kibo-ui.com) deze utility geïmplementeerd om hun eigen Radix-achtige componenten te bouwen.
+
+Laten we de hook installeren:
+
+```package-install
+npm install @radix-ui/react-use-controllable-state
+```
+
+Deze lichte hook geeft je dezelfde patronen voor statusbeheer die intern door de componentbibliotheek van Radix UI worden gebruikt, en zorgt ervoor dat je componenten zich consistent gedragen met de industriestandaarden.
+
+De hook accepteert drie hoofdparameters en retourneert een tuple met de huidige waarde en de setter. Laten we deze gebruiken om de gecontroleerde en ongecontroleerde toestand van de `Stepper` component samen te voegen:
+
+```tsx title="stepper.tsx"
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+
+type StepperProps = {
+  value: number;
+  defaultValue: number;
+  onValueChange: (value: number) => void;
+};
+
+export const Stepper = ({ value: controlledValue, defaultValue, onValueChange }: StepperProps) => {
+  const [value, setValue] = useControllableState({
+    prop: controlledValue,        // The controlled value prop
+    defaultProp: defaultValue,    // Default value for uncontrolled mode
+    onChange: onValueChange,      // Called when value changes
+  });
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+}
+```

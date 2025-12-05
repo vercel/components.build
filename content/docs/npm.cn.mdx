@@ -1,0 +1,165 @@
+---
+title: NPM
+description: 如何将你的组件发布到 NPM。
+---
+
+NPM 包代表了分发组件库的传统方法。虽然 [注册表](/registry) 因其灵活性而越来越受欢迎，但 npm 发布仍然是一种在某些用例下具有显著优势的强大选项。
+
+npm 包与注册表之间的根本区别在于它们如何分发代码并管理所有权。
+
+## 包模型
+
+当你将组件作为 npm 包发布时，你是在分发预构建、版本化的代码，用户将其作为依赖安装：
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+这提供了若干显著优势，使其成为许多组件库的合适选择。
+
+### 版本管理
+
+作为包的作者，你控制版本和更新。用户可以锁定特定版本，以确保稳定性：
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+这种集中式的版本控制意味着你可以推送更新、安全补丁和新功能，用户通过标准的依赖更新即可获得这些更改。
+
+### 简化安装
+
+NPM 包提供了无摩擦的安装体验。一个命令就可以添加整个组件库：
+
+```bash
+npm install @acme/ui-components
+```
+
+无需手动复制文件、管理依赖或配置构建工具。一切开箱即用。
+
+### 依赖解析
+
+NPM 会自动处理传递依赖。如果你的组件需要特定版本的 React、Framer Motion 或其他库，npm 会自动解析这些依赖，防止版本冲突。
+
+### TypeScript 支持
+
+已发布的包可以包含预构建的类型定义，从而在无需额外配置的情况下立即提供 TypeScript 支持：
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## NPM 包的局限性
+
+尽管 npm 包在分发方面表现出色，但它们也有权衡，注册表正是为了解决这些问题而提出的。
+
+### 源代码所有权
+
+最显著的限制是缺乏源代码访问。用户无法：
+
+- 直接修改组件行为
+- 在不等待更新的情况下修复错误
+- 自定义实现细节
+- 删除未使用的代码
+
+这会创建一种依赖关系，用户必须依赖包维护者来进行所有更改。
+
+### 自定义限制
+
+对组件进行微调需要在公开的 API 范围内进行。虽然你可以通过 props 提供定制：
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+但用户无法在不派生整个包（fork）的情况下从根本上改变组件的工作方式。
+
+### 包体积
+
+NPM 包包含所有组件，即使用户只需要其中的一部分。虽然 tree-shaking 有所帮助，但并不总是完美，可能会给应用程序增加不必要的体重。
+
+## CSS 和 Tailwind 配置
+
+通过 npm 发布基于 Tailwind 的组件时，一个关键考虑点是确保样式在消费应用中正确生效。
+
+默认情况下，Tailwind 只为它在你的项目文件中发现的类生成样式。它不会检查 `node_modules`，这意味着你的组件样式不会被包含。
+
+为了解决这个问题，用户需要在他们的 Tailwind 配置中添加一个 `@source` 指令，告诉它扫描你的包以查找类名：
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+务必在你的包的 README 中显著记录此要求。
+
+## 发布你的组件库
+
+要将你的组件发布到 npm，你需要一个配置正确的 `package.json`，可能如下所示：
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+NPM 包仍然是组件生态系统的重要组成部分。尽管注册表在源代码所有权和定制性方面提供了令人信服的好处，npm 包则提供了许多团队所需的稳定性、版本管理和易用性。
+
+关键在于了解你的用户的需求并选择最能满足他们的分发方式。有时，这意味着同时提供两种选项，让开发者根据项目选择最合适的方法。

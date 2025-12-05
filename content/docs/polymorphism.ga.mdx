@@ -1,0 +1,578 @@
+---
+title: Ilchineálacht
+description: Conas an prop `as` a úsáid chun an eilimint HTML a rindreáiltear a athrú agus feidhmiúlacht an chomhpháirte a chothabháil.
+---
+
+Is é an prop `as` pátrún bunúsach i leabharlanna comhdhéanamh React nua-aimseartha a ligeann duit an eilimint HTML bunúsach nó an chomhpháirt a bhfuiltear ag rindreáil a athrú.
+
+Faoi léigear é ag leabharlanna mar [Styled Components](https://styled-components.com/), [Emotion](https://emotion.sh/), agus [Chakra UI](https://chakra-ui.com/), tugann an pátrún seo solúbthacht maidir le HTML seimantúil a roghnú agus stíliú agus iompar an chomhpháirte a choinneáil.
+
+Cuidíonn an prop `as` le comhpháirteanna ilchineálacha a chruthú - comhpháirteanna a bhféadfadh siad a rindreáil mar chineálacha eilimintí éagsúla agus iad ag coimeád a bhfeidhmiúlacht lárnacha:
+
+```tsx
+<Button as="a" href="/home">
+  Go Home
+</Button>
+
+<Button as="button" type="submit">
+  Submit Form
+</Button>
+
+<Button as="div" role="button" tabIndex={0}>
+  Custom Element
+</Button>
+```
+
+## Ag tuiscint `as`
+
+Ligeann an prop `as` duit cineál eilimint réamhshocraithe chomhpháirte a shárú. In ionad a bheith greamaithe i ndiaidh eilimint áirithe HTML, is féidir leat an chomhpháirt a oiriúnú chun aon teg HTML bailí nó fiú comhpháirt React eile a rindreáil.
+
+Mar shampla:
+
+```tsx
+// Default renders as a div
+<Box>Content</Box>
+
+// Renders as a section
+<Box as="section">Content</Box>
+
+// Renders as a nav
+<Box as="nav">Content</Box>
+```
+
+Seo a rindreálfaidh sé eilimintí HTML éagsúla:
+```html
+<!-- Default -->
+<div>Content</div>
+
+<!-- With as="section" -->
+<section>Content</section>
+
+<!-- With as="nav" -->
+<nav>Content</nav>
+```
+
+## Modhanna Cur i bhfeidhm
+
+Tá dhá chur chuige móra chun comhpháirteanna ilchineálacha a chur i bhfeidhm: cur i bhfeidhm láimhe agus ag baint úsáide as `Slot` ó Radix UI.
+
+### Cur i bhfeidhm láimhe
+
+Úsáideann an cur i bhfeidhm an prop `as` rindreáil chomhpháirt dhinimiciúil:
+
+```tsx
+// Simplified implementation
+function Component({
+  as: Element = 'div',
+  children,
+  ...props
+}) {
+  return <Element {...props}>{children}</Element>;
+}
+
+// More complete implementation with TypeScript
+type PolymorphicProps<E extends React.ElementType> = {
+  as?: E;
+  children?: React.ReactNode;
+} & React.ComponentPropsWithoutRef<E>;
+
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  children,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props}>{children}</Element>;
+}
+```
+
+An chomhpháirt:
+1. Glacann sé prop `as` le cineál eilimint réamhshocraithe
+2. Úsáideann sé an eilimint a cuireadh ar fáil nó fillteann sé ar an réamhshocrú
+3. Scaipeann sé na props eile go léir chuig an eilimint a rindreáiltear
+4. Coinníonn sé sábháilteacht cineálach le ginearálacha TypeScript
+
+### Ag baint úsáide as `Slot` Radix UI
+
+Cuireann [Radix UI](https://www.radix-ui.com/) comhpháirt `Slot` ar fáil a thairgeann malairt níos cumhachtaí ar an bpátrún prop `as`. In ionad cineál an eilimint a athrú go simplí, déanann `Slot` props a chumasc leis an gcomhpháirt pháiste, rud a fhágann go bhfuil patrúin chomhdhéanamh indéanta.
+
+Ar dtús, suiteáil an pacáiste:
+
+```package-install
+npm install @radix-ui/react-slot
+```
+
+Úsáideann an patrún `asChild` prop boolean in áit cineál an eilimint a shonrú:
+
+```tsx
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+const itemVariants = cva(
+  "rounded-lg border p-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-white",
+        primary: "bg-blue-500 text-white",
+      },
+      size: {
+        default: "h-10 px-4",
+        sm: "h-8 px-3",
+        lg: "h-12 px-6",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+function Item({
+  className,
+  variant = "default",
+  size = "default",
+  asChild = false,
+  ...props
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof itemVariants> & { asChild?: boolean }) {
+  const Comp = asChild ? Slot : "div"
+  return (
+    <Comp
+      data-slot="item"
+      data-variant={variant}
+      data-size={size}
+      className={cn(itemVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
+}
+```
+
+Anois is féidir é a úsáid ar dhá bhealach:
+
+```tsx
+// Default: renders as a div
+<Item variant="primary">Content</Item>
+
+// With asChild: merges props with child component
+<Item variant="primary" asChild>
+  <a href="/home">Link with Item styles</a>
+</Item>
+```
+
+An comhpháirt `Slot`:
+1. Déanann sé cóip den eilimint pháiste
+2. Cumascann sé props an chomhpháirte (className, airíonna data, srl.) le props an pháiste
+3. Seolann sé refs ar aghaidh i gceart
+4. Bainistíonn sé comhdhéanamh láimhseálaithe imeachtaí
+
+### Comparáid: `as` vs `asChild`
+
+**`as` prop (Cur i bhfeidhm láimhe):**
+```tsx
+// Explicit element type
+<Button as="a" href="/home">Link Button</Button>
+<Button as="button" type="submit">Submit Button</Button>
+
+// Simple, predictable API
+// Limited to element types
+```
+
+**`asChild` le Slot:**
+```tsx
+// Implicit from child
+<Button asChild>
+  <a href="/home">Link Button</a>
+</Button>
+
+<Button asChild>
+  <button type="submit">Submit Button</button>
+</Button>
+
+// More flexible composition
+// Works with any component
+// Better prop merging
+```
+
+**Príomh-difríochtaí:**
+
+| Gné | `as` prop | `asChild` + Slot |
+|---------|-----------|------------------|
+| **API Style** | `<Button as="a">` | `<Button asChild><a /></Button>` |
+| **Element Type** | Sonraithe sa prop | Sonraithe ón pháiste |
+| **Component Composition** | Teoranta | Tacaíocht iomlán |
+| **Prop Merging** | Scaipeadh bunúsach | Cumasc cliste |
+| **Ref Forwarding** | Ní mór cumraíocht láimhe | Tógtha isteach |
+| **Event Handlers** | D’fhéadfadh coinbhleac a bheith ann | Cumasc i gceart |
+| **Library Size** | Gan spleáchas | Riachtanach: `@radix-ui/react-slot` |
+
+### Cathain le Gach Cur Chuige a Úsáid
+
+**Úsáid an prop `as` nuair:**
+- Más mian leat comhéadan API níos simplí
+- Má tá tú den chuid is mó ag athrú idir eilimintí HTML
+- Más mian leat spleáchais bhreise a sheachaint
+- Má tá an chomhpháirt simplí agus nach bhfuil gá le cumasc propanna casta
+
+**Úsáid `asChild` + Slot nuair:**
+- Má tá tú ag comhdhlúthú le comhpháirteanna eile
+- Más mian leat iompraíocht chumasc propanna uathoibríoch
+- Má tá tú ag tógáil leabharlainne comhpháirte cosúil le Radix UI nó shadcn/ui
+- Más gá duit seolta tagairtí (refs) iontaofa idir cineálacha éagsúla comhpháirte
+
+## Príomhbhuntáistí
+
+### 1. Solúbthacht HTML seimantúil
+
+Cinntíonn an prop `as` go bhféadfaidh tú an eilimint HTML is oiriúnaí seimantúla a úsáid i gcónaí:
+
+```tsx
+// Navigation container
+<Container as="nav" className="navigation">
+  <NavItems />
+</Container>
+
+// Main content area
+<Container as="main" className="content">
+  <Article />
+</Container>
+
+// Sidebar
+<Container as="aside" className="sidebar">
+  <Widgets />
+</Container>
+```
+
+### 2. In-athúsáidteacht chomhpháirte
+
+Is féidir dá mbeadh feidhm éagsúil ag comhpháirt amháin gan éagsúla a chruthú:
+
+```tsx
+// Text component used for different elements
+<Text as="h1" size="2xl">Page Title</Text>
+<Text as="p" size="md">Body paragraph</Text>
+<Text as="span" size="sm">Inline text</Text>
+<Text as="label" size="sm">Form label</Text>
+```
+
+### 3. Feabhsúcháin inrochtaineachta
+
+Roghnaigh eilimintí a sholáthraíonn an inrochtaineacht is fearr do gach comhthéacs:
+
+```tsx
+// Link that looks like a button
+<Button as="a" href="/signup">
+  Sign Up Now
+</Button>
+
+// Button that submits a form
+<Button as="button" type="submit">
+  Submit
+</Button>
+
+// Heading with button styles
+<Button as="h2" role="presentation">
+  Section Title
+</Button>
+```
+
+### 4. Comhtháthú córais stíle
+
+Coinnigh stíliú comhsheasmhach agus tú ag athrú eilimintí:
+
+```tsx
+const Card = styled.div`
+  padding: 1rem;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+`;
+
+// Same styles, different elements
+<Card as="article">Article content</Card>
+<Card as="section">Section content</Card>
+<Card as="li">List item content</Card>
+```
+
+## Cásanna Úsáide Coitianta
+
+### Comhpháirteanna Tíograifíochta
+
+Cruthaigh comhpháirteanna téacs solúbtha:
+
+```tsx
+function Text({
+  as: Element = 'span',
+  variant = 'body',
+  ...props
+}) {
+  const className = cn(
+    'text-base',
+    variant === 'heading' && 'text-2xl font-bold',
+    variant === 'body' && 'text-base',
+    variant === 'caption' && 'text-sm text-gray-600',
+    props.className
+  );
+
+  return <Element className={className} {...props} />;
+}
+
+// Usage
+<Text as="h1" variant="heading">Title</Text>
+<Text as="p" variant="body">Paragraph</Text>
+<Text as="figcaption" variant="caption">Caption</Text>
+```
+
+### Comhpháirteanna Leagan Amach
+
+Tóg leagain amach seimantúla:
+
+```tsx
+function Flex({ as: Element = 'div', ...props }) {
+  return (
+    <Element
+      className={cn('flex', props.className)}
+      {...props}
+    />
+  );
+}
+
+// Semantic HTML
+<Flex as="header" className="justify-between">
+  <Logo />
+  <Navigation />
+</Flex>
+
+<Flex as="main" className="flex-col">
+  <Content />
+</Flex>
+```
+
+### Eilimintí Idirghníomhacha
+
+Bain láimh le cineálacha idirghníomhaíochta éagsúla:
+
+```tsx
+function Clickable({ as: Element = 'button', ...props }) {
+  const isButton = Element === 'button';
+  const isAnchor = Element === 'a';
+
+  return (
+    <Element
+      role={!isButton && !isAnchor ? 'button' : undefined}
+      tabIndex={!isButton && !isAnchor ? 0 : undefined}
+      {...props}
+    />
+  );
+}
+
+// Various clickable elements
+<Clickable as="button" onClick={handleClick}>Button</Clickable>
+<Clickable as="a" href="/link">Link</Clickable>
+<Clickable as="div" onClick={handleClick}>Div Button</Clickable>
+```
+
+## Cleachtais is Fearr do TypeScript
+
+### Cineálacha Comhpháirte Ginearálta
+
+Cruthaigh comhpháirte ilchineálacha a bhfuil sábháilteacht chineálach iomlán acu:
+
+```tsx
+type PolymorphicRef<E extends React.ElementType> =
+  React.ComponentPropsWithRef<E>['ref'];
+
+type PolymorphicProps<
+  E extends React.ElementType,
+  Props = {}
+> = Props &
+  Omit<React.ComponentPropsWithoutRef<E>, keyof Props> & {
+    as?: E;
+  };
+
+// Component with full type safety
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E, { customProp?: string }>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### Props a Thagairt go Huathoibríoch
+
+Roghnaíonn tú props go huathoibríoch bunaithe ar an eilimint:
+
+```tsx
+// Props are inferred from the element type
+<Component as="a" href="/home">Home</Component>  // ✅ href is valid
+<Component as="div" href="/home">Home</Component> // ❌ TS error: href not valid on div
+
+<Component as="button" type="submit">Submit</Component> // ✅ type is valid
+<Component as="span" type="submit">Submit</Component>   // ❌ TS error
+```
+
+### Aontais Dheighilte
+
+Bain úsáid as aontais dheighilte chun props ar leith d’eilimintí a shainiú:
+
+```tsx
+type ButtonProps =
+  | { as: 'button'; type?: 'submit' | 'button' | 'reset' }
+  | { as: 'a'; href: string; target?: string }
+  | { as: 'div'; role: 'button'; tabIndex: number };
+
+function Button(props: ButtonProps & { children: React.ReactNode }) {
+  const Element = props.as;
+  return <Element {...props} />;
+}
+```
+
+## Cleachtais is Fearr
+
+### 1. Réamhshocraigh ar eilimintí seimantúla
+
+Roghnaigh réamhshocruithe atá ionadaíoch don úsáid is coitianta:
+
+```tsx
+// ✅ Good defaults
+function Article({ as: Element = 'article', ...props }) { }
+function Navigation({ as: Element = 'nav', ...props }) { }
+function Heading({ as: Element = 'h2', ...props }) { }
+
+// ❌ Too generic
+function Component({ as: Element = 'div', ...props }) { }
+```
+
+### 2. Doiciméad na heilimintí tacaíochta
+
+Sainmhínigh go soiléir cé na heilimintí atá tacaithe:
+
+```tsx
+interface BoxProps {
+  /**
+   * The HTML element to render as
+   * @default 'div'
+   * @example 'section', 'article', 'aside', 'main'
+   */
+  as?: 'div' | 'section' | 'article' | 'aside' | 'main' | 'header' | 'footer';
+}
+```
+
+### 3. Déan fíorú ar oiriúnacht na heilimintí
+
+Tabhair rabhaidh nuair a úsáidtear eilimintí nach bhfuil oiriúnach:
+
+```tsx
+function Button({ as: Element = 'button', ...props }) {
+  if (__DEV__ && Element === 'div' && !props.role) {
+    console.warn(
+      'Button: When using as="div", provide role="button" for accessibility'
+    );
+  }
+
+  return <Element {...props} />;
+}
+```
+
+### 4. Bainistigh láimhseálaithe imeachtaí i gceart
+
+Déan cinnte go n-oibríonn láimhseálaithe imeachtaí thar eilimintí éagsúla:
+
+```tsx
+function Interactive({ as: Element = 'button', onClick, ...props }) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (Element !== 'button' && (e.key === 'Enter' || e.key === ' ')) {
+      onClick?.(e as any);
+    }
+  };
+
+  return (
+    <Element
+      onClick={onClick}
+      onKeyDown={Element !== 'button' ? handleKeyDown : undefined}
+      {...props}
+    />
+  );
+}
+```
+
+## Péacanna Coitianta
+
+### Naisc HTML Neamhbhailí
+
+Bí cúramach le rialacha náisiúnta HTML maidir le srothanna:
+
+```tsx
+// ❌ Invalid - button inside button
+<Button as="button">
+  <Button as="button">Nested</Button>
+</Button>
+
+// ❌ Invalid - div inside p
+<Text as="p">
+  <Box as="div">Invalid nesting</Box>
+</Text>
+
+// ✅ Valid nesting
+<Text as="div">
+  <Box as="div">Valid nesting</Box>
+</Text>
+```
+
+### Airíonna inrochtaineachta ganntanas
+
+Cuimhnigh airíonna ARIA cuí a chur leis:
+
+```tsx
+// ❌ Missing accessibility
+<Box as="nav">
+  <MenuItems />
+</Box>
+
+// ✅ Proper accessibility
+<Box as="nav" aria-label="Main navigation">
+  <MenuItems />
+</Box>
+```
+
+### Caillteanas sábháilteachta cineálach
+
+Seachain cineálacha ró-urraithe:
+
+```tsx
+// ❌ Too permissive - no type safety
+function Component({ as: Element = 'div', ...props }: any) {
+  return <Element {...props} />;
+}
+
+// ✅ Type safe
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### Saincheisteanna Feidhmíochta
+
+Bí ar an eolas faoi thionchair ath-rindreála:
+
+```tsx
+// ❌ Creates new component on every render
+function Parent() {
+  const CustomDiv = (props) => <div {...props} />;
+  return <Component as={CustomDiv} />;
+}
+
+// ✅ Stable component reference
+const CustomDiv = (props) => <div {...props} />;
+function Parent() {
+  return <Component as={CustomDiv} />;
+}
+```

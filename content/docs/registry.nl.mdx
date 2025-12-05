@@ -1,0 +1,164 @@
+---
+title: Componentregister
+description: Begrijp het concept van componentregisters, hoe ze werken, en waarom ze de manier waarop ontwikkelaars UI-componenten delen en ontdekken revolutioneren.
+---
+
+Componentregisters zijn een manier om UI-componenten te delen en te ontdekken. Gepopulariseerd door [shadcn/ui](https://ui.shadcn.com), stellen ze je in staat componenten te vinden en rechtstreeks in je projecten te kopiëren.
+
+Registries vertegenwoordigen een fundamentele verschuiving in hoe ontwikkelaars UI-componenten delen en ontdekken. In tegenstelling tot traditionele npm-pakketten vertrouwen registries op een open-sourcemodel en werken ze door de broncode naar je project te downloaden.
+
+## Wat maakt een register?
+
+### 1. Broncode-distributie
+
+In tegenstelling tot npm-pakketten die gecompileerde code distribueren, verspreiden registries broncode:
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. Metadata en configuratie
+
+Goede registries bevatten rijke metadata over componenten zoals de naam, beschrijving, afhankelijkheden en categorie.
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. Voorbeeld en documentatie
+
+Hoewel ze niet worden gedownload, bieden registrysites doorgaans:
+
+- Live voorbeeldweergaven van componenten
+- Interactieve voorbeelden
+- Gedetailleerde documentatie
+- Klaar-om-te-kopiëren codefragmenten
+
+## Voordelen van registry-architectuur
+
+Componentregisters bieden aanzienlijke voordelen voor zowel auteurs als gebruikers en stroomlijnen het proces van het delen en adopteren van UI-componenten.
+
+### Voor auteurs
+
+Voor componentauteurs maken registries distributie opmerkelijk eenvoudig. Zodra een component is gemaakt, kan het aan het register worden toegevoegd en direct toegankelijk zijn voor gebruikers zonder ingewikkelde publicatiestappen. Deze eenvoud in distributie versnelt de feedbackloop en stimuleert snelle iteratie.
+
+Versiebeheer is een ander belangrijk voordeel. Registries volgen typisch componentversies, changelogs en compatibiliteitsinformatie. Een componentvermelding kan bijvoorbeeld de huidige versie specificeren, recente wijzigingen benadrukken zoals verbeterde toegankelijkheid of nieuwe functies, en aangeven welke versies van shadcn/ui worden ondersteund. Deze transparantie helpt beheerders bij het communiceren van updates en zorgt ervoor dat gebruikers componenten kunnen kiezen die passen bij hun projectvereisten.
+
+Communitybetrokkenheid wordt ook versterkt door registries. Auteurs kunnen directe feedback van gebruikers ontvangen, die problemen kunnen melden, functies kunnen aanvragen en kunnen bijdragen aan gezamenlijke verbeteringen. Dit bevordert een meer interactieve en responsieve ontwikkelomgeving, wat zowel makers als consumenten ten goede komt.
+
+### Voor gebruikers
+
+Vanuit het perspectief van componentgebruikers verbeteren registries het ontdekproces aanzienlijk. Gebruikers kunnen componenten bladeren op categorie, de zoekfunctionaliteit gebruiken, populariteitsstatistieken bekijken en gerelateerde componenten verkennen, waardoor het gemakkelijker wordt precies te vinden wat ze nodig hebben voor hun projecten.
+
+Voordat ze een component integreren, kunnen gebruikers het in actie bekijken, experimenteren met verschillende varianten en het gedrag en de codekwaliteit beoordelen. Deze mogelijkheid om componenten vooraf te evalueren vermindert risico's en vergroot het vertrouwen bij adoptie.
+
+Misschien nog belangrijker: registries geven gebruikers echte eigendom. In plaats van vast te zitten aan een afhankelijkheid, kopiëren gebruikers de broncode rechtstreeks in hun projecten. Dit betekent dat ze componenten naar wens kunnen aanpassen, afhankelijkheidsbeheerproblemen kunnen vermijden en volledige controle over hun codebase behouden.
+
+
+## Een register maken
+
+Je kunt vrij snel een eenvoudig register opzetten. Praktisch gezien heb je slechts 3 kernonderdelen nodig:
+
+### 1. Componenten
+
+Maak een component of een set componenten die je wilt delen. Zorg dat je de broncode van de componenten hebt en dat ze goed gedocumenteerd en gemakkelijk te begrijpen zijn.
+
+Overweeg om zaken toe te voegen zoals Markdown-documentatie, voorbeeldimplementaties en een manier om het component te previewen.
+
+### 2. Een openbaar eindpunt
+
+Maak een openbaar eindpunt dat de componenten serveert. Dit kan een eenvoudig JSON-bestand zijn of een complexere website. Zolang het openbaar en toegankelijk is, kun je elk gewenst eindpunt gebruiken.
+
+### 3. CLI
+
+Maak een CLI waarmee je de componenten in je project kunt installeren. Dit kan zo eenvoudig zijn als een enkele opdracht, zoals `npx myregistry add button`, of een complexere opdracht met opties en flags.
+
+## Gebruik van het shadcn-register
+
+Het opbouwen van je eigen register is een fantastische manier om je componenten met de community te delen, maar het vereist veel inspanning en onderhoud. Als je slechts een of twee componenten wilt delen, kun je het shadcn/ui-ecosysteem gebruiken - registry, CLI en variabelen.
+
+Laten we kijken hoe we een `MetricCard`-component live kunnen publiceren in minder dan 5 minuten met behulp van [Vercel](https://vercel.com)'s statische hosting.
+
+### Stap 1: Maak een map
+
+Maak een map met deze structuur:
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+Plaats je registry-item JSON (bijv. `metric-card.json`) in de map `public/`.
+
+### Stap 2: Voeg een `vercel.json` toe
+
+Maak een `vercel.json`-bestand naast `public/` met het volgende:
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Dit zorgt ervoor dat je JSON wordt geserveerd met de juiste CORS- en content-headers.
+
+### Stap 3: Deploy naar Vercel
+
+Voer vanaf de root van je map het volgende uit:
+
+```bash
+vercel --prod
+```
+
+en beantwoord de prompts om je project te deployen.
+
+Wanneer het klaar is, staat je bestand live op iets als:
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### Stap 4: Installeer het component
+
+Iedereen kan nu het volgende uitvoeren:
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+Geen npm-pakket, geen buildstap, geen complexiteit.

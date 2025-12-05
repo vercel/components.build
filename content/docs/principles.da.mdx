@@ -1,0 +1,54 @@
+---
+title: Kerneprincipper
+description: Når man bygger moderne UI-komponenter, er det vigtigt at have disse kerneprincipper i mente.
+---
+
+## Sammensætning og genanvendelighed
+
+Foretræk sammensætning frem for arv – byg komponenter, der kan kombineres og indlejres for at skabe mere komplekse UI'er, i stedet for at stole på dybe klassehierarkier.
+
+Komponérbare komponenter eksponerer en klar API (via props/slots), som gør det muligt for udviklere at tilpasse adfærd og udseende ved at tilføje child-elementer eller callbacks.
+
+Dette gør komponenter meget genanvendelige i forskellige sammenhænge. (React’s design understøtter dette: “Props og sammensætning giver dig al den fleksibilitet, du har brug for til at tilpasse en komponents udseende og adfærd på en eksplicit og sikker måde.”)
+
+## Tilgængelig som standard
+
+Komponenter skal kunne bruges af alle brugere. Brug semantiske HTML-elementer, der passer til komponentens rolle (f.eks. `<button>` til klikbare handlinger, `<ul>/<li>` til lister osv.) og udbyg med WAI-ARIA-attributter når det er nødvendigt.
+
+Sørg for, at tastaturnavigation og fokusstyring understøttes (for eksempel navigation med piletaster i menuer, fokusfælder i modaler). Hver komponent bør overholde tilgængelighedsstandarder og -retningslinjer ud af boksen.
+
+Det betyder at levere korrekte ARIA-roller/-tilstande og teste med skærmlæsere. Tilgængelighed er ikke valgfri – det er en grundlæggende egenskab for enhver komponent.
+
+## Tilpasning og tematisering
+
+En komponent skal være nem at restyle eller tilpasse til forskellige designkrav. Undgå at fastkode visuelle stilarter, som ikke kan overskrives.
+
+Tilbyd mekanismer til theming og styling, såsom CSS variables, klart dokumenterede klassnavne, eller style props. Ideelt set leveres komponenter med fornuftige standardstilarter, men de skal give udviklere mulighed for at tilpasse udseendet med minimal indsats (for eksempel ved at sende en className eller bruge design tokens).
+
+Dette princip sikrer, at komponenter kan passe ind i enhver brand- eller designsystem uden at “kæmpe” mod standardstilarter.
+
+## Letvægts og høj ydeevne
+
+Komponenter bør være så slanke som muligt med hensyn til assets og afhængigheder. Undgå at oppuste en komponent med store biblioteksafhængigheder eller unødvendigt kompleks logik, især hvis den logik ikke altid er nødvendig.
+
+Stræb efter god ydeevne (både rendering og interaktion) ved at minimere unødvendige gentegninger og bruge effektive algoritmer til tunge opgaver. Hvis en komponent er dataintensiv (som en stor liste eller tabel), overvej mønstre som virtualisering eller inkrementel rendering, men hold sådanne funktioner valgfrie.
+
+Letvægtige komponenter er nemmere at vedligeholde og hurtigere for slutbrugere.
+
+## Gennemsigtighed og kodeejerskab
+
+I open source gavner forbrugere ofte ved at have fuld indsigt og kontrol over komponentkoden. Denne specifikation opfordrer til en ”open-source først”-tankegang: komponenter bør ikke være black boxes.
+
+Når udviklere importerer eller kopierer din komponent, skal de kunne inspicere, hvordan den virker, og ændre den hvis nødvendigt. Dette princip ligger til grund for det fremvoksende kopi-og-indsæt-distributionsmønster (diskuteres senere), hvor udviklere integrerer komponentkode direkte i deres projekter.
+
+Ved at give brugerne ejerskab af koden øger du tilliden og muliggør dybere tilpasning.
+
+Selv hvis du distribuerer via et package, omfavn gennemsigtighed ved at levere source maps, læsbar kode og grundig dokumentation.
+
+## Vel-dokumenteret og DX-venlig
+
+En fremragende komponent er ikke kun kode – den kommer med klar dokumentation og eksempler. Fra et udvikleroplevelsesperspektiv (DX) bør dine komponenter være nemme at lære og integrere.
+
+Dokumentér hver komponents formål, props og brugseksempler. Inkluder noter om tilgængelighed (såsom tastaturkontroller eller anvendte ARIA-attributter) og eventuelle tilpasningsmuligheder.
+
+God dokumentation reducerer misbrug og sænker barrieren for adoption. Vi kommer ind på dokumentationsforventninger i Udgivelsesafsnittet, men det er listet her som et princip, fordi planlægning for god dokumentation og DX bør ske under design-/byggefasen.

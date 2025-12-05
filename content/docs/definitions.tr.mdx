@@ -1,0 +1,234 @@
+---
+title: Tanımlar
+description: Bu sayfa, spesifikasyon boyunca kullanılan kesin terminolojiyi belirler. Terimler kasıtlı olarak çerçeve bağımsızdır, ancak örnekler için React kullanacağız.
+---
+
+## 1. Varlık Sınıflandırması
+
+### 1.1 Primitif
+
+Bir primitif (veya stil verilmeyen bileşen), davranış ve erişilebilirlik sağlayan **en alt seviye yapı taşıdır**; herhangi bir stil içermez.
+
+Primitifler tamamen headless (yani stil verilmemiş) olup semantik, odak yönetimi, klavye etkileşimi, katmanlama/portallar, ARIA bağlantıları, ölçümleme ve benzeri endişeleri kapsüller. Davranışsal temeli sağlarlar ancak tamamlanmış bir UI olabilmeleri için stil gerektirirler.
+
+Örnekler:
+
+- [Radix UI Primitifleri](https://www.radix-ui.com/primitives) (Dialog, Popover, Tooltip, vb.)
+- [React Aria Bileşenleri](https://react-spectrum.adobe.com/react-aria)
+- [Base UI](https://base-ui.com)
+- [Headless UI](https://headlessui.com/)
+
+Beklentiler:
+
+- Tamamen stil verilmemiş (headless).
+- Tek sorumluluk; stil verilmiş bileşenlere bileşenlenebilir.
+- Rolü için kapsamlı a11y davranışı ile birlikte gelir.
+- Sürümleme kararlılığı tercih eder; kırıcı değişiklikler nadirdir ve belgelenir.
+
+<Callout>
+Primitif ve bileşen terimleri web genelinde genellikle birbirinin yerine kullanılır, ancak aynı şey değildir.
+</Callout>
+
+### 1.2 Bileşen
+
+Bir bileşen, primitiflere görsel tasarım ekleyen veya birden çok öğeyi bileştirerek tam, işlevsel arayüz öğeleri oluşturan stil verilmiş, yeniden kullanılabilir bir UI birimidir.
+
+Bileşenler hala nispeten düşük seviyelidir ancak stil içerirler, bu sayede uygulamalarda hemen kullanılabilir hâle gelirler. Genellikle stil verilmemiş primitifleri varsayılan görsel tasarımla sarar ve özelleştirilebilir kalırlar.
+
+Örnekler:
+- [shadcn/ui bileşenleri](https://ui.shadcn.com/) (Radix primitiflerinin stil verilmiş sarmaları)
+- [Material UI bileşenleri](https://mui.com/components/)
+- [Ant Design bileşenleri](https://ant.design/components/overview/)
+
+Beklentiler:
+- Açık props API'si; uygulanabiliyorsa kontrollü ve kontrolsüz kullanım desteklenir.
+- Varsayılan stil içerir ancak üzerine yazılmaya uygun kalır (classes, tokenlar, slotlar).
+- Tam klavye erişilebilir ve ekran okuyucu dostu (primitiflerden miras alır).
+- Bileşenlenebilir (children/slotlar, render props veya bileşik alt bileşenler).
+- Primitiflerden inşa edilebilir veya davranışı doğrudan stil ile uygular.
+
+### 1.3 Desen
+
+Desenler, belirli bir UI/UX sorununu çözmek için kullanılan primitiflerin veya bileşenlerin belirli bir bileşimidir.
+
+Örnekler:
+- Satır içi hatalarla form doğrulama
+- Yıkıcı işlemleri onaylama
+- Typeahead arama
+- İyimser UI
+
+Beklentiler.
+- Davranışı, erişilebilirliği, klavye haritasını ve hata modlarını açıklar.
+- Birden fazla çerçevede referans uygulamaları içerebilir.
+
+### 1.4 Blok
+
+İçerik iskeletiyle somut bir arayüz kullanım durumunu çözen, görüşe dayalı, üretime hazır bileşen bileşimidir (genellikle ürüne özgü). Bloklar genelliği hız alımıyla takas eder.
+
+Örnekler:
+- Fiyat tablosu
+- Kimlik doğrulama ekranları
+- Onboarding adım gösterici
+- Yapay zeka sohbet paneli
+- Fatura ayarları formu
+
+Beklentiler.
+- Güçlü varsayılanlar, kopyala-yapıştır dostu, kolay markalanabilir/temalandırılabilir.
+- Düzen ve orkestrasyon dışında minimal mantık; alan mantığı handler'lar aracılığıyla stublanır.
+- Veriyi props aracılığıyla kabul eder; belgelenmemiş bir adaptör olmadan fetch'lerin arkasına veri gizlemez.
+
+<AuthorNote name="Rob Austin" role="shadcnblocks.com'un Kurucusu" githubUsername="JugglerX" link="https://www.shadcnblocks.com/">
+Bloklar tipik olarak bir bileşen gibi yeniden kullanılabilir değildir. Onları içe aktarmazsınız, ancak genellikle bileşenleri ve primitifleri içe aktarırlar. Bu onları bir [Registry](/registry) dağıtım yöntemi için iyi adaylar yapar.
+</AuthorNote>
+
+### 1.5 Sayfa
+
+Belirli bir kullanıcıya yönelik amacı hizmet etmek üzere düzenlenmiş birden çok bloktan oluşan, tek rota için tam bir görünüm. Sayfalar, bir uygulamadaki tek bir hedefi temsil eden uyumlu bir düzen oluşturmak için blokları birleştirir.
+
+Örnekler:
+- Açılış sayfası (hero bloğu + özellikler bloğu + fiyatlandırma bloğu + footer bloğu)
+- Ürün detay sayfası (görüntü galerisi bloğu + ürün bilgileri bloğu + yorumlar bloğu)
+- Kontrol paneli sayfası (istatistik bloğu + grafik bloğu + etkinlik akışı bloğu)
+
+Beklentiler:
+- Tek bir rota için birleşik bir düzen oluşturmak üzere birden çok bloğu birleştirir.
+- Bileşen düzeyi ayrıntılardan ziyade düzen ve blok orkestrasyonuna odaklanır.
+- Bloklar arasındaki veri koordinasyonu için sayfa özelinde mantık içerebilir.
+- Tek bir URL/rota için kendi içinde tamamlanmıştır; rotalar arasında yeniden kullanılmak üzere tasarlanmamıştır.
+
+### 1.6 Şablon
+
+Sayfaları, yönlendirme yapılandırmasını, paylaşılan düzenleri, küresel sağlayıcıları ve proje yapısını paketleyen çok sayfalı koleksiyon veya tam site iskeleti. Şablonlar, tüm uygulamalar veya büyük uygulama bölümleri için eksiksiz başlangıç noktalarıdır.
+
+Örnekler:
+- [TailwindCSS Şablonları](https://tailwindui.com/templates)
+- [shadcnblocks Şablonları](https://www.shadcnblocks.com/templates) (tam uygulama kabukları)
+- "SaaS başlangıç" (kimlik doğrulama sayfaları + kontrol paneli sayfaları + ayarlar sayfaları + pazarlama sayfaları)
+- "E-ticaret şablonu" (mağaza ön yüzü + ürün sayfaları + ödeme akışı + yönetici sayfaları)
+
+Beklentiler:
+- Yönlendirme/navigasyon yapısıyla birden çok sayfa içerir.
+- Küresel yapılandırma sağlar (tema sağlayıcıları, auth context, düzen kabukları).
+- Açık kurallara sahip görüşe dayalı proje yapısı.
+- Bağımlılık olarak içe aktarmaktan ziyade forkladığınız ve özelleştirdiğiniz kapsamlı bir başlangıç noktası olarak tasarlanmıştır.
+- Yapılandırma, dağıtım kurulumu ve geliştirme araçlarını içerebilir.
+
+### 1.7 Yardımcı (Görsel olmayan)
+
+Geliştirici ergonomisi veya bileşim için dışa aktarılan yardımcı; render edilen UI değildir.
+
+Örnekler:
+- React hook'ları (useControllableState, useId)
+- Sınıf yardımcıları
+- Tuş bağlama yardımcıları
+- Odak kapsamları
+
+Beklentiler.
+- Yan etkisiz (belirtildiği yerler hariç).
+- İzole olarak test edilebilir; tree-shaking'i destekler.
+
+## 2. API ve Bileşim Sözlüğü
+
+### 2.1 Props API
+
+Bir bileşenin genel yapılandırma yüzeyi. Props'lar kararlı, tiplenmiş ve varsayılanlar ile a11y etkileriyle belgelenmiştir.
+
+### 2.2 Children / Slotlar
+
+Çağıran tarafından sağlanan yapı veya içerik için yer tutucular.
+- Children (örtük slot). Açılış/kapanış etiketleri arasındaki JSX.
+- Adlandırılmış slotlar. icon, footer gibi props'lar veya `<Component.Slot>` alt bileşenleri.
+- Slot iletimi. DOM özniteliklerini/className/ref'leri alt öğeye iletme.
+
+### 2.3 Render Prop (Fonksiyon-çocuk)
+
+Rendering'i devretmek için kullanılan bir fonksiyon çocuk; ebeveyn durum/veri sağlar.
+
+```tsx
+<ParentComponent data={data}>
+  {(item) => (
+    <ChildComponent key={item.id} {...item} />
+  )}
+</ParentComponent>
+```
+
+Ebeveyn veriye/davranışa sahip olmalı ama tüketici işaretlemeyi tamamen kontrol etmeliyse kullanın.
+
+### 2.4 Kontrollü vs. Kontrolsüz
+
+**Kontrollü** ve **kontrolsüz** terimleri bir bileşenin durumunu tanımlamak için kullanılır.
+
+**Kontrollü** bileşenlerin değeri props ile yönlendirilir ve tipik olarak bir `onChange` olayı yayarlar (gerçeklik kaynağı ebeveyn olur). **Kontrolsüz** bileşenler dahili durum tutar; `defaultValue` ve zorlayıcı sıfırlama gibi özellikler sunabilir.
+
+Birçok input her ikisini de desteklemelidir. [kontrollü ve kontrolsüz durum](/state) hakkında daha fazla bilgi edinin.
+
+### 2.5 Provider / Context
+
+Bir alt ağaç için paylaşılan durum/yapılandırma sağlayan üst düzey bir bileşen (ör. tema, yerel ayar, aktif sekme id'si). Provider'lar zorunlu yerleşim ile açıkça belgelenir.
+
+### 2.6 Portal
+
+Katmanlama/stack bağlamını yönetmek için DOM hiyerarşisinin dışına UI render etme (ör. modal'lar, popover'lar, toast'lar), aynı zamanda erişilebilirliği koruma (odak tuzağı, aria-modal, arka plan inert).
+
+## 3. Stil ve Tema Sözlüğü
+
+### 3.1 Headless
+
+Görünümü dayatmadan davranış ve erişilebilirlik uygular. Tüketicinin stil sağlamasını gerektirir.
+
+### 3.2 Stil Verilmiş
+
+Varsayılan görsel tasarımla birlikte gelir (CSS sınıfları, inline stiller veya tokenlar) ancak üzerine yazılmaya uygun kalır (className birleşimi, CSS değişkenleri, temalandırma).
+
+### 3.3 Varyantlar
+
+Props aracılığıyla açığa çıkan ayrık, belgelenmiş stil veya davranış permütasyonları (ör. `size="sm|md|lg"`, `tone="neutral|destructive"`). Varyantlar ayrı bileşenler değildir.
+
+### 3.4 Tasarım Tokenları
+
+Görsel tasarımı parametrize eden ve temalandırmayı destekleyen isimlendirilmiş, platformdan bağımsız değerler (ör. `--color-bg`, `--radius-md`, `--space-2`).
+
+## 4. Erişilebilirlik Sözlüğü
+
+### 4.1 Rol / Durum / Özellik
+
+Semantiği (`role="menu"`), durumu (`aria-checked`) ve ilişkileri (`aria-controls`, `aria-labelledby`) ileten WAI-ARIA öznitelikleri.
+
+### 4.2 Klavye Haritası
+
+Bir widget için belgelenmiş klavye etkileşimleri seti (ör. `Tab`, `Arrow keys`, `Home/End`, `Escape`). Her etkileşimli bileşen bir klavye haritası beyan eder ve uygular.
+
+### 4.3 Odak Yönetimi
+
+İlk odak, hareketli odak, odak tuzağı ve parçalanma durumunda odak geri dönüş kuralları.
+
+## 5. Dağıtım Sözlüğü
+
+### 5.1 Paket (Registry Dağıtımı)
+
+Bileşen/kütüphane bir paket kayıt defterine (ör. `npm`) yayınlanır ve bir bundler aracılığıyla içe aktarılır. Sürümlü güncellemeleri ve bağımlılık yönetimini tercih eder.
+
+### 5.2 Kopyala-ve-Yapıştır (Kaynak Dağıtımı)
+
+Kaynak kod tüketicinin deposuna doğrudan entegre edilir (genellikle bir CLI aracılığıyla). Sahipliği, özelleştirmeyi ve gereksiz çalışma zamanının olmamasını tercih eder.
+
+### 5.3 Kayıt (Katalog)
+
+Meta veriler, önizlemeler ve yükleme/kopyalama talimatları ile küratörlüğü yapılmış varlıkların (primitifler, bileşenler, bloklar, şablonlar) bir dizini. Bir kayıt mutlaka bir paket yöneticisi değildir.
+
+## 6. Sınıflandırma Heuristikleri
+
+Bir varlığa isim vermek ve yerleştirmek için bu karar akışını kullanın:
+
+1. Tek bir davranışı veya a11y kaygısını kapsıyor mu, stil yok mu? → **Primitif**
+2. Primitiflere görsel tasarım ekleyen veya birden çok öğeyi bileştirerek yeniden kullanılabilir, stil verilmiş bir UI öğesi mi? → **Bileşen**
+3. Görüşe dayalı bir bileşim ve kopya ile somut bir ürün kullanım durumunu çözüyor mu? → **Blok**
+4. Yönlendirme/provider'lar ve değiştirilebilir bölgeler ile bir sayfa/akışı iskeletliyor mu? → **Şablon**
+5. Uygulamadan bağımsız, uygulamadan bağımsız tekrar eden bir çözümün dokümantasyonu mu? → **Desen**
+6. Ergonomi/bileşim için görsel olmayan mantık mı? → **Yardımcı**
+
+## 7. Hedef Dışı ve Açıklamalar
+
+- Web Bileşenleri vs. "Bileşenler." Bu spesifikasyonda "bileşen", yeniden kullanılabilir bir UI birimini ifade eder (React örnekleri). Bu, HTML Custom Elements standardini açıkça belirtmedikçe ima etmez. Eşdeğer ilkeler çerçeveler arası geçerlidir.
+- Widget'lar. Terim belirsizlik nedeniyle kaçınılır; genel kullanım için bileşen, yalnızca dokümantasyon çözümü için desen kullanın.
+- Temalar vs. Stiller. Tema, tokenlar aracılığıyla stillerin parametrize edilmesidir. Stiller somut sunumdur. Bileşenler temaları desteklemelidir; bloklar/şablonlar görüşe dayalı stiller artı tema kancaları ile birlikte gelebilir.

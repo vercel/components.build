@@ -1,0 +1,233 @@
+---
+title: Compoziție
+description: Fundamentul construirii componentelor UI moderne.
+---
+
+Compoziție, sau compozabilitate, este fundamentul construirii componentelor UI moderne. Este una dintre cele mai puternice tehnici pentru crearea de componente flexibile și reutilizabile care pot trata cerințe complexe fără a sacrifica claritatea API-ului.
+
+În loc să înghesui toată funcționalitatea într-o singură componentă cu zeci de props-uri, compoziția distribuie responsabilitatea între mai multe componente care cooperează.
+
+Fernando a susținut o prezentare excelentă despre acest subiect la React Universe Conf 2025, unde și-a împărtășit abordarea pentru reconstruirea Message Composer-ului de la Slack ca o componentă compozabilă.
+
+<Video src="https://www.youtube.com/watch?v=4KvbVq3Eg5w" />
+
+## Cum să faci un component compozabil
+
+Pentru a face o componentă compozabilă, trebuie să o descompui în componente mai mici și mai concentrate. De exemplu, să luăm această componentă Accordion:
+
+```tsx title="accordion.tsx"
+import { Accordion } from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion data={data} />
+);
+```
+
+Deși această componentă Accordion poate părea simplă, gestionează prea multe responsabilități. Este responsabilă pentru redarea containerului, trigger-ului și conținutului; precum și pentru gestionarea stării acordeonului și a datelor.
+
+Personalizarea stilizării acestei componente este dificilă pentru că este strâns legată. Probabil necesită suprascrieri globale de CSS. În plus, adăugarea de funcționalități noi sau ajustarea comportamentului necesită modificarea codului sursă al componentei.
+
+Pentru a rezolva acest lucru, putem împărți aceasta în componente mai mici și mai concentrate.
+
+### 1. Componenta Root
+
+Mai întâi, să ne concentrăm pe container — componenta care ține totul împreună, adică trigger-ul și conținutul. Acest container nu trebuie să știe despre date, dar trebuie să păstreze starea de deschis.
+
+Totuși, vrem ca această stare să fie accesibilă de către componentele copil. Așadar, să folosim Context API pentru a crea un context pentru starea de deschis.
+
+În final, pentru a permite modificarea elementului `div`, vom extinde atributele HTML implicite.
+
+Vom numi această componentă "Root".
+
+```tsx title="@/components/ui/accordion.tsx"
+type AccordionProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+const AccordionContext = createContext<AccordionProps>({
+  open: false,
+  setOpen: () => {},
+});
+
+export type AccordionRootProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export const Root = ({
+  children,
+  open,
+  setOpen,
+  ...props
+}: AccordionRootProps) => (
+  <AccordionContext.Provider value={{ open, setOpen }}>
+    <div {...props}>{children}</div>
+  </AccordionContext.Provider>
+);
+```
+
+### 2. Componenta Item
+
+Componenta Item este elementul care conține un element al acordeonului. Este pur și simplu un învelitor pentru fiecare element din acordeon.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionItemProps = React.ComponentProps<'div'>;
+
+export const Item = (props: AccordionItemProps) => <div {...props} />;
+```
+
+### 3. Componenta Trigger
+
+Componenta Trigger este elementul care deschide acordeonul când este activat. Este responsabilă pentru:
+
+- Redarea ca buton în mod implicit (poate fi personalizată cu `asChild`)
+- Tratarea evenimentelor click pentru a deschide acordeonul
+- Gestionarea focalizării când acordeonul se închide
+- Furnizarea atributelor ARIA corecte
+
+Să adăugăm această componentă la componenta noastră Accordion.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionTriggerProps = React.ComponentProps<'button'> & {
+  asChild?: boolean;
+};
+
+export const Trigger = ({ asChild, ...props }: AccordionTriggerProps) => (
+  <AccordionContext.Consumer>
+    {({ open, setOpen }) => (
+      <button onClick={() => setOpen(!open)} {...props} />
+    )}
+  </AccordionContext.Consumer>
+);
+```
+
+### 4. Componenta Content
+
+Componenta Content este elementul care conține conținutul acordeonului. Este responsabilă pentru:
+
+- Redarea conținutului când acordeonul este deschis
+- Furnizarea atributelor ARIA corecte
+
+Să adăugăm această componentă la componenta noastră Accordion.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionContentProps = React.ComponentProps<'div'> & {
+  asChild?: boolean;
+};
+
+export const Content = ({ asChild, ...props }: AccordionContentProps) => (
+  <AccordionContext.Consumer>
+    {({ open }) => <div {...props} />}
+  </AccordionContext.Consumer>
+);
+```
+
+### 5. Punând totul cap la cap
+
+Acum că avem toate componentele, le putem combina în fișierul nostru inițial.
+
+```tsx title="accordion.tsx"
+import * as Accordion from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion.Root open={false} setOpen={() => {}}>
+    {data.map((item) => (
+      <Accordion.Item key={item.title}>
+        <Accordion.Trigger>{item.title}</Accordion.Trigger>
+        <Accordion.Content>{item.content}</Accordion.Content>
+      </Accordion.Item>
+    ))}
+  </Accordion.Root>
+);
+```
+
+## Convenții de denumire
+
+Când construiești componente compozabile, convențiile de denumire consistente sunt cruciale pentru crearea unor API-uri intuitive și previzibile. Atât shadcn/ui cât și Radix UI urmează modele stabilite care au devenit standardul de facto în ecosistemul React.
+
+### Componente Root
+
+Componenta `Root` servește ca containerul principal care învelește toate celelalte sub-componente. În mod tipic gestionează starea partajată și contextul, oferind un context tuturor componentelor copil.
+
+```tsx
+<AccordionRoot>{/* Child components */}</AccordionRoot>
+```
+
+### Elemente interactive
+
+Componentele interactive care declanșează acțiuni sau comută stări folosesc denumiri descriptive:
+
+- `Trigger` - Elementul care inițiază o acțiune (deschidere, închidere, comutare)
+- `Content` - Elementul care conține conținutul principal care este afișat/ascuns
+
+```tsx
+<CollapsibleTrigger>Click to expand</CollapsibleTrigger>
+<CollapsibleContent>
+  Hidden content revealed here
+</CollapsibleContent>
+```
+
+### Structura conținutului
+
+Pentru componente cu zone de conținut structurate, folosește denumiri semantice care descriu scopul lor:
+
+- `Header` - Secțiunea de sus care conține titluri sau controale
+- `Body` - Zona principală de conținut
+- `Footer` - Secțiunea de jos pentru acțiuni sau metadate
+
+```tsx
+<DialogHeader>
+  {/* Dialog title */}
+</DialogHeader>
+<DialogBody>
+  {/* Dialog content */}
+</DialogBody>
+<DialogFooter>
+  {/* Dialog footer */}
+</DialogFooter>
+```
+
+### Componente informaționale
+
+Componentele care furnizează informații sau context folosesc sufixe descriptive:
+
+- `Title` - Antetul principal sau etichetă
+- `Description` - Text de suport sau conținut explicativ
+
+```tsx
+<CardTitle>Project Statistics</CardTitle>
+<CardDescription>
+  View your project's performance over time
+</CardDescription>
+```

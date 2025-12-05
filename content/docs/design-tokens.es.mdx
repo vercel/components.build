@@ -1,0 +1,51 @@
+---
+title: Tokens de diseño
+description: Cómo las convenciones de nomenclatura semántica y los tokens de diseño crean un sistema de temas flexible y mantenible.
+---
+
+Una de las bases fundamentales de las bibliotecas de componentes modernas reside en su enfoque cuidadoso del estilo. En lugar de codificar colores de forma rígida o crear sistemas de clases inflexibles, podemos emplear una convención de nomenclatura semántica que separa las responsabilidades de tema, contexto y uso.
+
+Esta convención de nomenclatura semántica se conoce como tokens de diseño. Esta decisión arquitectónica crea un sistema mantenible y flexible que escala de forma elegante a través de las aplicaciones.
+
+## La filosofía de las variables CSS semánticas
+
+Los enfoques tradicionales de CSS frecuentemente vinculan los valores de color directamente a sus contextos de uso, creando sistemas frágiles que son difíciles de mantener. Los tokens de diseño adoptan un enfoque diferente al crear capas de abstracción que separan lo que algo es de cómo se ve.
+
+## Entendiendo la arquitectura de variables
+
+Veamos cómo podemos estructurar nuestras variables CSS para crear este sistema flexible:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+En el ejemplo anterior, tenemos cuatro tokens de diseño:
+
+- `--background`, que se usa para colores de fondo (principalmente el fondo de la página)
+- `--foreground`, que se usa para los colores de primer plano (el color general del texto)
+- `--primary`, que se usa para colores primarios (el color principal de la marca)
+- `--primary-foreground`, que se usa para los colores de primer plano primarios (el color del texto, tal como se ve frente al color primario)

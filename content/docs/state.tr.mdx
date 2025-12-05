@@ -1,0 +1,88 @@
+---
+title: Durum
+description: Bir bileşende durumu nasıl yöneteceğiniz ve kontrol edilebilir ile kontrolsüz durumların nasıl birleştirileceği.
+---
+
+Esnek bileşenler oluşturmak — hem kontrollü hem de kontrolsüz modlarda çalışabilen — profesyonel bileşenlerin ayırt edici özelliğidir.
+
+## Kontrolsüz Durum
+
+Kontrolsüz durum, bileşenin kendi durumunu dahili olarak yönetmesidir. Bu, çoğu bileşen için varsayılan kullanım desenidir.
+
+Örneğin, işte kendi durumunu dahili olarak yöneten basit bir `Stepper` bileşeni:
+
+```tsx title="stepper.tsx"
+import { useState } from 'react';
+
+export const Stepper = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+};
+```
+
+## Kontrollü Durum
+
+Kontrollü durum, bileşenin durumunun üst bileşen tarafından yönetildiği durumdur. Durumu dahili olarak takip etmek yerine bu sorumluluğu üst bileşene devrederiz.
+
+`Stepper` bileşenini üst bileşen tarafından kontrol edilecek şekilde yeniden düzenleyelim:
+
+```tsx title="stepper.tsx"
+type StepperProps = {
+  value: number;
+  setValue: (value: number) => void;
+};
+
+export const Stepper = ({ value, setValue }: StepperProps) => (
+  <div>
+    <p>{value}</p>
+    <button onClick={() => setValue(value + 1)}>Increment</button>
+  </div>
+);
+```
+
+## Durumların birleştirilmesi
+
+En iyi bileşenler hem kontrollü hem de kontrolsüz durumları destekler. Bu, bileşenin çeşitli senaryolarda kullanılmasına ve kolayca özelleştirilmesine olanak tanır.
+
+[Radix UI](https://www.radix-ui.com/) içsel olarak kontrollü ve kontrolsüz durumları birleştirmek için [`use-controllable-state`](https://github.com/radix-ui/primitives/tree/main/packages/react/use-controllable-state) adlı bir yardımcı araç sağlar. Genel kullanım için tasarlanmamış olsa da, [Kibo UI](https://www.kibo-ui.com) gibi kayıt platformları kendi Radix benzeri bileşenlerini oluşturmak için bu aracı uygulamışlardır.
+
+Hook'u yükleyelim:
+
+```package-install
+npm install @radix-ui/react-use-controllable-state
+```
+
+Bu hafif hook, Radix UI'nin bileşen kütüphanesi tarafından dahili olarak kullanılan aynı durum yönetimi desenlerini sunar ve bileşenlerinizin sektör standartlarıyla tutarlı davranmasını sağlar.
+
+Hook üç ana parametre kabul eder ve geçerli değeri ile setter'ı içeren bir tuple döner. Bunu `Stepper` bileşeninin kontrollü ve kontrolsüz durumlarını birleştirmek için kullanalım:
+
+```tsx title="stepper.tsx"
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+
+type StepperProps = {
+  value: number;
+  defaultValue: number;
+  onValueChange: (value: number) => void;
+};
+
+export const Stepper = ({ value: controlledValue, defaultValue, onValueChange }: StepperProps) => {
+  const [value, setValue] = useControllableState({
+    prop: controlledValue,        // The controlled value prop
+    defaultProp: defaultValue,    // Default value for uncontrolled mode
+    onChange: onValueChange,      // Called when value changes
+  });
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+}
+```

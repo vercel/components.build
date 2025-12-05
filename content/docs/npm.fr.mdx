@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Comment publier vos composants sur NPM.
+---
+
+Les packages NPM représentent l'approche traditionnelle pour distribuer des bibliothèques de composants. Alors que les [registres](/registry) ont gagné en popularité pour leur flexibilité, la publication sur npm reste une option puissante avec des avantages distincts pour certains cas d'utilisation.
+
+La différence fondamentale entre les packages npm et les registres réside dans la manière dont ils distribuent le code et gèrent la propriété.
+
+## Modèle de package
+
+Lorsque vous publiez des composants en tant que package npm, vous distribuez du code précompilé et versionné que les utilisateurs installent en tant que dépendance :
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+Cela offre plusieurs avantages convaincants qui en font le bon choix pour de nombreuses bibliothèques de composants.
+
+### Gestion des versions
+
+En tant qu'auteur du package, vous contrôlez la gestion des versions et les mises à jour. Les utilisateurs peuvent se verrouiller sur des versions spécifiques, garantissant la stabilité :
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+Ce contrôle centralisé des versions signifie que vous pouvez publier des mises à jour, des correctifs de sécurité et de nouvelles fonctionnalités que les utilisateurs reçoivent via les mises à jour de dépendances standard.
+
+### Installation simplifiée
+
+Les packages NPM offrent une expérience d'installation sans friction. Une seule commande ajoute l'ensemble de votre bibliothèque de composants :
+
+```bash
+npm install @acme/ui-components
+```
+
+Pas besoin de copier manuellement des fichiers, de gérer les dépendances ou de configurer des outils de build. Tout fonctionne immédiatement.
+
+### Résolution des dépendances
+
+NPM gère automatiquement les dépendances transitives. Si vos composants nécessitent des versions spécifiques de React, Framer Motion ou d'autres bibliothèques, npm résout ces dépendances automatiquement, évitant les conflits de versions.
+
+### Prise en charge de TypeScript
+
+Les packages publiés peuvent inclure des définitions de types préconstruites, offrant une prise en charge immédiate de TypeScript sans configuration supplémentaire :
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## Limitations des packages NPM
+
+Bien que les packages npm excellent dans la distribution, ils comportent des compromis que les registres adressent spécifiquement.
+
+### Accès au code source
+
+La limitation la plus importante est l'absence d'accès au code source. Les utilisateurs ne peuvent pas :
+
+- Modifier directement le comportement des composants
+- Corriger des bugs sans attendre des mises à jour
+- Personnaliser les détails d'implémentation
+- Supprimer du code inutilisé
+
+Cela crée une relation de dépendance où les utilisateurs doivent compter sur le mainteneur du package pour toutes les modifications.
+
+### Contraintes de personnalisation
+
+Ajuster les composants nécessite de travailler à l'intérieur de l'API exposée. Bien que vous puissiez fournir des props pour la personnalisation :
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+Les utilisateurs ne peuvent pas fondamentalement modifier le fonctionnement du composant sans forker l'ensemble du package.
+
+### Taille du bundle
+
+Les packages NPM incluent tous les composants, même si les utilisateurs n'ont besoin que d'un sous-ensemble. Bien que le tree-shaking aide, ce n'est pas toujours parfait, ce qui peut ajouter un poids inutile aux applications.
+
+## Configuration CSS et Tailwind
+
+Une considération critique lors de la publication de composants basés sur Tailwind via npm est de s'assurer que les styles fonctionnent correctement dans l'application consommatrice.
+
+Par défaut, Tailwind ne génère des styles que pour les classes qu'il trouve dans vos fichiers de projet. Il ne regarde pas à l'intérieur de `node_modules`, ce qui signifie que les styles de vos composants ne seront pas inclus.
+
+Pour corriger cela, les utilisateurs doivent ajouter une directive `@source` à leur configuration Tailwind, en lui indiquant de scanner votre package pour les noms de classes :
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+Documentez toujours cette exigence de manière visible dans le README de votre package.
+
+## Publier votre bibliothèque de composants
+
+Pour publier vos composants sur npm, vous avez besoin d'un `package.json` correctement configuré qui pourrait ressembler à ceci :
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+Les packages NPM restent une part essentielle de l'écosystème des composants. Alors que les registres offrent des avantages convaincants pour la propriété du code source et la personnalisation, les packages npm apportent stabilité, gestion des versions et facilité d'utilisation que de nombreuses équipes exigent.
+
+L'essentiel est de comprendre les besoins de vos utilisateurs et de choisir la méthode de distribution qui les sert le mieux. Parfois, cela signifie offrir les deux options et laisser les développeurs choisir ce qui fonctionne le mieux pour leur projet.

@@ -1,0 +1,400 @@
+---
+title: データ属性
+description: 宣言的なスタイリングとコンポーネント識別のためのデータ属性の使用。
+---
+
+データ属性は、コンポーネントの状態や構造を利用者に公開する強力な手段であり、propが爆発的に増えることなく柔軟なスタイリングを可能にします。モダンなコンポーネントライブラリでは主に2つのパターンが使われます: 視覚的状態には `data-state`、コンポーネント識別には `data-slot`。
+
+## data-stateによる状態のスタイリング
+
+コンポーネントのスタイリングにおける最も一般的なアンチパターンの一つは、異なる状態ごとに個別の className prop を公開することです。
+
+古い設計のコンポーネントでは、次のようなAPIをよく見かけます:
+
+```tsx
+<Dialog
+  openClassName="bg-black"
+  closedClassName="bg-white"
+  classes={{
+    open: "opacity-100",
+    closed: "opacity-0"
+  }}
+/>
+```
+
+このアプローチにはいくつかの問題があります:
+- コンポーネントの内部状態をスタイリングAPIに結びつけてしまう
+- コンポーネントが複雑になるにつれて props が急増する
+- コンポーネントの使いやすさと保守性が低下する
+- 状態の組み合わせに基づくスタイリングができなくなる
+
+### 解決策: data-state属性
+
+代わりに、`data-*` 属性を使ってコンポーネントの状態を宣言的に公開します。これにより、標準のCSSセレクタを使って消費者が状態に基づいてコンポーネントをスタイリングできます:
+
+```tsx title="component.tsx"
+const Dialog = ({ className, ...props }: DialogProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      data-state={isOpen ? 'open' : 'closed'}
+      className={cn('transition-all', className)}
+      {...props}
+    />
+  );
+};
+```
+
+これで外部から状態に基づいてコンポーネントをスタイリングできるようになります:
+
+```tsx title="app.tsx"
+<Dialog className="data-[state=open]:opacity-100 data-[state=closed]:opacity-0" />
+```
+
+### このアプローチの利点
+
+1. **単一の className prop** - 状態ごとに複数の className prop を用意する必要がない  
+2. **合成可能** - 複数のデータ属性を組み合わせて複雑な状態を表現できる  
+3. **標準CSS** - 任意の CSS-in-JS ソリューションやプレーンな CSS と連携する  
+4. **型安全** - TypeScript がデータ属性の値を推論できる  
+5. **検査可能** - DevTools 上で HTML 属性として状態が可視化される
+
+### よくある状態パターン
+
+あらゆる種類のコンポーネント状態にデータ属性を使用します:
+
+```tsx
+// Open/closed state
+<Accordion data-state={isOpen ? 'open' : 'closed'} />
+
+// Selected state
+<Tab data-state={isSelected ? 'active' : 'inactive'} />
+
+// Disabled state (in addition to disabled attribute)
+<Button data-disabled={isDisabled} disabled={isDisabled} />
+
+// Loading state
+<Button data-loading={isLoading} />
+
+// Orientation
+<Slider data-orientation="horizontal" />
+
+// Side/position
+<Tooltip data-side="top" />
+```
+
+### Tailwindでのスタイリング
+
+Tailwindは任意のバリアントをサポートしており、データ属性によるスタイリングがとてもエレガントになります:
+
+```tsx
+<Dialog
+  className={cn(
+    // Base styles
+    'rounded-lg border p-4',
+    // State-based styles
+    'data-[state=open]:animate-in data-[state=open]:fade-in',
+    'data-[state=closed]:animate-out data-[state=closed]:fade-out',
+    // Multiple attributes
+    'data-[state=open][data-side=top]:slide-in-from-top-2'
+  )}
+/>
+```
+
+よく使われる状態については、Tailwindの設定を拡張しておくこともできます:
+
+```js title="tailwind.config.js"
+module.exports = {
+  theme: {
+    extend: {
+      data: {
+        open: 'state="open"',
+        closed: 'state="closed"',
+        active: 'state="active"',
+      }
+    }
+  }
+}
+```
+
+これで短縮形が使えるようになります:
+
+```tsx
+<Dialog className="data-open:opacity-100 data-closed:opacity-0" />
+```
+
+### Radix UIとの統合
+
+このパターンは [Radix UI](https://www.radix-ui.com/) で広く使われており、同ライブラリはプリミティブに自動的にデータ属性を適用します:
+
+```tsx
+import * as Dialog from '@radix-ui/react-dialog';
+
+<Dialog.Root>
+  <Dialog.Trigger />
+  <Dialog.Portal>
+    {/* Radix automatically adds data-state="open" | "closed" */}
+    <Dialog.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out" />
+    <Dialog.Content className="data-[state=open]:fade-in data-[state=closed]:fade-out" />
+  </Dialog.Portal>
+</Dialog.Root>
+```
+
+Radixが提供するその他のデータ属性には次のようなものがあります:
+- `data-state` - open/closed、active/inactive、on/off
+- `data-side` - top/right/bottom/left（位置指定要素用）
+- `data-align` - start/center/end（位置指定要素用）
+- `data-orientation` - horizontal/vertical
+- `data-disabled` - disabled のときに存在
+- `data-placeholder` - プレースホルダを表示しているときに存在
+
+## data-slotによるコンポーネント識別
+
+`data-state`が視覚的状態を追跡する一方で、`data-slot`は構成内のコンポーネント種類を識別します。このパターンは [shadcn/ui](https://ui.shadcn.com/) によって広まり、親コンポーネントが壊れやすいクラス名や要素セレクタに頼らずに特定の子コンポーネントをターゲットしてスタイル適用できるようにします。
+
+### 子要素ターゲティングの問題点
+
+子コンポーネントをスタイリングする従来のアプローチには重大な制約があります:
+
+```tsx
+// Relies on element types - breaks if implementation changes
+<form className="[&_input]:rounded-lg [&_button]:mt-4" />
+
+// Relies on class names - breaks if classes change
+<form className="[&_.text-input]:rounded-lg" />
+
+// Requires passing classes through props - verbose
+<form>
+  <input className={inputClasses} />
+  <button className={buttonClasses} />
+</form>
+```
+
+### 解決策: data-slot属性
+
+`data-slot`を使って、親がターゲットできる安定した識別子をコンポーネントに付与します:
+
+```tsx title="field-set.tsx"
+function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
+  return (
+    <fieldset
+      data-slot="field-set"
+      className={cn(
+        "flex flex-col gap-6",
+        // Target specific child slots
+        "has-[>[data-slot=checkbox-group]]:gap-3",
+        "has-[>[data-slot=radio-group]]:gap-3",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+```tsx title="checkbox-group.tsx"
+function CheckboxGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="checkbox-group"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  );
+}
+```
+
+### data-slotの利点
+
+1. **安定した識別子** - 実装の詳細が変わっても壊れにくい  
+2. **意味に基づくターゲティング** - 構造ではなくコンポーネントの目的に基づいてターゲットできる  
+3. **カプセル化** - 内部クラスはプライベートのままにできる  
+4. **合成可能** - 任意のネストや構成に対して機能する  
+5. **型安全** - 検証やドキュメント化が可能
+
+### 親を意識したスタイリングに`has-[]`を使用する
+
+Tailwindの `has-[]` セレクタと `data-slot` を組み合わせることで、強力な親依存のスタイリングが可能になります:
+
+```tsx title="form.tsx"
+function Form({ className, ...props }: React.ComponentProps<"form">) {
+  return (
+    <form
+      data-slot="form"
+      className={cn(
+        "space-y-4",
+        // Adjust spacing when specific slots are present
+        "has-[>[data-slot=form-section]]:space-y-6",
+        "has-[>[data-slot=inline-fields]]:space-y-2",
+        // Style based on slot states
+        "has-[[data-slot=submit-button][data-loading=true]]:opacity-50",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### 子孫ターゲティングに`[&_]`を使用する
+
+より深いネストに対しては、`[&_selector]` パターンを使って任意の子孫をターゲットします:
+
+```tsx title="card.tsx"
+function Card({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card"
+      className={cn(
+        "rounded-lg border p-4",
+        // Target any descendant with data-slot
+        "[&_[data-slot=card-header]]:mb-4",
+        "[&_[data-slot=card-title]]:text-lg [&_[data-slot=card-title]]:font-semibold",
+        "[&_[data-slot=card-description]]:text-sm [&_[data-slot=card-description]]:text-muted-foreground",
+        "[&_[data-slot=card-footer]]:mt-4 [&_[data-slot=card-footer]]:border-t [&_[data-slot=card-footer]]:pt-4",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### data-slotを使ったグローバルCSS
+
+データスロットは、テーマ全体で一貫したスタイルを適用するためのグローバルCSSでも非常に有効です:
+
+```css title="globals.css"
+/* Style all buttons within forms */
+[data-slot="form"] [data-slot="button"] {
+  @apply w-full sm:w-auto;
+}
+
+/* Style submit buttons specifically */
+[data-slot="form"] [data-slot="submit-button"] {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* Adjust inputs within inline layouts */
+[data-slot="inline-fields"] [data-slot="input"] {
+  @apply flex-1;
+}
+
+/* Style based on state combinations */
+[data-slot="dialog"][data-state="open"] [data-slot="dialog-content"] {
+  @apply animate-in fade-in;
+}
+```
+
+### 命名規約
+
+一貫した `data-slot` 命名のために次の規約に従ってください:
+
+1. **ケバブケースを使う** - `data-slot="form-field"`（`data-slot="formField"`ではない）  
+2. **具体的にする** - `data-slot="submit-button"`（`data-slot="button"`ではない）  
+3. **コンポーネントの目的に合わせる** - 見た目ではなく何をするかを反映した名前にする  
+4. **実装の詳細を避ける** - `data-slot="user-avatar"`（`data-slot="rounded-image"`ではない）
+
+```tsx
+// Good examples
+data-slot="search-input"
+data-slot="navigation-menu"
+data-slot="error-message"
+data-slot="submit-button"
+data-slot="card-header"
+
+// Avoid
+data-slot="input"           // Too generic
+data-slot="blueButton"      // Includes styling
+data-slot="div-wrapper"     // Implementation detail
+data-slot="mainContent"     // Use camelCase
+```
+
+## data属性とpropsの使い分け
+
+どのパターンを使うべきかを理解することは、クリーンなAPI設計の鍵です:
+
+### `data-state` のユースケース
+- **視覚的状態** - 開/閉、アクティブ/非アクティブ、読み込み中 など  
+- **レイアウト状態** - 向き（orientation）、位置（side）、揃え（alignment）  
+- **インタラクション状態** - hover、focus、disabled（子要素をスタイルする必要がある場合）
+
+### `data-slot` のユースケース
+- **コンポーネント識別** - ターゲティングのための安定した識別子  
+- **合成パターン** - 親子関係の表現  
+- **グローバルスタイリング** - テーマ全体でのコンポーネントスタイリング  
+- **バリアントに依存しないターゲティング** - コンポーネントの任意のバリアントをターゲット可能
+
+### `props` のユースケース
+- **バリアント** - 異なるビジュアルデザイン（primary, secondary, destructive）  
+- **サイズ** - sm, md, lg  
+- **振る舞いの設定** - controlled/uncontrolled、デフォルト値など  
+- **イベントハンドラ** - onClick, onChange など
+
+### 組み合わせたアプローチ
+
+よく設計されたコンポーネントは、これら三つのパターンを適切に組み合わせて使用します:
+
+```tsx title="button.tsx"
+type ButtonProps = {
+  variant?: 'primary' | 'secondary' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
+  loading?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
+  className?: string;
+};
+
+const Button = ({
+  variant = 'primary',
+  size = 'md',
+  loading,
+  disabled,
+  className,
+  ...props
+}: ButtonProps) => {
+  return (
+    <button
+      // Slot for targeting
+      data-slot="button"
+      // State for conditional styling
+      data-loading={loading}
+      data-disabled={disabled}
+      className={cn(
+        // Variant styles via props
+        buttonVariants({ variant, size }),
+        // Additional state styling allowed via className
+        className
+      )}
+      disabled={disabled}
+      {...props}
+    />
+  );
+};
+```
+
+これによりボタンは複数の方法で使われ、スタイル設定できます:
+
+```tsx
+// Basic usage with variants
+<Button variant="primary" size="lg">Submit</Button>
+
+// Parent targeting via data-slot
+<form className="[&_[data-slot=button]]:w-full">
+  <Button>Submit</Button>
+</form>
+
+// State-based styling via data-state
+<Button
+  loading={isLoading}
+  className="data-[loading=true]:opacity-50"
+>
+  Submit
+</Button>
+
+// Global CSS can target any button
+// [data-slot="button"][data-loading="true"] { ... }
+```
+
+データ属性はモダンなコンポーネントライブラリのスタイリングに堅牢な基盤を提供します。視覚的状態には `data-state` を、コンポーネント識別には `data-slot` を使用することで、シンプルなコンポーネントから複雑なデザインシステムまでスケールする柔軟で保守しやすいAPIを構築できます。

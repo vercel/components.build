@@ -1,0 +1,140 @@
+---
+title: Dokümantasyon
+description: Bileşenlerinizi nasıl belgelendireceğiniz.
+---
+
+İyi dokümantasyon, bileşenlerinizi erişilebilir ve kullanımı kolay hale getirmek için çok önemlidir. Bu kılavuz, her bileşen dokümantasyon sayfasında bulunması gereken temel öğeleri ana hatlarıyla açıklar.
+
+## Belgelendirme Çerçevesi
+
+Dokümantasyonunuzu ölçeklendirmek için bir belgelendirme çerçevesi kullanabilirsiniz. Projelerinizin dili ve ihtiyaçlarına bağlı olarak birçok seçenek mevcuttur. Popüler seçenekler şunlardır:
+
+- [Fumadocs](https://fumadocs.dev/) - Next.js için hızlı, özellik zengini belgelendirme çerçevesi
+- [Nextra](https://nextra.site/) - Dahili arama ve tema desteğiyle markdown tabanlı dokümantasyon
+- [Content Collections](https://content-collections.dev/) - Dokümantasyon için tür güvenli içerik yönetimi
+- [Docusaurus](https://docusaurus.io/) - Sürümleme desteğiyle özellik zengini dokümantasyon siteleri
+- [VitePress](https://vitepress.dev/) - Belgelendirme için optimize edilmiş, Vue tabanlı statik site oluşturucu
+
+Tercih ettiğiniz çerçeve, sözdizimi vurgulama, özel bileşenler desteklemeli ve genel olarak iyi tasarlanmış olmalıdır.
+
+## Temel Belgelendirme Bölümleri
+
+### Genel Bakış
+
+Bileşenin ne yaptığını ve ne zaman kullanılacağını açıklayan kısa bir girişle başlayın.
+
+### Demo, Kaynak Kod ve Önizleme
+
+Geliştiriciler için iyi bir ilk izlenim oluşturmak amacıyla, bileşeni sahada gösteren bir demo ile demoyu oluşturmak için kullanılan kodu eklemelisiniz.
+
+Açık kaynak bir [Kayıt](/registry) kullanıyorsanız, bileşeni oluşturmak için kullanılan kaynak kodun bir önizlemesini de ekleyebilirsiniz.
+
+Sözdizimi vurgulama ve panoya kopyalama işlevi olan kod blokları kullanın. Sayfayı kalabalıklaştırmadan bu görünümler arasında geçiş yapmak için sekmeli arayüzler kullanmayı düşünün.
+
+### Kurulum
+
+Bileşenin nasıl kurulacağına dair net bir talimat ekleyin. Tercihen, terminalinize kopyalayıp yapıştırabileceğiniz tek bir komut olmalıdır.
+
+shadcn/ui üzerinde geliştiriyorsanız, bileşeni kurmak için [shadcn CLI](https://ui.shadcn.com/docs/cli) kullanabilirsiniz, ör.:
+
+```package-install
+npx shadcn@latest add <your-component-url>
+```
+
+Bileşeni bir [Pazar Yeri](/marketplaces) üzerinden yayımlıyorsanız, pazar yerinin CLI'sini kullanarak bileşeni kurabilirsiniz, ör.:
+
+```package-install
+npx shadcn@latest add https://21st.dev/r/<your-author>/<your-component>
+```
+
+shadcn/ui kullanmıyorsanız ancak bir [Kayıt](/registry) oluşturuyorsanız, bileşeni kurmak için kendi CLI'nizi oluşturabilirsiniz, ör.:
+
+```package-install
+npx your-registry-cli@latest add <your-component-url>
+```
+
+Son olarak, bileşeni npm'ye yayımlıyorsanız, bileşeni kurmak için npm CLI'sini kullanabilirsiniz, ör.:
+
+```package-install
+npm install <your-component-name>
+```
+
+<Callout>
+Birden fazla kurulum seçeneğini yukarıda yaptığımız gibi göstermek için, Fumadocs'un [`package-install` syntax](https://fumadocs.dev/docs/headless/mdx/install) benzeri bir şey kullanabilirsiniz.
+</Callout>
+
+### Özellikler
+
+Bileşeninizin ana özelliklerini listeleyerek kullanıcıların yeteneklerini ve avantajlarını hızlıca anlamalarına yardımcı olun. Örneğin:
+
+- **Özelleştirilebilir** – İhtiyaçlarınıza göre stilleri, boyutları ve davranışları kolayca ayarlayın.
+- **Varsayılan olarak erişilebilir** – Klavye navigasyonu, ARIA rolleri ve ekran okuyucu desteği için en iyi uygulamaları takip eder.
+- **Bileştirilebilir** – Diğer bileşenler ve kalıplarla sorunsuz çalışacak şekilde tasarlanmıştır.
+- **Tip güvenli** – Maksimum güvenlik ve otomatik tamamlama için kapsamlı TypeScript türleri ile gelir.
+- **Tema desteği** – Tasarım token'larınız veya tema sisteminizle bütünleşir.
+- **Hafif** – Minimum bağımlılık ve performans için optimize edilmiştir.
+- **SSR/SSG hazır** – Sunucu tarafı ve statik renderlama çerçeveleri ile çalışır.
+- **İyi belgelenmiş** – Açık kullanım örnekleri ve API referansı içerir.
+
+Bu listeyi özel bileşeninize göre uyarlayın. Onu benzersiz veya geliştiriciler için özellikle yararlı kılan özellikleri vurgulayın.
+
+### Örnekler
+
+Bileşenin esnekliğini pratik örneklerle gösterin:
+
+- **Varyantlar** - Mevcut farklı görsel stiller veya boyutlar
+- **Durumlar** - Yükleniyor, devre dışı, hata veya başarı durumları
+- **Gelişmiş Kullanım** - Karmaşık senaryolar ve uç durumlar
+- **Kompozisyon** - Bileşenin diğer bileşenlerle nasıl çalıştığı
+- **Duyarlı Davranış** - Farklı ekran boyutlarına nasıl uyum sağladığı
+
+Her örnek hem render edilmiş çıktıyı hem de ilgili kodu içermelidir.
+
+### Props ve API Referansı
+
+Mevcut tüm props, yöntemler ve yapılandırma seçeneklerini belgeleyin. İlgili prop'ları bir arada gruplayıp yaygın kullanılanları vurgulamayı düşünün. Her prop için şu bilgileri ekleyin:
+
+- **İsim** - Prop tanımlayıcısı
+- **Tür** - TypeScript tür tanımı
+- **Varsayılan** - Belirtilmezse varsayılan değer
+- **Zorunlu** - Prop'un zorunlu olup olmadığı
+- **Açıklama** - Prop'un ne yaptığı ve ne zaman kullanılacağı
+
+<Callout>
+Eğer Fumadocs kullanıyorsanız, doğruluk sağlamak ve bakım yükünü azaltmak için [Auto Type Table](https://fumadocs.dev/docs/ui/components/auto-type-table) kullanmayı düşünebilirsiniz.
+</Callout>
+
+### Erişilebilirlik
+
+Bileşeninizin erişilebilirlik özelliklerini nasıl desteklediğini belgeleyin:
+
+- Klavye navigasyon kalıpları
+- ARIA öznitelikleri ve rolleri
+- Ekran okuyucu desteği
+- Odak yönetimi
+- Renk kontrastı göz önünde bulundurmaları
+
+### Değişiklik Günlüğü ve Sürümleme
+
+Her bileşen dokümantasyon sayfasında şu konuları kapsayan bir değişiklik günlüğü bulundurmak faydalı olabilir:
+
+- Semantik sürümlemeyi takip eden sürüm numaraları
+- Yeni özellikler ve geliştirmeler
+- Hata düzeltmeleri
+- Kırıcı değişiklikler
+- Büyük sürüm güncellemeleri için geçiş rehberleri
+
+Kullanıcılara sürümler arasındaki farkları ve nasıl güvenli bir şekilde yükselteceklerini anlamalarına yardımcı olun. Kırıcı değişiklikler için önce/sonra desenlerini gösteren kod örnekleri ekleyin.
+
+<Callout>
+  Eğer sözdizimi vurgulama çerçeveniz bunu destekliyorsa (ör. Shiki), sürümler arasındaki değişiklikleri göstermek için [diff dönüştürücü notasyonu](https://shiki.style/packages/transformers#transformernotationdiff) kullanmak isteyebilirsiniz.
+</Callout>
+
+## En İyi Uygulamalar
+
+- Dokümantasyonu kod değişiklikleriyle güncel tutun
+- Gerçek dünya problemlerini çözen örnekler kullanın
+- Yaygın tuzaklar ve sorun giderme ipuçlarını dahil edin
+- İlgili olduğunda performans değerlendirmeleri sağlayın
+- İlgili bileşenlere ve kalıplara bağlantı verin
+- Tüm kod örneklerini çalıştırılabilir ve test edilmiş hale getirin

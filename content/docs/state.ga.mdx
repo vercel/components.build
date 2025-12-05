@@ -1,0 +1,88 @@
+---
+title: Stát
+description: Conas stát a bhainistiú i gcomhpháirt, chomh maith le cumasc stáit inrialaithe agus neamh-inrialaithe.
+---
+
+Building flexible components that work in both controlled and uncontrolled modes is a hallmark of professional components.
+
+## Stát Neamh-inrialaithe
+
+Is é an stát neamh-inrialaithe nuair a bhainistíonn an comhpháirt a stát féin go hinmheánach. Is é seo an patrún réamhshocraithe d'úsáid do chuid is mó de na comhpháirteanna.
+
+For example, here's a simple `Stepper` component that manages its own state internally:
+
+```tsx title="stepper.tsx"
+import { useState } from 'react';
+
+export const Stepper = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+};
+```
+
+## Stát Inrialaithe
+
+Is é an stát inrialaithe ná nuair a bhainistítear stát an chomhpháirte ag an gcomhpháirt tuismitheora. In ionad an stáit a choinneáil faoi chúram go hinmheánach, tugaimid an fhreagracht seo don chomhpháirt tuismitheora.
+
+Let's rework the `Stepper` component to be controlled by the parent component:
+
+```tsx title="stepper.tsx"
+type StepperProps = {
+  value: number;
+  setValue: (value: number) => void;
+};
+
+export const Stepper = ({ value, setValue }: StepperProps) => (
+  <div>
+    <p>{value}</p>
+    <button onClick={() => setValue(value + 1)}>Increment</button>
+  </div>
+);
+```
+
+## Cumasc stáit
+
+Tacaíonn na comhpháirteanna is fearr le stáit inrialaithe agus neamh-inrialaithe araon. Ligeann sé seo don chomhpháirt a bheith in úsáid i réimse cásanna éagsúla, agus é a shaincheapadh go héasca.
+
+[Radix UI](https://www.radix-ui.com/) maintain an internal utility for merging controllable and uncontrolled state called [`use-controllable-state`](https://github.com/radix-ui/primitives/tree/main/packages/react/use-controllable-state). While not intended for public use, registries like [Kibo UI](https://www.kibo-ui.com) have implemented this utility to build their own Radix-like components.
+
+Let's install the hook:
+
+```package-install
+npm install @radix-ui/react-use-controllable-state
+```
+
+This lightweight hook gives you the same state management patterns used internally by Radix UI's component library, ensuring your components behave consistently with industry standards.
+
+The hook accepts three main parameters and returns a tuple with the current value and setter. Let's use it to merge the controlled and uncontrolled state of the `Stepper` component:
+
+```tsx title="stepper.tsx"
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+
+type StepperProps = {
+  value: number;
+  defaultValue: number;
+  onValueChange: (value: number) => void;
+};
+
+export const Stepper = ({ value: controlledValue, defaultValue, onValueChange }: StepperProps) => {
+  const [value, setValue] = useControllableState({
+    prop: controlledValue,        // The controlled value prop
+    defaultProp: defaultValue,    // Default value for uncontrolled mode
+    onChange: onValueChange,      // Called when value changes
+  });
+
+  return (
+    <div>
+      <p>{value}</p>
+      <button onClick={() => setValue(value + 1)}>Increment</button>
+    </div>
+  );
+}
+```

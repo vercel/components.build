@@ -1,0 +1,234 @@
+---
+title: Fogalmak
+description: Ez az oldal pontos szakkifejezéseket határoz meg, amelyek a specifikáció során használatosak. A kifejezések szándékosan keretrendszer-agnosztikusak, de példákhoz a React-et fogjuk használni.
+---
+
+## 1. Artefaktumok taxonómiája
+
+### 1.1 Primitív
+
+A primitív (vagy stílus nélküli komponens) a **legalacsonyabb szintű építőelem**, amely viselkedést és hozzáférhetőséget biztosít stílus nélkül.
+
+A primitívek teljesen headless-ek (azaz stílus nélküli) és magukba foglalják a szemantikát, fókuszkezelést, billentyűzet-interakciót, rétegezést/portálokat, ARIA összekötést, mérést és hasonló kérdéseket. Viselkedési alapot szolgáltatnak, de kész UI-vá váláshoz stílusra van szükség.
+
+Példák:
+
+- [Radix UI Primitives](https://www.radix-ui.com/primitives) (Dialog, Popover, Tooltip, stb.)
+- [React Aria Components](https://react-spectrum.adobe.com/react-aria)
+- [Base UI](https://base-ui.com)
+- [Headless UI](https://headlessui.com/)
+
+Elvárások:
+
+- Teljesen stílus nélküli (headless).
+- Egyszereplős felelősség; komponensekké összefűzhető.
+- Szerepköréhez kimerítő hozzáférhetőségi (hozzáférhetőség / a11y) viselkedést szállít.
+- Verziózás a stabilitást részesíti előnyben; visszafelé nem kompatibilis változtatások ritkák és dokumentáltak.
+
+<Callout>
+A "primitive" és a "component" kifejezéseket az interneten általában felcserélhetően használják, de nem ugyanazt jelentik.
+</Callout>
+
+### 1.2 Komponens
+
+A komponens egy stílusozott, újrahasználható UI‑egység, amely vizuális megjelenést ad primitíveknek vagy több elemet komponál egy teljes, működő felhasználói felületi elemmé.
+
+A komponensek továbbra is viszonylag alacsony szintűek, de tartalmazzák a stílusokat, így közvetlenül használhatók alkalmazásokban. Tipikusan alapértelmezett vizuális dizájnnal burkolják az stílus nélküli primitíveket, miközben testreszabhatók maradnak.
+
+Példák:
+- [shadcn/ui komponensek](https://ui.shadcn.com/) (Radix primitívek stílusos burkolatai)
+- [Material UI komponensek](https://mui.com/components/)
+- [Ant Design komponensek](https://ant.design/components/overview/)
+
+Elvárások:
+- Egyértelmű props API; támogatja a vezérelt és nem vezérelt használatot, ahol alkalmazható.
+- Tartalmaz alapértelmezett stílust, de könnyen felülírható (classes, tokenek, slotok).
+- Teljes mértékben billentyűzettel elérhető és képernyőolvasó-barát (örökli a primitívektől).
+- Komponálható (children/slotok, render props, vagy összetett alkomponensek).
+- Felépülhet primitívekből vagy megvalósíthat viselkedést közvetlenül stílusokkal.
+
+### 1.3 Minta
+
+A minták konkrét primitívek vagy komponensek összetételei, amelyeket egy adott UI/UX probléma megoldására használnak.
+
+Példák:
+- Űrlap-hitelesítés inline hibákkal
+- Destruktív műveletek megerősítése
+- Typeahead keresés
+- Optimista UI
+
+Elvárások.
+- Leírja a viselkedést, hozzáférhetőséget, billentyűzet-térképet és hibamódokat.
+- Tartalmazhat referenciaimplementációkat több keretrendszerben.
+
+### 1.4 Blokk
+
+Egy véleményvezérelt, gyártásra kész komponenskompozíció, amely konkrét felület‑esetet old meg (gyakran termékspecifikus) tartalmi vázlattal. A blokkok a általánosság rovására a gyorsabb bevezetést cserélik.
+
+Példák:
+- Árazási táblázat
+- Hitelesítési képernyők
+- Bevezető lépések (onboarding) lépcső
+- AI chat panel
+- Számlázási beállítások űrlap
+
+Elvárások.
+- Erős alapbeállítások, másolható-beilleszthető, könnyen márkázható/stílusolható.
+- Minimális logika a layouton és összehangoláson túl; a domain logika handler-eken keresztül van stubolva.
+- Props-on keresztül fogad adatot; soha nem rejti el az adatokat fetch-ek mögé dokumentált adapter nélkül.
+
+<AuthorNote name="Rob Austin" role="Founder of shadcnblocks.com" githubUsername="JugglerX" link="https://www.shadcnblocks.com/">
+A blokkok általában nem olyan újrahasználhatók, mint egy komponens. Nem importálod őket tipikusan, hanem ők importálnak komponenseket és primitíveket. Ez jó jelöltekké teszi őket egy [Regiszter](/registry) elosztási módszer számára.
+</AuthorNote>
+
+### 1.5 Oldal
+
+Egy teljes, egy útvonalhoz tartozó nézet, amely több blokkot rendez el egy adott felhasználóorientált cél szolgálatára. Az oldalak blokkokat kombinálnak egy koherens elrendezéssé, amely egy alkalmazás egy célállomását képviseli.
+
+Példák:
+- Landing oldal (hero blokk + funkciók blokk + árazási blokk + lábléc blokk)
+- Termék részletező oldal (képgaléria blokk + termékinformáció blokk + értékelések blokk)
+- Irányítópult oldal (statisztika blokk + diagram blokk + aktivitási feed blokk)
+
+Elvárások:
+- Több blokkot egyesít egy egységes elrendezésbe egyetlen útvonalhoz.
+- Az elrendezésre és a blokk-összehangolásra fókuszál, nem a komponensszintű részletekre.
+- Tartalmazhat oldal-specifikus logikát a blokkok közötti adatszinkronizációhoz.
+- Egy URL/útvonal számára önálló; nem cél a több útvonalon való újrafelhasználás.
+
+### 1.6 Sablon
+
+Többoldalas gyűjtemény vagy teljes oldalváz, amely oldalakat, routing konfigurációt, megosztott elrendezéseket, globális provider-eket és projektstruktúrát csomagol. A sablonok teljes kiindulópontok egész alkalmazásokhoz vagy nagyobb alkalmazásszakaszokhoz.
+
+Példák:
+- [TailwindCSS sablonok](https://tailwindui.com/templates)
+- [shadcnblocks sablonok](https://www.shadcnblocks.com/templates) (teljes alkalmazásvázak)
+- "SaaS starter" (hitelesítési oldalak + irányítópult oldalak + beállítások + marketing oldalak)
+- "E-kereskedelmi sablon" (üzletfront + termékoldalak + pénztári folyamat + admin oldalak)
+
+Elvárások:
+- Több oldalt tartalmaz routing/navigációs felépítéssel.
+- Szolgáltat globális konfigurációt (theme providerek, auth context, layout shell-ek).
+- Véleményvezérelt projektstruktúra egyértelmű konvenciókkal.
+- Átfogó kiindulópontként tervezve; érdemes fork-olni és testreszabni, nem egyszerűen függőségként importálni.
+- Tartalmazhat build konfigurációt, telepítési beállítást és fejlesztési eszköztárat.
+
+### 1.7 Segéd (Nem vizuális)
+
+Fejlesztői ergonómiát vagy komponálhatóságot szolgáló segédfüggvény, amely nem renderelt UI.
+
+Példák:
+- React hookok (useControllableState, useId)
+- Osztály segédletek
+- Billentyűzetkiosztás segédletek
+- Fókusz tartományok (focus scopes)
+
+Elvárások.
+- Mellékhatás-mentes (kivéve, ha kifejezetten dokumentált).
+- Izoláltan tesztelhető; támogatja a tree-shaking-et.
+
+## 2. API és komponálási szókincs
+
+### 2.1 Props API
+
+Egy komponens publikus konfigurációs felülete. A props stabilak, típusosak és dokumentáltak alapértelmezettekkel és a hozzáférhetőség (a11y) következményeivel.
+
+### 2.2 Children / Slotok
+
+Helyőrzők a hívó által megadott struktúrához vagy tartalomhoz.
+- Children (implicit slot). JSX a nyitó/záró tagek között.
+- Névadott slotok. Props, például icon, footer, vagy `<Component.Slot>` alkomponensek.
+- Slot továbbítás. DOM attribútumok/className/ref-ek továbbadása az alapelemen lévő elemre.
+
+### 2.3 Render Prop (Function-as-Child)
+
+Függvényként átadott gyermek, amely a renderelést delegálja, miközben a szülő biztosítja az állapotot/adatot.
+
+```tsx
+<ParentComponent data={data}>
+  {(item) => (
+    <ChildComponent key={item.id} {...item} />
+  )}
+</ParentComponent>
+```
+
+Használjuk, amikor a szülőnek kell birtokolnia az adatot/viselkedést, de a fogyasztónak teljesen kontrollálnia kell a markupot.
+
+### 2.4 Vezérelt vs. nem vezérelt
+
+**Vezérelt** és **nem vezérelt** kifejezések a komponens állapotának leírására szolgálnak.
+
+**Vezérelt** komponensek értékét props vezérli, és tipikusan `onChange` eseményt bocsátanak ki (az igazság forrása a szülő). **Nem vezérelt** komponensek belső állapotot tartanak; és kitesznek egy `defaultValue`-t és imperatív reset-et.
+
+Sok inputnak támogatnia kell mindkettőt. Tudj meg többet a [vezérelt és nem vezérelt állapotról](/state).
+
+### 2.5 Provider / Kontextus
+
+Egy felső szintű komponens, amely megosztott állapotot/konfigurációt szolgáltat egy al-fának (pl. téma, lokalizáció, aktív fül azonosító). A providereket egyértelműen dokumentálni kell a szükséges elhelyezéssel.
+
+### 2.6 Portál
+
+UI renderelése a DOM hierarchián kívül a rétegzés/stacking kontextus kezelésére (pl. modalok, popoverek, toastok), miközben megőrzi a hozzáférhetőséget (fókuszfogás, aria-modal, inaktív háttér).
+
+## 3. Stílusozás és theming szókincs
+
+### 3.1 Stílus nélküli (Headless)
+
+Viselkedést és hozzáférhetőséget valósít meg anélkül, hogy megmondaná a megjelenést. A fogyasztónak kell biztosítania a stílusokat.
+
+### 3.2 Stilizált
+
+Alapértelmezett vizuális dizájnnal szállít (CSS osztályok, inline stílusok vagy tokenek), de felülírható marad (className egyesítés, CSS változók, theming).
+
+### 3.3 Variánsok
+
+Különálló, dokumentált stílus- vagy viselkedési permutációk, amelyeket props-on keresztül lehet elérni (pl. `size="sm|md|lg"`, `tone="neutral|destructive"`). A variánsok nem külön komponensek.
+
+### 3.4 Design tokenek
+
+Nevükben és platformtól független értékek (pl. `--color-bg`, `--radius-md`, `--space-2`), amelyek paraméterezik a vizuális dizájnt és támogatják a theming-et.
+
+## 4. Hozzáférhetőségi szókincs
+
+### 4.1 Szerep / Állapot / Tulajdonság
+
+WAI-ARIA attribútumok, amelyek szemantikát (`role="menu"`), állapotot (`aria-checked`) és kapcsolatokat (`aria-controls`, `aria-labelledby`) közölnek.
+
+### 4.2 Billentyűzet-térkép
+
+Egy widget dokumentált billentyűzet-interakcióinak halmaza (pl. `Tab`, `Arrow keys`, `Home/End`, `Escape`). Minden interaktív komponens deklarál és megvalósít egy billentyűzet-térképet.
+
+### 4.3 Fókuszkezelés
+
+Szabályok az inicializáló fókuszról, mozgatott fókuszról (roving focus), fókuszfogásról és a fókusz visszaállításáról bontáskor.
+
+## 5. Terjesztési szókincs
+
+### 5.1 Csomag (Regiszter alapú terjesztés)
+
+A komponens/könyvtár egy csomag-regiszterbe (pl. `npm`) van publikálva és bundler-en keresztül importálható. Előnyben részesíti a verziókezelést és a függőségkezelést.
+
+### 5.2 Másolás‑beillesztés (Forrás alapú terjesztés)
+
+A forráskód közvetlenül a fogyasztó repójába integrálódik (gyakran CLI-n keresztül). Előnyben részesíti a tulajdonlást, testreszabhatóságot és a futásidő nélküli felesleget.
+
+### 5.3 Regiszter (Katalógus)
+
+Egy kurált index az artefaktumokról (primitívek, komponensek, blokkok, sablonok) metadatokkal, előnézetekkel és telepítési/másolási utasításokkal. A regiszter nem feltétlenül csomagkezelő.
+
+## 6. Osztályozási heurisztikák
+
+Használd ezt a döntési folyamatot egy artefaktum elnevezéséhez és elhelyezéséhez:
+
+1. Összefoglal-e egyetlen viselkedést vagy hozzáférhetőségi kérdést, stílus nélkül? → **Primitív**
+2. Egy stílusozott, újrahasználható UI elem, amely vizuális dizájnt ad primitívekhez vagy több elemet komponál? → **Komponens**
+3. Konkrét termék‑esetet old meg véleményvezérelt kompozícióval és szövegezéssel? → **Blokk**
+4. Oldalt/folyamot scaffoldol routinggal/provider-ekkel és cserélhető régiókkal? → **Sablon**
+5. Ismétlődő megoldás dokumentációja, implementációtól függetlenül? → **Minta**
+6. Nem vizuális logika ergonómiához/kompozícióhoz? → **Segéd**
+
+## 7. Nem célok és tisztázások
+
+- Web Components vs. "Komponensek." Ebben a specifikációban a "komponens" egy újrahasználható UI egységre utal (a példák React-ben vannak). Nem feltételezi az HTML Custom Elements szabványt, hacsak azt kifejezetten nem említjük. Az elvek keretrendszereken átívelően alkalmazhatók.
+- Widgetek. A „widget” kifejezést kerülni tesszük a kétértelműség miatt; használjuk a komponens (általános) vagy minta (csak dokumentáció) kifejezést.
+- Témák vs. Stílusok. A téma a stílusok paraméterezése (tokeneken keresztül). A stílusok a konkrét megjelenítést jelentik. A komponenseknek támogatniuk kell a témákat; a blokkok/sablonok véleményvezérelt stílusokat és theming‑hookokat szállíthatnak.

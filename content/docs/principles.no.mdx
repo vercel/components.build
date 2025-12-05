@@ -1,0 +1,54 @@
+---
+title: Kjerneprinsipper
+description: Når man bygger moderne UI-komponenter, er det viktig å ha disse kjerneprinsippene i bakhodet.
+---
+
+## Komponerbarhet og gjenbrukbarhet
+
+Foretrekk komposisjon fremfor arv – bygg komponenter som kan kombineres og nestes for å skape mer komplekse brukergrensesnitt, i stedet for å stole på dype klassehierarkier.
+
+Komponerbare komponenter eksponerer et klart API (via props/slots) som lar utviklere tilpasse oppførsel og utseende ved å plugge inn barnelementer eller callbacks.
+
+Dette gjør komponenter svært gjenbrukbare i ulike kontekster. (React-designet forsterker dette: «Props og komposisjon gir deg all fleksibiliteten du trenger for å tilpasse en komponents utseende og oppførsel på en eksplisitt og sikker måte.»)
+
+## Tilgjengelig som standard
+
+Komponenter må være brukbare for alle brukere. Bruk semantiske HTML-elementer som passer komponentens rolle (f.eks. `<button>` for klikkbare handlinger, `<ul>/<li>` for lister osv.) og supplér med WAI-ARIA-attributter når det er nødvendig.
+
+Sørg for at tastaturnavigasjon og fokusstyring støttes (for eksempel piltastnavigasjon i menyer, fokusfeller i modaler). Hver komponent bør følge tilgjengelighetsstandarder og retningslinjer rett ut av boksen.
+
+Dette innebærer å gi riktige ARIA-roller/-tilstander og å teste med skjermlesere. Tilgjengelighet er ikke valgfritt – det er en grunnleggende funksjon i hver komponent.
+
+## Tilpasning og tematisering
+
+En komponent bør være enkel å restyle eller tilpasse til ulike designkrav. Unngå å hardkode visuelle stiler som ikke kan overstyres.
+
+Tilby mekanismer for tematisering og styling, som CSS-variabler, tydelig dokumenterte klassenavn eller style props. Ideelt sett leveres komponenter med fornuftige standardstiler, men lar utviklere tilpasse utseendet med minimal innsats (for eksempel ved å sende inn en className eller bruke design tokens).
+
+Dette prinsippet sikrer at komponenter kan passe inn i enhver merkevare eller designsystem uten å «kjempe» mot standardstilene.
+
+## Lett og ytelseseffektiv
+
+Komponenter bør være så slanke som mulig når det gjelder ressurser og avhengigheter. Unngå å gjøre en komponent tung med store bibliotekavhengigheter eller altfor kompleks logikk, spesielt hvis den logikken ikke alltid trengs.
+
+Søk god ytelse (både gjengivelse og interaksjon) ved å minimere unødvendige re-renders og bruke effektive algoritmer for tunge oppgaver. Hvis en komponent er dataintensiv (som en stor liste eller tabell), vurder mønstre som virtualisering eller inkrementell gjengivelse, men hold slike funksjoner valgfrie.
+
+Lettvektskomponenter er enklere å vedlikeholde og raskere for sluttbrukere.
+
+## Åpenhet og kodeeierskap
+
+I åpen kildekode drar brukere ofte nytte av å ha full innsyn og kontroll over komponentkoden. Denne spesifikasjonen oppmuntrer til en «åpen kildekode først»-tankegang: komponenter bør ikke være svarte bokser.
+
+Når utviklere importerer eller kopierer komponenten din, bør de kunne undersøke hvordan den fungerer og endre den om nødvendig. Dette prinsippet ligger til grunn for den fremvoksende «kopier-og-lim»-distribusjonsmodellen (omtalt senere), hvor utviklere integrerer komponentkoden direkte i prosjektene sine.
+
+Ved å gi brukerne eierskap til koden øker du tilliten og muliggjør dypere tilpasning.
+
+Selv om du distribuerer via en pakke, omfavn åpenhet ved å tilby sourcemaps, lesbar kode og grundig dokumentasjon.
+
+## Godt dokumentert og DX-vennlig
+
+En flott komponent er ikke bare kode – den leveres med tydelig dokumentasjon og eksempler. Fra et utvikleropplevelsesperspektiv (DX) bør komponentene dine være enkle å lære og integrere.
+
+Dokumenter hver komponents formål, props og brukseksempler. Inkluder notater om tilgjengelighet (som tastaturkontroller eller ARIA-attributter som brukes) og eventuelle tilpasningsmuligheter.
+
+God dokumentasjon reduserer feilbruk og senker terskelen for adopsjon. Vi vil dekke dokumentasjonsforventningene i Publiseringsdelen, men det er oppført her som et prinsipp fordi planlegging for god dokumentasjon og DX bør skje under design-/byggefasen.

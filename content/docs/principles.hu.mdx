@@ -1,0 +1,54 @@
+---
+title: Alapelvek
+description: Modern felhasználói felületi komponensek építésekor fontos, hogy ezeket az alapelveket szem előtt tartsuk.
+---
+
+## Kompozíció és újrafelhasználhatóság
+
+Részesítsd előnyben a kompozíciót az öröklődéssel szemben – építs olyan komponenseket, amelyek kombinálhatók és egymásba ágyazhatók összetettebb felhasználói felületek létrehozásához, ahelyett, hogy mély osztályhierarchiákra támaszkodnál.
+
+A komponálható komponensek egy tiszta API-t tesznek elérhetővé (via props/slots), amely lehetővé teszi a fejlesztők számára a viselkedés és megjelenés testreszabását gyermekelemek vagy callbackek bedugásával.
+
+Ez a komponenseket nagyon újrafelhasználhatóvá teszi különböző kontextusokban. (React’s design ezt megerősíti: „Props and composition give you all the flexibility you need to customize a component’s look and behavior in an explicit and safe way.”)
+
+## Alapértelmezés szerint hozzáférhető
+
+A komponenseknek minden felhasználó számára használhatónak kell lenniük. Használj a komponens szerepéhez illő szemantikus HTML elemeket (például `<button>` kattintható műveletekhez, `<ul>/<li>` listákhoz stb.), és szükség esetén egészítsd ki WAI-ARIA attribútumokkal.
+
+Biztosítsd a billentyűzetes navigációt és a fókuszkezelést (például menükben nyílbillentyűkkel történő navigáció, modálisokban fókuszcsapdák). Minden komponensnek alapból meg kell felelnie a hozzáférhetőségi szabványoknak és irányelveknek.
+
+Ez magában foglalja a megfelelő ARIA szerepek/állapotok biztosítását és képernyőolvasókkal történő tesztelést. A hozzáférhetőség nem opcionális – minden komponens alapvető jellemzője.
+
+## Testreszabhatóság és témázás
+
+Egy komponensnek könnyen át kell alakíthatónak vagy különböző dizájnkövetelményekhez igazíthatónak lennie. Kerüld a felül nem írható vizuális stílusok keménykódolását.
+
+Biztosíts mechanizmusokat témázásra és stílusozásra, mint például CSS változók, jól dokumentált osztálynevek, vagy style props. Ideális esetben a komponensek ésszerű alapstílussal érkeznek, de lehetővé teszik a fejlesztők számára a megjelenés egyszerű testreszabását (például egy className átadásával vagy design tokenek használatával).
+
+Ez az elv biztosítja, hogy a komponensek bármely márkába vagy dizájnrendszerbe illeszkedjenek anélkül, hogy „harcolnának” az alapértelmezett stílusokkal.
+
+## Könnyű és teljesítményorientált
+
+A komponensek legyenek minél karcsúbbak az erőforrások és függőségek tekintetében. Kerüld, hogy egy komponenst nagy könyvtárfüggőségekkel vagy túl bonyolult logikával terheld, különösen, ha az a logika nem mindig szükséges.
+
+Törekedj jó teljesítményre (mind renderelés, mind interakciók terén) azzal, hogy minimalizálod a szükségtelen újrarendereléseket és hatékony algoritmusokat alkalmazol a nehéz feladatokhoz. Ha egy komponens adatintenzív (például nagy lista vagy táblázat), fontold meg olyan mintákat, mint a virtualizáció vagy az inkrementális renderelés, de ezeket a funkciókat tartsd opcionálisnak.
+
+A könnyű komponensek karbantarthatóbbak és gyorsabbak a végfelhasználók számára.
+
+## Átláthatóság és kód tulajdonlás
+
+Nyílt forráskód esetén a fogyasztók gyakran profitálnak abból, ha teljes rálátásuk és irányításuk van a komponens kódja felett. Ez a specifikáció egy „nyílt forráskód-első” szemléletet ösztönöz: a komponensek ne legyenek fekete dobozok.
+
+Amikor a fejlesztők importálják vagy bemásolják a komponenstedet, képeseknek kell lenniük megvizsgálni, hogyan működik, és szükség esetén módosítani azt. Ez az elv alá fekszik a kialakuló „copy-and-paste” terjesztési modellnek (erről később lesz szó), amelyben a fejlesztők közvetlenül integrálják a komponens kódját a projektjeikbe.
+
+A felhasználóknak adott kódtulajdonlás növeli a bizalmat és lehetővé teszi mélyebb testreszabást.
+
+Még ha csomagon keresztül is terjeszted, támogasd az átláthatóságot source mapek, olvasható kód és alapos dokumentáció biztosításával.
+
+## Jól dokumentált és DX-barát
+
+Egy nagyszerű komponens nemcsak kód – világos dokumentációval és példákkal érkezik. A fejlesztői élmény (DX) szempontjából a komponenseket könnyűnek kell lennie megtanulni és integrálni.
+
+Dokumentáld minden komponens célját, props-ait és használati példáit. Tartalmazz megjegyzéseket a hozzáférhetőségről (például billentyűzetvezérlés vagy használt ARIA attribútumok) és az esetleges testreszabási lehetőségekről.
+
+A jó dokumentáció csökkenti a hibás használatot és lefaragja az elfogadási küszöböt. A dokumentációs elvárásokat a Közzététel szakaszban tárgyaljuk majd, de itt elvként szerepel, mert a jó dokumentáció és DX tervezésének a tervezési/építési fázis során kell megtörténnie.

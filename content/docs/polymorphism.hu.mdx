@@ -1,0 +1,578 @@
+---
+title: Polimorfizmus
+description: Hogyan használjuk az `as` prop-ot a renderelt HTML elem megváltoztatására úgy, hogy a komponens funkcionalitása megmaradjon.
+---
+
+Az `as` prop alapvető minta a modern React komponens könyvtárakban, amely lehetővé teszi az alapul szolgáló HTML elem vagy komponens megváltoztatását a renderelés során.
+
+A [Styled Components](https://styled-components.com/), [Emotion](https://emotion.sh/) és [Chakra UI](https://chakra-ui.com/) által népszerűsített minta rugalmasságot ad a szemantikus HTML kiválasztásában, miközben megőrzi a komponens stílusát és viselkedését.
+
+Az `as` prop polimorf komponenseket tesz lehetővé — olyan komponenseket, amelyek különböző elemtípusokként jeleníthetők meg, miközben megőrzik alapvető működésüket:
+
+```tsx
+<Button as="a" href="/home">
+  Go Home
+</Button>
+
+<Button as="button" type="submit">
+  Submit Form
+</Button>
+
+<Button as="div" role="button" tabIndex={0}>
+  Custom Element
+</Button>
+```
+
+## Az `as` megértése
+
+Az `as` prop lehetővé teszi, hogy felülírd egy komponens alapértelmezett elem típusát. Ahelyett, hogy egy konkrét HTML elemhez lennél kötve, a komponenst úgy alakíthatod, hogy bármely érvényes HTML tagként vagy akár egy másik React komponensként renderelődjön.
+
+Például:
+
+```tsx
+// Default renders as a div
+<Box>Content</Box>
+
+// Renders as a section
+<Box as="section">Content</Box>
+
+// Renders as a nav
+<Box as="nav">Content</Box>
+```
+
+Ez különböző HTML elemeket renderel:
+```html
+<!-- Default -->
+<div>Content</div>
+
+<!-- With as="section" -->
+<section>Content</section>
+
+<!-- With as="nav" -->
+<nav>Content</nav>
+```
+
+## Megvalósítási módszerek
+
+Két fő megközelítés létezik a polimorf komponensek megvalósítására: kézi megvalósítás és a Radix UI `Slot` komponens használata.
+
+### Kézi megvalósítás
+
+Az `as` prop megvalósítása dinamikus komponens-renderelést használ:
+
+```tsx
+// Simplified implementation
+function Component({
+  as: Element = 'div',
+  children,
+  ...props
+}) {
+  return <Element {...props}>{children}</Element>;
+}
+
+// More complete implementation with TypeScript
+type PolymorphicProps<E extends React.ElementType> = {
+  as?: E;
+  children?: React.ReactNode;
+} & React.ComponentPropsWithoutRef<E>;
+
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  children,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props}>{children}</Element>;
+}
+```
+
+A komponens:
+1. Elfogad egy `as` prop-ot alapértelmezett elem típussal
+2. A megadott elemet használja, vagy visszatér az alapértelmezetthez
+3. Minden többi prop-ot átterít a renderelt elemre
+4. Fenntartja a típusbiztonságot TypeScript generikusokkal
+
+### Radix UI Slot használata
+
+A [Radix UI](https://www.radix-ui.com/) egy `Slot` komponenst biztosít, amely erőteljesebb alternatívát kínál az `as` prop mintához. A `Slot` nemcsak az elemtípus megváltoztatását teszi lehetővé, hanem összeolvasztja a prop-okat a gyermek komponenssel, így támogatva a komponens-kompozíciós mintákat.
+
+Először telepítsd a csomagot:
+
+```package-install
+npm install @radix-ui/react-slot
+```
+
+Az `asChild` minta boolean prop-ot használ az elemtípus megadása helyett:
+
+```tsx
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+const itemVariants = cva(
+  "rounded-lg border p-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-white",
+        primary: "bg-blue-500 text-white",
+      },
+      size: {
+        default: "h-10 px-4",
+        sm: "h-8 px-3",
+        lg: "h-12 px-6",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+function Item({
+  className,
+  variant = "default",
+  size = "default",
+  asChild = false,
+  ...props
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof itemVariants> & { asChild?: boolean }) {
+  const Comp = asChild ? Slot : "div"
+  return (
+    <Comp
+      data-slot="item"
+      data-variant={variant}
+      data-size={size}
+      className={cn(itemVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
+}
+```
+
+Most két módon használhatod:
+
+```tsx
+// Default: renders as a div
+<Item variant="primary">Content</Item>
+
+// With asChild: merges props with child component
+<Item variant="primary" asChild>
+  <a href="/home">Link with Item styles</a>
+</Item>
+```
+
+A `Slot` komponens:
+1. Klónozza a gyermek elemet
+2. Összeolvasztja a komponens prop-jait (className, data attribútumok stb.) a gyermek prop-jaival
+3. Helyesen továbbítja a ref-eket
+4. Kezeli az eseménykezelők kompozícióját
+
+### Összehasonlítás: `as` vs `asChild`
+
+**`as` prop (kézi megvalósítás):**
+```tsx
+// Explicit element type
+<Button as="a" href="/home">Link Button</Button>
+<Button as="button" type="submit">Submit Button</Button>
+
+// Simple, predictable API
+// Limited to element types
+```
+
+**`asChild` with Slot:**
+```tsx
+// Implicit from child
+<Button asChild>
+  <a href="/home">Link Button</a>
+</Button>
+
+<Button asChild>
+  <button type="submit">Submit Button</button>
+</Button>
+
+// More flexible composition
+// Works with any component
+// Better prop merging
+```
+
+**Fő különbségek:**
+
+| Jellemző | `as` prop | `asChild` + Slot |
+|---------|-----------|------------------|
+| **API stílus** | `<Button as="a">` | `<Button asChild><a /></Button>` |
+| **Elem típusa** | Meg van határozva a prop-ban | A gyermek alapján |
+| **Komponens összetétele** | Korlátozott | Teljes támogatás |
+| **Propok egyesítése** | Egyszerű spread | Intelligens egyesítés |
+| **Ref továbbítás** | Kézi beállítás szükséges | Beépített |
+| **Eseménykezelők** | Előfordulhat konfliktus | Helyesen összeolvasztva |
+| **Könyvtárméret** | Nincs függőség | Szükséges `@radix-ui/react-slot` |
+
+### Mikor használd az egyes megközelítéseket
+
+**Használd az `as` prop-ot, amikor:**
+- Egyszerűbb API felületet szeretnél
+- Elsősorban HTML elemek között váltasz
+- El akarod kerülni a további függőségeket
+- A komponens egyszerű, és nincs szükség komplex prop egyesítésre
+
+**Használd az `asChild` + Slot kombinációt, amikor:**
+- Más komponensekkel kell kompozícionálni
+- Automatikus prop egyesítésre van szükséged
+- Komponens könyvtárat építesz, hasonlót a Radix UI-hoz vagy shadcn/ui-hoz
+- Megbízható ref továbbításra van szükség különböző komponens típusok között
+
+## Fő előnyök
+
+### 1. Szemantikus HTML rugalmasság
+
+Az `as` prop biztosítja, hogy mindig a leginkább szemantikus HTML elemet használhasd:
+
+```tsx
+// Navigation container
+<Container as="nav" className="navigation">
+  <NavItems />
+</Container>
+
+// Main content area
+<Container as="main" className="content">
+  <Article />
+</Container>
+
+// Sidebar
+<Container as="aside" className="sidebar">
+  <Widgets />
+</Container>
+```
+
+### 2. Komponens újrahasznosíthatóság
+
+Egy komponens több célt is kiszolgálhat anélkül, hogy sok variánst kellene létrehozni:
+
+```tsx
+// Text component used for different elements
+<Text as="h1" size="2xl">Page Title</Text>
+<Text as="p" size="md">Body paragraph</Text>
+<Text as="span" size="sm">Inline text</Text>
+<Text as="label" size="sm">Form label</Text>
+```
+
+### 3. Hozzáférhetőség javítása
+
+Válaszd az adott kontextusnak legmegfelelőbb elemeket a jobb hozzáférhetőség érdekében:
+
+```tsx
+// Link that looks like a button
+<Button as="a" href="/signup">
+  Sign Up Now
+</Button>
+
+// Button that submits a form
+<Button as="button" type="submit">
+  Submit
+</Button>
+
+// Heading with button styles
+<Button as="h2" role="presentation">
+  Section Title
+</Button>
+```
+
+### 4. Stílusrendszer integrációja
+
+Fenntarthatod a következetes stílust az elemek cseréje mellett is:
+
+```tsx
+const Card = styled.div`
+  padding: 1rem;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+`;
+
+// Same styles, different elements
+<Card as="article">Article content</Card>
+<Card as="section">Section content</Card>
+<Card as="li">List item content</Card>
+```
+
+## Gyakori felhasználási esetek
+
+### Tipográfiai komponensek
+
+Rugalmas szövegkomponensek létrehozása:
+
+```tsx
+function Text({
+  as: Element = 'span',
+  variant = 'body',
+  ...props
+}) {
+  const className = cn(
+    'text-base',
+    variant === 'heading' && 'text-2xl font-bold',
+    variant === 'body' && 'text-base',
+    variant === 'caption' && 'text-sm text-gray-600',
+    props.className
+  );
+
+  return <Element className={className} {...props} />;
+}
+
+// Usage
+<Text as="h1" variant="heading">Title</Text>
+<Text as="p" variant="body">Paragraph</Text>
+<Text as="figcaption" variant="caption">Caption</Text>
+```
+
+### Elrendezési komponensek
+
+Szemantikus elrendezések építése:
+
+```tsx
+function Flex({ as: Element = 'div', ...props }) {
+  return (
+    <Element
+      className={cn('flex', props.className)}
+      {...props}
+    />
+  );
+}
+
+// Semantic HTML
+<Flex as="header" className="justify-between">
+  <Logo />
+  <Navigation />
+</Flex>
+
+<Flex as="main" className="flex-col">
+  <Content />
+</Flex>
+```
+
+### Interaktív elemek
+
+Különböző interakciós típusok kezelése:
+
+```tsx
+function Clickable({ as: Element = 'button', ...props }) {
+  const isButton = Element === 'button';
+  const isAnchor = Element === 'a';
+
+  return (
+    <Element
+      role={!isButton && !isAnchor ? 'button' : undefined}
+      tabIndex={!isButton && !isAnchor ? 0 : undefined}
+      {...props}
+    />
+  );
+}
+
+// Various clickable elements
+<Clickable as="button" onClick={handleClick}>Button</Clickable>
+<Clickable as="a" href="/link">Link</Clickable>
+<Clickable as="div" onClick={handleClick}>Div Button</Clickable>
+```
+
+## TypeScript legjobb gyakorlatai
+
+### Generikus komponens típusok
+
+Teljesen típusbiztos polimorf komponensek létrehozása:
+
+```tsx
+type PolymorphicRef<E extends React.ElementType> =
+  React.ComponentPropsWithRef<E>['ref'];
+
+type PolymorphicProps<
+  E extends React.ElementType,
+  Props = {}
+> = Props &
+  Omit<React.ComponentPropsWithoutRef<E>, keyof Props> & {
+    as?: E;
+  };
+
+// Component with full type safety
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E, { customProp?: string }>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### Propsok automatikus következtetése
+
+Automatikusan következtetett prop-ok az elem alapján:
+
+```tsx
+// Props are inferred from the element type
+<Component as="a" href="/home">Home</Component>  // ✅ href is valid
+<Component as="div" href="/home">Home</Component> // ❌ TS error: href not valid on div
+
+<Component as="button" type="submit">Submit</Component> // ✅ type is valid
+<Component as="span" type="submit">Submit</Component>   // ❌ TS error
+```
+
+### Megkülönböztetett uniók
+
+Elem-specifikus prop-okhoz használj megkülönböztetett uniókat:
+
+```tsx
+type ButtonProps =
+  | { as: 'button'; type?: 'submit' | 'button' | 'reset' }
+  | { as: 'a'; href: string; target?: string }
+  | { as: 'div'; role: 'button'; tabIndex: number };
+
+function Button(props: ButtonProps & { children: React.ReactNode }) {
+  const Element = props.as;
+  return <Element {...props} />;
+}
+```
+
+## Legjobb gyakorlatok
+
+### 1. Alapértelmezettként szemantikus elemek használata
+
+Válassz értelmes alapértelmezéseket, amelyek a leggyakoribb használati esetet képviselik:
+
+```tsx
+// ✅ Good defaults
+function Article({ as: Element = 'article', ...props }) { }
+function Navigation({ as: Element = 'nav', ...props }) { }
+function Heading({ as: Element = 'h2', ...props }) { }
+
+// ❌ Too generic
+function Component({ as: Element = 'div', ...props }) { }
+```
+
+### 2. Támogatott elemek dokumentálása
+
+Egyértelműen határozd meg, mely elemek támogatottak:
+
+```tsx
+interface BoxProps {
+  /**
+   * The HTML element to render as
+   * @default 'div'
+   * @example 'section', 'article', 'aside', 'main'
+   */
+  as?: 'div' | 'section' | 'article' | 'aside' | 'main' | 'header' | 'footer';
+}
+```
+
+### 3. Ellenőrizd az elem megfelelőségét
+
+Figyelmeztess, ha nem megfelelő elemet használnak:
+
+```tsx
+function Button({ as: Element = 'button', ...props }) {
+  if (__DEV__ && Element === 'div' && !props.role) {
+    console.warn(
+      'Button: When using as="div", provide role="button" for accessibility'
+    );
+  }
+
+  return <Element {...props} />;
+}
+```
+
+### 4. Eseménykezelők helyes kezelése
+
+Gondoskodj róla, hogy az eseménykezelők különböző elemeken is működjenek:
+
+```tsx
+function Interactive({ as: Element = 'button', onClick, ...props }) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (Element !== 'button' && (e.key === 'Enter' || e.key === ' ')) {
+      onClick?.(e as any);
+    }
+  };
+
+  return (
+    <Element
+      onClick={onClick}
+      onKeyDown={Element !== 'button' ? handleKeyDown : undefined}
+      {...props}
+    />
+  );
+}
+```
+
+## Gyakori buktatók
+
+### Érvénytelen HTML beágyazás
+
+Ügyelj a HTML beágyazási szabályokra:
+
+```tsx
+// ❌ Invalid - button inside button
+<Button as="button">
+  <Button as="button">Nested</Button>
+</Button>
+
+// ❌ Invalid - div inside p
+<Text as="p">
+  <Box as="div">Invalid nesting</Box>
+</Text>
+
+// ✅ Valid nesting
+<Text as="div">
+  <Box as="div">Valid nesting</Box>
+</Text>
+```
+
+### Hiányzó hozzáférhetőségi attribútumok
+
+Ne felejts megfelelő ARIA attribútumokat hozzáadni:
+
+```tsx
+// ❌ Missing accessibility
+<Box as="nav">
+  <MenuItems />
+</Box>
+
+// ✅ Proper accessibility
+<Box as="nav" aria-label="Main navigation">
+  <MenuItems />
+</Box>
+```
+
+### Típusbiztonság elvesztése
+
+Kerüld a túl engedékeny típusok használatát:
+
+```tsx
+// ❌ Too permissive - no type safety
+function Component({ as: Element = 'div', ...props }: any) {
+  return <Element {...props} />;
+}
+
+// ✅ Type safe
+function Component<E extends React.ElementType = 'div'>({
+  as,
+  ...props
+}: PolymorphicProps<E>) {
+  const Element = as || 'div';
+  return <Element {...props} />;
+}
+```
+
+### Teljesítmény megfontolások
+
+Légy tisztában az újrarenderelés következményeivel:
+
+```tsx
+// ❌ Creates new component on every render
+function Parent() {
+  const CustomDiv = (props) => <div {...props} />;
+  return <Component as={CustomDiv} />;
+}
+
+// ✅ Stable component reference
+const CustomDiv = (props) => <div {...props} />;
+function Parent() {
+  return <Component as={CustomDiv} />;
+}
+```

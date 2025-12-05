@@ -1,0 +1,54 @@
+---
+title: Principi fondamentali
+description: Quando si progettano componenti UI moderni, è importante tenere a mente questi principi fondamentali.
+---
+
+## Composabilità e riusabilità
+
+Favorire la composizione rispetto all'ereditarietà – costruire componenti che possano essere combinati e annidati per creare interfacce più complesse, piuttosto che fare affidamento su gerarchie di classi profonde.
+
+I componenti componibili espongono un'API chiara (tramite props/slot) che permette agli sviluppatori di personalizzare comportamento e aspetto inserendo elementi figli o callback.
+
+Questo rende i componenti altamente riutilizzabili in contesti diversi. (Il design di React rafforza questo concetto: “Props and composition give you all the flexibility you need to customize a component’s look and behavior in an explicit and safe way.”)
+
+## Accessibile per impostazione predefinita
+
+I componenti devono essere utilizzabili da tutti gli utenti. Usare elementi HTML semantici appropriati al ruolo del componente (ad es. `<button>` per le azioni cliccabili, `<ul>/<li>` per le liste, ecc.) e integrare con attributi WAI-ARIA quando necessario.
+
+Assicurarsi che la navigazione tramite tastiera e la gestione del focus siano supportate (ad esempio, navigazione con i tasti freccia nei menu, blocchi del focus nei modali). Ogni componente dovrebbe rispettare gli standard e le linee guida sull'accessibilità fin da subito.
+
+Questo significa fornire ruoli/stati ARIA appropriati e testare con screen reader. L'accessibilità non è opzionale – è una caratteristica di base di ogni componente.
+
+## Personalizzazione e tematizzazione
+
+Un componente dovrebbe essere facile da restilizzare o adattare a differenti requisiti di design. Evitare di fissare stili visivi che non possano essere sovrascritti.
+
+Fornire meccanismi per il theming e lo styling, come variabili CSS, nomi di classi documentati in modo chiaro o props per gli stili. Idealmente, i componenti dovrebbero avere uno stile predefinito sensato ma permettere agli sviluppatori di personalizzare l'aspetto con il minimo sforzo (ad esempio, passando una className o utilizzando token di design).
+
+Questo principio garantisce che i componenti possano integrarsi in qualsiasi brand o sistema di design senza “combattere” contro gli stili predefiniti.
+
+## Leggerezza e prestazioni
+
+I componenti dovrebbero essere il più snelli possibile in termini di asset e dipendenze. Evitare di appesantire un componente con grandi dipendenze di librerie o logiche eccessivamente complesse, specialmente se tali logiche non sono sempre necessarie.
+
+Puntare a buone prestazioni (sia di rendering che di interazione) minimizzando i re-render non necessari e utilizzando algoritmi efficienti per compiti pesanti. Se un componente è intensivo nei dati (come una lista o una tabella di grandi dimensioni), considerare pattern come la virtualizzazione o il rendering incrementale, ma mantenere tali funzionalità opzionali.
+
+I componenti leggeri sono più facili da mantenere e più veloci per gli utenti finali.
+
+## Trasparenza e proprietà del codice
+
+Nell'open-source, i consumatori spesso traggono vantaggio dall'avere piena visibilità e controllo sul codice dei componenti. Questa specifica incoraggia una mentalità “open-source first”: i componenti non dovrebbero essere scatole nere.
+
+Quando gli sviluppatori importano o copiano il tuo componente, dovrebbero poter ispezionare come funziona e modificarlo se necessario. Questo principio è alla base del modello emergente di distribuzione “copia-e-incolla” (discussed later) in cui gli sviluppatori integrano direttamente il codice del componente nei loro progetti.
+
+Dando agli utenti la proprietà del codice, aumenti la fiducia e permetti una personalizzazione più profonda.
+
+Anche se distribuisci tramite un pacchetto, abbraccia la trasparenza fornendo source map, codice leggibile e documentazione approfondita.
+
+## Ben documentato e orientato alla DX
+
+Un ottimo componente non è solo codice – è accompagnato da documentazione chiara ed esempi. Dal punto di vista dell'esperienza dello sviluppatore (DX), i tuoi componenti dovrebbero essere facili da imparare e integrare.
+
+Documentare lo scopo di ogni componente, le sue props e esempi d'uso. Includere note sull'accessibilità (come i controlli da tastiera o gli attributi ARIA utilizzati) e qualsiasi opzione di personalizzazione.
+
+Una buona documentazione riduce gli usi scorretti e abbassa la barriera all'adozione. Tratteremo le aspettative di documentazione nella sezione Publish, ma è elencato qui come principio perché pianificare una buona documentazione e DX dovrebbe avvenire durante la fase di progettazione/costruzione.

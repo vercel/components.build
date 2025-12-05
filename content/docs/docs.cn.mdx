@@ -1,0 +1,140 @@
+---
+title: 文档
+description: 如何为你的组件编写文档。
+---
+
+良好的文档对于让你的组件易于访问和使用至关重要。本指南概述了每个组件文档页面应包含的关键要素。
+
+## 文档框架
+
+为了扩展你的文档，你可以使用一个文档框架。根据你的项目语言和需求，有许多可用选项。常见选项包括：
+
+- [Fumadocs](https://fumadocs.dev/) - 用于 Next.js 的快速且功能丰富的文档框架
+- [Nextra](https://nextra.site/) - 基于 Markdown 的文档，内置搜索和主题支持
+- [Content Collections](https://content-collections.dev/) - 用于文档的类型安全内容管理
+- [Docusaurus](https://docusaurus.io/) - 支持版本控制的功能丰富文档站点
+- [VitePress](https://vitepress.dev/) - 基于 Vue 的静态站点生成器，针对文档进行了优化
+
+首选的框架应支持语法高亮、自定义组件并且具备良好的设计。
+
+## 必要的文档章节
+
+### 概述
+
+以简短的介绍开始，说明组件的作用以及何时使用它。
+
+### 演示、源代码和预览
+
+为了给开发者留下良好的第一印象，你应包含一个展示组件实际效果的演示，以及用于创建该演示的代码。
+
+如果你使用的是开源的 [注册表](/registry)，你还可以包含用于创建组件的源代码预览。
+
+使用带语法高亮和一键复制功能的代码块。考虑使用选项卡界面在这些视图之间切换，而不会使页面混乱。
+
+### 安装
+
+包含关于如何安装组件的清晰说明。最好是一个可以复制粘贴到终端中的单行命令。
+
+如果你在基于 shadcn/ui 构建，可以使用 [shadcn CLI](https://ui.shadcn.com/docs/cli) 来安装组件，例如：
+
+```package-install
+npx shadcn@latest add <your-component-url>
+```
+
+如果你要发布到 [市场](/marketplaces)，可以使用市场提供的 CLI 来安装组件，例如：
+
+```package-install
+npx shadcn@latest add https://21st.dev/r/<your-author>/<your-component>
+```
+
+如果你没有使用 shadcn/ui，但正在构建一个 [注册表](/registry)，你可以构建你自己的 CLI 来安装组件，例如：
+
+```package-install
+npx your-registry-cli@latest add <your-component-url>
+```
+
+最后，如果你发布到 npm，你可以使用 npm CLI 来安装组件，例如：
+
+```package-install
+npm install <your-component-name>
+```
+
+<Callout>
+要像我们上面展示的那样显示多种安装选项，你可以使用类似 Fumadocs 的 [`package-install` 语法](https://fumadocs.dev/docs/headless/mdx/install)。
+</Callout>
+
+### 功能
+
+列出组件的关键功能，帮助用户快速了解其能力与优势。例如：
+
+- **可定制** – 轻松调整样式、大小和行为以满足你的需求。
+- **默认可访问** – 遵循键盘导航、ARIA 角色和屏幕阅读器支持的最佳实践。
+- **可组合** – 设计为能与其他组件和模式无缝协作。
+- **类型安全** – 随包附带全面的 TypeScript 类型以获得最大安全性和自动补全。
+- **主题支持** – 与你的设计代币或主题系统集成。
+- **轻量** – 最小依赖并针对性能进行了优化。
+- **支持 SSR/SSG** – 可与服务端渲染和静态渲染框架一起使用。
+- **文档完善** – 包含清晰的用法示例和 API 参考。
+
+根据你的具体组件调整该列表。强调使其独特或对开发者特别有用的点。
+
+### 示例
+
+使用实用示例展示组件的灵活性：
+
+- **变体** - 可用的不同视觉样式或尺寸
+- **状态** - 加载、禁用、错误或成功状态
+- **高级用法** - 复杂场景和边缘情况
+- **组合** - 组件与其他组件协作的方式
+- **响应式行为** - 在不同屏幕尺寸下的适应方式
+
+每个示例都应包含渲染输出和对应的代码。
+
+### Props 与 API 参考
+
+记录所有可用的 props、方法和配置选项。考虑将相关的 props 分组并突出常用项。对于每个 prop，包含：
+
+- **名称** - prop 标识符
+- **类型** - TypeScript 类型定义
+- **默认值** - 未指定时的默认值
+- **是否必需** - prop 是否为必填
+- **描述** - prop 的作用以及何时使用
+
+<Callout>
+如果你使用 Fumadocs，你可以考虑使用 [Auto Type Table](https://fumadocs.dev/docs/ui/components/auto-type-table) 来确保准确性并减少维护负担。
+</Callout>
+
+### 可访问性
+
+记录你的组件如何支持可访问性功能：
+
+- 键盘导航模式
+- ARIA 属性和角色
+- 屏幕阅读器支持
+- 焦点管理
+- 色彩对比注意事项
+
+### 更新日志与版本控制
+
+在每个组件文档页面上维护更新日志可能很有用，内容包括：
+
+- 遵循语义化版本的版本号
+- 新功能和增强
+- Bug 修复
+- 重大变更（breaking changes）
+- 主要版本更新的迁移指南
+
+帮助用户了解版本之间的差异以及如何安全升级。对破坏性更改包含前后示例代码。
+
+<Callout>
+  如果你的语法高亮框架支持（例如 Shiki），你可能想使用 [diff transformer notation](https://shiki.style/packages/transformers#transformernotationdiff) 来显示版本之间的更改。
+</Callout>
+
+## 最佳实践
+
+- 保持文档与代码变更同步
+- 使用解决实际问题的真实示例
+- 包含常见陷阱和故障排查提示
+- 在相关情况下提供性能方面的注意事项
+- 链接到相关组件和模式
+- 确保所有代码示例可运行并经过测试

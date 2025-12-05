@@ -1,0 +1,137 @@
+---
+title: Bileşen Pazar Yerleri
+description: Bileşenlerinizi paylaşmak için pazar yerlerini kullanma.
+---
+
+Bileşen pazar yerleri, geliştiricilerin UI bileşenlerini paylaşma ve keşfetme biçiminde başka bir yeni paradigmayı temsil eder. [21st.dev](https://21st.dev) gibi platformlar, yaratıcıların bileşenleri yayımlayabildiği ve tüketicilerin bunları sorunsuz bir şekilde keşfedip önizleyip kurabildiği merkezi merkezler olarak ortaya çıkmıştır.
+
+Bu pazar yerleri, kayıt depolarının erişilebilirliğini geleneksel paket havuzlarının keşfedilebilirliğiyle birleştirerek bileşen paylaşımı için canlı ekosistemler oluşturur.
+
+## Pazar Yerleri Nasıl Çalışır
+
+Bir pazara yayımladığınızda, platform genellikle:
+
+1. **Bileşen kodunuzu barındırır** - Kendi altyapınızı yönetmenize gerek yok
+2. **Birleşik bir CLI sağlar** - Kullanıcılar bileşenleri pazar yerinin araçlarıyla kurar
+3. **Önizlemeler üretir** - Canlı demolar ve etkileşimli örnekler otomatik olarak oluşturulur
+4. **Keşfi yönetir** - Arama, kategoriler ve öneriler ilgili bileşenleri öne çıkarır
+
+Örneğin, 21st.dev'den kurulum, tanıdık shadcn CLI desenini kullanır:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/haydenbleasel/dialog-stack
+```
+
+Pazar yeri, bileşen metadata'sını ve kaynak kodunu sunmayı yönetir, böylece kurulum süreci sorunsuz hale gelir.
+
+## Bileşen Pazar Yerlerinin Faydaları
+
+Pazar yerleri, ne kayıt depolarının ne de npm paketlerinin tek başına eşleşemeyeceği benzersiz avantajlar sunar.
+
+### Bileşen Yazarları İçin
+
+#### Altyapı Gerektirmeyen Dağıtım
+
+Bir pazar yerine yayımlamak altyapı kaygılarını ortadan kaldırır. Bileşenleriniz için barındırma kurmanıza veya CDN dağıtımını yönetmenize gerek yoktur.
+
+Pazar yeri tüm bunları halleder, böylece harika bileşenler oluşturmaya odaklanabilirsiniz.
+
+#### Hazır Bir İzleyici Kitlesi
+
+Pazar yerleri talebi bir araya getirir. Geliştiriciler 21st.dev veya benzeri platformları ziyaret ettiğinde aktif olarak bileşen arıyor olurlar. Çalışmanız arama, kategoriler ve öneriler yoluyla organik olarak keşfedilir.
+
+Bu hazır trafik, bileşenlerinizi bağımsız olarak pazarlamanız gerekmediği anlamına gelir.
+
+#### Para Kazanma Fırsatları
+
+Bazı pazar yerleri, yaratıcıların çalışmalarını premium bileşen katmanları, sponsorluk programları, kullanım bazlı fiyatlandırma ve tek seferlik satın alma modelleri aracılığıyla paraya çevirmesine olanak tanır.
+
+Bu, yüksek kaliteli bileşenleri sürdürmek için sürdürülebilir teşvikler oluşturur.
+
+#### Topluluk Geri Bildirimi
+
+Pazar yerleri genellikle puanlama sistemleri, yorum bölümleri, kullanım analitiği ve hata takibi içerir.
+
+Bu geri bildirim döngüsü, geliştiricilerin bileşenlerinizi nasıl kullandığını ve hangi iyileştirmelere ihtiyaç duyulduğunu anlamanıza yardımcı olur.
+
+### Bileşen Tüketicileri İçin
+
+#### Küratörlü Keşif
+
+GitHub veya npm'de arama yapmaktan farklı olarak, pazar yerleri küratörlü deneyimler sunar:
+
+```
+Browse by category:
+├── Marketing
+│   ├── Heroes
+│   ├── Pricing
+│   └── Testimonials
+├── Application
+│   ├── Dashboards
+│   ├── Forms
+│   └── Data Display
+└── E-commerce
+    ├── Product Cards
+    ├── Cart
+    └── Checkout
+```
+
+Bu organizasyon, doğru bileşeni bulmayı önemli ölçüde hızlandırır.
+
+#### Kalite Güvencesi
+
+Birçok pazar yeri inceleme süreçleri uygular. Bileşenler kod kalitesi kontrollerinden, erişilebilirlik denetimlerinden, performans testlerinden ve dokümantasyon incelemesinden geçebilir.
+
+Bu kürasyon, kendi kendine yayımlanan bileşenlerde eksik olabilecek asgari bir kalite standardı sağlar.
+
+#### Birleşik Araçlar
+
+Tüm pazar yeri bileşenleri için tek bir CLI kullanmak iş akışını basitleştirir. Pazar yerinden herhangi bir bileşeni aynı komutla kurabilirsiniz:
+
+```bash title="Terminal"
+npx shadcn@latest add https://21st.dev/r/<author>/<component>
+```
+
+## Pazar Yerlerinin Zorlukları
+
+Pazar yerleri cazip faydalar sunsa da, benzersiz zorluklar da getirir.
+
+### Yazarlar İçin
+
+#### Rekabet ve Görünürlük
+
+Kalabalık bir pazarda öne çıkmak zorlaşır. Yüzlerce benzer bileşen, takipçi kitlesine sahip yerleşik yaratıcılar, öne çıkarılan veya sponsorlu içerikler ve algoritma odaklı önerilerle rekabet ediyorsunuz.
+
+Başarı sadece iyi kod gerektirmez — etkileyici önizlemeler, mükemmel dokümantasyon ve genellikle aktif tanıtım da gerekir.
+
+#### Platform Bağımlılığı
+
+Bir pazara yayımlamak, onların hizmet şartlarını, gelir paylaşım modellerini, teknik gereksinimlerini ve inceleme süreçlerini kabul etmek demektir.
+
+Platform politika değiştirir veya kapatılırsa, dağıtım kanalınız ortadan kalkar.
+
+#### Kalite Baskısı
+
+Pazar yeri kullanıcıları cilalı, üretime hazır bileşenler bekler. Bu; kapsamlı dokümantasyon, birden fazla demo varyasyonu, duyarlı tasarım, çapraz tarayıcı testi ve erişilebilirlik uyumluluğu anlamına gelir.
+
+Bu beklentileri karşılamak, sadece bileşen kodu yazmanın ötesinde önemli zaman yatırımı gerektirir.
+
+### Tüketiciler İçin
+
+#### Değişken Kalite
+
+İnceleme süreçlerine rağmen, pazar yerlerindeki kalite çok değişken olabilir. Güncel olmayan bağımlılıkları olan terk edilmiş bileşenlerle, kötü belgelenmiş kodla, demoda çalışan ama üretimde bozulan bileşenlerle ve farklı yazarlar arasında tutarsız kodlama stilleriyle karşılaşabilirsiniz.
+
+Bileşen seçerken yine de özenli değerlendirme gereklidir.
+
+#### Kilitlenme Endişeleri
+
+Pazar yerleri shadcn CLI gibi standart araçları kullansa da, tescilli metadata formatları, özel yapılandırma gereksinimleri ve platforma özgü bağımlılıklar getirebilirler.
+
+Bu, pazar yerinden uzaklaşmayı zorlaştırabilir.
+
+#### Keşif Paradoksu
+
+Çok fazla seçenek bunaltıcı olabilir. Bir buton bileşeni ararken 200 seçenek bulmak her zaman fayda sağlamaz. Birden fazla benzer bileşeni değerlendirmeniz, ince farkları karşılaştırmanız, uzun vadeli sürdürülebilirliği değerlendirmeniz ve yazar itibarını göz önünde bulundurmanız gerekir.
+
+Bu değerlendirme süreci, bileşeni kendinizin oluşturmasından daha uzun sürebilir.

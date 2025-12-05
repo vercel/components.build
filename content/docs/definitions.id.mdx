@@ -1,0 +1,234 @@
+---
+title: Definisi
+description: Halaman ini menetapkan terminologi yang tepat yang digunakan di seluruh spesifikasi. Istilah-istilah sengaja agnostik terhadap framework, namun kami akan menggunakan React untuk contoh.
+---
+
+## 1. Taksonomi Artefak
+
+### 1.1 Primitif
+
+Sebuah primitif (atau, komponen tanpa gaya) adalah **blok penyusun tingkat terendah** yang menyediakan perilaku dan aksesibilitas tanpa gaya apa pun.
+
+Primitif sepenuhnya headless (yaitu tanpa gaya) dan mengenkapsulasi semantik, manajemen fokus, interaksi keyboard, pelapisan/portal, pengkabelan ARIA, pengukuran, dan aspek serupa. Mereka menyediakan fondasi perilaku tetapi membutuhkan styling untuk menjadi UI yang selesai.
+
+Contoh:
+
+- [Radix UI Primitives](https://www.radix-ui.com/primitives) (Dialog, Popover, Tooltip, dll.)
+- [React Aria Components](https://react-spectrum.adobe.com/react-aria)
+- [Base UI](https://base-ui.com)
+- [Headless UI](https://headlessui.com/)
+
+Ekspektasi:
+
+- Sepenuhnya tanpa gaya (headless).
+- Tanggung jawab tunggal; dapat dikomposisi menjadi komponen bergaya.
+- Dikirimkan dengan perilaku a11y yang komprehensif untuk perannya.
+- Versi memprioritaskan stabilitas; perubahan yang memecah jarang dan terdokumentasi.
+
+<Callout>
+Istilah primitif dan komponen biasanya digunakan secara bergantian di seluruh web, tetapi keduanya tidak sama.
+</Callout>
+
+### 1.2 Komponen
+
+Sebuah komponen adalah unit UI yang diberi gaya dan dapat digunakan kembali yang menambahkan desain visual ke primitif atau mengkomposisikan beberapa elemen untuk membuat elemen antarmuka yang lengkap dan fungsional.
+
+Komponen masih relatif tingkat rendah tetapi menyertakan styling, membuatnya langsung dapat digunakan dalam aplikasi. Mereka biasanya membungkus primitif tanpa gaya dengan desain visual default sambil tetap dapat dikustomisasi.
+
+Contoh:
+- [shadcn/ui components](https://ui.shadcn.com/) (pembungkus bergaya dari primitif Radix)
+- [Material UI components](https://mui.com/components/)
+- [Ant Design components](https://ant.design/components/overview/)
+
+Ekspektasi:
+- API props yang jelas; mendukung penggunaan terkontrol dan tidak terkontrol bila berlaku.
+- Menyertakan styling default tetapi tetap mudah di-override (class, token, slot).
+- Sepenuhnya dapat diakses dengan keyboard dan ramah pembaca layar (mewarisi dari primitif).
+- Dapat dikomposisi (children/slot, render props, atau subkomponen majemuk).
+- Dapat dibangun dari primitif atau mengimplementasikan perilaku secara langsung dengan styling.
+
+### 1.3 Pola
+
+Pola adalah komposisi tertentu dari primitif atau komponen yang digunakan untuk menyelesaikan masalah UI/UX tertentu.
+
+Contoh:
+- Validasi formulir dengan pesan kesalahan inline
+- Mengonfirmasi tindakan yang merusak
+- Pencarian typeahead
+- UI optimistik
+
+Ekspektasi.
+- Mendeskripsikan perilaku, a11y, peta keyboard, dan mode kegagalan.
+- Mungkin menyertakan implementasi referensi dalam beberapa framework.
+
+### 1.4 Block
+
+Sebuah block adalah komposisi komponen yang siap produksi dan beropini yang menyelesaikan kasus penggunaan antarmuka konkret (sering spesifik produk) dengan kerangka konten. Block menukar generalitas demi kecepatan adopsi.
+
+Contoh:
+- Tabel harga
+- Layar otentikasi
+- Stepper onboarding
+- Panel chat AI
+- Form pengaturan penagihan
+
+Ekspektasi.
+- Default yang kuat, mudah salin-tempel, mudah diberi merek/tema.
+- Logika minimal di luar tata letak dan orkestrasi; logika domain disingkat melalui handler.
+- Menerima data melalui props; tidak pernah menyembunyikan data di balik pengambilan tanpa adapter yang terdokumentasi.
+
+<AuthorNote name="Rob Austin" role="Founder of shadcnblocks.com" githubUsername="JugglerX" link="https://www.shadcnblocks.com/">
+Block biasanya tidak dapat digunakan kembali seperti sebuah komponen. Anda tidak mengimpornya, tetapi mereka biasanya mengimpor komponen dan primitif. Ini membuatnya menjadi kandidat yang baik untuk metode distribusi [Registri](/registry).
+</AuthorNote>
+
+### 1.5 Halaman
+
+Sebuah tampilan lengkap untuk satu rute yang terdiri dari beberapa block yang diatur untuk melayani tujuan tertentu yang berorientasi pengguna. Halaman menggabungkan block menjadi tata letak yang kohesif yang merepresentasikan satu tujuan dalam sebuah aplikasi.
+
+Contoh:
+- Halaman landing (hero block + features block + pricing block + footer block)
+- Halaman detail produk (image gallery block + product info block + reviews block)
+- Halaman dashboard (stats block + chart block + activity feed block)
+
+Ekspektasi:
+- Menggabungkan beberapa block menjadi tata letak terpadu untuk satu rute.
+- Fokus pada tata letak dan orkestrasi block daripada detail tingkat komponen.
+- Dapat menyertakan logika khusus halaman untuk koordinasi data antar block.
+- Mandiri untuk satu URL/rute; tidak dimaksudkan untuk digunakan ulang di berbagai rute.
+
+### 1.6 Template
+
+Koleksi multi-halaman atau kerangka situs penuh yang membundel halaman, konfigurasi routing, tata letak bersama, provider global, dan struktur proyek. Template adalah titik awal lengkap untuk seluruh aplikasi atau bagian besar dari aplikasi.
+
+Contoh:
+- [TailwindCSS Templates](https://tailwindui.com/templates)
+- [shadcnblocks Templates](https://www.shadcnblocks.com/templates) (cangkang aplikasi penuh)
+- "SaaS starter" (halaman otentikasi + halaman dashboard + halaman pengaturan + halaman pemasaran)
+- "Template E-commerce" (storefront + halaman produk + alur checkout + halaman admin)
+
+Ekspektasi:
+- Menyertakan beberapa halaman dengan struktur routing/navigasi.
+- Menyediakan konfigurasi global (theme provider, konteks auth, shell tata letak).
+- Struktur proyek yang beropini dengan konvensi yang jelas.
+- Dirancang sebagai titik awal komprehensif; fork dan sesuaikan daripada mengimpor sebagai dependensi.
+- Mungkin menyertakan konfigurasi build, setup deployment, dan tooling pengembangan.
+
+### 1.7 Utilitas (Non-visual)
+
+Bantuan yang diekspor untuk ergonomi pengembang atau komposisi; bukan UI yang dirender.
+
+Contoh:
+- Hook React (useControllableState, useId)
+- Utilitas kelas
+- Pembantu keybinding
+- Fokus scope
+
+Ekspektasi.
+- Bebas efek samping (kecuali secara eksplisit didokumentasikan).
+- Dapat diuji secara terisolasi; mendukung tree-shaking.
+
+## 2. Kosakata API dan Komposisi
+
+### 2.1 API Props
+
+Permukaan konfigurasi publik sebuah komponen. Props stabil, bertipe, dan didokumentasikan dengan default dan implikasi a11y.
+
+### 2.2 Children / Slot
+
+Placeholder untuk struktur atau konten yang disediakan pemanggil.
+- Children (slot implisit). JSX di antara tag pembuka/penutup.
+- Slot bernama. Props seperti icon, footer, atau subkomponen `<Component.Slot>`.
+- Penerusan slot. Meneruskan atribut DOM/className/ref ke elemen dasar.
+
+### 2.3 Render Prop (Fungsi-sebagai-Anak)
+
+Sebuah fungsi sebagai child yang digunakan untuk mendelegasikan rendering sementara parent menyediakan state/data.
+
+```tsx
+<ParentComponent data={data}>
+  {(item) => (
+    <ChildComponent key={item.id} {...item} />
+  )}
+</ParentComponent>
+```
+
+Gunakan ketika parent harus memiliki data/perilaku tetapi konsumen harus sepenuhnya mengontrol markup.
+
+### 2.4 Terkendali vs. Tidak Terkendali
+
+**Terkendali** dan **tidak terkendali** adalah istilah yang digunakan untuk menggambarkan status sebuah komponen.
+
+Komponen **terkendali** nilai-nilainya didorong oleh props, dan biasanya memancarkan event `onChange` (sumber kebenaran adalah parent). Komponen **tidak terkendali** menyimpan state internal; dan mungkin mengekspos `defaultValue` dan reset imperatif.
+
+Banyak input sebaiknya mendukung keduanya. Pelajari lebih lanjut tentang [controlled and uncontrolled state](/state).
+
+### 2.5 Provider / Context
+
+Komponen tingkat atas yang menyediakan state/konfigurasi bersama ke subtree (mis. theme, locale, id tab aktif). Provider didokumentasikan secara eksplisit dengan penempatan yang diperlukan.
+
+### 2.6 Portal
+
+Merender UI di luar hirarki DOM untuk mengelola konteks pelapisan/stacking (mis. modal, popover, toast), sambil mempertahankan a11y (focus trap, aria-modal, latar belakang inert).
+
+## 3. Kosakata Styling dan Theming
+
+### 3.1 Headless
+
+Mengimplementasikan perilaku dan aksesibilitas tanpa menentukan penampilan. Membutuhkan konsumen untuk menyediakan styling.
+
+### 3.2 Bergaya
+
+Dikirimkan dengan desain visual default (kelas CSS, style inline, atau token) tetapi tetap mudah di-override (penggabungan className, variabel CSS, theming).
+
+### 3.3 Varian
+
+Permutasi gaya atau perilaku yang terpisah dan terdokumentasi yang diekspos lewat props (mis. `size="sm|md|lg"`, `tone="neutral|destructive"`). Varian bukan komponen terpisah.
+
+### 3.4 Token Desain
+
+Nilai bernama yang agnostik platform (mis. `--color-bg`, `--radius-md`, `--space-2`) yang memparametrisasi desain visual dan mendukung theming.
+
+## 4. Kosakata Aksesibilitas
+
+### 4.1 Peran / Status / Properti
+
+Atribut WAI-ARIA yang mengkomunikasikan semantik (`role="menu"`), status (`aria-checked`), dan relasi (`aria-controls`, `aria-labelledby`).
+
+### 4.2 Peta Keyboard
+
+Set interaksi keyboard yang didokumentasikan untuk sebuah widget (mis. `Tab`, `Arrow keys`, `Home/End`, `Escape`). Setiap komponen interaktif mendeklarasikan dan mengimplementasikan peta keyboard.
+
+### 4.3 Manajemen Fokus
+
+Aturan untuk fokus awal, roving focus, fokus terperangkap, dan pengembalian fokus saat teardown.
+
+## 5. Kosakata Distribusi
+
+### 5.1 Paket (Distribusi Registri)
+
+Komponen/perpustakaan dipublikasikan ke registri paket (mis. `npm`) dan diimpor lewat bundler. Memfavor versi yang diatur dan manajemen dependensi.
+
+### 5.2 Salin-dan-Tempel (Distribusi Sumber)
+
+Kode sumber diintegrasikan langsung ke repositori konsumen (sering via CLI). Memfavor kepemilikan, kustomisasi, dan nol runtime yang tidak perlu.
+
+### 5.3 Registri (Katalog)
+
+Indeks kurasi artefak (primitif, komponen, block, template) dengan metadata, pratinjau, dan instruksi instal/salin. Registri tidak harus menjadi package manager.
+
+## 6. Heuristik Klasifikasi
+
+Gunakan alur keputusan ini untuk menamai dan menempatkan sebuah artefak:
+
+1. Apakah ia mengenkapsulasi satu perilaku atau perhatian a11y, tanpa styling? → **Primitif**
+2. Apakah itu elemen UI yang diberi gaya dan dapat digunakan kembali yang menambahkan desain visual ke primitif atau mengkomposisikan beberapa elemen? → **Komponen**
+3. Apakah ia menyelesaikan kasus penggunaan produk konkret dengan komposisi yang beropini dan salinan? → **Block**
+4. Apakah ia membuat kerangka halaman/alur dengan routing/provider dan wilayah yang dapat diganti? → **Template**
+5. Apakah itu dokumentasi solusi berulang, independen dari implementasi? → **Pola**
+6. Apakah itu logika non-visual untuk ergonomi/komposisi? → **Utilitas**
+
+## 7. Non-Goal dan Klarifikasi
+
+- Web Components vs. "Komponen." Dalam spesifikasi ini, "komponen" merujuk pada unit UI yang dapat digunakan kembali (contoh dalam React). Ini tidak menyiratkan standar HTML Custom Elements kecuali secara eksplisit dinyatakan. Prinsip setara berlaku di seluruh framework.
+- Widget. Istilah “widget” dihindari karena ambiguitas; gunakan komponen (umum) atau pola (solusi hanya dokumentasi).
+- Tema vs. Gaya. Tema adalah parameterisasi gaya (melalui token). Gaya adalah presentasi konkret. Komponen harus mendukung tema; block/template mungkin mengirimkan gaya opinatif plus hook theming.

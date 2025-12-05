@@ -1,0 +1,319 @@
+---
+title: asChild
+description: Conas an prop `asChild` a úsáid chun eilimint shaincheaptha a léiriú laistigh den chomhpháirt.
+---
+
+Is patrún cumhachtach é an prop `asChild` i leabharlanna comhpháirte React chomhaimseartha. Rinne [Radix UI](https://www.radix-ui.com/primitives/docs/guides/composition) é a cháiliú agus glacadh leis ag [shadcn/ui](https://ui.shadcn.com), agus ceadaíonn an patrún seo duit an marcáil réamhshocraithe a chur in ionad eilimintí saincheaptha agus fós feidhmiúlacht na comhpháirte a choimeád.
+
+## Tuiscint ar `asChild`
+
+Ag bun an cháis, athraíonn `asChild` an chaoi a ndéantar comhpháirt a léiriú. Nuair a socraítear é go `true`, in ionad a eilimint DOM réamhshocraithe a léiriú, déanann an comhpháirt a props, a iompar agus a láimhseálaithe imeachtaí a chumasc lena hinneachar díreach.
+
+### Gan `asChild`
+
+```tsx
+<Dialog.Trigger>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+Rinneann sé eilimintí níos doimhne a chur:
+```html
+<button data-state="closed">
+  <button>Open Dialog</button>
+</button>
+```
+
+### Le `asChild`
+
+```tsx
+<Dialog.Trigger asChild>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+Léiríonn sé eilimint shingil, chumasctha:
+```html
+<button data-state="closed">Open Dialog</button>
+```
+
+Tá feidhmiúlacht Dialog.Trigger curtha i bhfeidhm ar do bhotún, ag bainistiú eilimintí clúdaithe neamhúsáideacha.
+
+## Conas a Oibríonn sé
+
+Faoi na frámaí, úsáideann `asChild` cumais chomhdhála React chun comhpháirteanna a chumasc:
+
+```tsx
+// Simplified implementation
+function Component({ asChild, children, ...props }) {
+  if (asChild) {
+    // Clone child and merge props
+    return React.cloneElement(children, {
+      ...props,
+      ...children.props,
+      // Merge event handlers
+      onClick: (e) => {
+        props.onClick?.(e);
+        children.props.onClick?.(e);
+      }
+    });
+  }
+
+  // Render default element
+  return <button {...props}>{children}</button>;
+}
+```
+
+An chomhpháirt:
+1. Seiceálann sí an bhfuil `asChild` fíor
+2. Déanann sí cóip den iníne
+3. Cumasaíonn sí props ón tuismitheoir agus ón iníne
+4. Meascann sí láimhseálaithe imeachtaí
+5. Fillteann sí an iníne feabhsaithe
+
+## Príomhbhuntáistí
+
+### 1. HTML shemantach
+
+Ligeann `asChild` duit an eilimint HTML is oiriúnaí a úsáid don chás úsáide:
+
+```tsx
+// Use a link for navigation
+<AlertDialog.Trigger asChild>
+  <a href="/delete">Delete Account</a>
+</AlertDialog.Trigger>
+
+// Use a custom button component
+<Tooltip.Trigger asChild>
+  <IconButton icon={<InfoIcon />} />
+</Tooltip.Trigger>
+```
+
+### 2. Struchtúr Glan DOM
+
+Uaireanta cruthaíonn comhdhéanamh traidisiúnta struchtúir DOM an-domhain. Cuireann `asChild` deireadh leis an fhadhb sin an 'wrapper hell':
+
+```tsx
+// Without asChild: Nested wrappers
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger>
+      <button>
+        <span>Hover me</span>
+      </button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+
+// With asChild: Clean structure
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <button>Hover me</button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+```
+
+### 3. Comhtháthú le Córas Dearaidh
+
+Ceadaíonn `asChild` comhtháthú neamhbhriste le do chomhpháirteanna córas dearaidh atá ann cheana:
+
+```tsx
+import { Button } from '@/components/ui/button';
+
+<DropdownMenu.Trigger asChild>
+  <Button variant="outline" size="icon">
+    <MoreVertical className="h-4 w-4" />
+  </Button>
+</DropdownMenu.Trigger>
+```
+
+Faigheann do Chomhpháirt Button an iompar riachtanach spreagthóra dropdown gan aon mhodhnú.
+
+### 4. Comhdhéanamh Comhpháirte
+
+Is féidir leat iompar iolrach a chumasc ar eilimint shingil:
+
+```tsx
+<Dialog.Trigger asChild>
+  <Tooltip.Trigger asChild>
+    <button>
+      Open dialog (with tooltip)
+    </button>
+  </Tooltip.Trigger>
+</Dialog.Trigger>
+```
+
+Cruthaíonn sé seo cnaipe a osclaíonn dialóg agus a thaispeánann tooltip ar chliceáil ar hover.
+
+## Cásanna Úsáide Coitianta
+
+### Eilimintí Spreagthóra Saincheaptha
+
+Cuir in ionad spreagthóirí réamhshocraithe le comhpháirteanna saincheaptha:
+
+```tsx
+// Custom link trigger
+<Collapsible.Trigger asChild>
+  <a href="#" className="text-blue-600 underline">
+    Toggle Details
+  </a>
+</Collapsible.Trigger>
+
+// Icon-only trigger
+<Popover.Trigger asChild>
+  <IconButton>
+    <Settings className="h-4 w-4" />
+  </IconButton>
+</Popover.Trigger>
+```
+
+### Nascleanúint Inrochtana
+
+Coinnigh seomantacht cheart d’eilimintí nascleanúna:
+
+```tsx
+<NavigationMenu.Link asChild>
+  <Link href="/products" className="nav-link">
+    Products
+  </Link>
+</NavigationMenu.Link>
+```
+
+### Comhtháthú Foirm
+
+Comhtháthaigh le leabharlanna foirme agus coinnigh an fheidhmíocht:
+
+```tsx
+<FormField
+  control={form.control}
+  name="acceptTerms"
+  render={({ field }) => (
+    <FormItem>
+      <Checkbox.Root asChild>
+        <input
+          type="checkbox"
+          {...field}
+          className="sr-only"
+        />
+      </Checkbox.Root>
+    </FormItem>
+  )}
+/>
+```
+
+## Cleachtais Is Fearr
+
+### 1. Coinnigh Inrochtaineacht
+
+Nuair a athraíonn tú cineál eilimintí, déan cinnte go gcoinnítear inrochtaineacht:
+
+```tsx
+// ✅ Good - maintains button semantics
+<Dialog.Trigger asChild>
+  <button type="button">Open</button>
+</Dialog.Trigger>
+
+// ⚠️ Caution - ensure proper ARIA attributes
+<Dialog.Trigger asChild>
+  <div role="button" tabIndex={0}>Open</div>
+</Dialog.Trigger>
+```
+
+### 2. Doiciméad na Riachtanais Comhpháirte
+
+Déanaigh cur síos go soiléir cathain a thacaíonn comhpháirteanna le `asChild`:
+
+```tsx
+interface TriggerProps {
+  /**
+   * Change the default rendered element for the one passed as a child,
+   * merging their props and behavior.
+   *
+   * @default false
+   */
+  asChild?: boolean;
+  children: React.ReactNode;
+}
+```
+
+### 3. Tástáil ar Chomhpháirteanna Iníne
+
+Déan seiceáil go n-oibríonn comhpháirteanna saincheaptha i gceart le `asChild`:
+
+```tsx
+// Test that props are properly forwarded
+const TestButton = (props) => {
+  console.log('Received props:', props);
+  return <button {...props} />;
+};
+
+<Tooltip.Trigger asChild>
+  <TestButton>Test</TestButton>
+</Tooltip.Trigger>
+```
+
+### 4. Déileáil le Cásanna Teoranta
+
+Smaoinigh ar chásanna teoranta mar rindreáil choinníollach:
+
+```tsx
+// Handle conditional children
+<Dialog.Trigger asChild>
+  {isLoading ? (
+    <Skeleton className="h-10 w-20" />
+  ) : (
+    <Button>Open Dialog</Button>
+  )}
+</Dialog.Trigger>
+```
+
+## Easnaimh Choitianta
+
+### Gan Props a Scaipeadh
+
+Mar atá pléite i [Types](/docs/types), ba chóir duit i gcónaí props a scaipeadh chuig an eilimint bhunúsach.
+
+```tsx
+// ❌ Won't receive trigger behavior
+const BadButton = ({ children }) => <button>{children}</button>;
+
+// ✅ Properly receives all props
+const GoodButton = ({ children, ...props }) => (
+  <button {...props}>{children}</button>
+);
+```
+
+### Páistí Iolracha
+
+Ná pasáil páistí iolracha chuig comhpháirt a thacaíonn le `asChild`. Cruthóidh sé seo earráid mar ní bheidh a fhios ag an gcomhpháirt cén iníne le húsáid.
+
+```tsx
+// ❌ Error - asChild expects single child
+<Trigger asChild>
+  <button>One</button>
+  <button>Two</button>
+</Trigger>
+
+// ✅ Single child element
+<Trigger asChild>
+  <button>Single Button</button>
+</Trigger>
+```
+
+### Páistí Fragment
+
+Ná pasáil fragment chuig comhpháirt a thacaíonn le `asChild`. Cruthóidh sé seo earráid mar nach bhfuil fragments mar eilimintí bailí.
+
+```tsx
+// ❌ Fragment is not a valid element
+<Trigger asChild>
+  <>Button</>
+</Trigger>
+
+// ✅ Actual element
+<Trigger asChild>
+  <button>Button</button>
+</Trigger>
+```

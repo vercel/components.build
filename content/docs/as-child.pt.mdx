@@ -1,0 +1,319 @@
+---
+title: asChild
+description: Como usar a prop `asChild` para renderizar um elemento personalizado dentro do componente.
+---
+
+A prop `asChild` é um padrão poderoso em bibliotecas de componentes React modernas. Popularizado pelo [Radix UI](https://www.radix-ui.com/primitives/docs/guides/composition) e adotado pelo [shadcn/ui](https://ui.shadcn.com), esse padrão permite substituir a marcação padrão por elementos personalizados mantendo a funcionalidade do componente.
+
+## Entendendo `asChild`
+
+No essencial, `asChild` altera a forma como um componente é renderizado. Quando definido como `true`, ao invés de renderizar seu elemento DOM padrão, o componente mescla suas props, comportamentos e manipuladores de evento com seu elemento filho imediato.
+
+### Sem `asChild`
+
+```tsx
+<Dialog.Trigger>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+Isto renderiza elementos aninhados:
+```html
+<button data-state="closed">
+  <button>Open Dialog</button>
+</button>
+```
+
+### Com `asChild`
+
+```tsx
+<Dialog.Trigger asChild>
+  <button>Open Dialog</button>
+</Dialog.Trigger>
+```
+
+Isto renderiza um único elemento mesclado:
+```html
+<button data-state="closed">Open Dialog</button>
+```
+
+A funcionalidade do Dialog.Trigger é composta no seu botão, eliminando elementos wrapper desnecessários.
+
+## Como Funciona
+
+Por baixo dos panos, `asChild` usa as capacidades de composição do React para mesclar componentes:
+
+```tsx
+// Simplified implementation
+function Component({ asChild, children, ...props }) {
+  if (asChild) {
+    // Clone child and merge props
+    return React.cloneElement(children, {
+      ...props,
+      ...children.props,
+      // Merge event handlers
+      onClick: (e) => {
+        props.onClick?.(e);
+        children.props.onClick?.(e);
+      }
+    });
+  }
+
+  // Render default element
+  return <button {...props}>{children}</button>;
+}
+```
+
+O componente:
+1. Verifica se `asChild` é true
+2. Clona o elemento filho
+3. Mescla as props do pai e do filho
+4. Combina os manipuladores de evento
+5. Retorna o filho aprimorado
+
+## Principais Benefícios
+
+### 1. HTML Semântico
+
+`asChild` permite usar o elemento HTML mais apropriado para seu caso de uso:
+
+```tsx
+// Use a link for navigation
+<AlertDialog.Trigger asChild>
+  <a href="/delete">Delete Account</a>
+</AlertDialog.Trigger>
+
+// Use a custom button component
+<Tooltip.Trigger asChild>
+  <IconButton icon={<InfoIcon />} />
+</Tooltip.Trigger>
+```
+
+### 2. Estrutura DOM Limpa
+
+A composição tradicional frequentemente cria estruturas DOM profundamente aninhadas. `asChild` elimina esse "wrapper hell":
+
+```tsx
+// Without asChild: Nested wrappers
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger>
+      <button>
+        <span>Hover me</span>
+      </button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+
+// With asChild: Clean structure
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <button>Hover me</button>
+    </TooltipTrigger>
+  </Tooltip>
+</TooltipProvider>
+```
+
+### 3. Integração com Design System
+
+`asChild` possibilita integração fluida com os componentes do seu design system existente:
+
+```tsx
+import { Button } from '@/components/ui/button';
+
+<DropdownMenu.Trigger asChild>
+  <Button variant="outline" size="icon">
+    <MoreVertical className="h-4 w-4" />
+  </Button>
+</DropdownMenu.Trigger>
+```
+
+Seu componente Button recebe todo o comportamento necessário de trigger do dropdown sem modificação.
+
+### 4. Composição de Comportamentos
+
+Você pode compor múltiplos comportamentos em um único elemento:
+
+```tsx
+<Dialog.Trigger asChild>
+  <Tooltip.Trigger asChild>
+    <button>
+      Open dialog (with tooltip)
+    </button>
+  </Tooltip.Trigger>
+</Dialog.Trigger>
+```
+
+Isto cria um botão que tanto abre um diálogo quanto mostra uma tooltip ao passar o mouse.
+
+## Casos de Uso Comuns
+
+### Elementos Trigger Personalizados
+
+Substitua triggers padrão por componentes personalizados:
+
+```tsx
+// Custom link trigger
+<Collapsible.Trigger asChild>
+  <a href="#" className="text-blue-600 underline">
+    Toggle Details
+  </a>
+</Collapsible.Trigger>
+
+// Icon-only trigger
+<Popover.Trigger asChild>
+  <IconButton>
+    <Settings className="h-4 w-4" />
+  </IconButton>
+</Popover.Trigger>
+```
+
+### Navegação Acessível
+
+Mantenha a semântica adequada para elementos de navegação:
+
+```tsx
+<NavigationMenu.Link asChild>
+  <Link href="/products" className="nav-link">
+    Products
+  </Link>
+</NavigationMenu.Link>
+```
+
+### Integração com Formulários
+
+Integre com bibliotecas de formulário preservando a funcionalidade:
+
+```tsx
+<FormField
+  control={form.control}
+  name="acceptTerms"
+  render={({ field }) => (
+    <FormItem>
+      <Checkbox.Root asChild>
+        <input
+          type="checkbox"
+          {...field}
+          className="sr-only"
+        />
+      </Checkbox.Root>
+    </FormItem>
+  )}
+/>
+```
+
+## Melhores Práticas
+
+### 1. Mantenha a Acessibilidade
+
+Ao alterar tipos de elemento, garanta que a acessibilidade seja preservada:
+
+```tsx
+// ✅ Good - maintains button semantics
+<Dialog.Trigger asChild>
+  <button type="button">Open</button>
+</Dialog.Trigger>
+
+// ⚠️ Caution - ensure proper ARIA attributes
+<Dialog.Trigger asChild>
+  <div role="button" tabIndex={0}>Open</div>
+</Dialog.Trigger>
+```
+
+### 2. Documente os Requisitos do Componente
+
+Documente claramente quando os componentes suportam `asChild`:
+
+```tsx
+interface TriggerProps {
+  /**
+   * Change the default rendered element for the one passed as a child,
+   * merging their props and behavior.
+   *
+   * @default false
+   */
+  asChild?: boolean;
+  children: React.ReactNode;
+}
+```
+
+### 3. Teste Componentes Filhos
+
+Verifique que componentes personalizados funcionem corretamente com `asChild`:
+
+```tsx
+// Test that props are properly forwarded
+const TestButton = (props) => {
+  console.log('Received props:', props);
+  return <button {...props} />;
+};
+
+<Tooltip.Trigger asChild>
+  <TestButton>Test</TestButton>
+</Tooltip.Trigger>
+```
+
+### 4. Trate Casos de Borda
+
+Considere casos de borda como renderização condicional:
+
+```tsx
+// Handle conditional children
+<Dialog.Trigger asChild>
+  {isLoading ? (
+    <Skeleton className="h-10 w-20" />
+  ) : (
+    <Button>Open Dialog</Button>
+  )}
+</Dialog.Trigger>
+```
+
+## Armadilhas Comuns
+
+### Não Propagar Props
+
+Como discutido em [Tipos](/docs/types), você sempre deve espalhar (spread) as props para o elemento subjacente.
+
+```tsx
+// ❌ Won't receive trigger behavior
+const BadButton = ({ children }) => <button>{children}</button>;
+
+// ✅ Properly receives all props
+const GoodButton = ({ children, ...props }) => (
+  <button {...props}>{children}</button>
+);
+```
+
+### Múltiplos Filhos
+
+Não passe múltiplos filhos para um componente que suporta `asChild`. Isso causará um erro, pois o componente não saberá qual filho usar.
+
+```tsx
+// ❌ Error - asChild expects single child
+<Trigger asChild>
+  <button>One</button>
+  <button>Two</button>
+</Trigger>
+
+// ✅ Single child element
+<Trigger asChild>
+  <button>Single Button</button>
+</Trigger>
+```
+
+### Filhos em Fragmentos
+
+Não passe um fragmento para um componente que suporta `asChild`. Isso causará um erro, pois fragmentos não são elementos válidos.
+
+```tsx
+// ❌ Fragment is not a valid element
+<Trigger asChild>
+  <>Button</>
+</Trigger>
+
+// ✅ Actual element
+<Trigger asChild>
+  <button>Button</button>
+</Trigger>
+```

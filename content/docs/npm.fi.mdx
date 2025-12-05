@@ -1,0 +1,165 @@
+---
+title: NPM
+description: Kuinka julkaista komponenttisi NPM:iin.
+---
+
+NPM-paketit edustavat perinteistä lähestymistapaa komponenttikirjastojen jakeluun. Vaikka [rekisterit](/registry) ovat kasvattaneet suosiotaan joustavuuden ansiosta, npm-julkaiseminen on edelleen voimakas vaihtoehto, jolla on omat etunsa tietyissä käyttötapauksissa.
+
+Perusero npm-pakettien ja rekisterien välillä liittyy siihen, miten ne jakavat koodia ja hallinnoivat omistajuutta.
+
+## Pakettimalli
+
+Kun julkaiset komponentteja npm-pakettina, jaat valmiiksi rakennettua, versioitua koodia, jonka käyttäjät asentavat riippuvuutena:
+
+```bash title="Terminal"
+npm install @acme/ui-components
+```
+
+```tsx title="MyApp.tsx"
+import { Button } from '@acme/ui-components'
+
+// Component is imported from node_modules
+// Source code is not directly editable
+```
+
+Tämä tarjoaa useita huomattavia etuja, jotka tekevät niistä oikean valinnan monille komponenttikirjastoille.
+
+### Versiohallinta
+
+Pakettien kirjoittajana hallitset versiointia ja päivityksiä. Käyttäjät voivat lukita tiettyihin versioihin, mikä takaa vakauden:
+
+```json
+{
+  "dependencies": {
+    "@acme/ui-components": "^2.1.0"
+  }
+}
+```
+
+Tämä keskitetty versiohallinta tarkoittaa, että voit julkaista päivityksiä, suojauskorjauksia ja uusia ominaisuuksia, jotka käyttäjät saavat tavallisten riippuvuuspäivitysten kautta.
+
+### Yksinkertaistettu asennus
+
+NPM-paketit tarjoavat kitkattoman asennuskokemuksen. Yksi komento lisää koko komponenttikirjastosi:
+
+```bash
+npm install @acme/ui-components
+```
+
+Ei tarvetta kopioida tiedostoja manuaalisesti, hallita riippuvuuksia tai konfiguroida build-työkaluja. Kaikki toimii suoraan.
+
+### Riippuvuuksien ratkaisu
+
+NPM käsittelee automaattisesti transitatiiviset riippuvuudet. Jos komponenttisi vaativat tiettyjä versioita Reactista, Framer Motionista tai muista kirjastoista, npm ratkaisee nämä riippuvuudet automaattisesti, estäen versioristiriitoja.
+
+### TypeScript-tuki
+
+Julkaistut paketit voivat sisältää valmiiksi rakennetut tyypinmäärittelyt, tarjoten välittömän TypeScript-tuen ilman lisäkonfiguraatiota:
+
+```json
+{
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
+
+## NPM-pakettien rajoitukset
+
+Vaikka npm-paketit erottuvat jakelussa, niihin liittyy kompromisseja, joihin rekisterit erityisesti vastaavat.
+
+### Lähdekoodin omistajuus
+
+Suurin rajoitus on lähdekoodin puuttuva saatavuus. Käyttäjät eivät voi:
+
+- Muokata komponentin toimintaa suoraan
+- Korjata bugeja odottamatta päivityksiä
+- Mukauttaa toteutuksen yksityiskohtia
+- Poistaa käyttämätöntä koodia
+
+Tämä luo riippuvuussuhteen, jossa käyttäjien on luotettava paketin ylläpitäjään kaikissa muutoksissa.
+
+### Muokattavuuden rajoitukset
+
+Komponenttien hienosäätö vaatii työskentelyä esitetyn API:n puitteissa. Vaikka voit tarjota props-arvoja mukautusta varten:
+
+```tsx
+<Button
+  variant="primary"
+  size="large"
+  className="custom-styles"
+/>
+```
+
+Käyttäjät eivät voi perustavanlaatuisesti muuttaa komponentin toimintaa ilman koko paketin forkaamista.
+
+### Pakettikoko
+
+NPM-paketit sisältävät kaikki komponentit, vaikka käyttäjät tarvitsisivat vain osajoukkoa. Vaikka tree-shaking auttaa, se ei aina ole täydellistä, mikä voi lisätä tarpeetonta kuormaa sovelluksiin.
+
+## CSS- ja Tailwind-konfiguraatio
+
+Yksi tärkeä seikka, kun julkaiset Tailwind-pohjaisia komponentteja npm:n kautta, on varmistaa, että tyylit toimivat oikein sovelluksessa, joka käyttää pakettia.
+
+Oletuksena Tailwind generoi tyylejä vain luokille, jotka se löytää projektitiedostoistasi. Se ei tarkastele `node_modules`, mikä tarkoittaa, että komponenttiesi tyylit eivät sisälly automaattisesti.
+
+Korjataksesi tämän, käyttäjien tulee lisätä `@source`-direktiivi Tailwind-konfiguraatioonsa, jotta se skannaa pakettisi luokkien varalta:
+
+```css title="globals.css"
+@import "tailwindcss";
+
+/* Tell Tailwind to look for classes in your package */
+@source "../node_modules/@acme/ui-components";
+```
+
+Kirjoita tämä vaatimus aina näkyvästi pakettisi README-tiedostoon.
+
+## Komponenttikirjaston julkaiseminen
+
+Julkaistaksesi komponenttisi npm:iin tarvitset oikein konfiguroidun `package.json`-tiedoston, joka voi näyttää tältä:
+
+```json title="package.json"
+{
+  "name": "@acme/ui-components",
+  "version": "1.0.0",
+  "description": "A collection of accessible React components",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+NPM-paketit säilyvät tärkeänä osana komponenttiekosysteemiä. Vaikka rekisterit tarjoavat houkuttelevia etuja lähdekoodin omistajuudelle ja mukautettavuudelle, npm-paketit tarjoavat vakautta, versiohallintaa ja helppokäyttöisyyttä, joita monet tiimit tarvitsevat.
+
+Avain on ymmärtää käyttäjiesi tarpeet ja valita jakelutapa, joka palvelee heitä parhaiten. Joskus se tarkoittaa molempien vaihtoehtojen tarjoamista ja kehittäjien sallimista valita, mikä toimii parhaiten heidän projektissaan.

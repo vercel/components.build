@@ -1,0 +1,163 @@
+---
+title: Registar
+description: Razumite koncept registara komponenti, kako rade i zašto revolucioniraju način na koji programeri dele i otkrivaju UI komponente.
+---
+
+Registri komponenti su način za deljenje i otkrivanje UI komponenti. Popularizovao ih je [shadcn/ui](https://ui.shadcn.com), i omogućavaju vam da otkrijete i kopirate komponente direktno u vaše projekte.
+
+Registri predstavljaju fundamentalnu promenu u načinu na koji programeri dele i otkrivaju UI komponente. Za razliku od tradicionalnih npm paketa, registri se oslanjaju na model otvorenog koda i rade kroz preuzimanje izvornog koda u vaš projekat.
+
+## Šta čini registar?
+
+### 1. Distribucija izvornog koda
+
+Za razliku od npm paketa koji distribuiraju kompajlirani kod, registri distribuiraju izvorni kod:
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. Metadata i konfiguracija
+
+Dobri registri uključuju bogatu metadata o komponentama kao što su ime, opis, zavisnosti i kategorija.
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. Pregled i dokumentacija
+
+Iako se ne preuzimaju, veb-sajtovi registara obično obezbeđuju:
+
+- Preglede komponenti uživo
+- Interaktivne primere
+- Detaljnu dokumentaciju
+- Isječke koda spremne za kopiranje
+
+## Prednosti arhitekture registara
+
+Registri komponenti nude značajne prednosti i za autore i za korisnike, pojednostavljujući proces deljenja i usvajanja UI komponenti.
+
+### Za autore
+
+Za autore komponenti, registri čine distribuciju izuzetno jednostavnom. Kada je komponenta kreirana, može se dodati u registar i odmah postati dostupna korisnicima bez potrebe za složenim koracima objavljivanja. Ova lakoća distribucije ubrzava povratne informacije i podstiče brze iteracije.
+
+Kontrola verzija je još jedna ključna prednost. Registri obično prate verzije komponenti, changeloge i informacije o kompatibilnosti. Na primer, unos komponente može navesti trenutnu verziju, ukazati na nedavne izmene kao što su poboljšana pristupačnost ili nove mogućnosti, i naznačiti koje verzije shadcn/ui podržava. Ova transparentnost pomaže održavaocima da komuniciraju ažuriranja i osigurava da korisnici mogu izabrati komponente koje odgovaraju zahtevima njihovog projekta.
+
+Angažovanje zajednice je takođe poboljšano putem registara. Autori mogu dobijati direktne povratne informacije od korisnika, koji mogu prijavljivati probleme, tražiti funkcije i doprinositi zajedničkim poboljšanjima. To podstiče interaktivnije i responzivnije razvojno okruženje, što koristi i kreatorima i potrošačima.
+
+### Za korisnike
+
+Iz perspektive korisnika komponenti, registri znatno poboljšavaju proces otkrivanja. Korisnici mogu pregledavati komponente po kategorijama, koristiti funkciju pretrage, videti metrike popularnosti i istraživati povezane komponente, što olakšava pronalaženje tačno onoga što im treba za projekte.
+
+Pre nego što integrišu komponentu, korisnici je mogu videti u akciji, eksperimentisati sa različitim varijantama i pregledati njeno ponašanje i kvalitet koda. Ova mogućnost procene unapred smanjuje rizik i povećava poverenje pri usvajanju.
+
+Možda najvažnije, registri osnažuju korisnike sa pravim vlasništvom. Umesto da budu zaključani unutar zavisnosti, korisnici kopiraju izvorni kod direktno u svoje projekte. To znači da mogu menjati komponente po potrebi, izbeći probleme sa upravljanjem zavisnostima i zadržati potpunu kontrolu nad svojom bazom koda.
+
+## Kreiranje registra
+
+Možete prilično brzo napraviti jednostavan registar. U praktičnom smislu, potrebna su vam samo 3 osnovna elementa:
+
+### 1. Komponente
+
+Kreirajte komponentu, ili skup komponenti, koje želite da podelite. Uverite se da imate izvorni kod komponenti i da su dobro dokumentovane i lako razumljive.
+
+Razmislite o dodavanju stvari kao što su Markdown dokumentacija, primeri implementacija i način za pregled komponente.
+
+### 2. Javni endpoint
+
+Kreirajte javni endpoint koji servira komponente. To može biti jednostavan JSON fajl ili složeniji veb-sajt. Sve dok je javno i dostupno, možete koristiti bilo koji endpoint koji želite.
+
+### 3. CLI
+
+Kreirajte CLI koji vam omogućava da instalirate komponente u vaš projekat. To može biti jednostavno kao jedna komanda, kao `npx myregistry add button`, ili složenija komanda sa opcijama i zastavicama.
+
+## Korišćenje shadcn registra
+
+Izgradnja sopstvenog registra je fantastičan način da podelite vaše komponente sa zajednicom, ali zahteva dosta truda i održavanja. Ako samo želite da podelite jednu ili dve komponente, možete koristiti ekosistem [shadcn/ui](https://ui.shadcn.com) — registar, CLI i varijable.
+
+Pogledajmo kako možemo objaviti komponentu `MetricCard` uživo za manje od 5 minuta koristeći [Vercel](https://vercel.com) statički hosting.
+
+### Korak 1: Kreirajte direktorijum
+
+Napravite direktorijum sa ovom strukturom:
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+Stavite JSON stavku vašeg registra (npr. `metric-card.json`) u `public/` folder.
+
+### Korak 2: Dodajte `vercel.json`
+
+Kreirajte fajl `vercel.json` pored `public/` sa sledećim sadržajem:
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Ovo osigurava da se vaš JSON servira sa odgovarajućim CORS i Content-Type header-ima.
+
+### Korak 3: Objavite na Vercel
+
+Iz korena vašeg direktorijuma, pokrenite:
+
+```bash
+vercel --prod
+```
+
+i odgovorite na upite da biste objavili vaš projekat.
+
+Kada je proces završen, vaš fajl će biti dostupan na adresi sličnoj:
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### Korak 4: Instalirajte komponentu
+
+Sada bilo ko može da pokrene:
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+Bez npm paketa, bez koraka izgradnje, bez komplikacija.

@@ -1,0 +1,51 @@
+---
+title: Jetons de conception
+description: Comment les conventions de nommage sémantiques et les jetons de conception créent un système de thèmes flexible et maintenable.
+---
+
+L'une des bases fondamentales des bibliothèques de composants modernes réside dans leur approche réfléchie du style. Plutôt que d'encoder en dur les couleurs ou de créer des systèmes de classes rigides, nous pouvons adopter une convention de nommage sémantique qui sépare les préoccupations de thème, de contexte et d'usage.
+
+Cette convention de nommage sémantique est connue sous le nom de jetons de conception. Cette décision architecturale crée un système maintenable et flexible qui s'adapte parfaitement aux applications.
+
+## La philosophie des variables CSS sémantiques
+
+Les approches CSS traditionnelles associent souvent les valeurs de couleur directement à leurs contextes d'utilisation, créant des systèmes fragiles et difficiles à maintenir. Les jetons de conception adoptent une approche différente en créant des couches d'abstraction qui séparent ce qu'est quelque chose de son apparence.
+
+## Comprendre l'architecture des variables
+
+Examinons comment structurer nos variables CSS pour créer ce système flexible :
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+Dans l'exemple ci‑dessus, nous avons quatre jetons de conception :
+
+- `--background`, qui est utilisé pour les couleurs de fond (principalement l'arrière-plan de la page)
+- `--foreground`, qui est utilisé pour les couleurs d'avant-plan (la couleur générale du texte)
+- `--primary`, qui est utilisé pour les couleurs primaires (la couleur principale de la marque)
+- `--primary-foreground`, qui est utilisé pour les couleurs d'avant-plan primaires (la couleur du texte, telle qu'elle apparaît sur la couleur primaire)

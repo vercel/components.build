@@ -1,0 +1,185 @@
+---
+title: Tipos
+description: Estendendo os elementos HTML nativos do navegador para máxima personalização.
+---
+
+Ao criar componentes reutilizáveis, uma tipagem adequada é essencial para criar interfaces flexíveis, personalizáveis e seguras em tipo. Seguindo padrões estabelecidos para tipos de componentes, você pode garantir que seus componentes sejam poderosos e fáceis de usar.
+
+## Envolvendo um único elemento
+
+Cada componente exportado idealmente deve envolver um único elemento HTML ou JSX. Este princípio é fundamental para criar componentes compostos e personalizáveis.
+
+Quando um componente envolve múltiplos elementos, torna-se difícil customizar partes específicas sem passagem de props ou APIs complexas. Considere este anti-padrão:
+
+```tsx title="@/components/ui/card.tsx"
+const Card = ({ title, description, footer, ...props }) => (
+  <div {...props}>
+    <div className="card-header">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div className="card-footer">
+      {footer}
+    </div>
+  </div>
+);
+```
+
+Como discutimos em [Composição](/composition), essa abordagem cria vários problemas:
+- Você não pode personalizar o estilo do cabeçalho sem adicionar mais props
+- Você não pode controlar os elementos HTML usados para o título e a descrição
+- Você fica preso a uma estrutura DOM específica
+
+Em vez disso, cada camada deve ser seu próprio componente. Isso permite que você personalize cada camada de forma independente e controle os elementos HTML exatos usados para o título e a descrição.
+
+Os benefícios desta abordagem são:
+- **Máxima personalização** - Usuários podem estilizar e modificar cada camada de forma independente
+- **Sem passagem de props** - Props vão diretamente para o elemento que precisa delas
+- **HTML semântico** - Usuários podem ver e controlar a estrutura DOM exata
+- **Melhor acessibilidade** - Controle direto sobre atributos ARIA e elementos semânticos
+- **Modelo mental mais simples** - Um componente = um elemento
+
+## Estendendo atributos HTML
+
+Todo componente deve estender os atributos HTML nativos do elemento que envolve. Isso garante que os usuários tenham controle total sobre o elemento HTML subjacente.
+
+### Padrão básico
+
+```tsx
+export type CardRootProps = React.ComponentProps<'div'> & {
+  // Add your custom props here
+  variant?: 'default' | 'outlined';
+};
+
+export const CardRoot = ({ variant = 'default', ...props }: CardRootProps) => (
+  <div {...props} />
+);
+```
+
+### Tipos comuns de atributos HTML
+
+O React fornece definições de tipos para todos os elementos HTML. Use a apropriada para o seu componente:
+
+```tsx
+// For div elements
+type DivProps = React.ComponentProps<'div'>;
+
+// For button elements
+type ButtonProps = React.ComponentProps<'button'>;
+
+// For input elements
+type InputProps = React.ComponentProps<'input'>;
+
+// For form elements
+type FormProps = React.ComponentProps<'form'>;
+
+// For anchor elements
+type LinkProps = React.ComponentProps<'a'>;
+```
+
+### Lidando com diferentes tipos de elemento
+
+Quando um componente pode renderizar como diferentes elementos, use genéricos ou tipos união:
+
+```tsx
+// Using discriminated unions
+export type ButtonProps =
+  | (React.ComponentProps<'button'> & { asChild?: false })
+  | (React.ComponentProps<'div'> & { asChild: true });
+
+// Or with a polymorphic approach
+export type PolymorphicProps<T extends React.ElementType> = {
+  as?: T;
+} & React.ComponentPropsWithoutRef<T>;
+```
+
+### Estendendo componentes personalizados
+
+Se você está estendendo um componente existente, pode usar o tipo `ComponentProps` para obter as props do componente.
+
+```tsx title="@/components/ui/share-button.tsx"
+import type { ComponentProps } from 'react';
+
+export type ShareButtonProps = ComponentProps<'button'>;
+
+export const ShareButton = (props: ShareButtonProps) => (
+  <button {...props} />
+);
+```
+
+## Exportando tipos
+
+Sempre exporte os tipos de props do seu componente. Isso os torna acessíveis para consumidores em vários casos de uso.
+
+Exportar tipos habilita vários padrões importantes:
+
+```tsx
+// 1. Extracting specific prop types
+import type { CardRootProps } from '@/components/ui/card';
+type variant = CardRootProps['variant'];
+
+// 2. Extending components
+export type ExtendedCardProps = CardRootProps & {
+  isLoading?: boolean;
+};
+
+// 3. Creating wrapper components
+const MyCard = (props: CardRootProps) => (
+  <CardRoot {...props} className={cn('my-custom-class', props.className)} />
+);
+
+// 4. Type-safe prop forwarding
+function useCardProps(): Partial<CardRootProps> {
+  return {
+    variant: 'outlined',
+    className: 'custom-card',
+  };
+}
+```
+
+Seus tipos exportados devem ser nomeados `<ComponentName>Props`. Esta é uma convenção que ajuda outros desenvolvedores a entender o propósito do tipo.
+
+## Melhores práticas
+
+### 1. Sempre aplique o spread dos props por último
+
+Garanta que os usuários possam sobrescrever quaisquer props padrão:
+
+```tsx
+// ✅ Good - user props override defaults
+<div className="default-class" {...props} />
+
+// ❌ Bad - defaults override user props
+<div {...props} className="default-class" />
+```
+
+### 2. Evite conflitos de nomes de props
+
+Não use nomes de props que entrem em conflito com atributos HTML, a menos que a intenção seja sobrescrever:
+
+```tsx
+// ❌ Bad - conflicts with HTML title attribute
+export type CardProps = React.ComponentProps<'div'> & {
+  title: string; // This conflicts with the HTML title attribute
+};
+
+// ✅ Good - use a different name
+export type CardProps = React.ComponentProps<'div'> & {
+  heading: string;
+};
+```
+
+### 3. Documente props personalizadas
+
+Adicione comentários JSDoc às props personalizadas para melhor experiência do desenvolvedor:
+
+```tsx
+export type DialogProps = React.ComponentProps<'div'> & {
+  /** Whether the dialog is currently open */
+  open: boolean;
+  /** Callback when the dialog requests to be closed */
+  onOpenChange: (open: boolean) => void;
+  /** Whether to render the dialog in a portal */
+  modal?: boolean;
+};
+```

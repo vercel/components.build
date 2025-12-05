@@ -1,0 +1,54 @@
+---
+title: Keskeiset periaatteet
+description: Kun rakennat moderneja käyttöliittymäkomponentteja, on tärkeää pitää mielessä nämä keskeiset periaatteet.
+---
+
+## Yhdisteltävyys ja uudelleenkäytettävyys
+
+Suosi koostamista perinnän sijaan – rakenna komponentteja, joita voidaan yhdistellä ja sijoittaa toistensa sisään monimutkaisempien käyttöliittymien luomiseksi sen sijaan, että nojaisit syviin luokkahierarkioihin.
+
+Koostuvat komponentit tarjoavat selkeän rajapinnan (via props/slots), jonka avulla kehittäjät voivat muokata käyttäytymistä ja ulkoasua liittämällä lapsielementtejä tai callbacks-funktioita.
+
+Tämä tekee komponenteista erittäin uudelleenkäytettäviä eri konteksteissa. Reactin suunnittelu vahvistaa tätä: “Props and composition antavat kaiken tarvitsemasi joustavuuden mukauttaa komponentin ulkoasua ja käyttäytymistä selkeällä ja turvallisella tavalla.”
+
+## Oletuksena saavutettava
+
+Komponenttien on oltava käytettävissä kaikille käyttäjille. Käytä komponentin rooliin sopivia semanttisia HTML-elementtejä (esim. `<button>` klattavien toimintojen kohdalla, `<ul>/<li>` listoille jne.) ja täydennä tarvittaessa WAI-ARIA-attribuuteilla.
+
+Varmista, että näppäimistön navigointi ja fokuksen hallinta ovat tuettuja (esimerkiksi nuolinäppäimillä navigointi valikoissa, fokusloukut modaaleissa). Jokaisen komponentin tulee noudattaa saavutettavuusstandardeja ja -ohjeita suoraan paketista otettuna.
+
+Tähän kuuluu asianmukaisten ARIA-roolien/tilojen tarjoaminen ja testaaminen ruudunlukijoilla. Saavutettavuus ei ole valinnainen – se on jokaisen komponentin perusominaisuus.
+
+## Muokattavuus ja teemointi
+
+Komponentin tulisi olla helppo uudelleentyylittää tai mukauttaa erilaisiin suunnittelutarpeisiin. Vältä visuaalisten tyylien kovakoodaamista siten, että niitä ei voi ylikirjoittaa.
+
+Tarjoa mekanismeja teemointiin ja tyylitykseen, kuten CSS variables, selkeästi dokumentoidut class-nimet tai style props. Ihanteellisesti komponentit sisältävät järkevät oletustyylit, mutta antavat kehittäjille mahdollisuuden muokata ulkoasua vähällä vaivalla (esim. välittämällä className tai käyttämällä design tokens -elementtejä).
+
+Tämä periaate varmistaa, että komponentit sopivat mihin tahansa brändiin tai suunnittelujärjestelmään ilman että ne "taistelevat" oletustyyliä vastaan.
+
+## Kevyt ja suorituskykyinen
+
+Komponenttien tulisi olla mahdollisimman kevyitä resurssien ja riippuvuuksien osalta. Vältä komponentin paisuttamista suurilla kirjastoriippuvuuksilla tai tarpeettoman monimutkaisella logiikalla, erityisesti jos se logiikka ei ole aina tarpeen.
+
+Pyri hyvään suorituskykyyn (sekä renderöinnissä että vuorovaikutuksessa) minimoimalla tarpeettomat uudelleenrenderöinnit ja käyttämällä tehokkaita algoritmeja raskaissa tehtävissä. Jos komponentti käsittelee paljon dataa (esim. suuri lista tai taulukko), harkitse malleja kuten virtualisointi tai inkrementaalinen renderöinti, mutta pidä tällaiset ominaisuudet valinnaisina.
+
+Kevyet komponentit ovat helpompia ylläpitää ja toimivat loppukäyttäjille nopeammin.
+
+## Läpinäkyvyys ja koodin omistajuus
+
+Avoimen lähdekoodin yhteydessä käyttäjät hyötyvät usein täydestä näkyvyydestä ja hallinnasta komponentin koodiin. Tämä spesifikaatio kannustaa "open-source first" -ajatteluun: komponenttien ei tule olla mustia laatikoita.
+
+Kun kehittäjät tuovat tai kopioivat komponenttisi, heidän tulisi pystyä tarkastelemaan miten se toimii ja muokkaamaan sitä tarvittaessa. Tämä periaate on perustana nousevalle "copy-and-paste" -jakelumallille (josta keskustellaan myöhemmin), jossa kehittäjät integroivat komponenttikoodin suoraan projekteihinsa.
+
+Antamalla käyttäjille omistajuuden koodista lisäät luottamusta ja mahdollistat syvemmän mukauttamisen.
+
+Vaikka jakaisit komponentteja paketin kautta, omaksu läpinäkyvyys tarjoamalla source maps, luettavaa koodia ja perusteellista dokumentaatiota.
+
+## Hyvin dokumentoitu ja DX-ystävällinen
+
+Loistava komponentti ei ole vain koodia – siihen kuuluu selkeä dokumentaatio ja esimerkit. Kehittäjäkokemuksen (DX) näkökulmasta komponenttien tulisi olla helppo oppia ja integroida.
+
+Dokumentoi jokaisen komponentin tarkoitus, props ja käyttöesimerkit. Sisällytä huomautuksia saavutettavuudesta (kuten näppäinohjaimet tai käytetyt ARIA-attribuutit) ja kaikista mukautusvaihtoehdoista.
+
+Hyvä dokumentaatio vähentää väärinkäyttöä ja laskee käyttöönoton kynnystä. Käsittelemme dokumentaatioon liittyvät odotukset Julkaisu-osiossa, mutta se on mainittu täällä periaatteena, koska hyvän dokumentaation ja DX:n suunnittelu tulisi tapahtua jo suunnittelu/rakennus-vaiheessa.

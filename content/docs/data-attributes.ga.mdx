@@ -1,0 +1,400 @@
+---
+title: Airíonna Sonraí
+description: Ag úsáid airíonna sonraí le haghaidh stíleáil dearbhaithe agus d'aitheantas comhpháirte.
+---
+
+Soláthraíonn airíonna sonraí bealach cumhachtach chun staid agus struchtúr comhpháirte a nochtadh do thomhaltóirí, ag ceadú stíleála solúbtha gan borradh props. Úsáideann leabharlanna comhpháirte nua-aimseartha dhá phatrún príomha: `data-state` le haghaidh stáit amhairc agus `data-slot` le haghaidh aitheantais chomhpháirte.
+
+## Stíliú staid le data-state
+
+Ceann de na n-anti-phatrúin is coitianta i stíliú comhpháirteanna ná airíonna className ar leith a nochtadh do stáit éagsúla.
+
+I gcomhpháirteanna nach bhfuil chomh nua-aimseartha, feicfidh tú APIs mar seo go minic:
+
+```tsx
+<Dialog
+  openClassName="bg-black"
+  closedClassName="bg-white"
+  classes={{
+    open: "opacity-100",
+    closed: "opacity-0"
+  }}
+/>
+```
+
+Tá roinnt fadhbanna ag an gcur chuige seo:
+- Cuireann sé stát inmheánach an chomhpháirte le chéile lena API stíliúcháin
+- Cruthaíonn sé borradh props de réir mar a fhásann comhpháirte níos casta
+- Déanann sé an chomhpháirt níos deacra le húsáid agus le cothabháil
+- Cuireann sé cosc ar stíleáil bunaithe ar chomhcheangail staidí
+
+### An réiteach: airíonna data-state
+
+Ina ionad sin, bain úsáid as airíonna `data-*` chun staid an chomhpháirte a nochtadh go dearbhaitheach. Ligfidh sé seo do thomhaltóirí comhpháirte a stíliú bunaithe ar staid ag úsáid roghnóirí caighdeánacha CSS:
+
+```tsx title="component.tsx"
+const Dialog = ({ className, ...props }: DialogProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      data-state={isOpen ? 'open' : 'closed'}
+      className={cn('transition-all', className)}
+      {...props}
+    />
+  );
+};
+```
+
+Anois is féidir le tomhaltóirí an chomhpháirt a stíliú bunaithe ar an staid ón taobh amuigh:
+
+```tsx title="app.tsx"
+<Dialog className="data-[state=open]:opacity-100 data-[state=closed]:opacity-0" />
+```
+
+### Sochair an chur chuige seo
+
+1. **Aon prop className amháin** - Níl gá le roinnt props className ar leith do gach staid
+2. **Comhdhlúthaithe** - Comhcheangail roinnt airíonna data le haghaidh staidí casta
+3. **CSS Chaighdeánach** - Oibríonn sé le haon réiteach CSS-in-JS nó le CSS shimplí
+4. **Sábháilte ó thaobh na gclár cineálacha** - Is féidir le TypeScript luachanna airíonna sonraí a thomhas
+5. **Inchloisteáilte** - Tá stáit le feiceáil i DevTools mar airíonna HTML
+
+### Patrúin staid choitianta
+
+Bain úsáid as airíonna data le haghaidh gach cineál staid comhpháirte:
+
+```tsx
+// Open/closed state
+<Accordion data-state={isOpen ? 'open' : 'closed'} />
+
+// Selected state
+<Tab data-state={isSelected ? 'active' : 'inactive'} />
+
+// Disabled state (in addition to disabled attribute)
+<Button data-disabled={isDisabled} disabled={isDisabled} />
+
+// Loading state
+<Button data-loading={isLoading} />
+
+// Orientation
+<Slider data-orientation="horizontal" />
+
+// Side/position
+<Tooltip data-side="top" />
+```
+
+### Stíliú le Tailwind
+
+Tacaíonn Tailwind le variantes arbhair, rud a fhágann go bhfuil stíliú le airíonna data galánta:
+
+```tsx
+<Dialog
+  className={cn(
+    // Base styles
+    'rounded-lg border p-4',
+    // State-based styles
+    'data-[state=open]:animate-in data-[state=open]:fade-in',
+    'data-[state=closed]:animate-out data-[state=closed]:fade-out',
+    // Multiple attributes
+    'data-[state=open][data-side=top]:slide-in-from-top-2'
+  )}
+/>
+```
+
+Maidir le stáit a úsáidtear go coitianta, is féidir leat cumraíocht Tailwind a síneadh:
+
+```js title="tailwind.config.js"
+module.exports = {
+  theme: {
+    extend: {
+      data: {
+        open: 'state="open"',
+        closed: 'state="closed"',
+        active: 'state="active"',
+      }
+    }
+  }
+}
+```
+
+Anois is féidir leat shorthand a úsáid:
+
+```tsx
+<Dialog className="data-open:opacity-100 data-closed:opacity-0" />
+```
+
+### Comhtháthú le Radix UI
+
+Úsáidtear an patrún seo go forleathan ag [Radix UI](https://www.radix-ui.com/), a chuireann airíonna data i bhfeidhm go huathoibríoch ar a phirimidí:
+
+```tsx
+import * as Dialog from '@radix-ui/react-dialog';
+
+<Dialog.Root>
+  <Dialog.Trigger />
+  <Dialog.Portal>
+    {/* Radix automatically adds data-state="open" | "closed" */}
+    <Dialog.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out" />
+    <Dialog.Content className="data-[state=open]:fade-in data-[state=closed]:fade-out" />
+  </Dialog.Portal>
+</Dialog.Root>
+```
+
+Áirítear i ndiaidh sin na hairíonna data eile a sholáthraíonn Radix:
+- `data-state` - open/closed, active/inactive, on/off
+- `data-side` - top/right/bottom/left (do shaincheisteanna poistithe)
+- `data-align` - start/center/end (do shaincheisteanna poistithe)
+- `data-orientation` - horizontal/vertical
+- `data-disabled` - i láthair nuair atá sé díghníomhachtaithe
+- `data-placeholder` - i láthair nuair atá taispeántas sealadach á thaispeáint
+
+## Aitheantas comhpháirte le data-slot
+
+Cé go ndéanann `data-state` monatóireacht ar stáit amhairc, aithníonn `data-slot` cineálacha comhpháirte laistigh de chomhdhéanamh. Tá an patrún seo, a raibh tóir air ag [shadcn/ui](https://ui.shadcn.com/), ag ligean do chomhpháirteanna tuismitheora spriocdhíriú agus stíliú a dhéanamh ar pháistí ar leith gan brath ar ainmneacha ranganna íogaire nó roghnóirí eilimintí.
+
+### An fhadhb le spriocdhíriú páistí
+
+Tá teorainneacha suntasacha ag cur chuige traidisiúnta chun páistí a stíliú:
+
+```tsx
+// Relies on element types - breaks if implementation changes
+<form className="[&_input]:rounded-lg [&_button]:mt-4" />
+
+// Relies on class names - breaks if classes change
+<form className="[&_.text-input]:rounded-lg" />
+
+// Requires passing classes through props - verbose
+<form>
+  <input className={inputClasses} />
+  <button className={buttonClasses} />
+</form>
+```
+
+### An réiteach: airíonna data-slot
+
+Bain úsáid as `data-slot` chun aitheantais seasta a thabhairt do chomhpháirteanna is féidir a spriocdhíriú ag tuismitheoirí:
+
+```tsx title="field-set.tsx"
+function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
+  return (
+    <fieldset
+      data-slot="field-set"
+      className={cn(
+        "flex flex-col gap-6",
+        // Target specific child slots
+        "has-[>[data-slot=checkbox-group]]:gap-3",
+        "has-[>[data-slot=radio-group]]:gap-3",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+```tsx title="checkbox-group.tsx"
+function CheckboxGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="checkbox-group"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  );
+}
+```
+
+### Sochair na data-slot
+
+1. **Aitheantais seasta** - Ní bhriseann siad nuair a athraíonn sonraí cur i bhfeidhm
+2. **Spriocdhíriú séimeantach** - Sprioc bunaithe ar chuspóir an chomhpháirte, ní ar a struchtúr
+3. **Instealladh** - Fanann ranganna inmheánacha príobháideach
+4. **Comhdhlúthaithe** - Oibríonn sé le neadú agus comhdhéanamh ar bith
+5. **Sábháilte ó thaobh na gclár cineálacha** - Is féidir é a bhailíochtú agus a dhoiciméadú
+
+### Ag úsáid `has-[]` le haghaidh stíliúcháin a bhfuil tuismitheoirí ar eolas faoi
+
+Cruthaíonn roghnóir `has-[]` Tailwind chomhcheangailte le `data-slot` stíliúcháin chumhachtacha ar eolas faoi thuismitheoir:
+
+```tsx title="form.tsx"
+function Form({ className, ...props }: React.ComponentProps<"form">) {
+  return (
+    <form
+      data-slot="form"
+      className={cn(
+        "space-y-4",
+        // Adjust spacing when specific slots are present
+        "has-[>[data-slot=form-section]]:space-y-6",
+        "has-[>[data-slot=inline-fields]]:space-y-2",
+        // Style based on slot states
+        "has-[[data-slot=submit-button][data-loading=true]]:opacity-50",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### Ag úsáid `[&_]` le haghaidh spriocdhíriú síoltairseach
+
+Le haghaidh neadú níos doimhne, bain úsáid as an bpatrún `[&_selector]` chun spriocdhíriú a dhéanamh ar aon oidhre:
+
+```tsx title="card.tsx"
+function Card({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card"
+      className={cn(
+        "rounded-lg border p-4",
+        // Target any descendant with data-slot
+        "[&_[data-slot=card-header]]:mb-4",
+        "[&_[data-slot=card-title]]:text-lg [&_[data-slot=card-title]]:font-semibold",
+        "[&_[data-slot=card-description]]:text-sm [&_[data-slot=card-description]]:text-muted-foreground",
+        "[&_[data-slot=card-footer]]:mt-4 [&_[data-slot=card-footer]]:border-t [&_[data-slot=card-footer]]:pt-4",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+### CSS domhanda le data-slot
+
+Oibríonn sliotanna sonraí go hálainn le CSS domhanda le haghaidh comhsheasmhachta téama-ubhail:
+
+```css title="globals.css"
+/* Style all buttons within forms */
+[data-slot="form"] [data-slot="button"] {
+  @apply w-full sm:w-auto;
+}
+
+/* Style submit buttons specifically */
+[data-slot="form"] [data-slot="submit-button"] {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* Adjust inputs within inline layouts */
+[data-slot="inline-fields"] [data-slot="input"] {
+  @apply flex-1;
+}
+
+/* Style based on state combinations */
+[data-slot="dialog"][data-state="open"] [data-slot="dialog-content"] {
+  @apply animate-in fade-in;
+}
+```
+
+### Coinníollacha ainmniúcháin
+
+Lean na coinbhinsiúin seo le haghaidh ainmniú comhthreomhar `data-slot`:
+
+1. **Bain úsáid as kebab-case** - `data-slot="form-field"` ní `data-slot="formField"`
+2. **Bí sonrach** - `data-slot="submit-button"` ní `data-slot="button"`
+3. **Comhlíon cuspóir an chomhpháirte** - Tá ainm ag léiriú cad a dhéanann sé, ní conas a bhreathnaíonn sé
+4. **Seachain sonraí cur i bhfeidhm** - `data-slot="user-avatar"` ní `data-slot="rounded-image"`
+
+```tsx
+// Good examples
+data-slot="search-input"
+data-slot="navigation-menu"
+data-slot="error-message"
+data-slot="submit-button"
+data-slot="card-header"
+
+// Avoid
+data-slot="input"           // Too generic
+data-slot="blueButton"      // Includes styling
+data-slot="div-wrapper"     // Implementation detail
+data-slot="mainContent"     // Use camelCase
+```
+
+## Cathain le airíonna sonraí a úsáid vs props
+
+Is eochair chun API glan a bheith agat an tuiscint ar cathain is cuí gach patrún a úsáid:
+
+### Cásanna úsáide `data-state`
+- **Stáit amhairc** - open/closed, active/inactive, loading, srl.
+- **Stáit leagáide** - orientation, side, alignment
+- **Stáit idirghníomhaíochta** - hover, focus, disabled (nuair is gá stíliú a dhéanamh ar pháistí)
+
+### Cásanna úsáide `data-slot`
+- **Aitheantas comhpháirte** - Aitheantais seasta le haghaidh spriocdhíriú
+- **Patrúin comhdhéanta** - Caidreamh tuismitheoir-páiste
+- **Stíliú domhanda** - Stíliú comhpháirte téama-ubhail
+- **Spriocdhíriú neamhspleách ar éagsúlacht** - Sprioc ar aon éagsúlacht den chomhpháirt
+
+### Cásanna úsáide `props`
+- **Eagsúlachtaí (variants)** - Dearaidh amhairc éagsúla (primary, secondary, destructive)
+- **Méideanna** - sm, md, lg
+- **Cumrú iompraíochta** - controlled/uncontrolled, luachanna réamhshocraithe
+- **Láimhseálaithe imeachtaí** - onClick, onChange, srl.
+
+### Cur chuige comhcheangailte
+
+Úsáideann comhpháirt dea-dhearaithe na trí phatrún seo i gceart:
+
+```tsx title="button.tsx"
+type ButtonProps = {
+  variant?: 'primary' | 'secondary' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
+  loading?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
+  className?: string;
+};
+
+const Button = ({
+  variant = 'primary',
+  size = 'md',
+  loading,
+  disabled,
+  className,
+  ...props
+}: ButtonProps) => {
+  return (
+    <button
+      // Slot for targeting
+      data-slot="button"
+      // State for conditional styling
+      data-loading={loading}
+      data-disabled={disabled}
+      className={cn(
+        // Variant styles via props
+        buttonVariants({ variant, size }),
+        // Additional state styling allowed via className
+        className
+      )}
+      disabled={disabled}
+      {...props}
+    />
+  );
+};
+```
+
+Anois is féidir an cnaipe a úsáid agus a stíliú ar go leor bealaí:
+
+```tsx
+// Basic usage with variants
+<Button variant="primary" size="lg">Submit</Button>
+
+// Parent targeting via data-slot
+<form className="[&_[data-slot=button]]:w-full">
+  <Button>Submit</Button>
+</form>
+
+// State-based styling via data-state
+<Button
+  loading={isLoading}
+  className="data-[loading=true]:opacity-50"
+>
+  Submit
+</Button>
+
+// Global CSS can target any button
+// [data-slot="button"][data-loading="true"] { ... }
+```
+
+Soláthraíonn airíonna sonraí bunús láidir do stíliú leabharlanna comhpháirte nua-aimseartha. Trí úsáid a bhaint as `data-state` le haghaidh státanna amhairc agus `data-slot` le haghaidh aitheantais chomhpháirte, cruthaíonn tú API solúbtha, intomhaiste a shíneann ó chomhpháirte simplí go córais dearadh chasta.

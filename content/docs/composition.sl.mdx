@@ -1,0 +1,233 @@
+---
+title: Kompozicija
+description: Temelj za gradnjo sodobnih komponent uporabniškega vmesnika.
+---
+
+Kompozicija, oziroma *sestavljivost*, je temelj za gradnjo sodobnih komponent uporabniškega vmesnika. To je ena izmed najmočnejših tehnik za ustvarjanje prilagodljivih, ponovno uporabnih komponent, ki lahko obvladujejo kompleksne zahteve, ne da bi pri tem ogrozile jasnost API‑ja.
+
+Namesto da bi v eno komponento stlačili vso funkcionalnost z dziesetimi rekviziti, kompozicija porazdeli odgovornost med več sodelujočih komponent.
+
+Fernando je o tem imel odličen govor na React Universe Conf 2025, kjer je delil svoj pristop k ponovni izgradnji Slackovega Message Composerja kot sestavljive komponente.
+
+<Video src="https://www.youtube.com/watch?v=4KvbVq3Eg5w" />
+
+## Kako narediti komponento sestavljivo
+
+Da bi komponento naredili sestavljivo, jo morate razdeliti na manjše, bolj fokusirane komponente. Na primer, vzemimo to komponento Accordion:
+
+```tsx title="accordion.tsx"
+import { Accordion } from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion data={data} />
+);
+```
+
+Čeprav se ta komponenta Accordion morda zdi preprosta, obravnava preveč odgovornosti. Odgovorna je za upodabljanje kontejnerja, sprožilca in vsebine; pa tudi za upravljanje stanja akordeona in podatkov.
+
+Prilagajanje stilov te komponente je težko, ker je močno povezana. Verjetno bo zahtevalo globalne CSS override‑e. Poleg tega dodajanje nove funkcionalnosti ali spreminjanje vedenja zahteva spreminjanje izvorne kode komponente.
+
+Da bi to rešili, lahko to razdelimo na manjše, bolj fokusirane komponente.
+
+### 1. Root komponenta
+
+Najprej se osredotočimo na kontejner — komponento, ki drži vse skupaj, torej sprožilec in vsebino. Ta kontejner ne potrebuje podatkov, mora pa slediti odprtemu stanju.
+
+Poleg tega želimo, da je to stanje dostopno otroškim komponentam. Zato uporabimo Context API za ustvarjanje konteksta za odprto stanje.
+
+Na koncu, da dovolimo spreminjanje elementa `div`, bomo razširili privzeta HTML atributa.
+
+To komponento bomo poimenovali 'Root'.
+
+```tsx title="@/components/ui/accordion.tsx"
+type AccordionProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+const AccordionContext = createContext<AccordionProps>({
+  open: false,
+  setOpen: () => {},
+});
+
+export type AccordionRootProps = React.ComponentProps<'div'> & {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export const Root = ({
+  children,
+  open,
+  setOpen,
+  ...props
+}: AccordionRootProps) => (
+  <AccordionContext.Provider value={{ open, setOpen }}>
+    <div {...props}>{children}</div>
+  </AccordionContext.Provider>
+);
+```
+
+### 2. Item komponenta
+
+Komponenta Item je element, ki vsebuje posamezen element akordeona. Je preprosto ovojnina za vsak element v akordeonu.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionItemProps = React.ComponentProps<'div'>;
+
+export const Item = (props: AccordionItemProps) => <div {...props} />;
+```
+
+### 3. Trigger komponenta
+
+Komponenta Trigger je element, ki odpre akordeon, ko je aktivirana. Odgovorna je za:
+
+- Privzeto upodabljanje kot gumb (lahko se prilagodi z `asChild`)
+- Obdelavo klikov za odpiranje akordeona
+- Upravljanje fokusa, ko se akordeon zapre
+- Zagotavljanje ustreznih ARIA atributov
+
+Dodajmo to komponento v naš Accordion.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionTriggerProps = React.ComponentProps<'button'> & {
+  asChild?: boolean;
+};
+
+export const Trigger = ({ asChild, ...props }: AccordionTriggerProps) => (
+  <AccordionContext.Consumer>
+    {({ open, setOpen }) => (
+      <button onClick={() => setOpen(!open)} {...props} />
+    )}
+  </AccordionContext.Consumer>
+);
+```
+
+### 4. Content komponenta
+
+Komponenta Content je element, ki vsebuje vsebino akordeona. Odgovorna je za:
+
+- Prikaz vsebine, ko je akordeon odprt
+- Zagotavljanje ustreznih ARIA atributov
+
+Dodajmo to komponento v naš Accordion.
+
+```tsx title="@/components/ui/accordion.tsx"
+export type AccordionContentProps = React.ComponentProps<'div'> & {
+  asChild?: boolean;
+};
+
+export const Content = ({ asChild, ...props }: AccordionContentProps) => (
+  <AccordionContext.Consumer>
+    {({ open }) => <div {...props} />}
+  </AccordionContext.Consumer>
+);
+```
+
+### 5. Združevanje vsega skupaj
+
+Zdaj, ko imamo vse komponente, jih lahko združimo v naši izvorni datoteki.
+
+```tsx title="accordion.tsx"
+import * as Accordion from '@/components/ui/accordion';
+
+const data = [
+  {
+    title: 'Accordion 1',
+    content: 'Accordion 1 content',
+  },
+  {
+    title: 'Accordion 2',
+    content: 'Accordion 2 content',
+  },
+  {
+    title: 'Accordion 3',
+    content: 'Accordion 3 content',
+  },
+];
+
+return (
+  <Accordion.Root open={false} setOpen={() => {}}>
+    {data.map((item) => (
+      <Accordion.Item key={item.title}>
+        <Accordion.Trigger>{item.title}</Accordion.Trigger>
+        <Accordion.Content>{item.content}</Accordion.Content>
+      </Accordion.Item>
+    ))}
+  </Accordion.Root>
+);
+```
+
+## Konvencije poimenovanja
+
+Pri gradnji sestavljivih komponent so dosledne konvencije poimenovanja ključne za ustvarjanje intuitivnih in predvidljivih API‑jev. Tako shadcn/ui kot Radix UI sledita uveljavljenim vzorcem, ki so se uveljavili kot de facto standard v ekosistemu React.
+
+### Root komponente
+
+Komponenta `Root` služi kot glavni kontejner, ki ovije vse druge podkomponente. Običajno upravlja deljeno stanje in kontekst z zagotavljanjem konteksta vsem otroškim komponentam.
+
+```tsx
+<AccordionRoot>{/* Child components */}</AccordionRoot>
+```
+
+### Interaktivni elementi
+
+Interaktivne komponente, ki sprožijo dejanja ali preklapljajo stanja, uporabljajo opisna imena:
+
+- `Trigger` - Element, ki sproži dejanje (odpiranje, zapiranje, preklop)
+- `Content` - Element, ki vsebuje glavno vsebino, ki se prikazuje/skriva
+
+```tsx
+<CollapsibleTrigger>Click to expand</CollapsibleTrigger>
+<CollapsibleContent>
+  Hidden content revealed here
+</CollapsibleContent>
+```
+
+### Struktura vsebine
+
+Za komponente z organiziranimi območji vsebine uporabite semantična imena, ki opisujejo njihov namen:
+
+- `Header` - Zgornji razdelek, ki vsebuje naslove ali kontrolnike
+- `Body` - Glavno območje vsebine
+- `Footer` - Spodnji razdelek za dejanja ali metapodatke
+
+```tsx
+<DialogHeader>
+  {/* Dialog title */}
+</DialogHeader>
+<DialogBody>
+  {/* Dialog content */}
+</DialogBody>
+<DialogFooter>
+  {/* Dialog footer */}
+</DialogFooter>
+```
+
+### Informacijske komponente
+
+Komponente, ki zagotavljajo informacije ali kontekst, uporabljajo opisne pripone:
+
+- `Title` - Primarno ime ali oznaka
+- `Description` - Podporno besedilo ali pojasnjevalna vsebina
+
+```tsx
+<CardTitle>Project Statistics</CardTitle>
+<CardDescription>
+  View your project's performance over time
+</CardDescription>
+```

@@ -1,0 +1,140 @@
+---
+title: Dokumentaatio
+description: Miten dokumentoida komponenttisi.
+---
+
+Hyvä dokumentaatio on olennaista, jotta komponenttisi ovat saavutettavia ja helppokäyttöisiä. Tämä opas tiivistää keskeiset osat, jotka jokaiselta komponentin dokumentaatiolle tarkoitetulta sivulta tulisi löytyä.
+
+## Dokumentaatiokehys
+
+Skaalataaksesi dokumentaatiotasi voit käyttää dokumentaatiokehystä. Saatavilla on monia vaihtoehtoja riippuen projektisi kielestä ja tarpeista. Suosittuja vaihtoehtoja ovat:
+
+- [Fumadocs](https://fumadocs.dev/) - Fast, feature-rich documentation framework for Next.js
+- [Nextra](https://nextra.site/) - Markdown-based documentation with built-in search and theming
+- [Content Collections](https://content-collections.dev/) - Type-safe content management for documentation
+- [Docusaurus](https://docusaurus.io/) - Feature-rich documentation sites with versioning support
+- [VitePress](https://vitepress.dev/) - Vue-powered static site generator optimized for documentation
+
+Mieluiten valitsemasi kehys tukee syntaksikorostusta, mukautettuja komponentteja ja on yleisesti hyvin suunniteltu.
+
+## Oleelliset dokumentaation osiot
+
+### Yleiskatsaus
+
+Aloita lyhyellä johdannolla, joka selittää mitä komponentti tekee ja milloin sitä kannattaa käyttää.
+
+### Demo, lähdekoodi ja esikatselu
+
+Saadaksesi hyvän ensivaikutelman kehittäjille, sisällytä demo, joka näyttää komponentin toiminnassa, sekä koodi, jota käytettiin demon luomiseen.
+
+Jos käytät avointa lähdekoodin [Rekisteri](/registry), voit myös liittää esikatselun lähdekoodista, jota käytetään komponentin luomiseen.
+
+Käytä koodilohkoja, joissa on syntaksikorostus ja kopioi leikepöydälle -toiminto. Harkitse välilehtikäyttöliittymien käyttöä, jotta voit vaihtaa näkymien välillä ilman, että sivu täyttyy.
+
+### Asennus
+
+Sisällytä selkeä ohje komponentin asentamiseen. Mieluiten tämä on yksi komento, jonka voi kopioida ja liittää terminaaliin.
+
+Jos rakennat shadcn/ui:n päälle, voit käyttää [shadcn CLI](https://ui.shadcn.com/docs/cli) -työkalua komponentin asentamiseen, esim.
+
+```package-install
+npx shadcn@latest add <your-component-url>
+```
+
+Jos julkaiset [Markkinapaikka](/marketplaces):aan, voit käyttää markkinapaikan CLI:tä komponentin asentamiseen, esim.
+
+```package-install
+npx shadcn@latest add https://21st.dev/r/<your-author>/<your-component>
+```
+
+Jos et käytä shadcn/ui:ta mutta rakennat [Rekisteri](/registry):ä, voit rakentaa oman CLI:n komponentin asentamiseen, esim.
+
+```package-install
+npx your-registry-cli@latest add <your-component-url>
+```
+
+Lopuksi, jos julkaiset npm:iin, voit käyttää npm CLI:tä komponentin asentamiseen, esim.
+
+```package-install
+npm install <your-component-name>
+```
+
+<Callout>
+Näyttääksesi useita asennusvaihtoehtoja kuten yllä, voit käyttää esimerkiksi Fumadocsin [`package-install`-syntaksia](https://fumadocs.dev/docs/headless/mdx/install).
+</Callout>
+
+### Ominaisuudet
+
+Listaa komponenttisi keskeiset ominaisuudet, jotta käyttäjät ymmärtävät nopeasti sen kyvykkyydet ja edut. Esimerkiksi:
+
+- **Mukautettavissa** – Säädä tyylejä, kokoja ja käyttäytymistä helposti tarpeidesi mukaan.
+- **Saavutettavuus oletuksena** – Noudattaa parhaita käytäntöjä näppäimistöllä navigoinnissa, ARIA-roolien ja ruudunlukijan tuen osalta.
+- **Komponoituva** – Suunniteltu toimimaan saumattomasti muiden komponenttien ja kaavojen kanssa.
+- **Tyyppiturvallinen** – Toimitetaan kattavien TypeScript-tyyppien kanssa maksimaalisen turvallisuuden ja automaattisen täydennyksen vuoksi.
+- **Teemituen** – Integroituu design-tokeniesi tai teema-järjestelmäsi kanssa.
+- **Kevyt** – Minimiriippuvuudet ja optimoitu suorituskykyä varten.
+- **SSR/SSG-valmis** – Toimii server-side- ja staattisen renderöinnin kehysten kanssa.
+- **Hyvin dokumentoitu** – Sisältää selkeät käyttösovellusesimerkit ja API-viitteen.
+
+Muokkaa tätä luetteloa oman komponenttisi mukaisesti. Korosta, mikä tekee siitä ainutlaatuisen tai erityisen hyödyllisen kehittäjille.
+
+### Esimerkit
+
+Havainnollista komponentin joustavuutta käytännön esimerkeillä:
+
+- **Variantit** - Eri visuaaliset tyylit tai saatavilla olevat koot
+- **Tilat** - Lataus-, pois päältä-, virhe- tai onnistumistilat
+- **Edistynyt käyttö** - Monimutkaiset skenaariot ja reunatapaukset
+- **Kompositio** - Miten komponentti toimii muiden komponenttien kanssa
+- **Responsiivinen käyttäytyminen** - Miten se mukautuu eri näyttökokoihin
+
+Jokaisen esimerkin tulisi sisältää sekä renderöity tulos että vastaava koodi.
+
+### Propit ja API-viite
+
+Dokumentoi kaikki saatavilla olevat propit, metodit ja konfiguraatiovaihtoehdot. Harkitse aiheenmukaisten propien ryhmittelyä ja korosta yleisimmin käytettyjä. Jokaisesta propista sisällytä:
+
+- **Nimi** - Propin tunniste
+- **Tyyppi** - TypeScript-tyyppimäärittely
+- **Oletus** - Oletusarvo, jos ei määritetty
+- **Pakollinen** - Onko prop vaadittu
+- **Kuvaus** - Mitä prop tekee ja milloin sitä käytetään
+
+<Callout>
+Jos käytät Fumadocsia, voit harkita [Auto Type Table] -komponentin käyttöä varmistaaksesi tarkkuuden ja vähentääksesi ylläpitotaakkaa.
+</Callout>
+
+### Saavutettavuus
+
+Dokumentoi, miten komponenttisi tukee saavutettavuusominaisuuksia:
+
+- Näppäimistönavigointimallit
+- ARIA-attribuutit ja roolit
+- Ruudunlukijan tuki
+- Fokus-hallinta
+- Värikontrastin näkökohdat
+
+### Muutosloki ja versiohallinta
+
+Saattaa olla hyödyllistä ylläpitää muutoslokia jokaisen komponentin dokumentaatiosivulla, joka kattaa:
+
+- Versiot numeroinnilla, joka noudattaa semanttista versiointia
+- Uudet ominaisuudet ja parannukset
+- Bugikorjaukset
+- Rikkomuksia sisältävät muutokset
+- Migraatio-ohjeet suurten versiopäivitysten yhteydessä
+
+Auttaa käyttäjiä ymmärtämään, mitä versioiden välillä on muuttunut ja miten päivittää turvallisesti. Sisällytä koodiesimerkkejä, jotka näyttävät ennen/jälkeen -kuviot rikkomuksia sisältävissä muutoksissa.
+
+<Callout>
+  Jos syntaksikorostuskehyssi tukee sitä (kuten Shiki), saatat haluta käyttää [diff-transformer-notaatiota](https://shiki.style/packages/transformers#transformernotationdiff) näyttääksesi muutokset versioiden välillä.
+</Callout>
+
+## Parhaat käytännöt
+
+- Pidä dokumentaatio ajan tasalla koodimuutosten kanssa
+- Käytä todellisia esimerkkejä, jotka ratkaisevat oikeita ongelmia
+- Sisällytä yleiset sudenkuopat ja vianetsintävinkit
+- Tarjoa suorituskykyyn liittyvät näkökohdat, kun aihe on relevantti
+- Linkitä liittyviin komponentteihin ja kaavoihin
+- Tee kaikista koodiesimerkkejä ajettavia ja testattuja

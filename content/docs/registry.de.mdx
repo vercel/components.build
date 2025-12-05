@@ -1,0 +1,163 @@
+---
+title: Komponenten-Registry
+description: Verstehen Sie das Konzept von Komponenten-Registries, wie sie funktionieren und warum sie die Art und Weise revolutionieren, wie Entwickler UI-Komponenten teilen und entdecken.
+---
+
+Komponenten-Registries sind eine Möglichkeit, UI-Komponenten zu teilen und zu entdecken. Popularisiert durch [shadcn/ui](https://ui.shadcn.com) ermöglichen sie es, Komponenten zu finden und den Quellcode direkt in Ihre Projekte zu kopieren.
+
+Registries stellen einen grundlegenden Wandel dar, wie Entwickler UI-Komponenten teilen und entdecken. Im Gegensatz zu herkömmlichen npm-Paketen basieren Registries auf einem Open-Source-Modell und funktionieren dadurch, dass der Quellcode in Ihr Projekt heruntergeladen wird.
+
+## Was macht eine Registry aus?
+
+### 1. Quellcode-Verteilung
+
+Im Gegensatz zu npm-Paketen, die kompilierten Code verteilen, liefern Registries den Quellcode:
+
+```typescript
+// Traditional npm package
+import { Button } from 'some-ui-library';
+
+// Registry-based component
+// Copy source from registry into your project
+// src/components/ui/button.tsx contains the full source
+import { Button } from '@/components/ui/button';
+```
+
+### 2. Metadaten und Konfiguration
+
+Gute Registries enthalten umfangreiche Metadaten über Komponenten wie Name, Beschreibung, Abhängigkeiten und Kategorie.
+
+```json
+{
+  "name": "announcement",
+  "type": "registry:component",
+  "description": "A compound badge component designed to display announcements with theming support",
+  "dependencies": ["class-variance-authority", "lucide-react"],
+  "registryDependencies": ["badge"],
+  "files": [
+    {
+      "type": "registry:component",
+      "content": "..."
+    }
+  ],
+  "category": "ui"
+}
+```
+
+### 3. Vorschau und Dokumentation
+
+Auch wenn sie nicht heruntergeladen werden, bieten Registry-Websites typischerweise:
+
+- Live-Komponenten-Vorschauen
+- Interaktive Beispiele
+- Detaillierte Dokumentation
+- Code-Snippets zum Kopieren
+
+## Vorteile der Registry-Architektur
+
+Komponenten-Registries bieten sowohl für Autor:innen als auch für Nutzer:innen erhebliche Vorteile und vereinfachen den Prozess des Teilens und Übernehmens von UI-Komponenten.
+
+### Für Autoren
+
+Für Komponenten-Autoren machen Registries die Verteilung bemerkenswert einfach. Sobald eine Komponente erstellt ist, kann sie der Registry hinzugefügt werden und ist sofort für Nutzer zugänglich, ohne komplexe Veröffentlichungsschritte. Diese einfache Verteilung beschleunigt den Feedback-Zyklus und fördert schnelle Iterationen.
+
+Versionskontrolle ist ein weiterer wichtiger Vorteil. Registries verfolgen typischerweise Komponenten-Versionen, Changelogs und Kompatibilitätsinformationen. Zum Beispiel könnte ein Komponenten-Eintrag seine aktuelle Version angeben, kürzliche Änderungen hervorheben wie verbesserte Barrierefreiheit oder neue Funktionen und angeben, welche Versionen von shadcn/ui unterstützt werden. Diese Transparenz hilft Maintainer:innen, Updates zu kommunizieren, und stellt sicher, dass Nutzer Komponenten auswählen können, die zu ihren Projektanforderungen passen.
+
+Community-Engagement wird durch Registries ebenfalls gefördert. Autor:innen können direktes Feedback von Nutzer:innen erhalten, die Probleme melden, Features anfragen und zu kollaborativen Verbesserungen beitragen können. Dies schafft eine interaktivere und reaktionsschnellere Entwicklungsumgebung, wovon sowohl Ersteller als auch Konsumenten profitieren.
+
+### Für Nutzer
+
+Aus Sicht der Komponenten-Nutzer verbessern Registries den Entdeckungsprozess erheblich. Nutzer können Komponenten nach Kategorie durchsuchen, Suchfunktionen nutzen, Popularitätsmetriken einsehen und verwandte Komponenten erkunden, sodass sie leichter genau das finden, was sie für ihre Projekte benötigen.
+
+Bevor eine Komponente integriert wird, können Nutzer sie in Aktion vorab ansehen, mit verschiedenen Varianten experimentieren und Verhalten sowie Codequalität prüfen. Diese Möglichkeit, Komponenten vorab zu bewerten, reduziert Risiken und erhöht das Vertrauen in die Übernahme.
+
+Vielleicht am wichtigsten: Registries geben Nutzer:innen echte Kontrolle. Anstatt an eine Abhängigkeit gebunden zu sein, kopieren Nutzer den Quellcode direkt in ihre Projekte. Dadurch können sie Komponenten nach Bedarf anpassen, Abhängigkeitsmanagement-Probleme vermeiden und die vollständige Kontrolle über ihre Codebasis behalten.
+
+## Eine Registry erstellen
+
+Sie können relativ schnell eine einfache Registry erstellen. Praktisch benötigen Sie nur 3 Kernelemente:
+
+### 1. Komponenten
+
+Erstellen Sie eine Komponente oder eine Sammlung von Komponenten, die Sie teilen möchten. Stellen Sie sicher, dass Sie den Quellcode der Komponenten haben und dass sie gut dokumentiert und leicht verständlich sind.
+
+Denken Sie daran, Dinge wie Markdown-Dokumentation, Beispielimplementierungen und eine Möglichkeit zur Vorschau der Komponente hinzuzufügen.
+
+### 2. Einen öffentlichen Endpunkt
+
+Erstellen Sie einen öffentlichen Endpunkt, der die Komponenten bereitstellt. Das kann eine einfache JSON-Datei oder eine komplexere Website sein. Solange sie öffentlich und zugänglich ist, können Sie jeden gewünschten Endpunkt verwenden.
+
+### 3. CLI
+
+Erstellen Sie eine CLI, die es ermöglicht, die Komponenten in Ihr Projekt zu installieren. Das kann so einfach sein wie ein einzelner Befehl, wie `npx myregistry add button`, oder ein komplexerer Befehl mit Optionen und Flags.
+
+## Verwendung der shadcn-Registry
+
+Eine eigene Registry aufzubauen ist eine fantastische Möglichkeit, Ihre Komponenten mit der Community zu teilen, erfordert jedoch viel Aufwand und Pflege. Wenn Sie nur ein oder zwei Komponenten teilen möchten, können Sie das shadcn/ui-Ökosystem — Registry, CLI und Variablen — verwenden.
+
+Schauen wir uns an, wie wir eine `MetricCard`-Komponente in weniger als 5 Minuten live veröffentlichen können, indem wir das statische Hosting von [Vercel](https://vercel.com) nutzen.
+
+### Schritt 1: Ordner erstellen
+
+Erstellen Sie einen Ordner mit dieser Struktur:
+
+```
+my-component/
+├── public/
+│   └── metric-card.json
+└── vercel.json
+```
+
+Legen Sie Ihr Registry-Item-JSON (z. B. `metric-card.json`) im Ordner `public/` ab.
+
+### Schritt 2: Eine `vercel.json` hinzufügen
+
+Erstellen Sie eine `vercel.json`-Datei neben `public/` mit folgendem Inhalt:
+
+```json title="vercel.json"
+{
+  "headers": [
+    {
+      "source": "/(.*).json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Dies stellt sicher, dass Ihr JSON mit den korrekten CORS- und Content-Headern ausgeliefert wird.
+
+### Schritt 3: Auf Vercel bereitstellen
+
+Führen Sie im Stammverzeichnis Ihres Ordners aus:
+
+```bash
+vercel --prod
+```
+
+und beantworten Sie die Eingabeaufforderungen, um Ihr Projekt bereitzustellen.
+
+Wenn es fertig ist, ist Ihre Datei unter etwa folgender Adresse erreichbar:
+
+```
+https://your-project-name.vercel.app/metric-card.json
+```
+
+### Schritt 4: Komponente installieren
+
+Jeder kann jetzt ausführen:
+
+```bash
+npx shadcn@latest add https://your-project-name.vercel.app/metric-card.json
+```
+
+Kein npm-Paket, kein Build-Schritt, keine Komplexität.
