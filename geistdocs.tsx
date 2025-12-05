@@ -34,8 +34,62 @@ export const translations = {
   en: {
     displayName: "English",
   },
+  da: {
+    displayName: "Danish",
+  },
+  nl: {
+    displayName: "Dutch",
+  },
+  fi: {
+    displayName: "Finnish",
+  },
+  fr: {
+    displayName: "French",
+  },
+  hu: {
+    displayName: "Hungarian",
+  },
+  id: {
+    displayName: "Indonesian",
+  },
+  ga: {
+    displayName: "Irish",
+  },
+  it: {
+    displayName: "Italian",
+  },
+  no: {
+    displayName: "Norwegian",
+  },
+  pt: {
+    displayName: "Portuguese",
+  },
+  ro: {
+    displayName: "Romanian",
+  },
+  sr: {
+    displayName: "Serbian",
+  },
+  sl: {
+    displayName: "Slovenian",
+  },
+  es: {
+    displayName: "Spanish",
+  },
+  sv: {
+    displayName: "Swedish",
+  },
+  tr: {
+    displayName: "Turkish",
+  },
+  de: {
+    displayName: "German",
+  },
   cn: {
-    displayName: "Chinese",
+    displayName: "Chinese (Mandarin)",
     search: "搜尋文檔",
+  },
+  jp: {
+    displayName: "Japanese",
   },
 };
