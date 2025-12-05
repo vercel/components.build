@@ -6,7 +6,7 @@ import { source } from "@/lib/geistdocs/source";
 
 const localeMap: {
   [key: string]: {
-    language: string;
+    language?: string;
     components?: {
       tokenizer:
         | ReturnType<typeof createTokenizerMandarin>
@@ -26,7 +26,6 @@ const localeMap: {
 
 if ("cn" in translations) {
   localeMap.cn = {
-    language: "chinese",
     components: {
       tokenizer: createTokenizerMandarin(),
     },
@@ -39,7 +38,6 @@ if ("cn" in translations) {
 
 if ("jp" in translations) {
   localeMap.jp = {
-    language: "japanese",
     components: {
       tokenizer: createTokenizerJapanese(),
     },
