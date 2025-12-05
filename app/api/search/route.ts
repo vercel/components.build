@@ -20,7 +20,7 @@ const localeMap: {
 } = Object.fromEntries(
   Object.entries(translations).map(([locale, translation]) => [
     locale,
-    { language: translation.displayName },
+    { language: translation.displayName.toLowerCase() },
   ])
 );
 
