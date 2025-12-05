@@ -1,7 +1,6 @@
 import { createRelativeLink } from "fumadocs-ui/mdx";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Author } from "@/components/author";
-import { AuthorNote } from "@/components/author-note";
 import { AskAI } from "@/components/geistdocs/ask-ai";
 import { CopyPage } from "@/components/geistdocs/copy-page";
 import {
@@ -9,21 +8,20 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
-  generatePageMetadata,
-  generateStaticPageParams,
 } from "@/components/geistdocs/docs-page";
 import { EditSource } from "@/components/geistdocs/edit-source";
 import { Feedback } from "@/components/geistdocs/feedback";
 import { getMDXComponents } from "@/components/geistdocs/mdx-components";
 import { OpenInChat } from "@/components/geistdocs/open-in-chat";
 import { ScrollTop } from "@/components/geistdocs/scroll-top";
-import { TableOfContents } from "@/components/geistdocs/toc";
-import { getLLMText, source } from "@/lib/geistdocs/source";
+import { Separator } from "@/components/ui/separator";
+import { getLLMText, getPageImage, source } from "@/lib/geistdocs/source";
+import { Author } from "@/components/author";
+import { AuthorNote } from "@/components/author-note";
 
-const Page = async (props: PageProps<"/[[...slug]]">) => {
-  const params = await props.params;
-
-  const page = source.getPage(params.slug);
+const Page = async ({ params }: PageProps<"/[lang]/[[...slug]]">) => {
+  const { slug, lang } = await params;
+  const page = source.getPage(slug, lang);
 
   if (!page) {
     notFound();
@@ -34,17 +32,19 @@ const Page = async (props: PageProps<"/[[...slug]]">) => {
 
   return (
     <DocsPage
-      slug={params.slug}
+      full={page.data.full}
       tableOfContent={{
-        component: (
-          <TableOfContents>
+        style: "clerk",
+        footer: (
+          <div className="my-3 space-y-3">
+            <Separator />
             <EditSource path={page.path} />
             <ScrollTop />
             <Feedback />
             <CopyPage text={markdown} />
             <AskAI href={page.url} />
             <OpenInChat href={page.url} />
-          </TableOfContents>
+          </div>
         ),
       }}
       toc={page.data.toc}
@@ -66,12 +66,27 @@ const Page = async (props: PageProps<"/[[...slug]]">) => {
   );
 };
 
-export const generateStaticParams = generateStaticPageParams;
+export const generateStaticParams = () => source.generateParams();
 
-export const generateMetadata = async (props: PageProps<"/[[...slug]]">) => {
-  const params = await props.params;
+export const generateMetadata = async ({
+  params,
+}: PageProps<"/[lang]/[[...slug]]">) => {
+  const { slug, lang } = await params;
+  const page = source.getPage(slug, lang);
 
-  return generatePageMetadata(params.slug);
+  if (!page) {
+    notFound();
+  }
+
+  const metadata: Metadata = {
+    title: page.data.title,
+    description: page.data.description,
+    openGraph: {
+      images: getPageImage(page).url,
+    },
+  };
+
+  return metadata;
 };
 
 export default Page;

@@ -83,7 +83,7 @@ When adding code examples:
    - Don't mix unrelated changes
 
 4. **Follow the specification's philosophy**
-   - Align with the [core principles](/docs/principles)
+   - Align with the core principles
    - Ensure recommendations are framework-agnostic where possible
    - Prioritize accessibility and composability
 

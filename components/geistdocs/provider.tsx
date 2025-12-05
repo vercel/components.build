@@ -7,17 +7,20 @@ import type { ComponentProps } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { useChatContext } from "@/hooks/geistdocs/use-chat";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { i18n, i18nProvider } from "@/lib/geistdocs/i18n";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "../ui/tooltip";
 import { SearchDialog } from "./search";
 
 type GeistdocsProviderProps = ComponentProps<typeof RootProvider> & {
   className?: string;
+  lang?: string;
 };
 
 export const GeistdocsProvider = ({
   search,
   className,
+  lang = i18n.defaultLanguage,
   ...props
 }: GeistdocsProviderProps) => {
   const { isOpen } = useChatContext();
@@ -27,12 +30,13 @@ export const GeistdocsProvider = ({
     <div
       className={cn(
         "transition-all",
-        isOpen && !isMobile && "pr-[384px]!",
+        isOpen && !isMobile && "pr-96!",
         className
       )}
     >
       <TooltipProvider>
         <RootProvider
+          i18n={i18nProvider(lang)}
           search={{
             SearchDialog,
             ...search,
