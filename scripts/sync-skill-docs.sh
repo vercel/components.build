@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SKILL_DIR=".claude/skills/building-components/references"
+SKILL_DIR="skills/building-components/references"
 mkdir -p "$SKILL_DIR"
 
 # Find all non-localized .mdx files (exclude *.XX.mdx where XX is language code)

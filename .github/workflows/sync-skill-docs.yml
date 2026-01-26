@@ -21,7 +21,7 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          git add .claude/skills/
+          git add skills/
           if git diff --staged --quiet; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
