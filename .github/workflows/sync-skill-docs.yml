@@ -16,25 +16,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Copy and clean docs
-        run: |
-          SKILL_DIR=".claude/skills/building-components/references"
-          mkdir -p "$SKILL_DIR"
-
-          # Find all non-localized .mdx files (exclude *.XX.mdx where XX is language code)
-          for src in content/docs/*.mdx; do
-            filename=$(basename "$src")
-
-            # Skip localized files (pattern: name.XX.mdx where XX is 2-letter code)
-            if [[ "$filename" =~ \.[a-z]{2}\.mdx$ ]]; then
-              continue
-            fi
-
-            dest="${SKILL_DIR}/${filename}"
-
-            # Copy and strip MDX components that won't render
-            sed -E '/<Video[^>]*\/>/d; /<[A-Z][a-zA-Z]*[^>]*\/>/d; /<[A-Z][a-zA-Z]*>.*<\/[A-Z][a-zA-Z]*>/d' "$src" > "$dest"
-            echo "Synced: $filename"
-          done
+        run: ./scripts/sync-skill-docs.sh
 
       - name: Check for changes
         id: changes
