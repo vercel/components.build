@@ -4,14 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'content/docs/composition.mdx'
-      - 'content/docs/as-child.mdx'
-      - 'content/docs/polymorphism.mdx'
-      - 'content/docs/data-attributes.mdx'
-      - 'content/docs/state.mdx'
-      - 'content/docs/styling.mdx'
-      - 'content/docs/accessibility.mdx'
-      - 'content/docs/types.mdx'
+      - 'content/docs/*.mdx'
 
 jobs:
   sync:
@@ -25,28 +18,22 @@ jobs:
       - name: Copy and clean docs
         run: |
           SKILL_DIR=".claude/skills/building-components/references"
+          mkdir -p "$SKILL_DIR"
 
-          # List of docs to sync
-          DOCS=(
-            "composition"
-            "as-child"
-            "polymorphism"
-            "data-attributes"
-            "state"
-            "styling"
-            "accessibility"
-            "types"
-          )
+          # Find all non-localized .mdx files (exclude *.XX.mdx where XX is language code)
+          for src in content/docs/*.mdx; do
+            filename=$(basename "$src")
 
-          for doc in "${DOCS[@]}"; do
-            src="content/docs/${doc}.mdx"
-            dest="${SKILL_DIR}/${doc}.mdx"
-
-            if [ -f "$src" ]; then
-              # Copy and strip MDX components that won't render
-              sed -E '/<Video[^>]*\/>/d; /<[A-Z][a-zA-Z]*[^>]*\/>/d; /<[A-Z][a-zA-Z]*>.*<\/[A-Z][a-zA-Z]*>/d' "$src" > "$dest"
-              echo "Synced: $doc"
+            # Skip localized files (pattern: name.XX.mdx where XX is 2-letter code)
+            if [[ "$filename" =~ \.[a-z]{2}\.mdx$ ]]; then
+              continue
             fi
+
+            dest="${SKILL_DIR}/${filename}"
+
+            # Copy and strip MDX components that won't render
+            sed -E '/<Video[^>]*\/>/d; /<[A-Z][a-zA-Z]*[^>]*\/>/d; /<[A-Z][a-zA-Z]*>.*<\/[A-Z][a-zA-Z]*>/d' "$src" > "$dest"
+            echo "Synced: $filename"
           done
 
       - name: Check for changes
