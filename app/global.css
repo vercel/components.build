@@ -1,2 +1,12 @@
 @import "tailwindcss";
 @import "./styles/geistdocs.css";
+
+@theme inline {
+  --color-background: #000000;
+  --color-foreground: #ffffff;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
