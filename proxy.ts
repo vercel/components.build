@@ -6,12 +6,14 @@ import {
   NextResponse,
 } from "next/server";
 import { i18n } from "@/lib/geistdocs/i18n";
-import { trackMdRequest } from "@/lib/md-tracking";
+import { trackMdRequest } from "@/lib/geistdocs/md-tracking";
 
 const { rewrite: rewriteLLM } = rewritePath(
-  "/*path",
+  "/docs/*path",
   `/${i18n.defaultLanguage}/llms.mdx/*path`
 );
+
+const MDX_EXTENSION_PATTERN = /\.mdx?$/;
 
 const internationalizer = createI18nMiddleware(i18n);
 
@@ -32,14 +34,14 @@ const proxy = (request: NextRequest, context: NextFetchEvent) => {
 
   // Handle .md/.mdx URL requests before i18n runs
   if (
-    (pathname === ".md" ||
-      pathname === ".mdx" ||
-      pathname.startsWith("/")) &&
+    (pathname === "/docs.md" ||
+      pathname === "/docs.mdx" ||
+      pathname.startsWith("/docs/")) &&
     (pathname.endsWith(".md") || pathname.endsWith(".mdx"))
   ) {
-    const stripped = pathname.replace(/\.mdx?$/, "");
+    const stripped = pathname.replace(MDX_EXTENSION_PATTERN, "");
     const result =
-      stripped === ""
+      stripped === "/docs"
         ? `/${i18n.defaultLanguage}/llms.mdx`
         : rewriteLLM(stripped);
     if (result) {

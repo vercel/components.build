@@ -1,99 +1,54 @@
-import { BoxIcon } from "lucide-react";
+import { BookHeartIcon } from "lucide-react";
 
 export const Logo = () => (
-  <>
-    <span className="hidden font-semibold text-xl tracking-tight sm:block">
-      components.build
-    </span>
-    <span className="font-semibold text-xl tracking-tight sm:hidden">
-      <BoxIcon className="size-5" />
-    </span>
-  </>
+  <div className="flex items-center gap-2">
+    <BookHeartIcon className="size-5" />
+    <p className="font-semibold text-xl tracking-tight">Geistdocs</p>
+  </div>
 );
 
 export const github = {
   owner: "vercel",
-  repo: "components.build",
+  repo: "geistdocs",
 };
 
-export const nav: { label: string; href: string }[] = [];
-
-export const suggestions = [
-  "What is composability?",
-  "How do I make a component accessible?",
-  "What is the `asChild` prop?",
-  "Explain polymorphism.",
+export const nav = [
+  {
+    label: "Docs",
+    href: "/docs",
+  },
+  {
+    label: "Source",
+    href: `https://github.com/${github.owner}/${github.repo}/`,
+  },
 ];
 
-export const title = "components.build Documentation";
+export const suggestions = [
+  "What is Geistdocs?",
+  "What can I make with Geistdocs?",
+  "What syntax does Geistdocs support?",
+  "How do I deploy my Geistdocs site?",
+];
+
+export const title = "Geistdocs Documentation";
 
 export const prompt =
-  "You are a helpful assistant specializing in answering questions about components.build, an open-source standard for building modern, composable and accessible UI components.";
+  "You are a helpful assistant specializing in answering questions about Geistdocs, a modern documentation template built with Next.js and Fumadocs.";
 
 export const translations = {
   en: {
     displayName: "English",
   },
-  da: {
-    displayName: "Danish",
-  },
-  nl: {
-    displayName: "Dutch",
-  },
-  fi: {
-    displayName: "Finnish",
-  },
-  fr: {
-    displayName: "French",
-  },
-  hu: {
-    displayName: "Hungarian",
-  },
-  id: {
-    displayName: "Indonesian",
-  },
-  ga: {
-    displayName: "Irish",
-  },
-  it: {
-    displayName: "Italian",
-  },
-  no: {
-    displayName: "Norwegian",
-  },
-  pt: {
-    displayName: "Portuguese",
-  },
-  ro: {
-    displayName: "Romanian",
-  },
-  sr: {
-    displayName: "Serbian",
-  },
-  sl: {
-    displayName: "Slovenian",
-  },
-  es: {
-    displayName: "Spanish",
-  },
-  sv: {
-    displayName: "Swedish",
-  },
-  tr: {
-    displayName: "Turkish",
-  },
-  de: {
-    displayName: "German",
-  },
   cn: {
-    displayName: "Chinese (Mandarin)",
+    displayName: "Chinese",
     search: "搜尋文檔",
-  },
-  jp: {
-    displayName: "Japanese",
   },
 };
 
 export const basePath: string | undefined = undefined;
 
-export const siteId: string | undefined = "components-build";
+/**
+ * Unique identifier for this site, used in markdown request tracking analytics.
+ * Each site using geistdocs should set this to a unique value (e.g. "ai-sdk-docs", "next-docs").
+ */
+export const siteId: string | undefined = undefined;

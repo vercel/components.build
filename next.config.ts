@@ -13,7 +13,7 @@ const config: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "github.com",
+        hostname: "placehold.co",
       },
     ],
   },

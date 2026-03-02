@@ -7,7 +7,7 @@ import { i18n } from "./i18n";
 // See https://fumadocs.dev/docs/headless/source-api for more info
 export const source = loader({
   i18n,
-  baseUrl: "/",
+  baseUrl: "/docs",
   source: docs.toFumadocsSource(),
   plugins: [lucideIconsPlugin()],
 });
@@ -37,8 +37,7 @@ export const getLLMText = async (page: InferPageType<typeof source>) => {
     summary && `summary: ${summary}`,
     prerequisites?.length &&
       `prerequisites:\n${prerequisites.map((p) => `  - ${p}`).join("\n")}`,
-    related?.length &&
-      `related:\n${related.map((r) => `  - ${r}`).join("\n")}`,
+    related?.length && `related:\n${related.map((r) => `  - ${r}`).join("\n")}`,
     "---",
   ]
     .filter(Boolean)
@@ -48,5 +47,11 @@ export const getLLMText = async (page: InferPageType<typeof source>) => {
 
 # ${title}
 
-${processed}`;
+${processed}
+
+---
+
+For a semantic overview of all documentation, see [/sitemap.md](/sitemap.md)
+
+For an index of all available documentation, see [/llms.txt](/llms.txt)`;
 };
