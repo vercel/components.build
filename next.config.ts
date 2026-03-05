@@ -1,7 +1,10 @@
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
+import path from "node:path";
 
 const withMDX = createMDX();
+
+const jotaiPath = path.dirname(require.resolve("jotai"));
 
 const config: NextConfig = {
   experimental: {
@@ -16,6 +19,14 @@ const config: NextConfig = {
         hostname: "github.com",
       },
     ],
+  },
+
+  webpack: (webpackConfig) => {
+    webpackConfig.resolve.alias = {
+      ...webpackConfig.resolve.alias,
+      jotai: jotaiPath,
+    };
+    return webpackConfig;
   },
 };
 
