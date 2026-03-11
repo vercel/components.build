@@ -8,7 +8,7 @@ import { MobileMenu } from "./mobile-menu";
 import { SearchButton } from "./search";
 
 export const Navbar = () => (
-  <header className="sticky top-0 z-40 w-full gap-6 border-b bg-sidebar">
+  <header className="sticky top-0 z-40 w-full gap-6 border-b border-sidebar-border bg-sidebar/80 backdrop-blur-xl">
     <div className="mx-auto flex h-16 w-full max-w-(--fd-layout-width) items-center gap-4 px-4 py-3.5 md:px-6">
       <div className="flex shrink-0 items-center gap-2.5">
         <a href="https://vercel.com/" rel="noopener" target="_blank">
