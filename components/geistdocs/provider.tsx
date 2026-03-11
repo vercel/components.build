@@ -50,6 +50,7 @@ export const GeistdocsProvider = ({
             SearchDialog: SearchDialogComponent,
             ...search,
           }}
+          theme={{ forcedTheme: "dark" }}
           {...props}
         />
       </TooltipProvider>
