@@ -11,7 +11,6 @@ export const Author = (props: AuthorProps) => (
     <Image
       alt={props.name}
       className="my-0! inline-flex overflow-hidden rounded-full"
-      crossOrigin="anonymous"
       height={20}
       src={props.image}
       unoptimized
