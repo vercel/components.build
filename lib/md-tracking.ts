@@ -1,4 +1,5 @@
 import { siteId } from "@/geistdocs";
+import type { DetectionMethod } from "@/lib/ai-agent-detection";
 
 const PLATFORM_URL = "https://geistdocs.com/md-tracking";
 
@@ -8,7 +9,9 @@ type TrackMdRequestParams = {
   referer: string | null;
   acceptHeader: string | null;
   /** How the markdown was requested: 'md-url' for direct .md URLs, 'header-negotiated' for Accept header */
-  requestType?: "md-url" | "header-negotiated";
+  requestType?: "md-url" | "header-negotiated" | "agent-rewrite";
+  /** Which detection method identified this as an AI agent request */
+  detectionMethod?: DetectionMethod | null;
 };
 
 /**
@@ -21,6 +24,7 @@ export async function trackMdRequest({
   referer,
   acceptHeader,
   requestType,
+  detectionMethod,
 }: TrackMdRequestParams): Promise<void> {
   try {
     const response = await fetch(PLATFORM_URL, {
@@ -35,6 +39,7 @@ export async function trackMdRequest({
         referer,
         acceptHeader,
         requestType,
+        detectionMethod,
       }),
     });
 
