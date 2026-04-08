@@ -59,7 +59,7 @@ export const Sidebar = () => {
       className="pointer-events-none sticky top-(--fd-docs-row-1) z-20 h-[calc(var(--fd-docs-height)-var(--fd-docs-row-1))] [grid-area:sidebar] *:pointer-events-auto max-md:hidden md:layout:[--fd-sidebar-width:268px]"
       data-sidebar-placeholder
     >
-      <div className="h-full overflow-y-auto px-4 pt-12 pb-4">
+      <div className="h-full overflow-y-auto px-14 pt-12 pb-4">
         <Fragment key={root.$id}>{renderSidebarList(root.children)}</Fragment>
       </div>
       <Sheet onOpenChange={setIsOpen} open={isOpen}>
