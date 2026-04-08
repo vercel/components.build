@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
 
 type AuthorNoteProps = {
   name: string;
@@ -22,13 +22,15 @@ export const AuthorNote = ({
   >
     <blockquote className="mb-2 italic [&_a]:underline">{children}</blockquote>
     <div className="mt-2 flex items-center gap-3">
-      <Avatar className="h-10 w-10">
-        <AvatarImage
+      <div className="relative h-10 w-10 overflow-hidden rounded-full">
+        <Image
           alt={name}
           src={`https://github.com/${githubUsername}.png`}
+          width={40}
+          height={40}
+          className="h-full w-full object-cover"
         />
-        <AvatarFallback>{name.toUpperCase().slice(0, 2)}</AvatarFallback>
-      </Avatar>
+      </div>
       <div>
         <div className="font-semibold">{name}</div>
         <a

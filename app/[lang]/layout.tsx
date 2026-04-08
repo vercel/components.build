@@ -15,7 +15,7 @@ const Layout = async ({ children, params }: LayoutProps<"/[lang]">) => {
       lang={lang}
       suppressHydrationWarning
     >
-      <body>
+      <body className="bg-black text-white">
         <GeistdocsProvider basePath={basePath} lang={lang}>
           <Navbar />
           {children}
