@@ -18,7 +18,8 @@ export const DocsTitle = ({
   ...props
 }: ComponentProps<typeof FumadocsDocsTitle>) => (
   <FumadocsDocsTitle
-    className={cn("mb-4 text-4xl tracking-tight", className)}
+    className={cn("mb-4 tracking-tight", className)}
+    style={{ fontSize: "var(--text-3xl)" }}
     {...props}
   />
 );
