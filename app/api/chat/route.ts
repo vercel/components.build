@@ -4,6 +4,7 @@ import {
   createUIMessageStreamResponse,
   stepCountIs,
   streamText,
+  toUIMessageStream,
 } from "ai";
 import { createTools } from "./tools";
 import type { MyUIMessage } from "./types";
@@ -81,13 +82,14 @@ User question: ${userQuestion}`,
 
     const stream = createUIMessageStream({
       originalMessages: messages,
-      execute: ({ writer }) => {
+      execute: async ({ writer }) => {
+        const tools = createTools(writer);
         const result = streamText({
           model: "openai/gpt-4.1-mini",
-          messages: convertToModelMessages(processedMessages),
+          messages: await convertToModelMessages(processedMessages),
           stopWhen: stepCountIs(10),
-          tools: createTools(writer),
-          system: createSystemPrompt(currentRoute),
+          tools,
+          instructions: createSystemPrompt(currentRoute),
           prepareStep: ({ stepNumber }) => {
             if (stepNumber === 0) {
               return { toolChoice: { type: "tool", toolName: "search_docs" } };
@@ -95,7 +97,7 @@ User question: ${userQuestion}`,
           },
         });
 
-        writer.merge(result.toUIMessageStream());
+        writer.merge(toUIMessageStream({ stream: result.stream, tools }));
       },
     });
 
