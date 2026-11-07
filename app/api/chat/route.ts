@@ -82,6 +82,7 @@ User question: ${userQuestion}`,
 
     const stream = createUIMessageStream({
       originalMessages: messages,
+      onError: getErrorMessage,
       execute: async ({ writer }) => {
         const tools = createTools(writer);
         const result = streamText({
@@ -97,7 +98,13 @@ User question: ${userQuestion}`,
           },
         });
 
-        writer.merge(toUIMessageStream({ stream: result.stream, tools }));
+        writer.merge(
+          toUIMessageStream({
+            stream: result.stream,
+            tools,
+            onError: getErrorMessage,
+          })
+        );
       },
     });
 
@@ -116,3 +123,19 @@ User question: ${userQuestion}`,
     );
   }
 }
+
+const getErrorMessage = (error: unknown) => {
+  if (error === null || error === undefined) {
+    return "unknown error";
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return JSON.stringify(error);
+};
